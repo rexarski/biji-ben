@@ -1,0 +1,58 @@
+\documentclass[a4paper, 11pt, twoside]{article}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\begin{document}
+\title{STAT6038 week 5 lecture 14}
+\author{Rui Qiu}
+\date{2017-03-23}
+
+\maketitle
+
+\paragraph{Assessing the underlying (model-specific) assumptions.}
+
+\[\epsilon_i \overset{iid}\sim N(0, \sigma^2)\]
+
+\begin{enumerate}
+	\item iid = independent and identically distributed
+	\item $N$ = normally distributed errors
+	\item mean of distribution is $0$ (guaranteed by the least squares estimation -> not really an assumption)
+	\item constant variance $\sigma^2$ (homoscedasticity or homoskedasticity)
+\end{enumerate}
+
+We assess these assumptions using the residuals (observed errors)
+
+\[e_i=Y_i-\hat{Y_i}, i = 1, 2, \dots , n\]
+
+and we do this assessment using residual plots.\\
+
+\textbf{Key assumptions (in order of importance)}
+
+\begin{enumerate}
+	\item errors are independent (no obvious problem)
+	\item errors are identically distributed with constant variance $\sigma^2$ (homoscedastic errors)
+	\item errors are normally distributed
+\end{enumerate}
+
+Use resident plots:
+
+1 and 2 are best assessed using a \textbf{plot} of the (standardized) residuals vs. fitted values aka residual plot.
+
+3 is test assessed using a normal quantile plot (qq plot)
+
+Other plots may be useful in diagnosing (getting more details on ) problems observed in the main residual plot (and occasionally in normal qq plot).\\
+
+ If residual plot has a "curvature" -- a definite pattern $\implies$ indicating dependence in the errors $\implies$ errors are not independent $\implies$ model is probably not appropriate.
+ 
+ If residual plot shows a "heteroscedasticity" $\implies$ non-constant variance.
+ 
+ If outliers... outliers...
+ 
+\begin{itemize}
+	\item lack of independence
+	\item nor constant variance
+	\item potential outlier
+\end{itemize}
+
+
+
+\end{document}

@@ -1,0 +1,52 @@
+library(neuralnet)
+setwd("/usr/local/lib/R/site-library/rattle/csv/")
+
+weather <- read.csv("weather.csv")
+data <- subset(weather, select=c("WindSpeed9am", "Humidity9am", "Pressure9am", "Cloud9am", "Temp9am", "Temp3pm"))
+data[is.na(data)] <- 0
+
+index <- sample(1:nrow(data),round(0.75*nrow(data)))
+train <- data[index,]
+test <- data[-index,]
+
+maxs <- apply(data, 2, max) 
+mins <- apply(data, 2, min)
+scaled <- as.data.frame(scale(data, center = mins, scale = maxs - mins))
+train_ <- scaled[index,]
+test_ <- scaled[-index,]
+
+# NN
+
+f <- "Temp3pm ~ WindSpeed9am + Humidity9am + Pressure9am + Cloud9am + Temp9am"
+nn <- neuralnet(f,data=train_,hidden=c(5, 3), act.fct = "logistic", linear.output=T)
+
+plot(nn)
+
+pr.nn <- compute(nn, test_[,1:5])
+pr.nn_ <- pr.nn$net.result*(max(data$Temp3pm)-min(data$Temp3pm))+min(data$Temp3pm)
+test.r <- (test_$Temp3pm)*(max(data$Temp3pm)-min(data$Temp3pm))+min(data$Temp3pm)
+
+plot(test$Temp3pm,pr.nn_,col='red',main='Real vs predicted NN',pch=18,cex=0.7)
+MAE.nn <- sum(abs(test.r - pr.nn_))/nrow(test_)
+print(MAE.nn)
+
+# regression
+
+lm.fit <- glm(f, data=train)
+pr.lm <- predict(lm.fit, test)
+MAE.lm <- sum(abs(pr.lm - test$Temp3pm))/nrow(test)
+print(paste(MAE.lm))
+
+# comparison
+par(mfrow=c(1,2))
+
+plot(test$Temp3pm,pr.nn_,col='red',main='Real vs predicted NN',pch=18,cex=0.7)
+abline(0,1,lwd=2)
+legend('bottomright',legend='NN',pch=18,col='red', bty='n')
+
+plot(test$Temp3pm,pr.lm,col='blue',main='Real vs predicted lm',pch=18, cex=0.7)
+abline(0,1,lwd=2)
+legend('bottomright',legend='LM',pch=18,col='blue', bty='n', cex=.95)
+
+
+summary(lm.fit)

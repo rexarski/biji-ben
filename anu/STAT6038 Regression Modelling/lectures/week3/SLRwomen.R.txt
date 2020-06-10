@@ -1,0 +1,78 @@
+# SLR Example - heights and weights of a small sample of women:
+
+# Download the "worksheet2.women.csv" data file from Wattle to your current 
+# working directory. Remember that you can find out where that is by using:
+
+getwd()
+
+# Before trying to read some data into R, it is always a good idea to have a look 
+# at the file outside of R (using Notepad for text files or Excel for .csv files).
+
+# Check if the first row of the data is a list of variable names, so that you set the header=
+# argument properly. The default setting of header is T for .csv files and F for text files.
+# There are also other options you can set (e.g. if the first column is row names or numbers).
+
+# If you do download the data to one location and open R from a different location, you will
+# need to give a full path and file name so that R knows where to find the file. Remember 
+# in R file names, the path separator / has to be changed to either / or \\.
+
+# Sometimes you find might find it easier to open text files in Excel, adjust the contents
+# and then save the file as a comma separated variables (.csv) file. You use read.csv() for 
+# .csv files and read.table() for text (.txt) files. The options for using either are given 
+# in the same help file:
+
+help(read.table)
+
+# Now read the data into R:
+women <- read.csv("worksheet2_women.csv", header=F)
+women
+
+# Note this new object called women is now in the top area of the search path, so the old
+# object we called women in the previous (GTA) example is now masked:
+
+ls()
+search()
+ls(pos=7)
+
+# If we want to see or use the old object, we need to remove the new one:
+rm(women)
+women
+
+# But we do want to work with the new data, so let's read it in again:
+
+women <- read.csv("worksheet2_women.csv", header=F)
+women
+
+# The data doesn't come with a nice header row, so we will need to adjust the names:
+attributes(women)
+names(women)
+colnames(women)
+names(women)<-c("Height","Weight")
+attributes(women)
+women
+
+# Attach the data frame so we can access the columns by name:
+attach(women)
+search()
+ls(pos=2)
+Height
+Weight
+
+# Plot the data and add in a simple linear regression line:
+plot(Height,Weight)
+abline(lm(Weight ~ Height)$coef)
+
+# Identify the points at the edges of the plot:
+identify(Height, Weight)
+women
+
+# Has point 4 influenced the fit of the SLR model?
+abline(lm(Weight[-4] ~ Height[-4])$coef, lty=2)
+
+# Does point 4 have high leverage?
+hat(Height)
+barplot(hat(Height),names.arg=Height)
+abline(h=2*sum(hat(Height))/length(Height)) # put a horizontal line at 2p/n
+
+# There will more on the concept of influence and this arbitrary cut-off for the
+# hat values later in the course.

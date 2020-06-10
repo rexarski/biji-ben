@@ -1,0 +1,107 @@
+# To explore the issue of multicollinearity we will revisit
+# Example 5 from page 17 of chapter 2 of the lecture notes:
+# Body fat data (see description in the "brick")
+
+bodyfat <- read.csv("bft.csv")
+bodyfat
+
+# Attach the data so we can access each of the various columns by name:
+
+attach(bodyfat)
+
+# To explore the data graphically in R, draw a scatterplot matrix:
+
+pairs(bodyfat)
+cor(bodyfat)
+
+# There are definitely relationships between some of the 
+# predictors for this sample of 20 women, notably the triceps
+# skinfold and thigh circumference measurements and to a 
+# lesser extent the triceps and the midarm circumference:
+
+cor.test(Triceps, Thigh)
+cor.test(Triceps, Midarm)
+cor.test(Thigh, Midarm)
+
+# Note, as is done in the brick, we could summarise these
+# correlations in a correlation matrix for the X variables:
+
+cor(cbind(Triceps, Thigh, Midarm))
+
+# Inverting this matrix and taking the diagonal elements
+# gives us the VIFs (Variance Inflation Factors):
+
+diag(solve(cor(cbind(Triceps, Thigh, Midarm))))
+
+# We could also derive these for each of the three variables
+# using the formula given in the brick, for example, for Triceps:
+
+R2_Triceps <- summary(lm(Triceps ~ Thigh + Midarm))$r.squared
+R2_Triceps
+1/(1-R2_Triceps)
+
+# Fitting the multiple regression model with all three variables:
+
+bodyfat.lm <- lm(BodyFat ~ Triceps + Thigh + Midarm)
+plot(bodyfat.lm, which=c(1,2,4,5))
+
+# Nothing really wrong with underlying assumptions, however,
+# we find the last variable is not significant and the standard
+# errors for the coefficients do appear inflated (i.e. large 
+# relative to the estimates):
+
+anova(bodyfat.lm)
+summary(bodyfat.lm)
+
+# Note to get the VIFs, we could again create the useful function 
+# we developed in the previous example, which will work on the
+# a matrix formed from the X variables, a relevant subset of the
+# original data frame or on the above lm model object:
+
+vif <- function(xmatrix) {
+  if (class(xmatrix) == "matrix" | class(xmatrix) == "data.frame")
+    diag(solve(cor(xmatrix))) 
+  else  
+    diag(solve(cor(model.matrix(xmatrix)[,-1])))
+  # assuming a linear model object, if not a matrix
+}
+
+vif(cbind(Triceps, Thigh, Midarm))
+vif(bodyfat[,-4])
+vif(bodyfat.lm)
+
+# Given the very high bivariate correlation, the culprit is
+# probably trying to include both Triceps and Thigh in the
+# same model, so we could adopt the suggested strategy of
+# removing the variable with the highest VIF (Triceps):
+
+bodyfat.lm2 <- lm(BodyFat ~ Thigh + Midarm)
+plot(bodyfat.lm2, which=c(1,2,4,5))
+
+anova(bodyfat.lm2)
+summary(bodyfat.lm2)
+vif(bodyfat.lm2)
+
+# Midarm is still not significant in the context of this
+# model and there are some grounds for concern over the
+# status of observation 3, but we do appear to have solved
+# the multicollinearity problem. We could try dropping
+# Thigh instead of Triceps:
+
+bodyfat.lm3 <- lm(BodyFat ~ Triceps + Midarm)
+plot(bodyfat.lm3, which=c(1,2,4,5))
+
+anova(bodyfat.lm3)
+summary(bodyfat.lm3)
+vif(bodyfat.lm3)
+
+# Still some concern over observation 3, but this model has
+# the lowest RSE and the largest and "most significant" 
+# overall F statistic of the three models, with no 
+# real apparent problem with multi-collinearity.
+
+# However, as it says in the brick "we now have a model 
+# which uses only measurements on the the arm of the women,
+# and this seems rather unsound from a medical and biological
+# perspective".
+

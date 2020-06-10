@@ -1,0 +1,70 @@
+\documentclass[a4paper, 11pt, twoside]{article}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\begin{document}
+2017-03-02-lec05\\
+
+Last time, we discussed the meaning of logical symbols like $\exists, \forall, \wedge, \vee, \neg$.
+
+Using truth table, you can mechanically verify that $\neg (P \wedge Q)$ is logically equivalent to $(\neg P) \vee (\neg Q).$
+
+Another example: $P \implies Q$ logically equivalent to $\neg Q \implies \neg P.$ This is called \textit{contrapositive}.\\
+
+\textbf{(Proving the Contrapositive) Problem:} Prove that if $p$ is a prime and $p\not=2$, then $p$ is odd.
+
+Contrapositive: If $p$ is even, then either $p$ is not prime, or $p=2$.
+
+\textbf{Proof:} If $p$ is even, then $p=2k$ for some $k\in \mathbb{N}.$ Two cases:
+
+\begin{itemize}
+	\item $k=1$, then $p=2$.
+	\item $k>1$, then $p=2k$ is a nontrivial factorization of $p$ ($p$ can be broken down into smaller factor numbers). Therefore, $p$ is not a prime.
+\end{itemize}
+
+$P\implies Q$ logically equivalent to $\neg(P\wedge\neg Q).$\\
+
+\textbf{Proof by Contradiction:} Assume both $P$ and $\neg Q$ , and derive a contradiction.\\
+
+Example: If $a, b, c$ odd integers, then $ax^2+bx+c=0$ has no solution in $\mathbb{Q}.$
+
+Proof:
+
+Suppose $ax^2+bx+c=0$ has a rational solution $\frac{p}{q}.$
+
+\[
+\begin{split}
+	a\left(\frac{p}{q}\right)^2+b\left(\frac{p}{q}\right)+c&=0\\
+	ap^2+bpq+cq^2&=0\\	
+\end{split}
+\]
+
+\begin{itemize}
+	\item $p, q$ odd, $p^2, q^2, pq$ odd. So $ap^2, bpq, cq^2$ all odd. Odd+Odd+Odd $\not=0$.
+	\item $p$ odd, $q$ even, $ap^2$ odd, $bpq$ even, $cq^2$ even. Odd+Even+Even $\not=0$.
+	\item $p$ even, $q$ odd, $ap^2$ even, $bpq$ even, $cq^2$ odd. Even+Even+Odd $\not=0$.
+\end{itemize}
+
+We need to understand how negation interacts with quantifiers:
+
+Let $P(x)$ be a well-defined mathematical statement for all $x \in S.$
+
+$\neg(\forall x P(x))$ means the same as $\exists x (\neg P(x)).$
+
+$\neg(\exists x P(x))$ means the same as $\forall x (\neg P(x)).$\\
+
+Example: Every person likes ice cream.
+
+\textbf{This is not a negation!} Every person does not like ice cream.
+
+\textbf{This is a negation!} There is at least one person who does not like ice cream.\\
+
+Recall: $f:\mathbb{R}\rightarrow\mathbb{R}$ bounded if $\exists M\in \mathbb{R}, \forall x \in\mathbb{R}, |f(x)|\leq M.$
+
+What is the negation of this statement?
+
+$\neg(\exists M\in\mathbb{R}, \forall x \in\mathbb{R}, |f(x)|\leq M).$
+
+$(\forall M\in\mathbb{R}), \neg(\forall x\in\mathbb{R}), |f(x)|\leq M.$
+
+$\forall M\in\mathbb{R}, \exists x\in\mathbb{R}, |f(x)| > M.$
+\end{document}

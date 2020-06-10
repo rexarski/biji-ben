@@ -1,0 +1,165 @@
+# Example 2 from page 12 of chapter 2 of the lecture notes:
+# Pine tree data (see description in the "brick")
+
+# Taking another look at this example - again read in and attach the 
+# data and recalculate the transformed variables: 
+
+pine <- read.csv("pine.csv")
+pine
+attach(pine)
+
+x1 <- HD
+x2 <- AGE*N
+x3 <- HD/N
+pairs(cbind(x1,x2,x3,MDBH))
+
+# Given that order is important, we could fit various multiple regression
+# models involving all three explanatory variables:
+
+pine.lm231 <- lm(MDBH ~ x2 + x3 + x1)
+pine.lm231
+anova(pine.lm231)
+
+# Judging by the ANOVA table, x1 does appear to be a significant addition
+# to a model that already involves x2 and x3, but let's look at the added
+# variable plot:
+
+pine.lm23 <- lm(MDBH ~ x2 + x3)
+x1.lm23 <- lm(x1 ~ x2 + x3)
+
+plot(residuals(x1.lm23), residuals(pine.lm23),xlab="residuals(x1 on x2+x3)", ylab="residuals(MDBH on x2+x3)")
+abline(0, coef(pine.lm231)[4])
+title("Added variable plot for x1")
+
+cor(residuals(x1.lm23), residuals(pine.lm23))
+
+# Note the reasonably strong correlation between these residuals, and 
+# compare with the simple linear regression of MDBH on just x1:
+
+plot(x1, MDBH)
+abline(lm(MDBH ~ x1))
+title("SLR of MDBH on x1")
+
+cor(x1, MDBH)
+
+# There is obviously a strong linear relationship between MDBH and x1,
+# a relationship which is only modified slightly by the prior inclusion
+# of x2 and x3 in a multiple regression model.
+
+# Repeat the analysis for x2:
+
+pine.lm132 <- lm(MDBH ~ x1 + x3 + x2)
+pine.lm132
+anova(pine.lm132)
+
+pine.lm13 <- lm(MDBH ~ x1 + x3)
+x2.lm13 <- lm(x2 ~ x1 + x3)
+
+plot(residuals(x2.lm13), residuals(pine.lm13),xlab="residuals(x2 on x1+x3)", ylab="residuals(MDBH on x1+x3)")
+abline(0, coef(pine.lm132)[4])
+title("Added variable plot for x2")
+
+cor(residuals(x2.lm13), residuals(pine.lm13))
+
+plot(x2, MDBH)
+abline(lm(MDBH ~ x2))
+title("SLR of MDBH on x2")
+
+cor(x2, MDBH)
+
+# x2 does appear to be a significant addition to a MR model which already
+# includes x1 and x3, but the prior inclusion of x1 and x3 has definitely
+# modified the relationship between MDBH and x2.
+
+# Repeat the analysis for x3:
+
+pine.lm123 <- lm(MDBH ~ x1 + x2 + x3)
+pine.lm123
+anova(pine.lm123)
+
+pine.lm12 <- lm(MDBH ~ x1 + x2)
+x3.lm12 <- lm(x3 ~ x1 + x2)
+
+plot(residuals(x3.lm12), residuals(pine.lm12),xlab="residuals(x3 on x1+x2)", ylab="residuals(MDBH on x1+x2)")
+abline(0, coef(pine.lm123)[4])
+title("Added variable plot for x3")
+
+cor(residuals(x3.lm12), residuals(pine.lm12))
+
+plot(x3, MDBH)
+abline(lm(MDBH ~ x3))
+title("SLR of MDBH on x3")
+
+cor(x3, MDBH)
+
+# x3 does not appear to be a significant addition to a MR model which
+# already includes x1 and x2, and the prior inclusion of x1 and x2 has
+# definitely modified the relationship between MDBH and x3.
+
+# In the earlier analysis of the Forestry (pine) data, we also thought
+# that observation 20 was a potential outlier, which may have affected
+# the fit of all the above models. We can have a look at the various 
+# influence measures for the model that includes all 3 variables:
+
+help(influence)
+
+influence(pine.lm123)
+
+# The hat or leverage (hii) values are in $hat, which we can also
+# get using hat.values() on the model. Similarly, $coefficients 
+# has the deletion coefficients and $sigma has the deletion residual
+# standard deviations. We can also use similar functions to
+# hat.values() to get other influence measures.
+
+help(influence.measures)
+
+# Not the most informative help file, but as we have seen earlier:
+# rstandard() gives PRESS or internally studentised residuals (ri), 
+# rstudent() gives externally studentised residuals (ti),
+# dffits(), cov.ratio(), cooks.distance() are obvious and
+# dfbeta() just gives the deletion coefficients, whilst dfbetas()
+# gives the DFBETAS - be careful with these two.
+
+dfbetas(pine.lm123)
+
+# Observation 20 is perturbing most of the model coefficients.
+
+round(data.frame(DFFIT=dffits(pine.lm123),CooksD=cooks.distance(pine.lm123),COVRATIO=covratio(pine.lm123)),7)
+
+# There are arbitrary cut-offs of some sort for most of these 
+# (see the brick), but I tend not to trust any of them. I prefer
+# to weigh all the evidence and interpret most of them in relative
+# terms - problem observations have relatively large values.
+# This comparison is best done graphically, for example:
+
+plot(pine.lm123, which=4)
+
+# Observation 20 does stand out. Is the better solution to 
+# delete this observation or to modify the model to find
+# the model which bests fits ALL the data, BEFORE we
+# resolve any issues with potential outliers:
+
+pine.lmWOobs20 <- lm(MDBH[-20] ~ x1[-20] + x2[-20] + x3[-20])
+anova(pine.lmWOobs20)
+summary(pine.lmWOobs20)
+plot(pine.lmWOobs20, which=c(1,2,4,5))
+
+# Compare with the full model on all 20 observations:
+
+anova(pine.lm123)
+summary(pine.lm123)
+plot(pine.lm123, which=c(1,2,4,5))
+
+# Compare with reduced model we get by deleting the non 
+# significant variable x3, rather than part of the data:
+
+anova(pine.lm12)
+summary(pine.lm12)
+plot(pine.lm12, which=c(1,2,4,5))
+
+dfbetas(pine.lm12)
+
+round(data.frame(DFFIT=dffits(pine.lm12),CooksD=cooks.distance(pine.lm12),COVRATIO=covratio(pine.lm12)),7)
+
+# My preferred choice would be the last model, which 
+# appears to model all the data!

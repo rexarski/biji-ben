@@ -1,0 +1,96 @@
+\documentclass[a4paper, 11pt, twoside]{article}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\begin{document}
+\LaTeX\ Notes on 2017-03-02-lec05\\
+
+The building blocks of statistical regression are estimates and standard errors.\\
+
+The estimated variance model is detailed in the \textit{Analysis of Variance Table (ANOVA table)}
+
+The basic structure of ANOVA table in R consists of columns of  \textit{Source (of variability), degree of freedom (df), sum of squares (SS), mean square, F-statistics, p-value.}
+
+And rows of Model/Regression, Error/Residual, Total. At the same time we have \[Model + Error = Total\]
+
+Note that the total degree of freedom is always $n-1$ (the number of free information).
+
+\begin{table}[htbp!]
+		\centering
+		\begin{tabular}{|c|c|c|c|c|c|}
+			\hline
+			Source (of variability) & df & SS & MS & F & Pr \\
+			\hline
+			Model/Regression/Treatment & $1$ & $SS_{Reg}=SS_{Total}-SS_{Error}$ & $\frac{SST}{1}$ & $\frac{MST}{MSE}$ &\\
+			\hline
+			Error/Residual & $n-2$ & $SS_{Error}=\sum e_i^2$ & $MS_{Error}=\frac{SSE}{n-2}$ & &\\
+			\hline
+			Total(corrected) & $n-1$ & $SS_{yy}=SS_{Total}$ &  & &\\
+			\hline
+		\end{tabular}
+		\caption{ANOVA table}
+\end{table}
+
+The \textbf{Total} row is equivalent to the Null model $Y=\beta_0+\epsilon.$\\
+
+The \textbf{Model/Regression/Treatment} row is equivalent to the SLR model $Y=\beta_0+\beta_1X+\epsilon, \epsilon \overset{iid}{\sim}N(0, \sigma^2).$\\
+
+$MS_{Error}=\frac{SS_{Error}}{n-2}$, $\hat{\sigma}^2$ is the estimate of $\sigma^2$\\
+
+We could calculate $MS_{Total}=\frac{SS_{Total}}{n-1}=s_y^2.$\\
+
+Our key estimate of the error variance $\sigma^2$ is the $MS_{error}$.
+
+To calculate this:
+
+\begin{enumerate}
+	\item find $\hat{Y_i} =\hat{\beta_0} + \hat{\beta_1}X_i$ for all $i=1, 2, \dots, n$ (the sample)
+	\item find $e_i=Y_i - \hat{Y_i}$ (the residual)
+	\item find $\sum e_i^2 = SS_{error}$ and "average" over the $df = n-2$ (for SLR) to get $s^2 = \hat{\sigma}^2 = \frac{\sum e_i^2}{n-2}.$
+\end{enumerate} 
+
+In our current example,
+
+\begin{table}[htbp!]
+		\centering
+		\begin{tabular}{|c|c|c|c|c|c|}
+			\hline
+			Source & df & SS & MS & F & Pr \\
+			\hline
+			Regression (Year) & $1$ & $10.8685$ & $10.8685$ & $419.53$ & $2.2\times 10^{-16}$\\
+			\hline
+			Residual (Error) & $136$ & $3.5232$ & $0.0259$ & &\\
+			\hline
+			Total & $137$ & $14.3917$ & $0.1050$ & &\\
+			\hline
+		\end{tabular}
+		\caption{ANOVA table of our global warming example}
+\end{table}
+
+
+\textbf{Type I and Type II errors}
+\begin{table}[htbp!]
+	\centering
+	\begin{tabular}{|c|c|c|}
+		\hline
+		 & $H_0$ valid & $H_0$ not valid \\
+		\hline
+		Do not reject $H_0$ & correct & False negative Type II error \\
+		\hline
+		Reject $H_0$ & False positive Type I error & correct \\ 
+		\hline
+	\end{tabular}	
+\end{table}
+
+\begin{itemize}
+	\item $P(\text{Type I error}) = \alpha$ (significant level)
+	\item $1-\alpha$ is called the confidence
+	\item $P(\text{Type II error}) = \beta$
+	\item $1-\beta$ is called the power
+\end{itemize}
+
+A powerful test is one in which we are more likely to correctly reject a false null hypothesis.\\
+
+Note: about the only way we can reduce both $\alpha, \beta$ at the same time is to increase the sample size.\\
+
+Note 2: a one-tailed hypothesis test is more powerful than the equivalent two-tailed test (for the same sample size). 
+\end{document}

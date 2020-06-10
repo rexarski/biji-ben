@@ -1,0 +1,63 @@
+\documentclass[a4paper, 11pt, twoside]{article}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\begin{document}
+\title{STAT6038 week 3 lecture 8}
+\author{Rui Qiu}
+\date{2017-03-09}
+
+\maketitle
+
+\paragraph{ANOVA (Analysis of Variance Table}
+
+In general,
+
+\begin{table}[htbp!] 
+	\centering
+	\begin{tabular}{|c|c|c|c|c|c|}
+		\hline
+		Source & df & SS & MS & F & p-value\\
+		\hline
+		Regression (Model) & $k=p-1$ & $SS_{Regression}$ & $MS_{Reg}=\frac{SS_{Reg}}{k}$ & $\frac{MS_{Reg}}{MS_{Errors}}$ & \\
+		\hline
+		Residuals (Errors) & $n-1$ & $SS_{Errors}$ & $MS_{Errors}=\frac{SS_{Errors}}{n-p}$ & &\\
+		\hline
+		Total & $n-1$ & $SS_{Total}$ & & &\\
+		\hline
+	\end{tabular}
+	\caption{ANOVA table in details} 
+\end{table} 
+
+$p = $ number of parameters in the model $\{\beta_0, \beta_1, \dots, \beta_k\}$\\
+
+$k=$ number of variables or number of slope coefficients (excluding $\beta_0$) $\{\beta_1, \beta_2, \dots, \beta_k\}$.\\
+
+For simple linear regression (SLR), ($p=2, \beta_0,\beta_1$ and $k=1, \beta_1$).\\
+
+$F$ is Fisher test statistics.\\
+
+For SLR, 
+
+\begin{table}[htbp!] 
+	\centering
+	\begin{tabular}{|c|c|c|c|c|c|}
+		\hline
+		Source & df & SS & MS & F & p-value\\
+		\hline
+		Regression (Model) & $1$ & $\sum(\hat{Y_i}-\bar{Y})^2$ & $\sum(\hat{Y_i} - \bar{Y})^2$ & $MSR/MSE$& \\
+		\hline
+		Residuals (Errors) & $n-2$ & $\sum(Y_i-\hat{Y_i})^2$ & $\frac{\sum(Y_i-\hat{Y_i})^2}{n-2}$ & &\\
+		\hline
+		Total & $n-1$ & $\sum(Y_i-\bar{Y})^2$ & & &\\
+		\hline
+	\end{tabular}
+	\caption{ANOVA table for SLR} 
+\end{table} 
+
+Note that we use $s_y^2$ to estimate $SS_{Total}$
+
+\[s_y^2=\frac1{n-1}\sum(Y_i - \bar{Y})^2.\]
+
+
+
+\end{document}

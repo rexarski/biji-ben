@@ -1,0 +1,254 @@
+# R code for Sample Assignment 2
+
+library(faraway)
+
+# Q1 (a)
+
+prostate
+help(prostate)
+attach(prostate)
+
+svi
+unique(svi)
+table(svi)
+hist(svi)
+
+qqnorm(svi, main="Normal Q-Q plot for svi")
+qqline(svi)
+
+gleason
+unique(gleason)
+table(gleason)
+hist(gleason)
+
+qqnorm(gleason, main="Normal Q-Q plot for gleason")
+qqline(gleason)
+
+pgg45
+unique(pgg45)
+table(pgg45)
+hist(pgg45)
+
+qqnorm(pgg45, main="Normal Q-Q plot for pgg45")
+qqline(pgg45)
+
+# Q1 (b)
+
+prostate.lm <- lm(lcavol ~ lpsa + lcp)
+anova(prostate.lm)
+
+summary(prostate.lm)
+vif(prostate.lm)
+
+# Note that the tools we developed for the Surgery example don't work well here,
+# as they appear to suggest we should include other non-significant terms in the
+# model, but we would end up with the same model, if we fitted one of these
+# bigger models, played with the order of the variables and removed the
+# insignificant terms:
+
+selection.criteria <- function(model,ideal_mse=I(summary(model)$sigma^2)) {
+  parameters <- model$rank
+  sample.size <- parameters + model$df.residual
+  leverages <- hatvalues(model)
+  deletion.residuals <- residuals(model)/(1-leverages)
+  mse <- summary(model)$sigma^2
+  pressp <- sum(deletion.residuals^2)
+  r.squared <- summary(model)$r.squared
+  adj.r.squared <- summary(model)$adj.r.squared
+  Cp <- parameters + (((sample.size-parameters)*(mse-ideal_mse))/ideal_mse)
+  temp <- cbind(parameters, mse, pressp, r.squared, adj.r.squared, Cp)
+  dimnames(temp) <- list(paste(model$call)[2],c("p","MSE","PRESSp","R-Squared","Adj.R-Sqd","Cp"))
+  temp
+}
+
+model.selection <- function(response, predictors, model.list=matrix(1:ncol(predictors),nrow=1)) {
+  full.model <- lm(response ~ predictors)
+  full.mse <- summary(full.model)$sigma^2
+  temp <- model.list
+  dimnames(temp) <- list(dimnames(model.list)[[1]],dimnames(predictors)[[2]])
+  result <- cbind(temp,p=0,MSE=0,PRESSp=0,"R-Squared"=0,"Adj.R-Sqd"=0,"Cp"=0)
+  for (i in (1:nrow(model.list))) {
+    variables <- model.list[i,]
+    for (j in (1:length(variables))) {
+      ifelse(variables[j]>0,variables[j]<-j,variables[j]<-0)
+    }
+    part.model <- lm(response ~ predictors[,variables])
+    result[i,(ncol(predictors)+1):ncol(result)] <- selection.criteria(part.model, ideal_mse=full.mse)
+  }
+  as.data.frame(result)
+}
+
+models <- rbind(
+  c(1,0,0,0,0),
+  c(0,1,0,0,0),
+  c(0,0,1,0,0),
+  c(0,0,0,1,0),
+  c(0,0,0,0,1),
+  c(1,1,0,0,0),
+  c(1,0,1,0,0),
+  c(1,0,0,1,0),
+  c(1,0,0,0,1),
+  c(0,1,1,0,0),
+  c(0,1,0,1,0),
+  c(0,1,0,0,1),
+  c(0,0,1,1,0),
+  c(0,0,1,0,1),
+  c(0,0,0,1,1),
+  c(1,1,1,0,0),
+  c(1,1,0,1,0),
+  c(1,1,0,0,1),
+  c(1,0,1,1,0),
+  c(1,0,1,0,1),
+  c(1,0,0,1,1),
+  c(0,1,1,1,0),
+  c(0,1,1,0,1),
+  c(0,1,0,1,1),
+  c(0,0,1,1,1),
+  c(1,1,1,1,0),
+  c(1,1,1,0,1),
+  c(1,1,0,1,1),
+  c(1,0,1,1,1),
+  c(0,1,1,1,1),
+  c(1,1,1,1,1))
+
+model.selection(lcavol,cbind(lweight,age,lbph,lcp,lpsa),models)
+
+# Q1 (c)
+
+plot(fitted(prostate.lm), rstudent(prostate.lm), xlab="Fitted Values", ylab="Std. Residuals")
+title(main="Externally Studentised Residuals vs Fitted Values", sub="lm(lcavol ~ lpsa + lcp)")
+abline(0,0)
+identify(fitted(prostate.lm), rstudent(prostate.lm))
+
+plot(prostate.lm, which=2)
+
+plot(prostate.lm, which=4)
+
+sort(cooks.distance(prostate.lm), decreasing=TRUE)[1:7]
+sort(abs(rstudent(prostate.lm)), decreasing=TRUE)[1:7]
+sort(hatvalues(prostate.lm), decreasing=TRUE)[1:7]
+
+dfbetas(prostate.lm)[c(91,55,69,12),]
+dffits(prostate.lm)[c(91,55,69,12)]
+covratio(prostate.lm)[c(91,55,69,12)]
+
+# Q1 (d)
+
+prostate.lmplus <- lm(lcavol ~ lpsa + lcp + cbind(lweight, age, lbph))
+anova(prostate.lmplus)
+
+prostate.lmfull <- lm(lcavol ~ lpsa + lcp + cbind(lweight, age, lbph, svi, gleason, pgg45))
+anova(prostate.lmfull)
+
+summary(lm(lcavol ~ lpsa))
+summary(prostate.lm)
+
+# Q1 (e)
+
+prostate.lmint <- lm(lcavol ~ lpsa * lcp)
+anova(prostate.lmint)
+
+summary(prostate.lmint)
+vif(prostate.lmint)
+
+coef(prostate.lm)
+coef(prostate.lmint)
+
+cor.test(lpsa, lcp)
+
+plot(fitted(prostate.lmint), rstudent(prostate.lmint), xlab="Fitted Values", ylab="Std. Residuals")
+title(main="Externally Studentised Residuals vs Fitted", sub="lm(lcavol ~ lpsa * lcp)")
+identify(fitted(prostate.lmint), rstudent(prostate.lmint))
+
+plot(prostate.lmint, which=2)
+
+plot(prostate.lmint, which=4)
+
+# Q2 (a)
+
+teengamb
+help(teengamb)
+attach(teengamb)
+
+hist(gamble)
+
+qqnorm(gamble, main="Normal Q-Q plot for gamble")
+qqline(gamble)
+
+trans.gamble <- log(gamble + 1)
+
+hist(trans.gamble)
+
+qqnorm(trans.gamble, main="Normal Q-Q plot for trans.gamble")
+qqline(trans.gamble)
+
+gamble.fulllm <- lm(trans.gamble ~ sex + verbal + status + income)
+gamble.baselm <- lm(trans.gamble ~ sex + verbal + status)
+income.lm <- lm(income ~ sex + verbal + status)
+
+plot(residuals(income.lm), residuals(gamble.baselm), xlab="Residuals(income on sex, verbal, status)", ylab="Residuals (trans.gamble on sex, verbal, status)")
+abline(0, coef(gamble.fulllm)[5])
+title("Added variable plot for income")
+
+log_income <- log(income)
+gamble.lm <- lm(trans.gamble ~ sex + verbal + status + log_income)
+income.loglm <- lm(log_income ~ sex + verbal + status)
+
+plot(residuals(income.loglm), residuals(gamble.baselm), xlab="Residuals(log_income on sex, verbal, status)", ylab="Residuals (trans.gamble on sex, verbal, status)")
+abline(0, coef(gamble.lm)[5])
+title("Added variable plot for log_income")
+
+# Q2 (b)
+
+plot(fitted(gamble.lm), rstudent(gamble.lm))
+title("Externally studentised residuals vs fitted values", sub="lm(trans.gamble ~ sex + verbal + status + log_income)")
+abline(0,0)
+identify(fitted(gamble.lm), rstudent(gamble.lm))
+
+plot(gamble.lm, which=2)
+
+plot(gamble.lm, which=4)
+
+sort(hatvalues(gamble.lm), decreasing=TRUE)[1:7]
+
+dfbetas(gamble.lm)[c(5,6,23),]
+dffits(gamble.lm)[c(5,6,23)]
+covratio(gamble.lm)[c(5,6,23)]
+
+# Q2 (c)
+
+anova(gamble.lm)
+summary(gamble.lm)
+vif(gamble.lm)
+
+# Q2 (d)
+
+incomes <- 1:160/10
+incomes
+log_incomes <- log(incomes)
+log_incomes
+
+newfemales <- data.frame(sex=1,verbal=mean(verbal),status=mean(status),log_income=log_incomes)
+newfemales
+newfemales.preds <- predict(gamble.lm, newdata=newfemales, interval="confidence")
+newfemales.preds
+newfemales.backtranspreds <- exp(newfemales.preds)-1
+newfemales.backtranspreds
+
+newmales <- data.frame(sex=0,verbal=mean(verbal),status=mean(status),log_income=log_incomes)
+newmales
+newmales.preds <- predict(gamble.lm, newdata=newmales, interval="confidence")
+newmales.preds
+newmales.backtranspreds <- exp(newmales.preds)-1
+newmales.backtranspreds
+
+plot(c(min(income),max(income)), c(0,100), type="n", main="Teenage gambling in Britain", xlab="Income (pounds/week)", ylab="Expenditure on gambling (pounds/year)")
+points(income[sex==1], gamble[sex==1], pch="f")
+points(income[sex==0], gamble[sex==0], pch="m")
+lines(incomes, newfemales.backtranspreds[,"fit"],lty=6, lwd=2)
+lines(incomes, newmales.backtranspreds[,"fit"], lwd=2)
+lines(incomes, newfemales.backtranspreds[,"lwr"], lty=3)
+lines(incomes, newfemales.backtranspreds[,"upr"], lty=3)
+lines(incomes, newmales.backtranspreds[,"lwr"], lty=5)
+lines(incomes, newmales.backtranspreds[,"upr"], lty=5)
+legend(0.5,101,c("Males:","  model","  95% CI","Females:","  model","  95% CI"),lty=c(NA,1,5,NA,6,3), lwd=c(NA,2,1,NA,2,1), pch=c("m",NA,NA,"f",NA,NA))

@@ -1,0 +1,54 @@
+\documentclass[a4paper, 11pt, twoside]{article}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\begin{document}
+\title{STAT6038 week 5 lecture 13}
+\author{Rui Qiu}
+\date{2017-03-22}
+
+\maketitle
+
+blah, blah, blah.
+
+\paragraph{Confidence and Prediction Intervals}\ \\
+
+For new values of $Y$ given new values of $X$
+
+\[\hat{Y}|(X=x^*) = \hat{\beta_0} +\hat{\beta_1}x^*\]
+
+A $95\%$ \textbf{confidence interval} for $E(Y|X=x^*)$ is
+
+\[\hat{Y}\pm t_{\text{error df}}(0.975)\cdot s\sqrt{\frac1n + \frac{(x^*-\bar{x})^2}{s_{xx}}}.\]
+
+Note 
+
+\begin{itemize}
+	\item when $x^*=0$, standard error becomes $se(\hat{\beta_0}).$
+	\item when $x^*=\bar{x}$, standard error becomes $se(\bar{y})=\frac{s}{\sqrt{n}}.$\\
+\end{itemize}
+
+A $95\%$ \textbf{prediction interval} for $Y|X = x^*$ is
+
+\[\hat{Y}\pm t_{\text{error df}}(0.975) \cdot s\sqrt{1+\frac{1}{n}+\frac{(x^*-\bar{x})^2}{s_{xx}}}.\]
+
+Note these are the formulae for SLR, we need to make the usual modifications (switch to matrix notation) for multiple regression.\\
+
+\paragraph{Modelling process} Propose an initial plausible model.
+
+
+
+\begin{itemize}
+	\item Is the model appropriate? (Are the underlying assumptions ok?)\\
+	$\rightarrow$ Errors $\overset{iid}\sim N(0, \sigma^2)$\\
+	we estimate these Errors using the residuals \& produce residual plots. (plot(model) in R)
+	\item Is the model adequate? (Does the model have significant explanatory power?)\\
+	Is it a useful model (as per George Box)\\
+	$\rightarrow$ overall F test from the anova table is a good start here: anova(model) in R.
+	\item If yes to both the above, then we look at the details of the model by try and answer the research question\\
+	$\rightarrow$ this involves looking at the estimated model coefficients: summary(model) in R.
+	\item Finally, maybe, if everything is good enough, also use predict(model) in R.
+	\item Finally, some overall assessment - is the model just exploratory or can it be sensibly used to make predictions? (i.e., predictive model)\\
+	$\rightarrow$ this is a matter of judgement based on an objective assessment of all the above.
+\end{itemize}
+
+\end{document}

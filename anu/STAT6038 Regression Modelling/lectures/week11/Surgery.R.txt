@@ -1,0 +1,203 @@
+# Example 7 from page 36 of chapter 2 of the lecture notes:
+# Surgical data (see description in the "brick")
+
+# Read in and attach the data: 
+
+surgery <- read.csv("surgery.csv")
+surgery
+attach(surgery)
+pairs(surgery)
+
+# Try an initial multiple regression model:
+
+surgery.lm <- lm(survival ~ clot + prog + enzyme + liver)
+surgery.lm
+plot(surgery.lm, which=c(1,2,4))
+
+plot(I(prog*enzyme), residuals(surgery.lm))
+
+# After a lot of experimentation, the brick suggests some
+# transformations and combinations of the predictors:
+
+surgery.loglm <- lm(log(survival) ~ clot + prog*enzyme + liver) 
+surgery.loglm
+plot(surgery.loglm, which=c(1,2,4))
+
+plot(I(prog*enzyme), residuals(surgery.loglm))
+
+# We can create a few derived variables and experiment further:
+
+log_survival <- log(survival)
+int_pe <- prog*enzyme
+prog2 <- prog^2
+enzyme2 <- enzyme^2
+
+surgery.all <- cbind(clot, prog, enzyme, liver, prog2, int_pe, enzyme2, log_survival)
+pairs(surgery.all)
+
+surgery.loglm_all <- lm(log_survival ~ clot + prog + enzyme + liver + prog2 + int_pe + enzyme2)
+surgery.loglm_all
+plot(surgery.loglm_all, which=c(1,2,4))
+
+anova(surgery.loglm_all)
+summary(surgery.loglm_all)
+names(summary(surgery.loglm_all))
+allMSE <- summary(surgery.loglm_all)$sigma^2
+allMSE
+
+# Even assuming that we now have the right scale for each variable,
+# we have a lot of possible predictors in the mix, not all of which
+# are significant, so we could try updating the "user-defined" 
+# (S-Plus) functions described in the brick:
+
+selection.criteria <- function(model,ideal_mse=I(summary(model)$sigma^2)) {
+  parameters <- model$rank
+  sample.size <- parameters + model$df.residual
+  leverages <- hatvalues(model)
+  deletion.residuals <- residuals(model)/(1-leverages)
+  mse <- summary(model)$sigma^2
+  pressp <- sum(deletion.residuals^2)
+  r.squared <- summary(model)$r.squared
+  adj.r.squared <- summary(model)$adj.r.squared
+  Cp <- parameters + (((sample.size-parameters)*(mse-ideal_mse))/ideal_mse)
+  temp <- cbind(parameters, mse, pressp, r.squared, adj.r.squared, Cp)
+  dimnames(temp) <- list(paste(model$call)[2],c("p","MSE","PRESSp","R-Squared","Adj.R-Sqd","Cp"))
+  temp
+  }
+
+selection.criteria(surgery.lm) # allMSE not appropriate for use with a non-log model
+selection.criteria(surgery.loglm, allMSE)
+selection.criteria(surgery.loglm_all, allMSE) 
+
+model.selection <- function(response, predictors, model.list=matrix(1:ncol(predictors),nrow=1)) {
+  full.model <- lm(response ~ predictors)
+  full.mse <- summary(full.model)$sigma^2
+  temp <- model.list
+  dimnames(temp) <- list(dimnames(model.list)[[1]],dimnames(predictors)[[2]])
+  result <- cbind(temp,p=0,MSE=0,PRESSp=0,"R-Squared"=0,"Adj.R-Sqd"=0,"Cp"=0)
+  for (i in (1:nrow(model.list))) {
+    variables <- model.list[i,]
+    for (j in (1:length(variables))) {
+      ifelse(variables[j]>0,variables[j]<-j,variables[j]<-0)
+      }
+    part.model <- lm(response ~ predictors[,variables])
+    result[i,(ncol(predictors)+1):ncol(result)] <- selection.criteria(part.model, ideal_mse=full.mse)
+    }
+  as.data.frame(result)
+  }
+
+models <- rbind(
+  c(1,0,0,0,0,0,0),
+  c(0,1,0,0,0,0,0),
+  c(0,0,1,0,0,0,0),
+  c(0,0,0,1,0,0,0),
+  c(1,1,0,0,0,0,0),
+  c(1,0,1,0,0,0,0),
+  c(1,0,0,1,0,0,0),
+  c(0,1,1,0,0,0,0),
+  c(0,1,0,1,0,0,0),
+  c(0,1,0,0,1,0,0),
+  c(0,0,1,1,0,0,0),
+  c(0,0,1,0,0,0,1),
+  c(1,1,1,0,0,0,0),
+  c(1,1,0,1,0,0,0),
+  c(1,1,0,0,1,0,0),
+  c(1,0,1,1,0,0,0),
+  c(1,0,1,0,0,0,1),
+  c(0,1,1,1,0,0,0),
+  c(0,1,1,0,1,0,0),
+  c(0,1,1,0,0,1,0),
+  c(0,1,1,0,0,0,1),
+  c(0,1,0,1,1,0,0),
+  c(0,0,1,1,0,0,1),
+  c(1,1,1,1,0,0,0),
+  c(1,1,1,0,1,0,0),
+  c(1,1,1,0,0,1,0),
+  c(1,1,1,0,0,0,1),
+  c(1,1,0,1,1,0,0),
+  c(1,0,1,1,0,0,1),
+  c(0,1,1,1,1,0,0),
+  c(0,1,1,1,0,1,0),
+  c(0,1,1,1,0,0,1),
+  c(0,1,1,0,1,1,0),
+  c(0,1,1,0,1,0,1),
+  c(0,1,1,0,0,1,1),
+  c(1,1,1,1,1,0,0),
+  c(1,1,1,1,0,1,0),
+  c(1,1,1,1,0,0,1),
+  c(1,1,1,0,1,1,0),
+  c(1,1,1,0,1,0,1),
+  c(1,1,1,0,0,1,1),
+  c(0,1,1,1,1,1,0),
+  c(0,1,1,1,1,0,1),
+  c(0,1,1,1,0,1,1),
+  c(0,1,1,0,1,1,1),
+  c(1,1,1,1,1,1,0),
+  c(1,1,1,1,1,0,1),
+  c(1,1,1,1,0,1,1),
+  c(1,1,1,0,1,1,1),
+  c(0,1,1,1,1,1,1),
+  c(1,1,1,1,1,1,1))
+
+bigtable <- model.selection(log(survival),surgery.all[,1:7],models)
+bigtable
+
+plot(bigtable$p, bigtable$"Adj.R-Sqd", xlab="Number of parameters", ylab="Adjusted R-squared")
+
+plot(bigtable$p, bigtable$PRESSp, xlab="Number of parameters", ylab="PRESSp")
+
+plot(bigtable$p, bigtable$Cp, xlab="Number of parameters", ylab="Mallows' Cp")
+abline(0,1)
+
+plot(c(2,8), c(0.97,max(bigtable$"Adj.R-Sqd")), type="n", xlab="Number of parameters", ylab="Adjusted R-squared")
+points(bigtable$p, bigtable$"Adj.R-Sqd")
+identify(bigtable$p, bigtable$"Adj.R-Sqd")
+
+plot(c(2,8), c(min(bigtable$PRESSp),1), type="n", xlab="Number of parameters", ylab="PRESSp")
+points(bigtable$p, bigtable$PRESSp)
+identify(bigtable$p, bigtable$PRESSp)
+
+plot(c(2,8), c(0,10), type="n", xlab="Number of parameters", ylab="Mallows' Cp")
+points(bigtable$p, bigtable$Cp)
+abline(0,1)
+identify(bigtable$p, bigtable$Cp)
+
+# The best 4 parameter model for all 3 plots is model 13 consisting
+# of the first 3 variables:
+
+anova(lm(log(survival)~surgery.all[,1:3]+surgery.all[,4:7]))
+
+# None of the last 4 variables are a significant addition to model 13!
+# However, we should possibly approach this one step at a time, The 
+# lecture notes suggest that other candidate models include model 25:
+
+surgery.loglm1235 <- lm(log(survival) ~ clot + prog + enzyme + prog2)
+anova(surgery.loglm1235)
+
+# And model 39:
+
+surgery.loglm12356 <- lm(log(survival) ~ clot + prog + enzyme + prog2 + int_pe)
+anova(surgery.loglm12356)
+
+# So, it looks like surgery.loglm1235, model 25 in bigtable, is the best
+# model (at least the best we have found using this approach):
+
+surgery.loglm1235 <- lm(log(survival) ~ clot + prog + enzyme + prog2)
+surgery.loglm1235
+plot(surgery.loglm1235, which=c(1,2,4))
+
+# Unfortunately, this model is not completely problem free, but at
+# least all of the terms are significant in both the anova table
+# and the table of coefficients:
+
+anova(surgery.loglm1235)
+summary(surgery.loglm1235)
+
+vif <- function(xmatrix) {
+  if (class(xmatrix) == "matrix" | class(xmatrix) == "data.frame")
+    diag(solve(cor(xmatrix))) 
+  else  
+    diag(solve(cor(model.matrix(xmatrix)[,-1])))
+  # assuming a linear model object, if not a matrix
+}
+vif(surgery.loglm1235)

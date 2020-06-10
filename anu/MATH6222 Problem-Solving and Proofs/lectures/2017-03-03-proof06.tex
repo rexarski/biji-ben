@@ -1,0 +1,73 @@
+\documentclass[a4paper, 11pt, twoside]{article}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\begin{document}
+2017-03-03\\
+
+\textbf{Remainders \& left-overs}
+
+Recall: Let $a,b,c$ be odd integers, then $ax^2+bx+c=0$ has no rational solution.
+
+Suppose it had a rational solution $\frac{p}{q}$, then $a\left(\frac{p}{q}\right)^2+b\left(\frac{p}{q}\right)+c=0 \iff ap^2+bpq+cq^2=0.$
+
+Let $a=2k+1, b=2l+1, c=2m+1$,
+
+\[
+\begin{split}
+	(2k+1)p^2+(2l+1)pq+(2m+1)q^2&=0\\
+	2kp^2+p^2+2lpq+pq+2mq^2+q^2&=0 \\
+	p^2+pq+q^2&=\text{some even number}
+\end{split}
+\]
+
+Another approach that is by quadratic formula
+
+\[x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}\]
+
+and it is equivalent to show that if $a,b,c$ odd integers, then $\sqrt{b^2-4ac}$ is irrational.
+
+Is $\sqrt{n}$ rational if and only if $n$ is a perfect square.\\\\\\
+
+Getting back to bounded and unbounded $f: \mathbb{R} \rightarrow \mathbb{R}$ is \textbf{bounded} if
+
+\[\exists M, \forall x, |f(x)| < M\]
+
+And this is equivalent to say
+
+\[\exists M, \forall x, |f(x)| \leq M\]
+
+Also, like this
+
+\[\exists M > 0, \forall x \in \mathbb{R}, |f(x)| < M\]
+
+or
+
+\[\exists M > 0, \forall x \in \mathbb{R}, |f(x)| \leq M\]
+
+Prove the first and the second statements are equivalent.
+
+1st $\implies$ 2nd. We have a function $f$ satisfying the 1st. Then $\exists M$ such that $|f(x)|<M$ for all $x\in\mathbb{R}.$ But this implies $|f(x)|\leq M$ for all $x\in\mathbb{R}$. This means $f$ satisfies the 2nd with the same $M$.
+
+2nd $\implies$ 1st. Suppose $f$ satisfies the 2nd. i.e. $\exists M$ such that $|f(x)|< M$ for all $x\in\mathbb{R}.$ Let $N=M+1$, then $|f(x)|<M+1=N$ for all $x\in\mathbb{R}.$ Thus $f$ satisfies the 1st condition as well.
+
+Exercise: Try to prove condition 1 and 3 are equivalent.\\\\\\
+
+An unbounded function satisfies
+
+\[
+\begin{split}
+	\neg (\exists M\ \forall x\ ,|f(x)| < M)\\
+	\iff \forall M \exists x, \neg (|f(x)|< M)\\
+	\iff \forall M \exists x, (|f(x)| \geq M)
+\end{split}
+\]
+
+Let's prove that $f(x)=x^3$ is unbounded.
+
+Given any real number $M$, consider $x=\sqrt[\leftroot{-3}\uproot{3}3]{M}$, then $f(x)=M\implies |f(x)|\geq M.$ Done.\\
+
+What does it mean to say $$\lim_{x\to\infty}f(x)=\infty$$. We can make $f$ arbitrarily large by taking $x$ arbitrarily large. \[\forall x\ \forall k>0\ \text{ such that } f(x) < f(x+k)\]
+
+$\forall M\ \exists N$ such that $(x>N)\implies(f(x)>M).$
+
+\end{document}

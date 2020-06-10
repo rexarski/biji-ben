@@ -1,0 +1,147 @@
+\documentclass[a4paper, 11pt, twoside]{article}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\begin{document}
+\title{MATH6222 Week 11 Lecture Notes}
+\author{Rui Qiu}
+\date{2017-05-15}
+
+\maketitle
+
+\section{Monday's Lecture}
+
+\paragraph{Eulerian Circuit:} Every edge exactly once, starts and ends at the same vertex.
+
+\paragraph{Eulerian Path:} Every edge exactly once, start and ending can be different.
+
+\begin{enumerate}
+	\item If there is a vertex with an odd number edges, then there cannot be Eulerian circuit.
+	\item Out graph should be connected.
+\end{enumerate}
+
+\paragraph{Remaining Question:} If all vertices have even edges, then must I have an Eulerian circuit?
+
+\textbf{A graph $G$ consists of a vertex set $V(G)$ (finite set), and edge set $E(G)$ (finite set).}\\
+
+\[I_G:\ E(G)\rightarrow V(G):=\{\text{set of unordered pairs of elements of } V(G)\}
+\]
+
+edge $\rightarrow$ pair of vertices it connects.\\
+
+A graph is simple if it is injective.\\
+
+$V(G)=\{a,b,c,d\}$
+
+$E(G)=\{e_1,e_2,\dots, e_6\}$
+
+$i_G(e_1)= \{a, b\}=i_G(e_2)$
+
+$i_G(e_3)=i_G(e_4)=\{a, d\}$
+
+$i_G(e_5)=\{b, c\} \dots \dots $\\
+
+\paragraph{Alternative definition:} A graph $G$ is a set $V(G)$ together with a symmetric relation $E(G)\subseteq V(G)\times V(G) \implies$ doesn't tell the number of edges between $2$ edges.\\
+
+A graph, if $i_G$ is injective, is simple.
+
+Geometrically: simple graph has no multiple edges, no loops.\\
+
+If $i_G(e)=\{u, v\}$, then $u,v$ are adjacent to edge $e$.\\
+
+The degree of a vertex is just the number of edges adjacent to it.\\
+
+\paragraph{Definition:} a trail in a graph $G$ is a list $v_0e_1v_1e_2v_2\dots v_k$, where $v_i\in V(G), e_i \in E(G)$, satisfies
+
+\begin{itemize}
+	\item $e_i$ is adjacent to $v_{i-1}, v_i$
+	\item every $e_i$ is distinct
+\end{itemize}
+
+A trail is close if $v_o=v_k\implies$ Eulerian circuit is a closed trail.
+
+\section{Thursday's Lecture}
+
+Last time:\\
+
+A \textbf{trail} is a list $v_0e_1v_1e_2v_2\dots e_kv_k$ such that 
+
+\begin{enumerate}
+	\item $v_{i-1}$ and $v_i$ are the endpoints of $e_i$
+	\item $e_1,\dots, e_k$ distinct
+\end{enumerate}
+
+A trail is \textbf{closed} if $v_o=v_k$.\\
+
+A trail is \textbf{Eulerian} if it contains all edges of $G$.\\
+
+\paragraph{Proposition:} a graph has a closed Eulerian trail iff every vertex has even degree.
+
+\paragraph{Proof:}\ \\
+
+$\Longrightarrow$ Suppose $v_0e_1v_1\dots v_k$ is  a closed Eulerian trail. Let $v\in V(G)$ be any vertex (say $v\not= v_o, v_k$). Suppose $v$ shows up in this list as $v_{i_1}, v_{i_2}, \dots, v_{i_l}, 1\leq i_1\leq \dots \leq i_l\leq k$\\
+
+The edges adjacent to $v$ in $G$ are just: $e_{i_1}, e_{i_1+1}, e_{i_2}, e_{i_2+1}, \dots, e_{i_l}, e_{i_l+1}$.\\
+
+There is an even number of these.\\
+
+If $v\in V(G)$ is the endpoint, i.e. $v=v_0=v_k$. Then the edges adjacent to $v$ are $e_1, e_k$ plus pairs of edges for every additional time $v$...\\
+
+$\Longleftarrow$ Suppose every vertex has even degree. Consider a trail in $G$ of maximal length.\\
+
+\textbf{Observation:} It must be closed!\\
+
+Suppose $v_0e_0\dots e_kv_k$ is a maximal trail. Suppose not closed so $v_k\not=v_0$.\\
+
+The number of edges contained in this trail and adjacent to $v_k$ must be odd.\\
+
+Since degree of $v_k$ is even, there must be some edge adjacent to $v_k$ which has not appeared in out trail -- call it $e_{k+1}$. Then we get a longer trail by adding $e_{k+1}v_{k+1}$.\\
+
+Now we'll show that a max length trail must be Eulerian.\\
+
+Suppose there is some edge not contained in your trail. We can assume that this edge is adjacent to some vertex already on our trail.\\
+
+Construct a graph $G$ by deleting all edges of $G$ that are contained in our max trail.\\
+
+This new graph $G'$ still has every vertex of even degree.\\
+
+Consider any maximal trail in $G'$ starting from $v_i$.\\
+
+Get a closed trail in $G'$ starting and ending at $v_i$.\\
+
+But now we can get a longer trail!
+
+\[v_0e_1v_1\dots e_iv_ie_{i+1}\dots v_k\]
+
+\[v_0e_1v_1\dots e_iv_i \longleftrightarrow v_ie_{i+1}\dots v_k\]
+
+We conclude that a maximal trail must include every edge of $G$.\\
+
+\paragraph{\"Uber-Problem:} A $k$-colouring of a graph $G$ is a function $f: V(G)\longmapsto [k]$ such that $f(u)\not= f(v)$ wherever $u,v$ are adjacent.\\
+
+Let 
+
+\begin{itemize}
+	\item $P_n$ be a path with $n$ vertices.
+	\item $C_n$ be a cycle on $n$ vertices.
+	\item $K_n$ be a complete graph on $n$ vertices.
+\end{itemize}
+
+The chromatic number of a graph denoted $\chi(G)$, is the minimum number of colors needed to $k$-colour.
+
+\begin{itemize}
+	\item $\chi(P_n)=2$
+	\item $\chi(C_n)=\begin{cases}
+		3,\ &n\text{ odd}\\
+		2,\ &n\text{ even}
+	\end{cases}$
+	\item $\chi(K_n)=n$
+\end{itemize}
+
+\paragraph{Definition:} a graph is \textbf{bipartite} if $\chi(G)=2$. Equivalently, $V(G)=X\cup Y$ such that every edge in $G$ has one endpoint in $X$, and one endpoint in $Y$.
+
+\paragraph{Theorem:} a graph $G$ is bipartite iff it has no cycles of odd length.\\
+
+A cycle is a list except we insist $v_0=v_k$.\\
+
+\paragraph{Definition:} a connected graph with no cycles is called a \textbf{tree}.
+\end{document}

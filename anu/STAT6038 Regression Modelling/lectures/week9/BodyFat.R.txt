@@ -1,0 +1,97 @@
+# Example 5 from page 17 of chapter 2 of the lecture notes:
+# Body fat data (see description in the "brick")
+
+bodyfat <- read.csv("bft.csv")
+bodyfat
+
+# Attach the data so we can access each of the various columns by name:
+
+attach(bodyfat)
+
+# To explore the data graphically in R, draw a scatterplot matrix and
+# obtain some simple summary statistics:
+
+pairs(bodyfat)
+cor(bodyfat)
+summary(bodyfat)
+
+# A simple initial multiple regression model:
+
+bodyfat.lm <- lm(BodyFat ~ Triceps + Thigh + Midarm)
+bodyfat.lm
+
+plot(bodyfat.lm, which=c(1,2,5))
+
+# A new set of standard plots:
+
+plot(fitted(bodyfat.lm), rstandard(bodyfat.lm), xlab="Fitted values", ylab="Internally Studentised Residuals")
+title(main="Standardised Residuals vs Fitted Values", sub="lm(BodyFat ~ Triceps + Thigh + Midarm)")
+abline(0,0, lty=2)
+identify(fitted(bodyfat.lm), rstandard(bodyfat.lm))
+
+plot(bodyfat.lm, which=2)
+abline(0,1, lty=2)
+
+plot(bodyfat.lm, which=4)
+
+# And now the other standard output for this model:
+
+anova(bodyfat.lm)
+summary(bodyfat.lm)
+
+# There is obviously some scope for model refinement and we will 
+# revisit this example later in the course; but for now, we will 
+# simply use this initial model to illustrate the different 
+# types of studentised residuals:
+
+data.frame(BodyFat,fitted=fitted(bodyfat.lm),residual=residuals(bodyfat.lm),int.stud=rstandard(bodyfat.lm),ext.stud=rstudent(bodyfat.lm))
+
+plot(fitted(bodyfat.lm), rstudent(bodyfat.lm), xlab="Fitted values", ylab="Externally Studentized Residuals", sub="lm(BodyFat ~ Triceps + Thigh + Midarm)")
+abline(0,0, lty=2)
+title("Standardised Residuals vs Fitted Values")
+identify(fitted(bodyfat.lm), rstudent(bodyfat.lm))
+
+# Note the degrees of freedom are 15, not 16, as we are dealing with
+# the externally studentised residuals, where the estimate of the 
+# residual standard error effectively excludes the current observation,
+# i.e. the degrees of freedom should be 1 less than for the full model.
+
+bodyfat.lm$df
+qt(0.975, bodyfat.lm$df-1)
+
+# Observation 14 has the largest externally studentised residual:
+
+rstudent(bodyfat.lm)[14]
+pt(rstudent(bodyfat.lm)[14], bodyfat.lm$df-1)
+1-pt(rstudent(bodyfat.lm)[14], bodyfat.lm$df-1)
+2*(1-pt(rstudent(bodyfat.lm)[14], bodyfat.lm$df-1))
+
+# Create an indicator variable for the 14th observation:
+
+obs14 <- c(rep(0,13), 1, rep(0,6))
+obs14
+
+# Use this indicator variable to test if observation 14 is a
+# potentially influential outlier in the context of the above
+# model:
+
+bodyfat.lmO <- lm(BodyFat ~ Triceps + Thigh + Midarm + obs14)
+anova(bodyfat.lmO)
+summary(bodyfat.lmO)
+
+# The p-value associated with observation 14 in both the ANOVA
+# table and the summary output looks very familiar, as does
+# the t statistic in the summary output
+
+plot(fitted(bodyfat.lmO), rstandard(bodyfat.lmO), xlab="Fitted values", ylab="Internally Studentised Residuals")
+title(main="Standardised Residuals vs Fitted Values", sub="lm(BodyFat ~ Triceps + Thigh + Midarm + obs14)")
+abline(0,0, lty=2)
+identify(fitted(bodyfat.lmO), rstandard(bodyfat.lmO))
+
+plot(bodyfat.lmO, which=2)
+abline(0,1, lty=2)
+
+plot(bodyfat.lmO, which=4)
+
+round(data.frame(Obs14=obs14,BodyFat,fitted=fitted(bodyfat.lmO),residual=residuals(bodyfat.lmO),int.stud=rstandard(bodyfat.lmO),ext.stud=rstudent(bodyfat.lmO)),7)
+

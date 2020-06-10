@@ -1,0 +1,234 @@
+\documentclass[a4paper, 11pt, twoside]{article}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\begin{document}
+\title{MATH6222 Week 9 Lecture Notes}
+\author{Rui Qiu}
+\date{2017-05-01}
+
+\maketitle
+
+\section{Monday's Lecture}
+\subsection{equivalent relations}
+\paragraph{Proposition:} If $R$ is an equivalent relation often write $x\sim y$ to mean $(x,y)\in R$.
+
+If ``$\sim$'' is an equivalent relation, then
+
+\begin{enumerate}
+	\item If $x\sim y, [x]=[y]$.
+	\item If $x\not\sim y, [x]\cap [y] = \varnothing$
+	\item The distinct equivalence classes partition $S$, i.e. every element of $S$ belongs in exactly one equivalence class.
+\end{enumerate}
+
+\paragraph{Proof:}
+
+\begin{enumerate}
+	\item Suppose $z\in[x]$, i.e. $z\sim x$. We are given $x\sim y$. By symmetry, $z\sim y$, i.e. $z\in[y]$. This shows $[x]\subseteq [y]$, same argument in reverse shows $[y]\subseteq [x]$. Therefore, $[x]=[y]$.
+	\item Suppose $[x]\cap[y]\not=\varnothing$, i.e. $\exists\ z\in[x]\cap [y]$, i.e.$z\sim x$ and $z\sim y$. By symmetry, $x\sim z$. By transitivity $x\sim y$. Contradiction.
+	\item Given any $x\in S$. By reflexivity, $x\in[x]$. So every element of $S$ is in at least one equivalence class. Suppose $x$ was contained in two equivalence classes, say $[y]$ and $[z]$. Then $x\in[y]\cap[z]\implies y\sim z\implies [y]=[z]$.
+\end{enumerate}
+
+\subsection{Probability}
+
+\paragraph{Definition:} a (finite) probability space is a finite set $S$ together with a function $P: \{\text{subsets of } S\} \rightarrow [0, 1]$ satisfying:
+
+\begin{enumerate}
+	\item $P(S)= 1$
+	\item If $A, B \in S$ and $A\cap B=\varnothing$, then $P(A\cup B)=P(A)+P(B)$.
+\end{enumerate}
+
+We call a subset $A\subseteq S$ an ``event''. $P(A)$ is the probability of the event. If $A\cap B=\varnothing$, we say the events are mutually exclusive.\\
+
+\paragraph{Example:} Suppose $S$ any finite set, define $P$ by $P(A)=\frac{|A|}{|S|}$.
+
+E.g. $A=\{(i,j): 1\leq i, j\leq 6\}$, ($|A|=36$).
+
+This $P$ defines the usual probability space for pairs of die.
+
+\paragraph{Remark:} Alternative definition. Finite set $S$ together with a function $P: S\rightarrow [0,1]$ satisfying $\sum P(a)=1, a\in S$. Define $P(A)=\sum_{a\in A}P(a)$.
+
+\subsection{Conditional probability}
+
+Pick a jar at random, pick a marble out of the jar. It's black.
+
+What is the probability that I have picked for number 3?
+
+...
+
+\paragraph{Definition:} Let $A,B$ be two events in a probability space. The ``probability of $A$ given $B$''
+
+\[P(A|B)=\frac{P(A\cap B)}{P(B)}\]
+
+\paragraph{Bayesian Hypothesis Testing:} Suppose $B_1\dots, B_r$ are mutually exclusive events which partition a finite probability space. Suppose wee know $P(B_i)=b_i$. Given another event $A\subseteq S$. Suppose we know $a_i=P(A|B_i)$ for each $i=1,\dots, r$.
+
+Problem: Determine $P(B_i|A)$.
+
+$B_i=$ We've picked for $i$, $b_i=\frac{1}{3}$.
+
+$A=$ Picking a black marble
+
+$P(A|B_1)=0, P(A|B_2)=\frac{1}{2}, P(A|B_3=1$.
+
+I asked $P(B_i|A)$,
+
+so $P(B_1|A)=0, P(B_2|A)=\frac{1}{3}, P(B_3|A)=\frac{2}{3}$.
+
+\section{Thursday's Lecture}
+
+\[P(A|B)=\frac{P(A\cap B)}{P(B)}\]
+
+Suppose there are mutually exclusive events $B_1,\dots, B_r$ which partition $S$. Then suppose there's another event $A$. We know $b_i=P(B_i)$.
+
+Problem: Determine $P(B_i|A)=b_i^*$.
+
+\paragraph{Bayes Formula:}
+
+\[b_i^*=P(B_i|A):=\frac{a_ib_i}{\sum^r_{j=1}a_jb_j}\]
+
+\paragraph{Proof:}
+
+\[
+\begin{split}
+	P(B_i|A)&=\frac{P(B_i\cap A)}{P(A)}\\
+	P(B_i\cap A) &= P(A \cap B_i) = P(A|B_i)\cdot P(B_i) = a_ib_i\\
+	A&=(A\cap B_1)\cup (A\cap B_2)\cup \cdots \cup (A\cap B_r)\\
+	P(A)&=\sum^r_{j=1}P(A\cap B_j) = \sum^r_{j=1}a_jb_j
+\end{split}
+\]
+
+\paragraph{Medical Testing:} Suppose you have a test for condition $X$, which is 96\% accurate. Question: If you test positive, what is the probability that you actually have condition $X$?
+
+Suppose throughout the general population, the probability of having condition $X$ is 1\% (99\% healthy).
+
+$A$: testing positive +
+
+$B_1$: you have condition $X, b_1=P(B_1)=0.01$
+
+$B_2:$ you don't have condition $X, b_2=P(B_2)=0.99$
+
+$a_1=P(A|B_1)=0.96$
+
+$a_2=P(A|B_2)=0.04$
+
+\[P(B_1|A)=\frac{P(B_1\cap A)}{P(A)}=\frac{a_1b_1}{a_1b_1+a_2b_2}=\frac{.96\cdot .01}{.96\cdot .01 + .99\cdot .04}=19.59\%\]
+
+\paragraph{Random variables and Expectation:} a \textbf{random variable} on a probability space $S$ is just a function $X: S\rightarrow R$.
+
+The \textbf{expectation} of the random variable $X$ is $E(X):=\sum_{a\in S}X(a)P(a)$
+
+\paragraph{Simple Examples:}
+
+$S=\{\text{people in our class}\}, X:S\rightarrow R$ (person $\rightarrow$ weight), $|S|=N$
+
+\[E(X)=\sum_{\text{people in class}}\frac1{N}{(\text{height of person})}=\text{average height in the class}\]
+
+Given a random variable $X$ on probability space $S$, we can define the probability $P(X=k)=\sum_{a\in S,\ \text{such that}\ X(a)=k}P(a)=P(\{a\in S: X(a)=k\})$.
+
+\[E(X)=\sum_k k\cdot P(X=k)\]\\
+
+Suppose $S=\{\text{Sequences of length 10 flips}: HT\dots\}$, ($|S|=2^{10}$).
+
+$X=\{\text{any length 10 sequence of H T}\rightarrow \text{number of heads}\}$
+
+\[E(X)=\sum^{10}_{k=0}k\cdot P(X=k)=\sum^{10}_{k=0}k\cdot{n\choose k}\frac1{2^{10}}=\frac1{2^{10}}\sum^{10}_{k=0}k\cdot{n\choose k}\]
+
+\section{Friday's Lecture}
+$S =$ \{Length n sequences of \{H, T\}\}, $|S|=2^n$.
+
+Define $X$ on $S$ by taking the number of heads in any given sequences.
+
+\[E(X)=\sum^n_{k=0}k\cdot P(X=k)=\sum^n_{k=0}k {n\choose k} 2^{-n}=\frac{n}{2}\]
+
+\paragraph{Linearity of Expectation:} Let $X_1,\dots, X_n$ be random variables on probability space $S$. Let $c_1,\dots, c_n\in\mathbb{R}$. Let $X=c_1X_1+c_2X_2+\cdots + c_nX_n$.
+
+Then $E(X)=c_1E(X_1)+c2E(X_2)+\cdots+c_nE(X_n)$.
+
+\paragraph{Proof:}
+
+\[
+\begin{split}
+	E(X)&=E(c_1X_1+\cdots +c_nX_n)\\
+	&=\sum_{a\in S} \left(c_1X_1(a)+c_2X_2(a)+\cdots +c_nX_n(a)\right)\cdot P(a)\\
+	&=\sum_{a\in S} c_1X_1(a)P(a)+\cdots +c_nX_nP(a)\\
+	&=\sum_{a\in S} c_1X_1(a)P(a)+\sum_{a\in S}c_2X_2(a)P(a)+\cdots +\sum_{a\in S}c_nX_n(a)P(a)\\
+	&=c_1\sum_{a\in S}X_1(a)P(a)+\cdots +c_n\sum_{a\in S}X_n(a)P(a)\\
+	&=c_1E(X_1)+\cdots +c_nE(X_n)
+\end{split}
+\]\\
+
+\[X_i=\begin{cases}1,\ &\text{if the ith toss is heads}\\ 0,\ &\text{if the ith toss is tails}\end{cases}\]
+
+Note: $i=1,\dots, n$, $X=X_1+\dots +X_n, E(X)=\sum^n_{i=1}E(X_i)=\frac{n}{2}.$ As $E(X_1)=1\cdot P(X_1=1)+0\cdot P(X_1=0)=\frac12$.\\
+
+\paragraph{Problem:} So $n$ pairs of socks thrown into a laundry machine. Machine spits out a random subset of $k$ socks. How many complete pairs of socks do we expect come out?
+
+Outcomes $={2n\choose k}, \{L_1, R_1, \dots, L_n, R_n\}$
+
+$X$ is defined as the number of complete pairs in a particular subset.
+
+\[X_i=\begin{cases}1,\ &\text{if the \{$L_i, R_i$\} comes out}\\ 0,\ &\text{otherwise}\end{cases}\]
+
+We need to count subsets of size $k\subset \{L_1, R_1,L_2, R_2,\dots, L_n, R_n\}$, which is ${2n-2 \choose k-2}.$
+
+So
+
+\[E(X_1)=1\cdot P(X_1=1)+0\cdot P(X_1=0)=\frac{{2n-2 \choose k-2}}{{2n\choose k}}\]
+
+Then
+
+\[E(X) = \sum^n_{i=1}E(X_i)=\frac{n{2n-2 \choose k-2}}{{2n\choose k}}\]\\
+
+\paragraph{Finger Game:} A and B can hold up 1 or 2 fingers. If the total is odd, A wins; if the total is even, B wins. Whoever wins, the losing side has to pay the amount of money of the number of fingers.
+
+\begin{itemize}
+	\item 1, 1, A pays B 2 dollars.
+	\item 1, 2, B pays A 3 dollars.
+	\item 2, 1, B pays A 3 dollars.
+	\item 2, 2 A pays B 4 dollars.
+\end{itemize}
+
+Suppose $A, B$ play randomly, each scenario has a probability of $\frac{1}{4}$.
+
+$E(A)= \frac{1}{4}(-2)+\frac{1}{4}(3)+\frac{1}{4}3+\frac{1}{4}(-4)=0$. Seems fair.\\
+
+A chooses \begin{enumerate}
+	\item with probability $x$
+	\item with probability $1-x$
+\end{enumerate}
+
+B choose \begin{enumerate}
+	\item with probability $y$
+	\item with probability $1-y$
+\end{enumerate}
+
+A wants to choose $x$ to maximize expected pay-off.\\
+
+Then the probabilities of the 4 scenarios above become $xy, (1-x)y, x(1-y), (1-x)(1-y)$.\\
+
+\[\begin{split}
+	E(X)&=-2xy+3(1-x)y+3(1-y)x-4(1-x)(1-y)\\
+	&=-12xy+7x+7y-4\\
+	&=(7-12x)y+(7x-4)\\
+	(x=\frac{7}{12})&=7\cdot \frac{7}{12}-4=\frac{1}{12}>0
+\end{split}
+\]
+If $x=\frac{7}{12}$, we can make $y$ irrelevant.
+
+Suppose we look this from B's angle, then $=(7-12y)x+(7y-4), y=\frac{7}{12}$.\\
+
+When A takes $x=\frac{7}{12}, 1-x=\frac{5}{12}$. B holding 1 all the time! Then
+
+\[E(A)=\frac{7}{12}(-2)+\frac{5}{12}(3)=\frac{1}{12}\]
+
+If B holding 2 all the time!
+
+\[E(A)=\frac{7}{12}(3)+\frac{5}{12}(-4)=\frac{1}{12}\]
+
+No matter what B does here, $A$'s expectation should always be $\frac{1}{12}$.\\
+
+If $x<\frac{7}{12}$, B chooses $y=0, (7x-4)<\frac{1}{12}$.
+
+If $x>\frac{7}{12}$, B chooses $y=1, 7-12x+7x-4=3-5x<\frac{1}{12}$. 
+
+
+\end{document}

@@ -1,0 +1,381 @@
+---
+title: "STAT6038 Assignment 2"
+author: "Rui Qiu, Ming Zhang"
+date: '2017-05-10'
+output:
+  pdf_document: default
+  html_document:
+    self_contained: no
+---
+
+## Question 1
+
+### (a)
+
+```{r, echo=FALSE}
+# ---------------Q1---------------
+# ---------------(a)---------------
+moorhen <- read.csv('moorhen.csv', header = TRUE)
+attach(moorhen)
+
+pairs(moorhen)
+cor(moorhen)
+```
+
+Generally speaking, only the following pairs of predictors seem to have linear relations:
+
+- Shield vs. Adult
+- Weight vs. Stern
+- Weight vs. Hb
+- Weight vs. TandT
+- Stern vs. Hb
+- Hb vs. Tandt
+
+Note: The variable $\texttt{Adult}$ is an indicator variable, thus we only care about if different predictor inputs lead to different responses. But it looks like only the variable $\texttt{Shield}$ differs dramatically. For $\texttt{Stern}$ also looks like adult moorhens have seemingly higher $\texttt{Stern}$ values, but just not as obvious as $\texttt{Shield}$, i.e. generally adult moorhens have larger shield area than juvenile moorhens.
+
+And the correlation matrix confirms our statement above, since only the mentioned 6 pairs of variables have correlations greater than $0.5$ in the matrix.
+
+### (b)
+
+```{r, echo=FALSE}
+# ---------------(b)&(c)---------------
+moorhen.lm <- lm(Shield ~ Weight + Stern + Hb + TandT + Adult)
+moorhen.loglm <- lm(log(Shield) ~ Weight + Stern + Hb + TandT + Adult)
+layout(matrix(c(1,2), 1, 2, byrow = TRUE))
+plot(moorhen.lm, which=1, main='residual plot BEFORE log')
+plot(moorhen.loglm, which=1, main='residual plot AFTER log')
+```
+
+The residuals vs. fitted values plot for our first multiple liner regression model seems to not satisfying the assumption of homoscedasticity, i.e. the variance of residuals is not constant. That's we can detect the existence of 'funnel'-shape in the residual plot. However, the assumption of zero-mean residual seems ok as no intense curvature observed.
+
+Also, the sample data points are clustered basically on two different sides of the plot, thus leaving the centre of the plot quite blank. As we know, an ideal normally distributed residual plot should have a rectangular or ecliptical shape, while ours does not look anything like that. Hence we also check the normal qq-plot, and find out it is not fitting a straight line.
+
+### (c)
+This time the assumption of homoscedasticity is fixed, since the scale of the 'funnel'-shape is smaller, i.e. not spreading far away as before. But still, the centre lacks of data points, leaving the overall shape like a 'dumbbell'. We will look into this issue later.
+
+### (d)
+```{r, echo=FALSE, eval=FALSE}
+# ---------------(d)---------------
+anova(moorhen.loglm)
+summary(moorhen.loglm)
+```
+Examine the log-transformed model in part (c): The ANOVA table shows that only insignificant additional variable is $\texttt{TandT}$ with p-value greater than $0.05$, others are fine. But the summary table (t-test) infers that every predictor variable is not significant, except the last one $\texttt{Adult}$ which has the same p-value as it in ANOVA (F-test).
+
+Nested hypotheses testing (with ANOVA tables):
+
+```{r, echo=FALSE, eval=TRUE}
+anova(lm(log(Shield) ~ Stern + Adult + Weight + Hb + TandT))
+```
+
+```{r, echo=TRUE, eval=TRUE}
+(0.0402 + 0.0001 + 0.0129)/3/0.0573
+(0.0001 + 0.0129)/2/0.0573
+(0.0129)/0.0573
+qf(0.95, 3, 37)
+```
+We calculated the theoretical 95\% F-statistics, which is $F_{3,37}=2.858796$.
+
+- $H_0:\beta_{\text{Weight}}=\beta_{\text{Hb}}=\beta_{\text{TandT}}=0$
+    - Given $\texttt{Stern, Adult}$ included in the model, the inclusion of variables $\texttt{Weight, Hb, TandT}$ has F-statistics $0.3094823<2.858796$, so they provide no significantly additional information.
+
+- $H_0:\beta_{\text{Hb}}=\beta_{\text{TandT}}=0$
+    - Given $\texttt{Stern, Adult, Weight}$ included in the model, the inclusion of variables $\texttt{Hb, TandT}$ has F-statistics $0.113438<2.858796$, so they provide no significantly additional information.
+
+- $H_0:\beta_{\text{TandT}}=0$
+    - Given $\texttt{Stern, Adult, Weight, Hb}$ included in the model, the inclusion of variable $\texttt{TandT}$ has F-statistics $0.2251309<2.858796$, so it provides no significantly additional information.
+
+To conclude, we could possibly modify the model by removing predictors $\texttt{\text{Weight,Hb,TandT}}$ in the following parts of this question.
+
+### (e)
+```{r, echo=FALSE}
+# ---------------(e)---------------
+moorhen.loglm2 <- lm(log(Shield) ~ Adult + Stern)
+par(mfrow=c(2,2))
+plot(moorhen.loglm2, which=1)
+plot(fitted(moorhen.loglm2), rstandard(moorhen.loglm2))
+abline(0,0, lty=2)
+title("IntStud Residuals vs. Fitted Values")
+plot(moorhen.loglm2, which=c(2, 4))
+```
+
+- Internally Studentised (standardised) residual plot: Data points generally spread into a rectangle, no obvious outliers observed. In fact, if we check the scale-location plot with default $\texttt{plot()}$ function, we would find that then there is a general increasing trend from the left hand side to the right hand side. This might be explained by the fact that adult moorhens usually have larger `log(Shield)` value than juvenile ones.
+- Normal qq-plot: Even less curved than the one we ploted in our first log-transformed model, and no obvious problem observed. Thus it satisfies the normal distribution assumption.
+- Cook's Distance plot: The highest three Cook's distances are only around $0.12$, and are not even relatively higher than any other points. So no influential points observed here. Also we could check Residuals vs Leverage plot to confirm our statement. (In fact, no data points are beyond the cut-off boundary.)
+
+In addtion, we also include main residual plot besides the three requires plots above Based on the main residual plot, we believe our model satisfies the assumption of independent errors.
+
+But back to our question itself, since we have indicator variables labeling every one of moorhens (either adult or juvenile), we probably would like to display this feature and try to investigate further if the dumbbell-shape clustering is related with this. Thinking about this from common sense, adult bird usually is larger in size than juvenile bird.
+
+### (f)
+```{r, echo=FALSE}
+# ---------------(f)---------------
+par(mfrow=c(1,1))
+plot(Shield ~ Stern,
+     xlab = "Stern (unit unknown)",
+     ylab = "Shield Area (mm^2)",
+     #ylim = c(0, 600),
+     pch = c(16, 17)[as.numeric(Adult)+1],
+     main = "Prediction Intervals of Adult and Juvenile Moorhens",
+     col = c("red", "blue")[as.numeric(Adult)+1],
+     data = moorhen,
+     cex = 1.5)
+adults.sterns <- moorhen[moorhen$Adult==1,]$Stern
+adults.sterns2 <- (min(adults.sterns) * 10):(round(max(adults.sterns)*10,0)+1)/10
+adults.input <- data.frame(Shield=mean(Shield), Weight=mean(Weight),
+                           Stern=adults.sterns2, 
+                           Hb=mean(Hb), TandT=mean(TandT), Adult=1)
+
+juves.sterns <- moorhen[moorhen$Adult!=1,]$Stern
+juves.sterns2 <- (round(min(juves.sterns) * 10, 0)-1):(round(max(juves.sterns) * 10, 0)+1)/10
+juves.input <- data.frame(Shield=mean(Shield), Weight=mean(Weight), 
+                          Stern=juves.sterns2,
+                          Hb=mean(Hb), TandT=mean(TandT), Adult=0)
+
+adults.pred <- exp(predict(moorhen.loglm2, newdata = adults.input, 
+                           interval = "prediction"))
+juves.pred <- exp(predict(moorhen.loglm2, newdata = juves.input, 
+                          interval = "prediction"))
+
+lines(adults.sterns2, adults.pred[,"fit"], lty=6, lwd=2, col="blue")
+lines(adults.sterns2, adults.pred[,"lwr"], lty=5, col="blue")
+lines(adults.sterns2, adults.pred[,"upr"], lty=5, col="blue")
+lines(juves.sterns2, juves.pred[,"fit"], lty=4, lwd=2, col="red")
+lines(juves.sterns2, juves.pred[,"lwr"], lty=3, lwd=2, col="red")
+lines(juves.sterns2, juves.pred[,"upr"], lty=3, lwd=2, col="red")
+legend( x="topleft", 
+        legend=c("Adult", "Adult model", "Adult 95% PI",
+                 "Juvenile", "Juvenile model", "Juvenile 95% PI"),
+        col=c("blue", "blue", "blue", "red", "red", "red"), 
+        lwd=c(1, 2, 1, 1, 2, 2), lty=c(NA, 6, 5, NA, 4, 3), 
+        pch=c(17, NA, NA, 16, NA, NA), cex = 0.75)
+```
+
+The plot surely captured the general trend of adult and juvenile moorhens' shield area, that is, adults usually have larger shield area. But note that, the two prediction intervals have overlaps.
+
+### (g)
+
+\[
+\begin{split}
+\text{Ratio} &= \frac{e^{\beta_0 + \beta_{\text{Adult}}\cdot 1 + \beta_{\text{Stern}}\cdot \text{Stern}}}{e^{\beta_0 + \beta_{\text{Adult}}\cdot 0 + \beta_{\text{Stern}}\cdot \text{Stern}}}\\
+&=e^{\beta_{\text{Adult}}}
+\end{split}
+\]
+
+Since the ratio seems to be a fixed value, then the $95\%$ confidence interval of this estimated ratio is in fact, an exponential of $95\%$ confidence interval of parameter $\beta_{\text{Adult}}$. Therefore, we have
+
+```{r, echo=FALSE}
+# ---------------(g)---------------
+coef(moorhen.loglm2)
+shield.calc <- function(x1, x2){
+    exp(as.numeric(moorhen.loglm2$coefficients[1]
+                   + moorhen.loglm2$coefficients[2] * x1
+                   + moorhen.loglm2$coefficients[3] * x2))
+}
+ratio.calc <- function(st.input){
+    shield.calc(1, st.input)/shield.calc(0, st.input)
+}
+
+confint(moorhen.loglm2, "Adult", level = 0.95)
+exp(confint(moorhen.loglm2, "Adult", level = 0.95))
+```
+
+## Question 2
+
+### (a)
+```{r, echo=FALSE}
+# ---------------Q2---------------
+# ---------------(a)---------------
+library(faraway)
+
+fat <- read.csv('fat.csv', header = TRUE)
+fat[42,]$height <- 69.5
+attach(fat)
+```
+- NOT including `case`, `body.fat.siri` or `density`:
+    - `case`: This is just the index of each man, it has no real impact on the real body fat percentage.
+    - `body.fat.siri`: This is just another expression of body fat. We have already included `body.fat` as the response, there is no need to include it as a predictor. If we do so, it would be affect the power of other predictors. (In other words, we are using body fat to fit body fat.) 
+    - `density`: According to Bozek's equation, $\text{body.fat}=\frac{457}{\text{Density}}-414.2$, since we are trying to find a regression model for `body.fat`, we should not include a variable which is a direct transformation of that response in the predictors.
+- Including all three `weight`, `height`, `BMI` at the same time: No need to include all of three variables, since `BMI` can be expressed as `weight/height^2`, so `BMI` is highly correlated with those two variables. We can keep `weight` and `height`, excluding `BMI`.
+- Including `ffweight` when `weight` is included: No need to do this as well. `ffweight` is both related with `weight` and involved with `body.fat`. Pretty dangerous to include it.
+
+### (b)
+Recall that `ln(BMI)` was a pretty good simple linear regression predictor in Assignment 1, and this problem itself addresses that `weight` is a considered as a key and should be included. By the formula 
+
+\[
+\begin{split}
+\log(\text{BMI}) &= \log\left(\frac{\text{weight}}{\text{height}^2}\right)\\
+&=\log(\text{weight})-2\log(\text{height})\end{split}\]
+
+So we put variable `ln(weight), ln(height)` into our draft model.
+
+Next, we tend to add variables into this model. We add the variables left one by one, by checking the variance inflation factor (VIF), we only confirm the addition if no VIFs of current variables exceed $10$ (conventionally we pick $10$ as a cut-off value). In other words, we only add variables if we can avoid multicolinearity. 
+
+Repeat until we have a full model, in this case, which is `body.fat ~ log(weight) + log(height) + wrist + neck + age + forearm + bicep + ankle + knee`.
+
+Then we check the ANOVA and `summary()` table, both suggests the last four variables are insignificant. And we think about it with common sense that, there is not much body fat in those parts of human body. So we would like to drop those variables.
+
+Now the model is `body.fat ~ log(weight) + log(height) + wrist + neck + age`. Again we check the ANOVA and `summary()` table. Now every variable is significant.
+
+```{r, echo=FALSE, eval=FALSE}
+# ---------------(b)---------------
+# round(cor(fat[c(2,5:7,10:19)]),4)
+# round(cor(fat[c(2,5:7,10:19)]),4)>0.7
+
+vif(lm(body.fat~log(weight)+log(height)+abdomen))
+vif(lm(body.fat~log(weight)+log(height)+neck))
+vif(lm(body.fat~log(weight)+neck+wrist+log(height)))
+vif(lm(body.fat~log(weight)+neck+wrist+hip+log(height)))
+vif(lm(body.fat~log(weight)+neck+wrist+chest+log(height)))
+vif(lm(body.fat~log(weight)+neck+wrist+log(height)+age))
+vif(lm(body.fat~log(weight)+neck+wrist+log(height)+age+forearm))
+vif(lm(body.fat~log(weight)+neck+wrist+log(height)+age+forearm+thigh))
+vif(lm(body.fat~log(weight)+neck+wrist+log(height)+age+forearm+bicep))
+vif(lm(body.fat~log(weight)+neck+wrist+log(height)+age+forearm+bicep+ankle))
+vif(lm(body.fat~log(weight)+neck+wrist+log(height)+age+forearm+bicep+ankle+knee))
+
+vif(lm(body.fat~log(weight)+wrist+log(height)+age+forearm+bicep+ankle+knee))
+
+vif(lm(body.fat~log(weight)+wrist+log(height)+age+forearm+bicep+ankle))
+
+vif(lm(body.fat~log(weight)+log(height)+age+forearm+bicep+ankle))
+
+vif(lm(body.fat~log(weight)+log(height)+age+forearm+ankle))
+
+# acutally the following model works well too!
+vif(lm(body.fat~log(weight)+log(height)+age))
+anova(lm(body.fat~log(weight)+log(height)+age))
+summary(lm(body.fat~log(weight)+log(height)+age))
+
+# draft model based on correlation matrix intuition and VIF analysis
+fat.lm1 <- lm(body.fat ~ log(weight) + log(height) + wrist + neck + age 
+              + forearm + bicep + ankle + knee)
+anova(fat.lm1)
+summary(fat.lm1)
+```
+
+```{r, echo=FALSE, eval=TRUE}
+# draft model deleted insignificant variables
+fat.lm2 <- lm(body.fat ~ log(weight) + log(height) + wrist + neck + age)
+anova(fat.lm2)
+summary(fat.lm2)
+```
+
+Afterwards, we plot and examine these three diagnostic plots:
+
+```{r, echo=FALSE, eval=TRUE}
+par(mfrow=c(2,2))
+plot(fat.lm2, which=1)
+plot(fitted(fat.lm2), rstandard(fat.lm2))
+abline(0,0, lty=2)
+title("IntStud Residuals vs. Fitted Values")
+# identify(fitted(fat.lm), rstandard(fat.lm)) # 39, 216
+plot(fat.lm2, which=c(2, 4))
+par(mfrow=c(1,1))
+```
+
+For here, we also include a main residual plot with some curvature on the right hand side, but generally the model satisfies the independent errors assumption.
+
+- The internally studentized residuals plot looks fine, the data points cluster generally in a rectangular range. The only thing suspicious is the data point (case number $39$) in the downright corner, which might be an potential outlier.
+- The normal-qq looks a little bit light tailed, but generally we consider it satisfying the assumption.
+- The Cook's distances plot suggests that the case number $39$ stands out comparing with all other data. It probably is high leverage which affects the model dramatically.
+
+### (c)
+
+```{r, echo=FALSE, eval=TRUE}
+# ---------------(c)---------------
+# case 39 is the suspisious outlier
+# also 182 has is 0 as body.fat (but we still need it as 'underweight' category later)
+
+# draft model with case 39 removed (revisiting)
+fat.lm3 <- lm(body.fat[-39] ~ log(weight)[-39] + log(height)[-39] 
+              + wrist[-39] + neck[-39] + age[-39])
+anova(fat.lm3)
+summary(fat.lm3)
+
+# final model with some order tweaked (neck moved to the last)
+fat.lm4 <- lm(body.fat[-39] ~ log(weight)[-39] + log(height)[-39] 
+              + wrist[-39] + age[-39] + neck[-39])
+
+par(mfrow=c(2,2))
+plot(fat.lm4, which=1)
+plot(fitted(fat.lm4), rstandard(fat.lm4))
+abline(0,0, lty=2)
+title("IntStud Residuals vs. Fitted Values")
+plot(fat.lm4, which=c(2, 4))
+par(mfrow=c(1,1))
+```
+
+According to the diagnostic plots, we tend to delete the case $39$. After doing so, 
+we refit the model and find out that in ANOVA table, the predictor `neck` becomes insignificant with p-value $0.096>0.05$. This might be because the removed data has rather high `neck` value, so it increased the influence of `neck`, but in fact, neck is not that important. So our modification is to switch the position of `neck` and `age`. Now our final model looks like: `body.fat ~ log(weight) + log(height) + wrist + age + neck`.
+
+The new diagnostic plots indicate that no outliers or influential points exist any more.
+
+### (d)
+The ANOVA and `summary()` table for our final model.
+
+```{r, eval=TRUE}
+# ---------------(d)---------------
+anova(fat.lm4)
+summary(fat.lm4)
+```
+
+Observe the estimate coefficients of variables, we conclude that `log(weight)` and `age` are postively related with `body.fat`, i.e. a person with larger weight and older age tends to have higher body fat percentage. On the other hand, `log(height), wrist, neck` are negatively related with `body.fat`. Among all, `log(height)` contributes the most, which can be interpreted as "taller people tend to have less body fat percentage when other variable hold constant".
+
+The overall F-test has a p-value much less than $0.05$, the model is significant.
+
+Also note that the adjusted $R^2$ is $0.6584$ which is adequate, but definitely leaves some space for improvement. 
+
+For multiple one-sample t-tests, the cut-off value is:
+
+```{r, echo=TRUE}
+qt(.975, 250)
+```
+
+- $H_0: \beta_0=0$ vs. $H_A: \beta_{0}\not=0$.
+\[t = \frac{118.71664-0}{36.1338}=3.285\]
+- $H_0: \beta_{\log{(\text{weight})}} = 0$ vs. $H_A: \beta_{\log{(\text{weight})}}\not=0$,
+\[t = \frac{60.56758-0}{3.74084}=16.191\]
+- $H_0: \beta_{\log{(\text{height})}} = 0$ vs. $H_A: \beta_{\log{(\text{height})}}\not=0$
+\[t = \frac{-82.87330-0}{9.63657}=-8.600\]
+- $H_0: \beta_{\text{wrist}} = 0$ vs. $H_A: \beta_{\text{wrist}}\not=0$
+\[t = \frac{-2.80081-0}{0.51383}=-5.451\]
+- $H_0: \beta_{\text{age}} = 0$ vs. $H_A: \beta_{\text{age}}\not=0$
+\[t = \frac{0.18113-0}{0.02515}=7.201\]
+- $H_0: \beta_{\text{neck}} = 0$ vs. $H_A: \beta_{\text{neck}}\not=0$
+\[t = \frac{-0.46871-0}{0.23184}=-2.022\]
+
+All of those observed t-statistics have absolute values greater than the theoretical t-statistic $1.969498$. Therefore, we reject all of those null hypotheses. The results of t-tests agree with that of F-test as we desired.
+
+### (e)
+```{r, echo=FALSE, eval=TRUE}
+# ---------------(e)---------------
+fat2 <- fat[-39,]
+attach(fat2)
+head(fat2)
+
+underweight <- fat2[which(BMI<18.5),]
+normal <- fat2[which(BMI>=18.5 & BMI<25), ]
+overweight <- fat2[which(BMI>=25 & BMI<30),]
+obese <- fat2[which(BMI>=30),]
+
+UwM <- sapply(underweight[,c(2,5,6,7,10,19)], mean)
+NM <- sapply(normal[,c(2,5,6,7,10,19)], mean)
+OwM <- sapply(overweight[,c(2,5,6,7,10,19)], mean)
+ObM <- sapply(obese[,c(2,5,6,7,10,19)], mean)
+
+df <- data.frame(weight=c(UwM[3],NM[3],OwM[3],ObM[3]),
+                 height=c(UwM[4],NM[4],OwM[4],ObM[4]),
+                 wrist=c(UwM[6],NM[6],OwM[6],ObM[6]),
+                 age=c(UwM[2],NM[2],OwM[2],ObM[2]),
+                 neck=c(NM[5],NM[5],OwM[5],ObM[5]))
+
+(ci <- predict(fat.lm4, newdata = df, interval = "confidence"))
+```
+- The interval for each category is narrow. But for underweight category, we have a negative value for the lower bound of 95\% confidnece interval which is unrealistic. This is probably because the underweight category only contains one sample, whose `body.fat` value is $0$. (We consider this as an input error, since no human has a zero body fat percent, this is just unrealistic.) So the prediction here is not accurate.
+- Generally we should have an impression that, the more data we have in a category, the predicted confidence interval for this category is narrower, i.e. the prediction is more accurate.
+
+To conclude, under such assumption, our model is good for predicting the later 3 categories but definitely not for underweight category.
+
+## Appendix
+```{r, ref.label=knitr::all_labels(),echo=TRUE,eval=FALSE}
+```

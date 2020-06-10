@@ -1,0 +1,37 @@
+# Simple exercise for you to try out visualising 
+# 3-dimensional data. Here, x1 and x2 are
+# randomly generated, and the "true" model 
+# is y=x1+x2 with an additive normal error:
+
+x1=rnorm(100,1,1)
+x2=rnorm(100,1,1)
+y=x1+x2+rnorm(100,0,0.1)
+
+# To consider the obvious three coordinate 
+# directions in the 3-D space spanned by x1, 
+# x2 and y, we would use the scatterplot 
+# matrix (using the pairs() function in R):
+
+pairs(cbind(x1,x2,y))
+
+# Now to visualise the data in 3-D, use the 
+# rgl library (which you can install if you 
+# don't have it using):
+
+install.packages("rgl")
+
+# There were problems with the dependent package
+# "shiny" on Wednesday 19 April 2017, which you can
+# probably work round by using:
+
+install.packages("shiny", type="binary")
+
+# You will only need to install the new packages the
+# first time, after which you just load the library:
+
+library(rgl)
+
+# and look at the data (a new window will open
+# and moving the mouse around moves the image)
+
+plot3d(x1,x2,y)

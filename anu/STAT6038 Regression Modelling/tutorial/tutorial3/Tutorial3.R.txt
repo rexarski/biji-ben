@@ -1,0 +1,109 @@
+# STAT2008/STAT6038 Regression Modelling Tutorial 3 - R Commands
+
+# Question One
+
+# Q1 (a)
+
+auscars <- read.csv("auscars.csv", header=T)
+auscars
+attach(auscars)
+auscars.lm <- lm(L.100k ~ Weight)
+auscars.lm
+
+# The fitted regression line is L.100k = 2.671 + 0.00723*Weight. The estimated
+# slope coefficient (0.00723) represents the expected change in fuel efficiency
+# for a 1 kg change in the weight of the car.
+
+anova(auscars.lm)
+
+# So SS_Regression = 180.031, SS_Error = 80.998 and SS_Total is the sum of 
+# these two, i.e. 180.031 + 80.998 = 261.029.
+
+# So long as we don't overwrite the auscars.lm with some different model, the
+# residuals are already safely stored in either:
+
+auscars.lm$residuals
+residuals(auscars.lm)
+
+# Q1 (b)
+
+auscars.mrlm <- lm(L.100k ~ Weight + Capacity)
+auscars.mrlm
+
+# New fitted regression equation is L.100k = 3.199 + 0.00581*Weight + 0.00052*Capacity.
+# The interpretation of the partial regression "slope" coefficent for 
+# weight (0.00581) is the expected change in fuel efficiency for a 1 kg change
+# in the weight of the car, holding the capacity constant (though remember this
+# may not always be possible, if weight and capacity are strongly associated).
+
+anova(auscars.mrlm)
+
+# The SS_Regression is the sum of the individual SS associated with the two 
+# explanatory variable = 180.031 + 5.971 = 186.002, SS_Error = 75.027 and 
+# SS_Total = 186.002 + 75.027 = 261.029, which is the same SS_Total as for
+# the earlier simple linear regression with the same response variable.
+
+# Q1 (c)
+
+newWeight <- 1500
+newCapacity <- 1500
+prediction <- predict(auscars.mrlm, newdata=data.frame(Weight=newWeight, Capacity=newCapacity), se.fit=T)
+prediction
+
+# So, we would expect such a car to consume approximately 12.7 litres for every
+# 100 kilometres, and we consider this estimate to be fairly accurate as the
+# associated standard error is small (relative to the size of the estimate);
+# 0.42 is only about 3.3% of 12.7 (this is called the Relative Standard Error %).
+
+# Q1 (d)
+
+plot(Weight, Capacity)
+auscars_Xvars.lm <- lm(Capacity ~ Weight)
+auscars_Xvars.lm
+anova(auscars_Xvars.lm)
+
+# Both the plot and the signifcant F statistic suggests there is a relationship
+# Weight and Capacity. However, there is clear non constant variance in this
+# relationship, perhaps using log(Capacity) would have been better.
+
+plot(auscars_Xvars.lm, which=1)
+
+# Again the residuals from this model are already saved with the model:
+
+auscars_Xvars.lm$residuals
+
+# Q1 (e)
+
+auscars_residuals.lm <- lm(auscars.lm$residuals ~ auscars_Xvars.lm$residuals)
+auscars_residuals.lm
+
+round(auscars_residuals.lm$coef, 5)
+
+# Note the intercept coefficient is within machine rounding error of zero 
+# and the slope coefficient is the partial regression coefficient for Capacity
+# in the earlier multiple regression model, i.e. the "slope" associated with
+# Capacity, having already accounted for the effects of Weight.
+
+round(auscars.mrlm$coef, 5)
+
+anova(auscars_residuals.lm)
+
+# And yes, there does appear to be some relationship between the two sets of
+# residuals (F=4.77, p=0.03), which shows as a gently sloping line in the plot:
+
+plot(residuals(auscars_Xvars.lm), residuals(auscars.lm))
+abline(auscars_residuals.lm$coef)
+
+# We have effectively removed any "shared" information common to both predictors 
+# by "regressing" out the effects of the first predictor from both the response 
+# the second predictor, before examining the relationship between the second
+# predictor and the response.
+
+# The residuals from the regression of L.100k on Weight can be viewed as the
+# being the left-over variation in L.100k which is not accounted for by Weight
+# and the residuals from the regression of Capacity on Weight can be viewed as
+# the left-over in Capacity not accounted for by Weight, so the plot shows 
+# what relationship there might be between L.100k and Capacity, having first
+# removed the effects of Weight from both variables. If there is a relationship,
+# then Capacity should be a sensible addition to a regression model (to explain
+# L.100k) which already includes Weight.

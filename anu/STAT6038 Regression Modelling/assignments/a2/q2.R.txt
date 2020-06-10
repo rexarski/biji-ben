@@ -1,0 +1,116 @@
+# Q2
+library(faraway)
+# (a)
+fat <- read.csv('fat.csv', header = TRUE)
+fat[42,]$height <- 69.5
+attach(fat)
+
+# (b)
+round(cor(fat[c(2,5:7,10:19)]),4)
+round(cor(fat[c(2,5:7,10:19)]),4)>0.7
+
+vif(lm(body.fat~log(weight)+log(height)+abdomen))
+vif(lm(body.fat~log(weight)+log(height)+neck))
+vif(lm(body.fat~log(weight)+neck+wrist+log(height)))
+vif(lm(body.fat~log(weight)+neck+wrist+hip+log(height)))
+vif(lm(body.fat~log(weight)+neck+wrist+chest+log(height)))
+vif(lm(body.fat~log(weight)+neck+wrist+log(height)+age))
+vif(lm(body.fat~log(weight)+neck+wrist+log(height)+age+forearm))
+vif(lm(body.fat~log(weight)+neck+wrist+log(height)+age+forearm+thigh))
+vif(lm(body.fat~log(weight)+neck+wrist+log(height)+age+forearm+bicep))
+vif(lm(body.fat~log(weight)+neck+wrist+log(height)+age+forearm+bicep+ankle))
+vif(lm(body.fat~log(weight)+neck+wrist+log(height)+age+forearm+bicep+ankle+knee))
+
+vif(lm(body.fat~log(weight)+wrist+log(height)+age+forearm+bicep+ankle+knee))
+
+vif(lm(body.fat~log(weight)+wrist+log(height)+age+forearm+bicep+ankle))
+
+vif(lm(body.fat~log(weight)+log(height)+age+forearm+bicep+ankle))
+
+vif(lm(body.fat~log(weight)+log(height)+age+forearm+ankle))
+
+# acutally the following model works well too!
+vif(lm(body.fat~log(weight)+log(height)+age))
+anova(lm(body.fat~log(weight)+log(height)+age))
+summary(lm(body.fat~log(weight)+log(height)+age))
+
+# draft model based on correlation matrix intuition and VIF analysis
+fat.lm1 <- lm(body.fat ~ log(weight) + log(height) + wrist + neck + age 
+              + forearm + bicep + ankle + knee)
+anova(fat.lm1)
+summary(fat.lm1)
+
+# draft model deleted insignificant variables
+fat.lm2 <- lm(body.fat ~ log(weight) + log(height) + wrist + neck + age)
+anova(fat.lm2)
+summary(fat.lm2)
+
+par(mfrow=c(2,2))
+plot(fat.lm2, which=1)
+plot(fitted(fat.lm2), rstandard(fat.lm2))
+abline(0,0, lty=2)
+title("Internally Studentised Residuals vs. Fitted Values")
+# identify(fitted(fat.lm), rstandard(fat.lm)) # 39, 216
+plot(fat.lm2, which=c(2, 4))
+par(mfrow=c(1,1))
+
+# (c)
+# case 39 is the suspisious outlier
+# also 182 has is 0 as body.fat (but we still need it as 'underweight' category later)
+
+# draft model with case 39 removed (revisiting)
+fat.lm3 <- lm(body.fat[-39] ~ log(weight)[-39] + log(height)[-39] 
+              + wrist[-39] + neck[-39] + age[-39])
+anova(fat.lm3)
+summary(fat.lm3)
+
+# final model with some order tweaked (neck moved to the last)
+fat.lm4 <- lm(body.fat[-39] ~ log(weight)[-39] + log(height)[-39] 
+              + wrist[-39] + age[-39] + neck[-39])
+
+par(mfrow=c(2,2))
+plot(fat.lm4, which=4)
+plot(fitted(fat.lm4), rstandard(fat.lm4))
+abline(0,0, lty=2)
+title("Internally Studentised Residuals vs. Fitted Values")
+plot(fat.lm4, which=c(2, 4))
+par(mfrow=c(1,1))
+
+# (d)
+anova(fat.lm4)
+summary(fat.lm4)
+(cfts <- coefficients(fat.lm4))
+# t.test(log(weight)[-39], mu = as.numeric(cfts[2]))
+# t.test(log(height)[-39], mu = as.numeric(cfts[3]))
+# t.test(wrist[-39], mu = as.numeric(cfts[4]))
+# t.test(age[-39], mu = as.numeric(cfts[5]))
+# t.test(neck[-39], mu = as.numeric(cfts[6]))
+
+# (e)
+fat2 <- fat[-39,]
+attach(fat2)
+head(fat2)
+
+underweight <- fat2[which(BMI<18.5),]
+normal <- fat2[which(BMI>=18.5 & BMI<25), ]
+overweight <- fat2[which(BMI>=25 & BMI<30),]
+obese <- fat2[which(BMI>=30),]
+
+UwM <- sapply(underweight[,c(2,5,6,7,10,19)], mean)
+NM <- sapply(normal[,c(2,5,6,7,10,19)], mean)
+OwM <- sapply(overweight[,c(2,5,6,7,10,19)], mean)
+ObM <- sapply(obese[,c(2,5,6,7,10,19)], mean)
+
+df <- data.frame(weight=c(UwM[3],NM[3],OwM[3],ObM[3]),
+                 height=c(UwM[4],NM[4],OwM[4],ObM[4]),
+                 wrist=c(UwM[6],NM[6],OwM[6],ObM[6]),
+                 age=c(UwM[2],NM[2],OwM[2],ObM[2]),
+                 neck=c(NM[5],NM[5],OwM[5],ObM[5]))
+
+(ci <- predict(fat.lm4, newdata = df, interval = "confidence"))
+
+(pi <- predict(fat.lm4, newdata = df, interval = "prediction"))
+
+sum(normal$body.fat > pi[2,2] & normal$body.fat < pi[2,3]) / nrow(normal)
+sum(overweight$body.fat > pi[3,2] & overweight$body.fat < pi[3,3]) / nrow(overweight)
+sum(obese$body.fat > pi[4,2] & obese$body.fat < pi[4,3]) / nrow(obese)

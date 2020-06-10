@@ -1,0 +1,81 @@
+\documentclass[a4paper, 11pt, twoside]{article}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\begin{document}
+2017-02-24-lec03
+\\
+
+\textbf{Operations with sets} \\
+
+\textbf{Product:} Given set $S, T$, their product is defined as $S\times T:\{(x,y): x \in S, y \in T\}$. e.g. $S^k = S\times S \times \cdots \times S = \{(x_1, \dots, x_k): x_i \in S\}$
+
+Example: Cartesian Plane $\mathbb{R}^2 = \{(x,y): x, y \in \mathbb{R}$, also notated as $(\mathbb{R} \times \mathbb{R})$.
+
+$\mathbb{R}\times \mathbb{Q} \subseteq \mathbb{R}^2$
+
+$\mathbb{Q}\times \mathbb{R} \subseteq \mathbb{R}^2$
+
+$\mathbb{Q}^2 \subseteq \mathbb{R}\times \mathbb{Q}$
+
+$\mathbb{Q}^2 \subseteq \mathbb{Q}\times \mathbb{R}$\\
+
+\textbf{Power set:} given a set $S$, the power set of $S$ is defined as $2^{S} = \{T | T \subseteq S\}$
+
+\textbf{Remark:} There is a unique set with no elements called the empty set $\emptyset$. Note that $\emptyset$ is a subset of every subset.
+
+$S=\{Sydney, Melbourne\}$
+
+$2^S = \{\emptyset, \{Sydney\}, \{Melbourne\}, S\}$
+
+More generally, if $S$ is a finite set with $n$ elements, then $2^S$ has $2^n$ elements .
+
+$S = \{x_1, \dots , x_n\}, T\subseteq S?$
+
+Either $x_1 \in T$ or $x_1 \not \in T$,
+
+$x_2 \in T$ or $x_2 \not \in T, \dots$
+
+$x_n \in T$ or $x_n \not \in T.$ All together, $2^n$.\\
+
+\textbf{Unions, intersections, difference, complement}
+
+Suppose $A, B \subseteq U, A\cup B= \{x \in U | x \in A \text{ or } x \in B\}.$
+
+$A\cap B = \{x\in U | x\in A \text{ and } x \in B\}.$ 
+
+$A-B = \{x\in U|x\in A \text{ and } x \not \in B\}.$
+
+$A^C = \{x \in U |x \not \in A\}.$
+
+Example: 
+
+$E=\{2k: k\in \mathbb{Z}\}$ even integer.
+
+$O=\{2k+1: k\in \mathbb{Z}\}$ odd integer.
+
+$E \cup O = \mathbb{Z}$
+
+$E \cap O = \emptyset$
+
+$E^C = O$
+
+$O^C = E$
+
+$E - O = E$\\
+
+\textbf{Functions:} Let $A, B$ be sets, a function $f: A \rightarrow B$ assigns to each $a \in A$ an element $f(a) \in B$. We call $A$ the domain of $f$, $B$ the target of $f$.
+
+$\forall S \subseteq A$, can consider $f(S):= \{f(a): a \in S\} \subseteq B$
+
+We call $f(A)$ the image of $f$, or the range of $f$.
+
+Example: Let $[n] = \{1, 2, \dots , n\}$. How many distinct functions from $[n]$ to $[n]$?
+
+$n$ choices for $f(1)$, $n$ choices for $f(2)$, $\cdots$, $n$ choices for $f(n)$.
+
+$n^n$ possible functions\\
+
+The \textbf{graph of a function} $f:A\rightarrow B$ is the subset $\{(a, f(a)):a\in A\}\subseteq A\times B$. In fact, $f$ is completely determined by its graph, i.e., I could equivalently define a function $f: A\rightarrow B$ to be a subset $S\subseteq A \times B$ such that $\forall a \in A, \exists$ a unique $b\in B$ such that $(a, b) \in S$.\\
+
+\textbf{Reading:} Chapter 1 (skip quadratic formula and arithmetic/geometric inequality) sets, functions...
+\end{document}
