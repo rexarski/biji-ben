@@ -1,0 +1,117 @@
+library(nlme)
+
+qcolour <- read.csv("qcolour.csv",header=T)
+head(qcolour)
+attach(qcolour)
+
+colours <- as.factor(colour)
+weeks <- as.factor(week)
+
+lm.a <- lm(rrate~colours+weeks+size)
+par(mfrow=c(2,2))
+plot(lm.a,which = c(1,2,4,5))
+
+# autoplot(lm.a, which=c(1,2,4,5), label.size = 3) # a ggplot2 implimentation of diagnostic plots
+
+# qq-plot problematic, the topright part looks suspicous but generallly not a big deal.
+
+anova(lm.a) # factor week seems not that important
+
+# -----------------------------NOTE--------------------------------------
+# use summary or anova 
+# -- anova
+#    -- does order matter
+summary(lm.a)
+
+lm.b <- lm(rrate~colours+size)
+par(mfrow=c(1,1))
+plot(size, rrate, type="n")
+title("Plot of rrate vs size")
+points(qcolour[colour=='blue'&week=='A',]$size,qcolour[colour=='blue'&week=='A',]$rrate,pch='B',col='blue')
+points(qcolour[colour=='blue'&week=='B',]$size,qcolour[colour=='blue'&week=='B',]$rrate,pch='b',col='blue')
+points(qcolour[colour=='green'&week=='A',]$size,qcolour[colour=='green'&week=='A',]$rrate,pch='G',col='green')
+points(qcolour[colour=='green'&week=='B',]$size,qcolour[colour=='green'&week=='B',]$rrate,pch='g',col='green')
+points(qcolour[colour=='orange'&week=='A',]$size,qcolour[colour=='orange'&week=='A',]$rrate,pch='O',col='orange')
+points(qcolour[colour=='orange'&week=='B',]$size,qcolour[colour=='orange'&week=='B',]$rrate,pch='o',col='orange')
+
+intercept <- coef(lm.b)[1]
+coef.green <- coef(lm.b)[2]
+coef.orange <- coef(lm.b)[3]
+coef.size <- coef(lm.b)[4]
+
+# regression lines
+abline(intercept, coef.size, lty=2, col="blue", lwd=2) # blue
+abline(intercept+coef.green, coef.size, lty=1, col="green", lwd=2) # green
+abline(intercept+coef.orange, coef.size, lty=3, col="orange", lwd=2) # orange
+legend("topright", c("blue","green","orange"), 
+       lty=c(2,1,3), col=c("blue","green","orange"), lwd=c(2,2,2))
+
+# -----------------------------NOTE--------------------------------------
+# add point legend as well
+# ADD ALGEBRAIC EQUATIONS
+# maybe try to use ggplot2 here?
+
+# -----------------------------NOTE--------------------------------------
+# algebraic equation in 2016 part (d) formation
+# error normality
+# no transformaion applied here
+# diagnostics plot? to support our decision
+
+summary.lm(lm.b)
+
+# -----------------------------NOTE--------------------------------------
+# contrasts -- what is a good choice?
+# only compare blue vs green, blue vs orange, we have no idea green vs orange
+contrasts(colour)
+
+lvl.mns <- tapply(rrate,colour,mean)
+lvl.mns
+ni <- tapply(rrate,colour,length)
+h.blue <- c(1,0,0)
+h.green <- c(1,1,0)
+h.orange <- c(1,0,1)
+
+ci <- function(h) {
+  h.extra <- h
+  h.extra[length(h)+1] <- 250
+  est <- t(h.extra)%*%coef(lm.b)
+  MSE <- sum((rrate-fitted(lm.b))^2)/lm.b$df.residual
+  sd <- sqrt(MSE)*sqrt(sum((h^2)/ni))
+  upper <- est+qt(0.975,lm.b$df.residual)*sd
+  lower <- est-qt(0.975,lm.b$df.residual)*sd
+  c(lower,est,upper)
+}
+
+cis <- rbind(ci(h.blue),ci(h.green),ci(h.orange))
+colnames(cis) <- c("lower","fit","upper")
+rownames(cis) <- c("blue","green","orange")
+cis
+
+
+lm.e <- lm(rrate~colours+size+colours:size)
+summary(lm.e)
+anova(lm.e)
+
+# -----------------------------NOTE--------------------------------------
+# not significant
+
+anova(lm.b,lm.e)
+
+qcolour.A <- qcolour[qcolour$week=='A',]
+colours.A <- as.factor(qcolour.A$colour)
+lm.f <- lm(qcolour.A$rrate~colours.A+qcolour.A$size)
+summary(lm.f)
+anova(lm.f)
+
+lm.g <- lme(rrate~colours+size, random=~1|week)
+# -----------------------------NOTE--------------------------------------
+# describe the changes, formula
+anova(lm.g)
+summary(lm.g)
+
+# intra-class correlation (2016 last part)
+(icc <- (7.935918e-05)^2/((7.935918e-05)^2+2.06258^2))
+
+# (h)
+# -----------------------------NOTE--------------------------------------
+# response as 

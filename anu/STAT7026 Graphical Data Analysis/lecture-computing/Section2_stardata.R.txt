@@ -1,0 +1,180 @@
+# 1. DATA
+
+disk <- c(4,44,-23,-32,26,13,34,-24,-10,-34,72,-26,-32,-144,3,0,-43)
+halo <- c(214,129,34,-31,155,76,-18,-96,33,-81,-6,20,95,-72,-110,-90,
+          -118,-61,-4)
+inter <- c(0,45,6,-48,65,55,-69,-77,117,33,-17,64,5,-286,-175,-29,-63,
+           23,58,69,7,-1,25,-268,-44,87,-102,-42,25,16,62,31,5,
+           21,-77,-63)
+
+# 2. ONE DIMENSIONAL SCATTERPLOT AND VARIATIONS
+
+plot(inter,rep(0,36),main="Velocity Distribution of Intermediate
+     Stars",sub="One Dimensional Scatterplot",xlab="Velocity",ylab="",axes=F)
+axis(1) # put in x-axis
+
+plot(inter,sample(36),main="Velocity Distribution of Intermediate
+     Stars",sub="Jittered One Dimensional Scatterplot",xlab="Velocity", ylab="",axes=F)
+axis(1)
+
+plot(Stack(inter),main="Velocity Distribution of Intermediate
+     Stars",sub="Stacked One Dimensional Scatterplot",xlab="Velocity",ylab="",
+     axes=F)
+axis(1)
+
+Stack=function(x)
+{
+  x <- sort(x)
+  y <- rep(0, length(x))
+  for(i in 2:length(x)) {
+    if(x[i] == x[i - 1])
+      y[i] <- y[i - 1] + 1
+  }
+  list(x = x, y = y)
+}
+
+# Stem-and-leaf diagrams
+stem(inter)
+
+# The decimal point is 2 digit(s) to the right of the |
+#   
+# -2 | 97
+# -2 | 
+# -1 | 8
+# -1 | 0
+# -0 | 887665
+# -0 | 44320
+#  0 | 011112223333
+#  0 | 56666779
+#  1 | 2
+
+# 3. HISTOGRAMS
+
+hist(inter,main="Velocity Distribution of Intermediate Stars",sub="Default
+     number of bins",xlab="Velocity",ylab="Count",col=0)
+
+hist(inter,nclass=4,main="Velocity Distribution of Intermediate Stars",sub="
+     Five bins",xlab="Velocity",ylab="Count",col=0)
+
+hist(inter,nclass=20,main="Velocity Distribution of Intermediate Stars",sub="
+     Twenty-one bins",xlab="Velocity",ylab="Count",col=0)
+
+# 4. DENSITY FUNCTIONS
+
+plot(density(inter,window="r"),type="l",main="Velocity Distribution of
+     Intermediate Stars",sub="Density with rectangular kernel",
+     xlab="Velocity",ylab="")
+
+plot(density(inter,window="c"),type="l",main="Velocity Distribution of
+     Intermediate Stars",sub="Density with cosine kernel",xlab="Velocity",ylab="")
+
+plot(density(inter,window="c",width=10),type="l",lty=1,main="Velocity
+     Distribution of Intermediate Stars",sub="Density with cosine
+     kernel",xlab="Velocity",ylab="")
+lines(density(inter,window="c",width=40),lty=2)
+lines(density(inter,window="c",width=80),lty=3)
+legend(locator(1),c("h=10","h=40","h=80"),lty=1:3)
+
+# 5. DISTRIBUTION FUNCTIONS
+
+Cdf <- function(x){
+  x <- sort(x)
+  for (i in 2:length(x)){
+    segments(x[i-1],(i-1)/length(x),x[i],(i-1)/length(x))
+  }
+}
+
+plot(sort(inter),c(1:36)/36,main="Velocity Distribution of Intermediate
+     Stars",sub=" Distribution Function",xlab="Velocity",ylab="Fraction of Data")
+Cdf(inter)
+
+Cdf <- function(x,int=F){
+  x <- sort(x)
+  if (int) for (i in 2:length(x)) segments(x[i-1],(i-1)/length(x),x[i],i/length(x))
+  else for (i in 2:length(x)) segments(x[i-1],(i-1)/length(x),x[i],(i-1)/length(x))
+}
+
+plot(sort(inter),c(1:36)/36,main="Velocity Distribution of Intermediate
+     Stars",sub="Linearly Interpolated Distribution Function",xlab="Velocity",
+     ylab="Fraction of Data")
+Cdf(inter,int=T)
+
+# 6. QUANTILE PLOTS
+
+plot(c(1:36)/36,sort(inter),main="Velocity Distribution of Intermediate
+     Stars",sub="Quantile Function",ylab="Velocity",xlab="Fraction of Data")
+
+ord <- order(inter)
+par(pty="s")
+plot(median(inter)-inter[ord[1:18]],inter[ord[36:19]]-median(inter),
+     main="Velocity Distribution of Intermediate Stars",sub="Symmetry Plot",
+     ylab="Upper Tail",xlab="Lower Tail",xlim=range(median(inter)-inter[ord[1:18]],
+     inter[ord[36:19]]-median(inter)),ylim=range(median(inter)-inter[ord[1:18]],
+     inter[ord[36:19]]-median(inter)))
+abline(0,1)
+par(pty="m")
+
+plot(inter[ord[1:18]],inter[ord[36:19]]+inter[ord[1:18]],main="Velocity
+     Distribution of Intermediate Stars",sub="Modified Symmetry Plot",
+     ylab="Sums of Paired Order Statistics",xlab="Lower Tail")
+abline(h=0)
+
+plot(inter[ord[4:18]],inter[ord[33:19]]+inter[ord[4:18]],main="Velocity
+     Distribution of Intermediate Stars",sub="Modified Symmetry Plot with 3
+     Outliers excluded",ylab="Sums of Paired Order Statistics",xlab="Lower Tail")
+abline(h=0)
+
+qqnorm(inter,main="Velocity Distribution of Intermediate Stars",
+       sub="Quantile-Quantile Plot for Gaussian Model",ylab="Sample Quantiles",
+       xlab="Gaussian Quantiles")
+
+
+temp <- sort(inter)
+temp[36] <- 286
+qqnorm(temp)
+par(mfrow=c(1,3),oma=c(10,0,10,0)) # In R (see below)
+
+# In R, the xaxs and yaxs option "d" is described in the help file, but
+# has NOT been implemented. So, for R you need to set the axes *manually* using
+# xlim and ylim. Do this by looking at the initial plot, noting what the axes
+# are, and use xlim=c(x1,x2) and similar for ylim where x1 and x2 are the axis
+# limits you saw. This is an annoyance, not a show-stopper...
+
+# In R, you need to set the axes manually...
+qqnorm(disk,main="Disk Stars",xlab="Normal Quantiles",ylab="Velocity",
+       xlim=c(-2.3,2.3),ylim=c(-300,300))
+qqnorm(inter,main="Intermediate Stars",xlab="Normal Quantiles",ylab="Velocity",
+       xlim=c(-2.3,2.3),ylim=c(-300,300))
+qqnorm(halo,main="Halo Stars",xlab="Normal Quantiles",ylab="Velocity",
+       xlim=c(-2.3,2.3),ylim=c(-300,300))
+# Now put the title on
+mtext(side=3,line=0,cex=1,outer=T,"Quantile-Quantile Plots for Stellar
+      Velocities")
+
+qqnorm(disk,main="Disk Stars",xlab="Normal Quantiles",ylab="Velocity",
+       xlim=c(-2.3,2.3),ylim=c(-300,300))
+abline(h=0)
+abline(v=0)
+qqnorm(inter,main="Intermediate Stars",xlab="Normal Quantiles",ylab="Velocity",
+       xlim=c(-2.3,2.3),ylim=c(-300,300))
+abline(h=0)
+abline(v=0)
+qqnorm(halo,main="Halo Stars",xlab="Normal Quantiles",ylab="Velocity",
+       xlim=c(-2.3,2.3),ylim=c(-300,300))
+abline(h=0)
+abline(v=0)
+mtext(side=3,line=0,cex=1,outer=T,"Quantile-Quantile Plots for Stellar
+      Velocities")
+
+
+# 7. BOXPLOTS
+
+boxplot(inter,main="Velocity Distribution of Intermediate Stars",
+        sub="Boxplots",ylab="Velocity",xlab="",style.bxp="old")
+
+boxplot(inter,varwidth=T,main="Velocity Distribution of Intermediate Stars",
+        sub="Boxplot",ylab="Velocity",xlab="",style.bxp="old")
+boxplot(split(c(disk,inter,halo),c(rep(1,17),rep(2,36),rep(3,19))),
+        main="Velocity Distribution of Intermediate Stars", sub="Boxplot",
+        ylab="Velocity",names=c("Disk Stars","Intermediate Stars","Halo Stars"),
+        style.bxp="old")

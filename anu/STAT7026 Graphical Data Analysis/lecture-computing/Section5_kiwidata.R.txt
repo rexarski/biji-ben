@@ -1,0 +1,255 @@
+kiwi
+# [1]  4169  3355  2395  2481  1281   216    54    16    12     4  3962  2275
+# [13]  1947  2619  2648  1806  1890   413    93    33    20     1  9153  8743
+# [25]  4809  5795  4567  4559  1957   224    30     1     1     1 10561 12187
+# [37]  5451  8734  7345  5512  2085   104    32     2     1   488 19302 13156
+# [49] 16651 11587 13787  9451  4025   279    28    18     1   551 25540 18899
+# [61] 11960 13299 15396 15504  4622   325   327   135     1   501 28049 38507
+# [73] 28249 21318 24498 17632  7772   671    14     1     7   246 33895 29238
+# [85] 31144 16743 31990 26594 10135  3244   395    34     1   243 33856 38975
+# [97] 23674 25762 34785 12742 22592  5705  1602   382    16    55 41998 68158
+
+library(MASS)
+
+kiwi <- ts(kiwi,frequency=12,start=c(1981,7))
+
+plot(kiwi,xlab="Month",ylab="Kiwifruit (tonnes)",type="b",pch="*",
+       main="Monthly Kiwifruit Exports from New Zealand 1981 to 1990")
+
+plot(log(kiwi),xlab="Month",ylab="log(Kiwifruit)",type="b",pch="*",
+       main="Monthly log(Kiwifruit) Exports from New Zealand 1981 to 1990")
+lines(lowess(as.vector(time(kiwi)),log(kiwi)),type='l')
+
+plot(log(kiwi),xlab="Month",ylab="log(Kiwifruit)",type="b",pch="*",
+       main="Monthly log(Kiwifruit) Exports from New Zealand 1981 to 1990")
+abline(rlm(log(kiwi)~time(kiwi)))
+
+trendfit = rlm(log(kiwi)~time(kiwi))
+fv <- cbind(1,time(kiwi)) %*% trendfit$coef
+
+plot(log(kiwi)-fv,xlab="Month",ylab="log(Kiwifruit)",type="b",pch="*",
+       main="Detrended Monthly log(Kiwifruit) Exports from New Zealand 1981 to 1990")
+abline(h=0)
+
+h <- stl(log(kiwi),s.window="periodic",t.window=99)
+plot(h)
+title("Monthly log(Kiwifruit) Exports from New Zealand 1981 to 1990")
+
+monthplot(h,ylab="log(Kiwifruit)",
+          main="Seasonal log(Kiwifruit) Exports from New Zealand 1981 to 1990")
+
+
+v <- Factor(c(7,8,9,10,11,12,rep(1:12,8),1,2,3,4,5,6))
+v1 <- cbind(1 - apply(v,1,sum),v)
+apply(v1,2,sum)
+# 2 3 4 5 6 7 8 9 10 11 12
+# 9 9 9 9 9 9 9 9 9  9  9  9
+
+months <- c("January","February","March","April","May","June","July",
+            "September","October","November","December")
+par(mfrow=c(3,4),oma=c(6,0,6,0))
+
+for (i in 1:12){
+  if(i <= 6){
+    plot(c(1:10),c(NA,log(kiwi)[v1[,i]==1]),
+         type="b",pch="*",axes=F,ylim=range(log(kiwi)),xlim=c(1,10),
+         main=paste(months[i]),
+         ylab="log(Kiwifruit)",
+         xlab="")
+    abline(rlm(c(NA,log(kiwi)[v1[,i]==1])~c(1:10)))
+  }
+  else{
+    plot(c(1:10),c(log(kiwi)[v1[,i]==1],NA),
+         type="b",pch="*",axes=F,ylim=range(log(kiwi)),xlim=c(1,10),
+         main=paste(months[i]),
+         ylab="log(Kiwifruit)",
+         xlab="")
+    abline(rlm(c(log(kiwi)[v1[,i]==1],NA)~c(1:10)))
+  }
+  box()
+  axis(2)
+  axis(1,at=c(1,3,5,7,9),labels=c("1981","1983","1985","1987","1989"))
+}
+
+mtext("Seasonal subseries for the log(Kiwifruit) data",
+      side=3,line=2,outer=T,cex=1.5)
+
+detrend <- ts(log(kiwi)-fv,frequency=12,start=c(1981,7))
+for (i in 1:12){
+  if(i <= 6){
+    plot(c(1:10),c(NA,detrend[v1[,i]==1]),
+         type="b",pch="*",axes=F,ylim=range(detrend),xlim=c(1,10),
+         main=paste(months[i]),
+         ylab="log(Kiwifruit)",
+         xlab="")
+    abline(rlm(c(NA,detrend[v1[,i]==1])~c(1:10)))
+  }
+  else{
+    plot(c(1:10),c(detrend[v1[,i]==1],NA),
+         type="b",pch="*",axes=F,ylim=range(detrend),xlim=c(1,10),
+         main=paste(months[i]),
+         ylab="log(Kiwifruit)",
+         xlab="")
+    abline(rlm(c(detrend[v1[,i]==1],NA)~c(1:10)))
+  }
+  box()
+  axis(2)
+  axis(1,at=c(1,3,5,7,9),labels=c("1981","1983","1985","1987","1989"))
+}
+
+mtext("Seasonal subseries for the log(Kiwifruit) data",
+      side=3,line=2,outer=T,cex=1.5)
+mtext("Linear trend removed",
+      side=1,line=2,outer=T)
+
+v = Factor(c(rep(5,5),6,rep(c(1,2,3,4,rep(5,7),6),8),1,2,3,4,5,5))
+fit <- rlm(log(kiwi)~cbind(time(kiwi),v,v[,2]*time(kiwi),v[,3]*time(kiwi)))
+par(mfrow=c(1,1))
+
+plot(log(kiwi)-fv,xlab="Month",ylab="log(Kiwifruit)",type="b",pch="*",
+       main="Monthly log(Kiwifruit) Exports from New Zealand 1981 to 1990",
+       sub="Linear trend and constant seasonal (Jan, Feb, May-Nov, Dec) or
+       separate trends (Mar, Apr) fitted")
+fv2 <- cbind(1,time(kiwi),v,v[,2]*time(kiwi),v[,3]*time(kiwi))%*%fit$coef-fv
+lines(as.vector(time(kiwi)),fv2,lty=2)
+
+par(mfrow=c(4,1),oma=c(0,0,3,0))
+plot(1:length(kiwi),log(kiwi),type="b",pch="*",axes=F,
+     ylab="log(Kiwifruit)",xlab="")
+box()
+axis(2)
+axis(1,at=seq(7,103,12),
+     labels=c("1982","1983","1984","1985","1986","1987","1988",
+              "1989","1990"))
+plot(1:length(kiwi),cbind(1,time(kiwi))%*%fit$coef[1:2],type='l',axes=F,
+     ylab="Trend",xlab="")
+box()
+axis(2)
+axis(1,at=seq(7,103,12),
+     labels=c("1982","1983","1984","1985","1986","1987","1988",
+              "1989","1990"))
+season <- c(rep(5,5),6,rep(c(1,2,3,4,rep(5,7),6),8),1,2,3,4,5,5)
+s[1] = 0
+for(i in 2:8){s[i]=fit$coef[i+1]}
+seasonal=s[season]+ifelse(season==3,s[7],0)*time(kiwi)+ifelse(season==4,
+                                                              s[8],0)*time(kiwi)
+plot(1:length(kiwi),seasonal,type='p',axes=F,ylab="Seasonal",xlab="",pch="*")
+abline(h=0)
+segments(1:length(kiwi),0,1:length(kiwi),seasonal)
+box()
+axis(2)
+axis(1,at=seq(7,103,12),
+     labels=c("1982","1983","1984","1985","1986","1987","1988",
+              "1989","1990"))
+fv3 <- cbind(1,time(kiwi))%*%fit$coef[1:2]
+plot(1:length(kiwi),log(kiwi)-fv3-seasonal,type='p',axes=F,ylab="Seasonal",
+     xlab="",pch="*")
+abline(h=0)
+segments(1:length(kiwi),0,1:length(kiwi),log(kiwi)-fv3-seasonal)
+box()
+axis(2)
+axis(1,at=seq(7,103,12),
+     labels=c("1982","1983","1984","1985","1986","1987","1988",
+              "1989","1990"))
+mtext("Decomposition for the log(Kiwifruit) Data",side=3,outer=T,cex=1.5)
+par(mfrow=c(1,1),oma=c(0,0,0,0))
+
+adjusted=log(kiwi)-seasonal
+plot(adjusted,xlab="Month",ylab="log(Kiwifruit)",type='b',pch="*",
+       main="Seasonally Adjusted Monthly log(Kiwifruit) Exports",
+       sub="Constant seasonal (Jan, Feb, May-Nov, Dec) or separate trends (Mar, Apr)
+       removed")
+
+adjusted <- adjusted-fv3
+plot(adjusted,xlab="Month",ylab="log(Kiwifruit)",type='b',pch="*",
+       main="Detrended and Deseasonalised Monthly log(Kiwifruit) Exports",
+       sub="Linear trend and Constant seasonal (Jan, Feb, May-Nov, Dec) or
+       separate trends (Mar, Apr) removed")
+abline(h=0)
+
+Ident(fit$resid)
+
+fin <- Raic(fit$resid)
+
+par(mfrow=c(1,1),oma=c(4,0,6,0))
+
+c1 <- 2/sqrt(length(fit$resid))
+plot(fin$k,diag(fin$coef),ylim=range(diag(fin$coef),c1,-c1),type="b",lty=2,
+     main="Robust PACF",
+     xlab="Autoregression Order",
+     ylab="Robust PACF")
+box(lty = 1)
+abline(h = c(-c1, c1), lty = 2)
+abline(h=0)
+segments(fin$k,0,fin$k,diag(fin$coef))
+
+mtext("Identification for the Irregular Component of the log(Kiwifruit) Data",
+      3,1,outer=T,cex=1.5)
+mtext("Linear trend and constant seasonal (Jan, Feb, May-Nov, Dec) or
+      separate trends (Mar, Apr) removed",1,1,outer=T)
+
+
+res <- fin$resid[,1]
+fv <- fit$resid[-1] - res
+
+par(mfcol=c(2,2),oma = c(6,0,6,0))
+
+plot(1:(length(kiwi)-1),res,type="b",
+     main="Residual Series",
+     xlab="Time",
+     ylab="Residuals")
+
+qqnorm(res,
+       main="Quantile-Quantile Plot",
+       xlab="Gaussian Quantiles",
+       ylab="Residuals")
+
+plot(fv,res,
+     main="Residual Plot",
+     xlab="Lagged Irregular Values",
+     ylab="Residuals")
+
+plot(fv,abs(res),
+     main="Absolute Residual Plot",
+     xlab="Lagged Irregular Values",
+     ylab="Absolute Residuals")
+lines(lowess(fv,abs(res)))
+
+
+mtext("Diagnostics for the log(Kiwifruit) data",
+      side=3,line=2,outer=T,cex=1.5)
+mtext("Markov model fitted after removing linear trend and constant seasonal
+      (Jan, Feb, May-Nov, Dec) or separate trends (Mar,Apr)",
+      side=1,line=2,outer=T,cex=1.5)
+
+fin2 <- Raic(res)
+
+par(mfrow=c(1,1),oma=c(4,0,6,0))
+
+c1 <- 2/sqrt(length(res))
+plot(fin2$k,diag(fin2$coef),ylim=range(diag(fin2$coef),c1,-c1),type="b",lty=2,
+     main="Robust PACF",
+     xlab="Autoregression Order",
+     ylab="Robust PACF")
+box(lty=1)
+abline(h = c(-c1, c1), lty = 2)
+abline(h=0)
+segments(fin2$k,0,fin2$k,diag(fin2$coef))
+
+mtext("Identification for the Residual Series from the log(Kiwifruit) Data",
+      3,1,outer=T,
+      cex=1.5)
+mtext("Markov model fitted after removing linear trend and constant seasonal
+(Jan, Feb, May-Nov, Dec) or separate trends (Mar,Apr)",
+      side=1,line=2,outer=T,cex=1.5)
+
+fit$coef
+# (Intercept)                   2      3         4        5        6
+# -652.4701 0.3308859 -1.538503 901.86 -655.9769 4.586167 1.609588 -0.4559847
+
+# 0.3298341
+
+fin <- Raic(fit$resid)
+
+fin$coef[1,1]
+# [1] 0.309432

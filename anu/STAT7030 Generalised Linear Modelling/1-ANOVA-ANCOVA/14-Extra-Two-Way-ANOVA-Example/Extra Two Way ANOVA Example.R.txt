@@ -1,0 +1,20 @@
+
+pyg<-read.table("pyg.csv",header=TRUE,sep=",")
+summary(pyg)
+attach(pyg)
+
+#pyg$newTreat=relevel(pyg$TREAT,ref="CONTROL") # check reference level is Controls
+
+interaction.plot(COMPANY,TREAT,SCORE,
+   main="Avg. score for platoons on test",cex.axis=0.8)
+
+m1<-lm(SCORE~TREAT*COMPANY,data=pyg)
+summary(m1)
+anova(m1)
+m2<-lm(SCORE~TREAT + COMPANY, data=pyg)
+summary(m2)
+anova(m1)
+anova(m2)
+anova(m2,m1)
+plot(m2,which=1)
+

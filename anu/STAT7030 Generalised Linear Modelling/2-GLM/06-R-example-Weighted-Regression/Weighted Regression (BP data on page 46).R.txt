@@ -1,0 +1,80 @@
+# This R code is a slightly modified version of the example discussed on pages 46 to 48
+# of the "brick".
+
+# The same example was also covered in Question 1 of Tutorial 5. 
+
+bp <- read.table("BP.txt",header=T)
+bp
+attach(bp)
+names(bp)
+
+bp.lm <- lm(diasbp ~ age)
+anova(bp.lm)
+plot(bp.lm)
+
+# The residual plot clearly shows the increasing (non-constant) variance.
+
+bp.glm <- glm(diasbp ~ age,family=gaussian)
+anova(bp.glm)
+
+# The change in deviance due to the addition of age to a null model equals the 
+# sum of squares for age in the ANOVA table for the above lm.
+
+summary(bp.glm)$dispersion
+
+# And the dispersion equals the MSE.
+
+# So the scaled change in deviance is:
+
+anova(bp.glm)$Deviance[2]/summary(bp.glm)$dispersion
+
+# Which is the same as the F statistic, however, for GLMs we use the chi-square distribution,
+# so we get a slightly different p-value:
+
+1-pchisq(anova(bp.glm)$Deviance[2]/summary(bp.glm)$dispersion,1)
+
+# Note, we could have got R to do this test for us, as there is an optional test argument
+# included in the glm method used to produce the Analysis of Deviance table:
+
+help(anova)
+
+help(anova.glm)
+
+anova(bp.glm, test="Chisq")
+
+# Or, we could even have done the more traditional F test for an ordinary normally
+# distributed linear model:
+
+anova(bp.glm, test="F")
+
+# Now for the plots for a normally distributed glm object:
+
+plot(bp.glm)
+
+# The results for the glm are very similar to the results for the lm, as we have not yet 
+# introduced any additional weighting:
+
+# In the tutorial, we found the most appropriate weights were:
+
+wgts <- 1/(age^2)
+bp.lm1 <- lm(diasbp ~ age, weights=wgts)
+bp.glm1 <- glm(diasbp ~ age, family=gaussian, weights=wgts)
+
+anova(bp.lm1)
+anova(bp.glm1, test="F")
+summary(bp.glm1)$dispersion
+
+summary(bp.lm1)$coef
+summary(bp.glm1)$coef
+
+# Again, very similar results, however, when we produce the default plots, we find that 
+# the residual plot for the lm is unweighted, whilst the residual plot for the glm correctly
+# accounts for the weighting:
+
+plot(bp.lm1, which=1)
+
+plot(bp.glm1, which=1)
+
+
+ 
+

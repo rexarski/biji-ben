@@ -1,0 +1,177 @@
+---
+title: "STAT7026 Assignment 2"
+geometry: margin=1.75cm
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.path='Figs/', dev = 'pdf', out.width='320px', 
+                      out.height='200px',dpi=200,fig.align = "center",
+                      small.mar=TRUE,
+                      echo=FALSE, warning=FALSE, message=FALSE)
+```
+
+```{r load}
+library(MASS)
+library(forecast)
+load("classData.RData")
+coal <- bicoal.tons
+```
+
+## 1. Decomposing
+
+The time series `bicoal.tons` provided by U.S. Bureau of Mines stores the annual production of bituminous coal between 1920 and 1968 (in millions of net tons). We tried a log-scale plot beforehand. However, it did not provide a better view of the data, so there is no need to do the log-transformation.
+
+```{r main-plot}
+plot(coal,type="b",pch="*",
+     main="Plot of Annual Bituminous Coal Production from 1920 to 1968",
+     ylab="10^6 net tons", 
+     xlab="Year",
+     lwd=1.5)
+lines(lowess(coal),lty=1,col="red",lwd=2)
+fit.l <- rlm(coal~time(coal))
+abline(fit.l,lty=2,col="blue",lwd=2)
+legend("topright",legend=c("lowess","linear"),lty=1:2,col=c("red","blue",lwd=c(2,2)))
+```
+
+After plotting the time series directly, we would like to decompose it into three main components.
+
+- **Trend**: The solid curve is a LOWESS curve, while the dotted line is the linear trend candidate. Though not perfectly accurate, we believe a linear line is an adequate trend that basically represents the of coal production during this time period. To some extent, the coal production from 1920 to 1968 fluctuates, but it never deviates too much from this linear trend. On the other hand, a quadratic or even a cubic trend is possible, but nevertheless they seem to be overfitting in this scenario.
+
+- **Seasonal component**: In this case we detect no seasonal component here. Even though the data seems to have a drop-down in the 1930s (possibly due to the Great Depression which lasted from 1929 to 1939), then hits a peak in the 1940s (the World War II), then drops again in the 1950s. Notwithstanding that this back-and-forth changes look like a pattern, we cannot expect those rare events to happen every 10-20 years. On the other hand, those data hardly make two whole cycles, thus we cannot confirm the existence of a seasonality confidently.
+
+```{r irregular}
+plot(1:49,fit.l$resid,type="b",pch="*",
+     main="Detrended Annual Bituminous Coal (1920-1968)",
+     ylab="10^6 net tons",
+     xlab="Year",
+     sub="Linear trend removed")
+abline(h=0)
+```
+
+- **Irregular component**: After plotting the "detrended time series", what remains should be some random noise. But the figure above still looks like the original data. This deja vu indicates that the residuals are dependent.
+
+## 2. Fitting an ARIMA Model
+So far, we are a little bit worried that the coal data is not suitable to fit an ARMA model directly, as it's not stationary. To test it is really not stationary, we use the plot the Autocorrelation Function (ACF) and the partial Autocorrelation Function (PACF) for it.
+
+```{r stationary}
+par(mfrow=c(1,2))
+Acf(coal,lag=20) # not stationary
+Pacf(coal,lag=20)
+par(mfrow=c(1,1))
+```
+
+The ACF does not cut off to the dotted region, as we can see the values go beyond the critical value from lag 8 to lag 14. This suggests that we might need to take the first differences, which agrees with our previous decision that a linear trend is selected. After doing so, we check the plot and corresponding ACF, PACF again.
+
+```{r diff}
+coaldiff1 <- diff(coal,differences=1)
+tsdisplay(coaldiff1,lag.max=20)
+```
+
+This time both ACF and PACF tail off exponentially, the only two lags out of the region are lag 2 in ACf and lag 2 in PACF. Therefore, the order of autoregression terms $q=2$ and the order of moving average terms $p=2$, we have an ARIMA model candidate as ARIMA(2,1,2).
+
+But it is possible that an AR term and an MA term can cancel each other's effects, so we would also try ARIMA(2,1,1) and ARIMA(1,1,2).
+
+The AIC and BIC values returned by ARIMA table for all three candidates indicates that the ARIMA(2,1,1) model has the lowest AIC and BIC values, although the difference is not tremendous. On the other hand, it is a simpler model than our first candidate ARIMA(2,1,2). By the principle of parsimony, we pick ARIMA(2,1,1) as the model to fit our time series. 
+
+```{r model-aic}
+# (arima212 <- Arima(coal,c(2,1,2))) # AIC=528.55 BIC=537.91
+(arima211 <- Arima(coal,c(2,1,1))) # AIC=526.91 BIC=534.4
+# (arima112 <- Arima(coal,c(1,1,2))) # AIC=528.81 BIC=536.29
+```
+
+\[\begin{split}
+\Delta Y &= Y_t-Y_{t-1}\\
+\Delta Y &= \phi_2 Y_{t-2} + \phi_1 Y_{t-1} + \theta_1\epsilon_{t-1} + \epsilon_t\\
+&= -0.6648 Y_{t-2} -0.4336 Y_{t-1} + 0.6714\epsilon_{t-1} +\epsilon_t\ \text{where $\epsilon_t,\epsilon_{t-1}$ are white noise error terms.}
+\end{split}\]
+
+## 3. Forecast
+
+```{r forecast-error}
+plotForecastErrors <- function(forecasterrors) { 
+  # make a histogram of the forecast errors:
+  mybinsize <- IQR(forecasterrors)/4
+  mysd <- sd(forecasterrors)
+  mymin <- min(forecasterrors) - mysd * 5 
+  mymax <- max(forecasterrors) + mysd * 3 
+  # generate normally distributed data with mean 0 and standard deviation mysd 
+  mynorm <- rnorm(10000, mean=0, sd=mysd) 
+  mymin2 <- min(mynorm) 
+  mymax2 <- max(mynorm) 
+  if (mymin2 < mymin) {
+    mymin <- mymin2 
+  } 
+  if (mymax2 > mymax) { 
+    mymax <- mymax2 
+  } 
+  # make a histogram of the forecast errors, with the normally distributed 
+  # data overlaid:
+  
+  mybins <- seq(mymin, mymax, mybinsize)
+  hist(forecasterrors, col="#7B84FC", freq=FALSE, breaks=mybins) 
+  # freq=FALSE ensures the area under the histogram = 1 
+  # generate normally distributed data with mean 0 and standard deviation mysd 
+  myhist <- hist(mynorm, plot=FALSE, breaks=mybins) 
+  # plot the normal curve as a blue line on top of the 
+  # histogram of forecast errors:
+  points(myhist$mids, myhist$density,type="l",col="blue",lwd=2)
+}
+
+# forecast212 <- forecast:::forecast.Arima(arima212,h=5)
+forecast211 <- forecast:::forecast.Arima(arima211,h=5)
+# forecast112 <- forecast:::forecast.Arima(arima112,h=5)
+
+# Box.test(forecast212$residuals,lag=20,type="Ljung-Box") # p-value = 0.9998
+# Box.test(forecast211$residuals,lag=20,type="Ljung-Box") # p-value = 0.9993
+# Box.test(forecast112$residuals,lag=20,type="Ljung-Box") # p-value = 0.9896
+
+layout(matrix(1:2,1,2,byrow=FALSE))
+# acf(forecast212$residuals,lag.max=20)
+# pacf(forecast212$residuals,lag.max=20)
+acf(forecast211$residuals,lag.max=20)
+pacf(forecast211$residuals,lag.max=20)
+# acf(forecast112$residuals,lag.max=20)
+# pacf(forecast112$residuals,lag.max=20)
+```
+
+Now we are interested in if the forecast made by this model is plausible. First we can conduct a Ljung-Box test to see if there is little evidence for non-zero autocorrelations in the forecast errors. The returned p-value is $0.9993>0.05$, so the forecast errors are not correlated. Meanwhile, the ACF and PACF of forecast residuals both drop into the region as expected.
+
+```{r forecast-error-meanvar}
+layout(matrix(c(1,1,2,3),2,2,byrow=TRUE))
+# plot.ts(forecast212$residuals)
+# plotForecastErrors(forecast212$residuals)
+# qqnorm(forecast212$residuals)
+# qqline(forecast212$residuals)
+plot.ts(forecast211$residuals)
+plotForecastErrors(forecast211$residuals)
+qqnorm(forecast211$residuals)
+qqline(forecast211$residuals)
+# plot.ts(forecast112$residuals)
+# plotForecastErrors(forecast112$residuals)
+# qqnorm(forecast112$residuals)
+# qqline(forecast112$residuals)
+```
+
+Furthermore, we investigate whether the forecast errors are normally distributed with mean zero and constant variance. The line plot shows that the variance of the forecast errors seems to be roughly constant over time. The histogram, together with normal Q-Q plot, shows that the forecast errors are roughly normally distributed and the mean seems to be close to zero. Therefore, it is plausible that the forecast errors are normally distributed with mean zero and constant variance.
+
+Since successive forecast errors do not seem to be correlated, and the forecast errors seem to be normally distributed with mean zero and constant variance, the ARIMA(2,1,1) does seem to provide an adequate predictive model for the annual coal production.
+
+```{r forecast-plot}
+par(mfrow=c(1,1))
+# plot(forecast(arima212,h=5),include=80)
+plot(forecast(arima211,h=5),include=80)
+# plot(forecast(arima112,h=5),include=80)
+```
+
+Basically, we predict that the production would stay constant in the next 5 year.
+
+# 4. References
+- Using R for Time Series Analysis, http://a-little-book-of-r-for-time-series.readthedocs.io/en/latest/src/timeseries.html
+- Occam's razor, https://en.wikipedia.org/wiki/Occam%27s_razor
+- Forecasting: principles and practice, https://www.otexts.org/fpp/
+- Using AIC to Test ARIMA Models, https://coolstatsblog.com/2013/08/14/using-aic-to-test-arima-models-2/
+- Terms “cut off” and “tail off” about ACF, PACF functions,https://stats.stackexchange.com/questions/241914/terms-cut-off-and-tail-off-about-acf-pacf-functions
+- Summary of rules for identifying ARIMA models, https://people.duke.edu/~rnau/arimrule.htm

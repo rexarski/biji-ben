@@ -1,0 +1,736 @@
+# STAT3015/STAT7030 Generalised Linear Models
+
+# Assignment 2 for 2017 - R code appendix to the solutions
+
+# Question 1
+
+# Ear infections data from OzDASL (www.statsci.org/data)
+
+ear.infections <- read.table("earinf.txt", header=T)
+attach(ear.infections)
+names(ear.infections)
+
+# A little exploratory data analysis before we start:
+
+summary(ear.infections)
+
+c(mean(Infections), var(Infections))
+range(Infections)
+table(Infections)
+
+ear.infections[Infections>5,]
+
+tapply(Infections, list(Sex, Age, Location, Swimmer), length)
+# Definitely not a balanced design and therefore not orthogonal contrasts.
+
+round(tapply(Infections, list(Sex, Age, Location, Swimmer), mean), 1)
+
+# Q1 (a)
+
+# First model fitted on OzDASL:
+
+glm.inf <- glm(Infections~Swimmer*Location*Age*Sex,family=poisson)
+
+par(mfrow=c(2,2))
+plot(glm.inf, which=c(1,2,4,5))
+par(mfrow=c(1,1))
+
+# For some discussion of these plots, see the solutions.
+
+# Q1 (b)
+
+# Again using the code shown on OzDASL:
+
+round(anova(glm.inf,test="F"),2)
+
+# Note that the current version of R does not produce the output shown on OzDASL.
+# The difference lies with the requested F statistics (which, as we will see
+# in part (c), are actually mislabelled Chisq statistics) However, the residual
+# deviance and degrees of freedom are the same as shown on OzDASL and can still
+# be used in the usual "goodness of fit" test:
+
+glm.inf$deviance/glm.inf$df.residual
+glm.inf$deviance
+glm.inf$df.residual
+c(qchisq(0.025, glm.inf$df.residual), qchisq(0.975, glm.inf$df.residual))
+
+# Definitely over-dispersed!
+
+# Q1 (c)
+
+# R will correct the Analysis of Deviance table if we ask it to use the alternative
+# estimate of the dispersion:
+
+alt.est.disp <- glm.inf$deviance/glm.inf$df.residual
+alt.est.disp
+
+anova(glm.inf, dispersion=alt.est.disp, test="Chisq")
+
+# Or borrow and modify some code from the "Residual Plots" example to make the
+# scaling that is going on here more obvious:
+scaled.dev <- anova(glm.inf)$Deviance/alt.est.disp
+chisq.pvalues <- 1 - pchisq(scaled.dev, anova(glm.inf)$Df)
+round(cbind(anova(glm.inf), "Scaled Dev"=scaled.dev, "Pr(>Chi)"=chisq.pvalues), 3)
+
+# These p values are closer to the ones shown on OzDASL and suggest that we 
+# could indeed refine this model by deleting non-significant terms.
+
+# Note we could reproduce the output shown on OzDASL in the current version of
+# R, by using the quasipoisson family - see help(family) for details
+
+glm.inf <- glm(Infections~Swimmer*Location*Age*Sex,family=quasipoisson)
+round(anova(glm.inf,test="F"),2)
+
+# Note the results are roughly comparable using either Chisq inference (which treats
+# the dispersion estimate as a constant - which is not strictly true) or F inference
+# (which treats both the drop-in-deviances and the dispersion estimate as comparable
+# variance estimates - also not strictly correct). Both versions are approximations -
+# under the Chisq version the Location:Sex is just significant, whilst under the F
+# version it is just not significant.
+
+# Q1 (d)
+
+# Let's first try the suggested change of link function and also reorder the terms
+# as we definitely do not have orthogonal contrasts:
+
+infections.glm <- glm(Infections ~ Sex*Age*Location*Swimmer, family=poisson(link="sqrt"))
+
+par(mfrow=c(2,2))
+plot(infections.glm, which=c(1,2,4,5))
+par(mfrow=c(1,1))
+
+# Possibly looks a little better, but we still have over-dispersion and non-significant
+# terms:
+
+infections.glm$deviance
+infections.glm$df.residual
+c(qchisq(0.025, infections.glm$df.residual), qchisq(0.975, infections.glm$df.residual))
+
+anova(infections.glm, test="Chisq")
+
+# Adjusting the Analysis of Deviance table for the over-dispersion:
+
+alt.est.disp <- infections.glm$deviance/infections.glm$df.residual
+alt.est.disp
+
+anova(infections.glm, dispersion=alt.est.disp, test="Chisq")
+
+# The lack of orthogonality means that order is important and we should probably 
+# refine the model one term at a time, but skipping a few steps:
+
+infections.glm <- glm(Infections ~ Location*Swimmer, family=poisson(sqrt))
+
+par(mfrow=c(2,2))
+plot(infections.glm, which=c(1,2,4,5))
+par(mfrow=c(1,1))
+
+infections.glm$deviance
+infections.glm$df.residual
+c(qchisq(0.025, infections.glm$df.residual), qchisq(0.975, infections.glm$df.residual))
+
+alt.est.disp <- infections.glm$deviance/infections.glm$df.residual
+alt.est.disp
+
+anova(infections.glm, dispersion=alt.est.disp, test="Chisq")
+
+# We eventually get down to a final model in which all the remaining terms are
+# significant:
+
+infections.glm <- glm(Infections ~ Location+Swimmer, family=poisson(sqrt))
+
+par(mfrow=c(2,2))
+plot(infections.glm, which=c(1,2,4,5))
+par(mfrow=c(1,1))
+
+infections.glm$deviance
+infections.glm$df.residual
+c(qchisq(0.025, infections.glm$df.residual), qchisq(0.975, infections.glm$df.residual))
+
+alt.est.disp <- infections.glm$deviance/infections.glm$df.residual
+alt.est.disp
+
+anova(infections.glm, dispersion=alt.est.disp, test="Chisq")
+
+# Now the question about the variance weights, which are all constant and equal to:
+
+infections.glm
+unique(infections.glm$weights)
+
+# For the reason, see the solutions.
+
+# Q1 (e)
+
+# Model is still over-dispersed, but we could take that into account in the residuals
+# when we standardise them:
+
+std.residuals <- residuals(infections.glm)/sqrt(alt.est.disp * (1 - influence(infections.glm)$hat))
+
+plot(infections.glm$linear.predictors, std.residuals, xlab="Linear Predictors", ylab="Studentised Deviance Residuals")
+abline(0,0,lty=2)
+title("Ear Infections in Swimmers, Sydney 1990 \n Standardised Residuals vs Fitted Values", sub="glm(Infections ~ Location+Swimmer, family=poisson(sqrt))")
+identify(infections.glm$linear.predictors, std.residuals)
+
+qqnorm(std.residuals, sub="glm(Infections ~ Location+Swimmer, family=poisson(sqrt))")
+qqline(std.residuals, lty=2)
+abline(0,1)
+temp <- qqnorm(std.residuals, plot.it=F)
+identify(temp$x, temp$y)
+
+plot(infections.glm, which=4, sub="glm(Infections ~ Location+Swimmer, family=poisson(sqrt))")
+
+# The points identified on the above plots are all amongst the ones we identifed earlier as
+# having a large number of ear infections: 
+
+dataplusmodel <- data.frame(ear.infections, Fitted=fitted(infections.glm), "Std Residuals"=std.residuals, "Cooks D"=cooks.distance(infections.glm))
+dataplusmodel[Infections>5, ]
+
+# Note that the model is consistently under-estimating the observed number of infections,
+# not just in the ones shown above, but also most of the data:
+
+table(fitted(infections.glm) < 2)
+
+# As, it say on page 57 of the lecture notes: "For Poisson models, any residual associated
+# with a fitted value less than 2 will generally cause distortion in the plot, even when 
+# the Poisson model is perfectly adequate." But the fit of the Poisson model looks less
+# than adequate here. As often happens with Poisson count models fit to data with a small
+# mean, we have problems in both tails, with too many 0 counts and a long tail with very
+# high observed counts, so the mean is small, but the variance is much larger.
+
+# The appropriately adjusted Analysis of Deviance table is the one we produced earlier:
+
+anova(infections.glm, dispersion=alt.est.disp, test="Chisq")
+
+# Which is still over-dispersed (though the above chisq p-values have been adjusted):
+
+infections.glm$deviance
+infections.glm$df.residual
+c(qchisq(0.025, infections.glm$df.residual), qchisq(0.975, infections.glm$df.residual))
+
+# There is no easy way to adjust the summary output, but it is consistent with the 
+# Analysis of Deviance table, with positive coefficients suggesting that NonBeach 
+# swimmers report significantly more infections than Beach swimmers and that Occas 
+# swimmers report significantly more infections than Freq swimmers:
+
+summary(infections.glm)
+
+# And the results are similar to those shown on OzDASL for their reduced model:
+
+round(tapply(fitted(infections.glm), list(Location, Swimmer), mean), 2)
+
+# Q1 (f)
+
+# The combinations of Location and Swimmer are the important ones, and the fitted
+# values from the model are shown above. Here are the sample sizes, observed means
+# and ranges for each of the combinations:
+
+ssize <- tapply(Infections, list(Location, Swimmer), length)
+ssize
+obs.means <- tapply(Infections, list(Location, Swimmer), mean)
+obs.means
+mins <- tapply(Infections, list(Location, Swimmer), min)
+mins
+maxs <- tapply(Infections, list(Location, Swimmer), max)
+maxs
+
+# Set-up a list of these combinations to use to make predictions:
+
+newd <- data.frame(Location=rep(levels(Location), 2), Swimmer=c("Freq","Freq","Occas","Occas"))
+newd
+
+# To find the estimates and required intervals, again borrow some code, this time from the 
+# "Predictions using GLMs" example:
+
+add.ci <- function(object, fit.se, conf.level=0.95){
+  fit <- fit.se$fit
+  se.fit <- fit.se$se.fit
+  residual.scale <- fit.se$residual.scale
+  pi.se <- sqrt(residual.scale^2 + se.fit^2) 
+  tquantile <- qt(1 - (1 - conf.level)/2, object$df.residual)
+  ci.fit <- cbind(lower = fit - tquantile*se.fit, upper = fit + tquantile*se.fit)
+  pi.fit <- cbind(lower = fit - tquantile*pi.se, upper = fit + tquantile*pi.se)
+  list(fit = fit, se.fit = se.fit, residual.scale = residual.scale, ci.fit = ci.fit, pi.fit = pi.fit)
+}
+
+temp <- predict(infections.glm, newdata=newd, type="link",se.fit=T)
+temp
+
+temp2 <- add.ci(infections.glm, temp)
+temp2
+
+# The lower ends of the prediction intervals have all gone negative, which is not possible:
+
+temp2$pi.fit[,"lower"] <- c(0,0,0,0)
+temp2
+
+# We need to back-transform (i.e. square these predictions and ends of the intervals):
+
+data.frame(newd,Sample=as.vector(ssize),Obs.Mean=as.vector(obs.means),Min=as.vector(mins),Max=as.vector(maxs),Estimate=temp2$fit^2,CI=temp2$ci.fit^2,PI=temp2$pi.fit^2)
+
+
+# Question 2 
+
+# First read in and check the individual data:
+
+passengers <- read.csv("titanic_combined2017.csv")
+passengers
+names(passengers)
+
+# Kaggle_Set tells you which Kaggle data set the observation comes from, the 
+# variables from Kaggle_Id to Embarked are as they appear on Kaggle and the
+# variables ID_No to Boarded were added in by me (Ian). A few of the names
+# have been changed to avoid confusion (or is that to create more confusion?)
+
+# Q2 (a)
+
+table(passengers$Pclass, passengers$Class)
+
+passengers[passengers$Pclass==2&passengers$Class=="1st Class",]
+ 
+# Read the biography of Mr Alfred Nourney (alias "Baron von Drachstedt") on the
+# Encyclopedia Titanica and you find he was indeed a first class passenger as he 
+# requested and paid for an upgrade, so the version in my variable Class is more
+# correct than the Kaggle version, Pclass. Class is also coded as a factor, which 
+# is a better way to treat this variable (at least, that is what I argue in the
+# analyses in the previous assignments).
+
+# Q2 (b)
+
+# The "passengers" data contains both the training and test data from Kaggle:
+
+table(passengers$Kaggle_Set)
+sum(table(passengers$Kaggle_Set))
+
+# Remember these numbers, they will be important!
+
+# Separate out and attach the training data:
+
+train <- passengers[passengers$Kaggle_Set=="train",]
+attach(train)
+
+# Fitting the most promising model from Q2(e) of Assignment 2 for 2016 
+# (remembering to change some variable names):
+
+train.glm1 <- glm(Survived ~ Age + Sex + Class + Age:Sex + Sex:Class + Age:Class + Nat_Group, family = binomial)
+
+# Note that I have used Class instead of Pclass (as argued in part (a) above),
+# and I have also preferred my version of Age over Kaggle_Age - the two are 
+# in broad agreement, but there are numerous discrepancies (mainly minor,
+# a few major ones), but there are lots of missing values in Kaggle_Age:
+
+table(Age, Kaggle_Age)
+cor.test(Age, Kaggle_Age)
+sum(table(Kaggle_Age))
+sum(table(Age))
+
+# I have used Kaggle's version of Sex, as mine wasn't included in the data.
+# Surprisingly the two versions did agree and there are no missing values
+# of Sex in the Kaggle data:
+
+table(Sex)
+sum(table(Sex))
+
+table(passengers$Sex)
+sum(table(passengers$Sex))
+
+# Here's some summary output for this intial model:
+
+anova(train.glm1, test="Chisq")
+
+summary(train.glm1)
+levels(Nat_Group)
+
+# Most of the above model was justified and well-founded, when fit to the overall 
+# aggregate data in the assignments from earlier years, which is a good argument
+# for accepting the fit to a subset of the individual binary response data.
+# However, Nat_Group wasn't a key part of the aggregate binomial analysis and
+# there has been a change in the category that appears to be significant - it 
+# is now the Other group rather than the OES group - I strongly suspect this 
+# to be a sampling artefact (i.e. something that differs depending on which
+# subset of the data we fit the model to, not a genuine effect with some 
+# wider validity). For this reason (lack of clear interpretability and to
+# keep the rest of this exercise a bit simpler), I am going to exclude Nat_Group  
+# from further models. The other variables in my version of the data 
+# (Home_Country, English and ESC) have already been considered (and ruled out)
+# in Q2(e) of Assignment 2.
+
+# Now to experiment with the additional variables in the Kaggle data.
+# The most promising of these in terms of predicting survival is Cabin, as the
+# disaster occurred in the early hours of the morning and having a Cabin close
+# to the boat deck would probably have been an advantage (the boat deck was 
+# located just above deck A - see the article on Wikipedia or the boat plans
+#  on the Encyclopedia Titanica). However, it would take a lot of work to get
+# Cabin ready for a suitable analysis (good luck to anyone who tried) and a 
+# lot of the values of Cabin are missing:
+
+unique(Cabin)
+table(Cabin=="")
+
+# Similar comments go for the information in Name (really just a "nominal" 
+# identifier), Ticket and Embarked (which has numerous discrepancies with
+# my version Boarded, which need to be resolved):
+
+table(Embarked, Boarded)
+
+# Fare, which is coded as a possible continuous covariate, is a little more
+# promising, until you realise that many of the larger fares were paid as
+# a group fare and each member of the group is recorded as paying that same
+# fare; and that some passengers had very nice cabins, but paid 0 for their
+# fare (such as Mr Bruce Ismay, President of the White Star Line, the "owner"
+# of the ship and members of the Guarantee group, the "builders" of the ship). 
+# Fare would also take a lot of work to get ready for analysis, and the 
+# information that is in this variable is not surprisingly related to Class
+# (1st class fares tended to cost more than 2nd or 3rd Class fares) and
+# Class is already included in the model:
+
+passengers[passengers$Fare==0,]
+passengers[is.na(passengers$Fare),]
+
+table(Fare, Class)
+cor.test(Fare, Pclass)
+
+train.glm2 <- glm(Survived ~ Age + Sex + Class + Age:Sex + Sex:Class + Age:Class + Fare, family = binomial)
+
+anova(train.glm2, test="Chisq")
+
+summary(train.glm2)
+
+# This just leaves SibSp and ParCh, which are both indicators of the size of 
+# the family group that each passenger was travelling with:
+
+table(SibSp)
+sum(table(SibSp))
+table(ParCh)
+sum(table(ParCh))
+
+# It is easy to believe that family membership had an effect on survival for
+# certain individuals. For example, consider the case of the only child in 
+# first class who did not survive the disaster (who also often turned up
+# as an outlier in the earlier aggregate models):
+
+passengers[passengers$Class=="1st Class" & passengers$Group=="Children",]
+
+# Examine the biographies of the Allison family on the Encyclopedia Titanica!
+
+train.glm3 <- glm(Survived ~ Age + Sex + Class + Age:Sex + Sex:Class + Age:Class + SibSp + ParCh, family = binomial)
+
+anova(train.glm3, test="Chisq")
+
+summary(train.glm3)
+
+# SibSp is surprisingly significant, given that it is hard to understand how
+# exactly the size of each family group might affect survival, though the
+# negative coefficient suggests the larger the group the worse the survival.
+# Note the effects on other terms in the model, which are now showing mixed
+# signals on whether or not they are significant (different conclusions 
+# depending on whether you consider the Analysis of Deviance table or
+# the table of Coefficients).
+
+# This is fairly close to the model I would expect most students to use to 
+# answer Q2(b), though there is scope for further refinement.
+
+# If you drill down a bit into the Kaggle discussion of the Titanic data, you
+# will find the suggestion to add SibSp and ParCh, to get an overall family size 
+# (just in case I need these derived variables later, I will add them to both
+# the training and overall data sets):
+
+passengers$Family_Size <- passengers$SibSp + passengers$ParCh + 1
+# The 1 is added to include each passenger in the group along with their 
+# siblings, spouse, parents and children.
+names(passengers)
+
+# Also need to recreate and reattach the training set:
+train <- passengers[passengers$Kaggle_Set=="train",]
+attach(train)
+ls(pos=2)
+
+table(Family_Size)
+sum(table(Family_Size))
+
+train.glm4 <- glm(Survived ~ Age + Sex + Class + Age:Sex + Sex:Class + Age:Class + Family_Size, family = binomial)
+
+anova(train.glm4, test="Chisq")
+
+summary(train.glm4)
+
+# To allow different effects for different size groups, we could try fitting
+# family size as a categorical factor rather than a continuous covariate:
+
+train.glm5 <- glm(Survived ~ Age + Sex + Class + Age:Sex + Sex:Class + Age:Class + factor(Family_Size), family = binomial)
+
+anova(train.glm5, test="Chisq")
+
+summary(train.glm5)
+
+round(summary(train.glm5)$coef, 4)
+
+# The effects of family size are not linear and the Age:Class interaction
+# variable is now definitely not significant. Bigger families do appear to
+# have had worse survival, possibly as it was harder to accommodate them in 
+# the lifeboats if they refused to be separated (like the Allison family).
+# The coefficients for the really big families are large, but not significant, 
+# due to the small sample sizes and large standard errors involved. We could
+# collapse some of the categories in family size to increase the sample size
+# in each category:
+
+passengers$Family <- rep("Small", length(passengers$Family_Size))
+passengers$Family[passengers$Family_Size>4] <- "Large"
+passengers$Family[passengers$Family_Size==2] <- "Couple"
+passengers$Family[passengers$Family_Size==1] <- "Alone"
+
+table(passengers$Family)
+sum(table(passengers$Family))
+names(passengers)
+
+# Again need to recreate and reattach the training set:
+train <- passengers[passengers$Kaggle_Set=="train",]
+attach(train)
+ls(pos=2)
+
+train.glm6 <- glm(Survived ~ Age + Sex + Class + Age:Sex + Sex:Class + Age:Class + Family, family = binomial)
+
+anova(train.glm6, test="Chisq")
+
+summary(train.glm6)
+
+# Survival was definitely worse for large family groups, and the changing 
+# significance of the Age:Class interaction term with the inclusion of 
+# Family in the model suggests other possible interactions:
+
+table(passengers$Family, passengers$Class)
+
+# 69 out of the 82 large families (84%) were in 3rd Class (which could 
+# explain a lot about their worse survival). We could try including
+# more interactions involving Family interaction in the model, but this
+# is already a fairly complex model and like Nat_Group, I think we need 
+# to have clear interpretations as well as significance, before we include
+# more complex terms in the model. I will remove the now non signifcant 
+# Age:Class interaction term and reintroduce the Nat_Group term to check
+# that it was just an artefact in the context of this new model.
+
+train.glm7 <- glm(Survived ~ Age + Sex + Class + Family + Age:Sex + Sex:Class + Nat_Group, family = binomial)
+
+anova(train.glm7, test="Chisq")
+
+summary(train.glm7)
+
+# In the Analysis of Deviance table, every term is highly significant,
+# except the main effect for Age (which should still be included as Age:Sex
+# is a highly significant second order interaction) and the term Nat_Group.
+# The coefficient for Nat_Group = Other is marginally significant, but 
+# I think a model excluding Nat_Group will do for answering the rest of the 
+# question and a series of 8 models is more than enough for this Assignment: 
+
+train.glm8 <- glm(Survived ~ Age + Sex + Class + Family + Age:Sex + Sex:Class, family = binomial)
+
+anova(train.glm8, test="Chisq")
+
+summary(train.glm8)
+
+# As a final comment, the Family variable created here is a proxy for the 
+# size of each family. I suspect that if there is any real family effect, it
+# is due being a member of a particular family group. With a lot of work,
+# we could use the additional information in Ticket, Cabin and even Name, to 
+# create an indicator for which family group (if any) each passenger belonged
+# to and use this as a random effect in a multi-level mixed model.
+
+# Q2 (c)
+
+# My "chosen" model is obviously train.glm8. The rationale for choosing this
+# model is presented above, but here are the summary output (again) and 
+# the (default) residual plots:
+
+summary(train.glm8)
+
+# I asked for the summary output in this part of the question, to enusre that
+# we could see the details of your model, not because I am seriously going to
+# interpret it here. I will leave that for Q2(d).
+
+par(mfrow=c(2,2))
+plot(train.glm8, which=c(1,2,4,5))
+par(mfrow=c(1,1))
+
+# There is little point in standardising the residuals, as my main point in
+# getting you to produce these plots is to point out that many of the usual
+# tools for assessing the fit of a model are not particularly useful with
+# binary response models.
+
+# The main residual plot is two curves (corresponding to the values of the
+# response variable, one curve for Survived = 1 and one for Survived = 0) 
+# and is not useful for assessing the underlying assumptions of independence
+# and constant dispersion (or variance). Passengers who survived are in the 
+# upper curve of positive residuals and those who didn't survive are in 
+# the lower curve of negative residuals:
+
+range(residuals(train.glm8)[(train$Survived == 1)])
+range(residuals(train.glm8)[(train$Survived == 0)])
+
+# Similarly, there is a question mark over whether the usual binomial 
+# asymptotic assumptions are satisfied for binary response models and 
+# whilst the Normal Q_Q plot looks reassuringly normal, there are no
+# guarantees, even with a large sample size. 
+
+# We could identify the three most extreme points on the Cook's Distance plot:
+
+train[c(298, 499, 178),]
+
+# And find that they are unusual in being female (or a female child) in 1st
+# class, but not surviving the disaster. The only other two passengers that
+# fit this description are in the test data:
+
+passengers[passengers$Survived==0 & passengers$Class=="1st Class" & passengers$Sex=="female",]
+
+# I think that the best argument for the fit of this model, apart from the
+# significant drop-in-deviance tests in the Analysis of Deviance table, see
+# Q2(d) below, is that in the earlier assignments, when we fit similar models
+# to the aggregate data, they proved a reasonable fit (in situations where
+# we could rely on the residual plots and usual diagnostic tools). We could
+# try for a better main residual plot by doing some "post hoc" aggregation:
+
+library(arm)
+help(binnedplot)
+
+binnedplot(train.glm8$linear.predictors, residuals(train.glm8), nclass=29, xlab="Linear Predictors", ylab="Average Deviance Residuals", main="Passengers on the RMS Titanic, 1912 \n Binned Residuals vs Fitted Values")
+abline(0,0,lty=2)
+title(sub="glm(Survived ~ Age + Sex + Class + Family + Age:Sex + Sex:Class, family = binomial)")
+
+# If you read the help file for a binned plot: "the gray lines indicate plus
+# and minus 2 standard-error bounds, within which one would expect about 95%
+# of the binned residuals to fall, if the model were actually true".
+
+# Note that we could smooth out a little more of the volatility in the grey 
+# lines by reducing the number of bins, using the parameter nclass, the default
+# for which is:
+
+floor(sqrt(length(train.glm8$linear.predictors)))
+
+# The main region of lack of fit is in the lower left hand corner of the plot,
+# with linear predictor values between -1 and -2 (which means they are
+# predicted by the model to have not survived) and with large negative 
+# deviance residuals (which means they also did not actually survive).
+
+# These are not the group of "outliers" identified earlier, who were all
+# predicted to survive but didn't (and would be included in the averaged bins
+# somewhere towards the right of the plot):
+
+train[c(298, 499, 178),]
+train.glm8$linear.predictors[c(298, 499, 178)]
+residuals(train.glm8)[c(298, 499, 178)]
+
+# The ones we are looking for have linear predictors in the range (-2, -1)
+# Most of the observations in this range have negative deviance residuals:
+
+residuals(train.glm8)[train.glm8$linear.predictors > -2 & train.glm8$linear.predictors < -1]
+range(residuals(train.glm8)[train.glm8$linear.predictors > -2 & train.glm8$linear.predictors < -1])
+mean(residuals(train.glm8)[train.glm8$linear.predictors > -2 & train.glm8$linear.predictors < -1])
+
+# But none of them have particularly large negative residuals, so the 
+# low negative averages must be a result of not enough positive residuals
+# (people who actually survived within the bin range) to raise the averages.
+# This is more a problem with the post hoc aggregation process used, than
+# it is really indicating a problem with particular observations.
+
+# Q2 (d)
+
+# Here is the Analysis of Deviance table for the chosen model:
+
+anova(train.glm8, test="Chisq")
+
+# The drop-in-deviance tests are all highly significant (except for the
+# main effect term for Age, but Age is also involved in a significant two-way
+# interaction terms). The results are also consistent with the table of
+# coefficients presented in Q2(c), where there were significant differences
+# in at least one of the levels for each of the significant terms.
+
+# Whilst we can trust the drop-in-deviance tests, where the associated
+# degrees of freedom are the df required to fit each additional term, we
+# cannot trust the goodness of fit test which uses the residual deviance
+# and the residual degrees of freedom in the context of a binary response
+# model - the usual asymptotic arguments for binomial models do not apply
+# and we do not have a good handle on the true (residual) degrees of freedom
+# available to estimate the actual dispersion.
+
+# As mentioned above, I think the best argument for the fit of this model
+# is the fact that very similar models fitted to the aggregated data (where
+# we could trust the residual plots and the goodness of fit test) were a 
+# reasonable fit.  I do not believe the GLMs for these data have gone from
+# being over-dispersed when fit to aggregate data to being genuinely
+# under-dispersed when fit to individual level data.
+
+# Overall, this argument, the highly significant drop-in-deviance tests and
+# the reasonable binned residual plot in Q1(c) suggest that the overall fit 
+# of this model is reasonable, making the model okay to use as an exploratory
+# model for investigating factors that lead to passenger survival on the
+# Titanic.
+
+# Q2 (e)
+
+# As the link function which has been applied is the logit function, to 
+# transform linear predictors (which are on the link scale) back to the
+# original scale of the response variable, Survived, which was 0/1 binary
+# variable, we have to apply the invlogit function. Normally, we might
+# have to create our own invlogit funtion, but there is one included in 
+# arm library, which we attached earlier in Q2(c):
+
+invlogit
+help(invlogit)
+
+# The fitted values (which are already back-transformed) range from 0
+# to 1 and can be interpreted for each observation as the probability
+# (estimated from the model) that the passenger is in the Survived = 1
+# category. If we round the fitted values, either down to 0 or up to 1,
+# then we have the values of Survived, as predicted by the model:
+
+table(round(fitted(train.glm8),0))
+sum(table(round(fitted(train.glm8),0)))
+
+# We can cross-tabulate these against the actual values of Survived
+# and then store the results:
+
+table(round(fitted(train.glm8),0), Survived)
+
+train.results <- as.vector(table(round(fitted(train.glm8),0), Survived))
+train.results
+sum(train.results)
+
+# So, the sensitivity (proportion of passengers correctly predicted as 
+# having Survived) is:
+
+train.sensitivity <- train.results[4]/(train.results[3] + train.results[4])
+train.sensitivity
+
+# The specificity (proportion of passengers correctly predicted as having
+# NOT Survived) is:
+
+train.specificity <- train.results[1]/(train.results[1] + train.results[2])
+train.specificity
+
+# And overall accuracy is:
+
+train.accuracy <- (train.results[1] + train.results[4])/sum(train.results)
+train.accuracy
+
+# Q2 (f):
+
+test.predicted <- predict(train.glm8, newdata=passengers[passengers$Kaggle_Set=="test",], type="response")
+test.Survived <- passengers[passengers$Kaggle_Set=="test",]$Survived
+
+table(round(test.predicted,0), test.Survived)
+
+test.results <- as.vector(table(round(test.predicted,0), test.Survived))
+test.results
+sum(test.results)
+
+test.sensitivity <- test.results[4]/(test.results[3] + test.results[4])
+test.sensitivity
+train.sensitivity
+
+test.specificity <- test.results[1]/(test.results[1] + test.results[2])
+test.specificity
+train.specificity
+
+test.accuracy <- (test.results[1] + test.results[4])/sum(test.results)
+test.accuracy
+train.accuracy
+
+# For some discussion of these results, see the solutions.
+

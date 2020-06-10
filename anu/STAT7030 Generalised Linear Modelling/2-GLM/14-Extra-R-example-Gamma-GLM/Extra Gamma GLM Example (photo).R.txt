@@ -1,0 +1,276 @@
+# For an additional example of a gamma GLM, I have chosen an example from one of the applications texts, which is
+# included in the list of recommended references available on Wattle:
+# Myers RH, Montgomery DC and Vining GG (2002) "Generalized linear models: with applications in engineering and the sciences"
+# New York: Wiley
+
+# This referenced edition is the one I have in my bookshelf, a copy of which is available in the Hancock library, though 
+# the text has since gone to a second edition (in 2010), which is also available in the Hancock library.
+
+# The original data is from Chapman, RE (1997-98) "De-gredation Study of a Photgraphic Developer to Determine Shelf Life",
+# Quality Engineering, 10, pp 137-140.
+
+# Exercise 5.14 of the Myers et al text:
+
+# Chapman (1997-98) conducted an experiment using accelerated life testing to determine the estimated shelf life of a 
+# photgraphic developer. The data follow (table of life times in hours and storage temperatures in degrees celsius). 
+# Life times often follow an exponential distribution. The company has found that the maximum density is a good indicator
+# of overall developer/film performance; correspondingly using generalized linear models. Perform appropriate residual
+# analysis of your final model.
+
+# First read in and attach the data:
+
+photo <- read.table("Photo.txt", header=T)
+photo
+attach(photo)
+
+# The response variable is the maximum density of the photographic developer (a good indicator of how well the chemical is 
+# maintaining effectiveness whilst in storage) and the explanatory variables are the shelf lifetime (how long it has been in
+# storage) and the temp-erature at which it has been stored. This is a designed experiment, with the developer stored at a 
+# series of fixed pre-determined high temperatures, which were designed to acclerate the ageing of the developer (i.e. 
+# reduce the maximum density in a set of relatively short fixed shelf lifetimes). A little exploratory data analysis reveals
+# something about the relationship between the three variables:
+
+plot(lifetime, density, type="n", xlab="life time in hours (temperature 7=72C, 8=82C, 9=92C)", ylab="maximum density")
+points(lifetime[temp==72], density[temp==72], pch="7")
+points(lifetime[temp==82], density[temp==82], pch="8")
+points(lifetime[temp==92], density[temp==92], pch="9")
+title("Density of a photographic developer by lifetime and temperature")
+
+# There is definite curvature in the relationship between lifetime and density, which might be solved by a log transformation 
+# applied to the response variable:
+
+plot(lifetime, log(density), type="n", xlab="life time in hours (temperature 7=72C, 8=82C, 9=92C)", ylab="ln(maximum density)")
+points(lifetime[temp==72], log(density[temp==72]), pch="7")
+points(lifetime[temp==82], log(density[temp==82]), pch="8")
+points(lifetime[temp==92], log(density[temp==92]), pch="9")
+title("Density of a photographic developer by lifetime and temperature")
+
+# Now this has a continuous response variable and could possibly be modelled using an ordinary (normally distributed) linear
+# model - possibly a separate lines ANCOVA model, which allows for different slopes and different intercepts for the three
+# temperatures. This approach treats temp as a three level factor variable and lifetime as a continuous covariate.
+
+# Alternatively we could treat temp as a continuous covariate, which fits everything with a single slope coefficient.
+# Fitting a single linear slope coefficent for the three levels of temp assumes a linear relationship between the levels,
+# i.e. that the difference between 72C and 82C is the same as the difference between 82C and 92C. 
+# But the the relationship between density and temperature may not be linear and it may be better to treat temp as a factor
+# variable (the three distinct levels of temp were deliberately chosen, possibly on the basis on previous experimentation).
+
+# In choosing contrasts to use for temp, where there is no obvious reference group, we could apply sum contrasts or,
+# if the research question (which is not really clearly specified), is really about the differences between the three
+# temperatures, then we could use treatment contrasts and arbitrarily choose one of the three as the reference group.
+# A good choice when dealing with three levels is often the middle level:
+
+temp72 <- ifelse(temp==72,1,0)
+temp92 <- ifelse(temp==92,1,0)
+temps <- cbind(temp72, temp92)
+
+photo.lm <- lm(density ~ lifetime * temps)
+plot(photo.lm)
+
+photo.loglm <- lm(log(density) ~ lifetime * temps)
+plot(photo.loglm)
+
+# There is definitely signs of both non linearity and non constant variance, which we could address using further 
+# variance-stabilising transformations (I'll leave you to experiment with those as an exercise) or we could use 
+# weighted least squares; or we could try a gamma generalised linear model which will automatically include some 
+# variance weighting.
+
+photo.glm <- glm(density ~ lifetime * temps, family = Gamma)
+plot(photo.glm)
+
+# The default link transformation with a gamma family GLM is the inverse, a very "strong" transformation and the results
+# appear almost as poor as the ordinary lm!
+
+# The log transformation we applied to density in the earlier lm appeared to effectively linearise the relationship between
+# lifetime and density, so the log() function might be a better choice of link function in this instance:
+
+photo.logglm <- glm(density ~ lifetime * temps, family = Gamma(link=log))
+plot(photo.logglm)
+
+# This appears a little much better, however, we do need to check a few things. First, there is the issue of the scale on the 
+# deviance residual plot, where the deviance residuals are obviously not standardised (at least not in the expected fashion).
+# As discussed on page 64 of the brick, the variance of the deviance residuals is disp * (1 - hatii), where disp is the
+# estimated dispersion for the model and hatii is the leverage or hat value (diagonal element of the hat matrix) for the
+# observation in question. With binomial and Poisson GLMs where the estimated dispersion is 1, then the deviance residuals 
+# are approximately standardised, so long as none of the observations has distinctly large leverage. With a gamma GLM, the
+# estimated dispersion does not have to be 1, but is found using the coefficient of variation (CV) estimate, which is stored
+# as part of the summary of the model:
+
+names(photo.logglm)
+names(summary(photo.logglm)) 
+summary(photo.logglm)$dispersion 
+
+# For a gamma glm the estimated dispersion is equal to 1/alpha, where alpha is one of the parameters of the gamma distribution.
+# The exponential distribution is the special case of the gamma distribution where alpha = 1, so the gamma distribution fitted
+# by this model is definitely not the exponential, i.e. we are not seeing classic exponential decay!
+
+1/summary(photo.logglm)$dispersion
+
+# The hat values can be found by calculation: 
+
+Xmat <- cbind(1, lifetime, temp72, temp92, lifetime*temp72, lifetime*temp92)
+Wmat <- diag(photo.logglm$weights)
+Hii <- diag(sqrt(Wmat) %*% Xmat %*% summary(photo.logglm)$cov.unscaled %*% t(Xmat) %*% sqrt(Wmat))
+Hii
+
+# Or, in the more recent versions of R, we can simply use the appropiate influence measures function:
+
+hatvalues(photo.logglm)
+hatvalues(photo.logglm)-Hii
+
+barplot(hatvalues(photo.logglm), ylab="Leverage values") 
+
+# We have n=21 observations and p=6 parameters in the model and there are no leverage values greater than:
+(2 * 6)/21 
+max(Hii)
+
+# So, there are no points with particularly large leverage and we can standardise the residual plot as follows:
+
+std.devres <- residuals(photo.logglm, "deviance")/sqrt(summary(photo.logglm)$dispersion*(1 - Hii))
+std.devres
+
+plot(fitted(photo.logglm), std.devres, type="n", xlab="fitted values (temperature 7=72C, 8=82C, 9=92C)", ylab="standardised deviance residuals")
+title("Plot of standardised deviance residuals against fitted values")
+abline(0,0)
+points(fitted(photo.logglm)[temp==72], std.devres[temp==72], pch="7")
+points(fitted(photo.logglm)[temp==82], std.devres[temp==82], pch="8")
+points(fitted(photo.logglm)[temp==92], std.devres[temp==92], pch="9")
+
+# Alternatively, we could plot the standardised residuals against the linear predictors (the fitted values on the link
+# transformed scale):
+
+plot(photo.logglm$linear.predictors, std.devres, type="n", xlab="linear predictors (temperature 7=72C, 8=82C, 9=92C)", ylab="standardised deviance residuals")
+title("Plot of standardised deviance residuals against linear predictors")
+abline(0,0)
+points(photo.logglm$linear.predictors[temp==72], std.devres[temp==72], pch="7")
+points(photo.logglm$linear.predictors[temp==82], std.devres[temp==82], pch="8")
+points(photo.logglm$linear.predictors[temp==92], std.devres[temp==92], pch="9")
+
+# We can also check the Cooks' distances for each of the observations:
+
+plot(photo.loglm, which=4)
+photo
+
+# There are some indications that the model is not a great fit to all three groups, with some of the observations in the 92C
+# temperature group having relatively large values for Cook's D. One of these is also the only observation (#20) to have a 
+# standardised residual value greater than +/- 2 standard deviations, but it is only just greater than 2:
+
+std.devres[abs(std.devres)>2]
+
+# We could also check for over-dispersion. The alternative way of estimating dispersion involves dividing the residual
+# deviance by the residual df:
+
+photo.logglm$deviance/photo.logglm$df.residual
+
+# This compares very well with CV estimate
+
+summary(photo.logglm)$dispersion
+
+# And also indicates that alpha is not 1 (i.e. we are not dealing with simple exponential decay)
+
+1/summary(photo.logglm)$dispersion
+photo.logglm$df.residual/photo.logglm$deviance
+
+# To formally check for over-dispersion, we need to first scale the residual deviance by dividing by the CV estimate of
+# dispersion (the assumed version used by R when fitting the model):
+
+photo.logglm$deviance/summary(photo.logglm)$dispersion
+
+# This should have a chisq distrbution with the residual df
+
+photo.logglm$df.residual
+c(qchisq(0.025, photo.logglm$df.residual), qchisq(0.975, photo.logglm$df.residual))
+
+# And so, we do not have over-dispersion and this model really does appear to be an appropriate one for these data.
+
+# Now, we can have a closer look at the summary output for the model:
+
+anova(photo.logglm)
+
+# To assess the changes in deviance, we first need to scale them by dividing by the CV estimate of the dispersion:
+
+names(anova(photo.logglm))
+anova(photo.logglm)$Deviance
+anova(photo.logglm)$Df
+anova(photo.logglm)$Deviance/summary(photo.logglm)$dispersion
+qchisq(0.95, c(1,2,2))
+
+# And we can even calculate p-values:
+1 - pchisq(anova(photo.logglm)$Deviance/summary(photo.logglm)$dispersion, anova(photo.logglm)$Df)
+
+# Note that the anova() function can do this scaling for us:
+
+anova(photo.logglm, dispersion=summary(photo.logglm)$dispersion, test="Chisq")
+
+# This is an experimental design model and I suspect this is fairly close to being the design model (i.e. the one that the
+# researchers had in mind when they designed the experiment), so even if there were some non significant terms, I would not
+# refine them out of the model.
+
+# Finally, we can also examine the individual coefficents from the model:
+
+summary(photo.logglm)$coef
+c(qt(0.025, photo.logglm$df.residual), qt(0.975, photo.logglm$df.residual))
+
+# There is some indication that different intercepts are not required (which is not overly surprising when you think about
+# the experiment), but we definitely need different slopes - again this is not by itself a good justification for making
+# further refinements to this experimental design model, eg. adopting a "common intercept" model, we would first need to 
+# check with the researchers what sort of model they did have in mind as the design model.
+
+# So, we might even use this model to make some predictions for expected density at each of the three temperatures
+# (say for a life time of 100 hours):
+
+new <- predict(photo.logglm, newdata=list(lifetime=c(100,100,100), temps=cbind(temp72=c(1,0,0), temp92=c(0,0,1))), type="link", se.fit=T)
+new
+
+# Borrowing some code from the earlier "Predictions using GLMs" example, we can also add confidence intervals:
+
+add.ci <- function(object, fit.se, conf.level=0.95){
+  fit <- fit.se$fit
+  se.fit <- fit.se$se.fit
+  residual.scale <- fit.se$residual.scale
+  pi.se <- sqrt(residual.scale^2 + se.fit^2) 
+  tquantile <- qt(1 - (1 - conf.level)/2, object$df.residual)
+  ci.fit <- cbind(lower = fit - tquantile*se.fit, upper = fit + tquantile*se.fit)
+  pi.fit <- cbind(lower = fit - tquantile*pi.se, upper = fit + tquantile*pi.se)
+  list(fit = fit, se.fit = se.fit, residual.scale = residual.scale, ci.fit = ci.fit, pi.fit = pi.fit)
+}
+
+new2 <- add.ci(photo.logglm, new)
+new2 
+
+# To help the researchers interpret the results, we could produce a good plot of the model on the original scale:
+
+plot(lifetime, density, type="n", xlab="life time in hours (temperature 7=72C, 8=82C, 9=92C)", ylab="maximum density")
+points(lifetime[temp==72], density[temp==72], pch="7")
+points(lifetime[temp==82], density[temp==82], pch="8")
+points(lifetime[temp==92], density[temp==92], pch="9")
+lines(lifetime[temp==72], fitted(photo.logglm)[temp==72])
+lines(lifetime[temp==82], fitted(photo.logglm)[temp==82])
+lines(lifetime[temp==92], fitted(photo.logglm)[temp==92])
+title("Density of a photographic developer by lifetime and temperature")
+
+# Note that this approach  to producing the graph only works in this instance, as there are enough fitted values to give 
+# the appearance of a curve and the data and therefore the fitted values were already sorted in life time order. In general,
+# to draw this sort of graph we would need to produce a whole new set of predicted values using the model.
+
+# Our back-transformed predictions for a life time of 100 hours were:
+
+exp(new2$fit)
+
+exp(new2$ci.fit)
+
+# Or on the log-transformed scale, where it is obvious that we do indeed have a linear model:
+
+plot(c(0,max(lifetime)), c(min(log(density)),coef(photo.logglm)[1] + coef(photo.logglm)[4]), type="n", xlab="life time in hours (temperature 7=72C, 8=82C, 9=92C)", ylab="ln(maximum density)")
+points(lifetime[temp==72], log(density)[temp==72], pch="7")
+points(lifetime[temp==82], log(density)[temp==82], pch="8")
+points(lifetime[temp==92], log(density)[temp==92], pch="9")
+abline(coef(photo.logglm)[1] + coef(photo.logglm)[3], coef(photo.logglm)[2] + coef(photo.logglm)[5])
+abline(coef(photo.logglm)[1], coef(photo.logglm)[2])
+abline(coef(photo.logglm)[1] + coef(photo.logglm)[4], coef(photo.logglm)[2] + coef(photo.logglm)[6])
+title("Density of a photographic developer by lifetime and temperature")
+
+# Again, we can compare with our predictions for a life time of 100 hours:
+
+new2
+

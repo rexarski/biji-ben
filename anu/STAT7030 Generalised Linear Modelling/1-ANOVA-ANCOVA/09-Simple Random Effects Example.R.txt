@@ -1,0 +1,71 @@
+# This is the worker example referred to in Bronwyn Loong's slides:
+
+# Set-up the libraries needed for fitting mixed effect models:
+
+library(lme4)
+library(arm)
+
+# Enter the data:
+
+y1<-c(30,32,28,33,35,29)
+y2<-c(27,40,43,34,32,42)
+y3<-c(24,22,31,30,27,26)
+y4<-c(42,34,37,35,33,40)
+y5<-c(33,29,40,30,34,37)
+y<-c(y1,y2,y3,y4,y5)
+worker<-as.factor(rep(1:5,each=6))
+I<-5
+n<-6
+N<-I*n
+
+y
+worker
+
+# Now estimate the overall mean (using an intercept only model):
+
+mean(y)
+
+nullmod<-lm(y~1)
+plot(nullmod)
+
+anova(nullmod)
+    summary(nullmod)
+
+# Now to account for differences between workers. First using a fixed effects model:
+
+lmod <- aov(y~worker, contrasts=list(worker=contr.sum))
+plot(lmod)
+
+summary(lmod)
+summary.lm(lmod)
+
+# Now the random effects model:
+
+mmod<-lmer(y~(1|worker))
+summary(mmod)
+
+# Note we can derive the worker effect in the second model from the first model:
+
+(104.95-17.81)/n
+
+# This was a balanced design, so it is not surprising that the fixed and random effects models
+# give similar results. What about in an unbalanced model?  Use the likelihood ratio test
+# (more on this later in the course):
+
+as.numeric(2*(logLik(mmod)-logLik(nullmod)))
+
+pchisq(9.678228,1,lower=FALSE)
+
+# Note even with a balanced design, there are some differences between treating 
+# worker as a random rather than a fixed effect
+
+ranef(mmod) # random effect
+fixef(mmod) # fixed effect
+se.fixef(mmod) # standard error of fixed effect
+se.ranef(mmod) # standard error of randomf effect
+
+# Compare with the fixed effects model:
+
+summary.lm(lmod)
+
+# Note: fixed and random don't make too much difference, both account of(for) the variability.

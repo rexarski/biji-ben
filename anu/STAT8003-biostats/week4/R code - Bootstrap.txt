@@ -1,0 +1,18 @@
+set.seed(123)
+x<-c(9,10,22,7,13,13,7)
+exp(mean(x)/10) # estimate
+
+#using Boostrap
+res<-rep(0,1000) #B=1000
+for(i in 1:1000) {
+xsamp<-sample(x,length(x),replace=TRUE)
+res[i]<-exp(mean(xsamp)/10)
+}
+#bootstrap estimate of standard error
+sqrt(var(res)) # estimate of standard error
+
+#bootstrap 95% CI
+quantile(res,c(0.025,0.975))
+
+hist(res)
+	

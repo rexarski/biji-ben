@@ -1,0 +1,237 @@
+RESEARCH SCHOOL OF FINANCE, ACTUARIAL STUDIES AND APPLIED STATISTICS
+GRAPHICAL DATA ANALYSIS
+TUTORIAL 5 
+SAMPLE SOLUTION
+
+1. There are a number of ways to approach this problem so there is
+definitely no "right" answer.  However, a little inventiveness will
+take us quite far with this data set.
+
+We'll begin by taking a look at the pairs plot for this data:
+
+pairs(blood)
+pairs(blood,panel=function(x,y){points(x,y);
+abline(rlm(y~x))})
+
+There is a clear linear relationship between height and weight, and
+we would not envisage including both of them in any model for blood
+pressure. Here is where we could either delete one or other of the variables
+or investigate an approach which uses a new variable which combines
+information from the two variables. The purpose of including weight and
+height information is essentially to allow for an adjustment due to the
+size of the subjects.  We may therefore try to combine these two
+covariates into a single size or obesity measure.  Plotting height
+against weight, we see there is considerable variability and one
+particularly heavy, short subject.  One possible measure of size is
+weight/height which is large for short heavy subjects and small for
+tall light subjects.  If we adopt this measure, we have only three
+variables to consider.
+
+One thing to note is that we are not collapsing height and weight
+into a single variable just to fix up a multicollinearity problem. In
+fact, because the relationship between height and weight contains so much
+variability, the variables are not really collinear. We can check this as 
+follows:
+
+x <- blood[,2:4]
+w <- sweep(x,2,apply(x,2,mean))
+w <- w %*% diag(1/sqrt(diag(crossprod(w))))
+s <- prcomp(w)
+s$sdev[1]/s$sdev
+[1] 1.000000 1.279897 1.794092
+
+x <- blood[-39,2:4]
+w <- sweep(x,2,apply(x,2,mean))
+w <- w %*% diag(1/sqrt(diag(crossprod(w))))
+s <- prcomp(w)
+s$sdev[1]/s$sdev
+[1] 1.000000 1.325685 2.127791
+
+No evidence of multicollinearity at all. Nonetheless, it is clear from
+the original scatterplot matrix that height and weight probably contribute
+essentially the same information, and so we go ahead and collapse weight
+and height into a single size variable.
+
+bp <- blood[,1]
+lifefrac <- blood[,2]
+weight <- blood[,3]
+height <- blood[,4]
+size <- weight/height
+newblood <- cbind(bp,lifefrac,size)
+
+Now, we'll have a look at the pairs plot for the three new variables:
+  
+  pairs(newblood,panel=function(x,y){points(x,y);
+                                     abline(rlm(y~x))})
+
+The pairs plot shows that there is a reasonably strong relationship between
+blood pressure and size, and less of a relationship between blood pressure
+and life fraction.
+
+Because we are now down to three variables, we can try some methods
+specific to three variables:
+ 
+library(rgl) 
+plot3d(newblood,highlight=rep(T,length(blood[,1]))) 
+
+OR
+
+library(Rcmdr) 
+scatter3d(bp,lifefrac,size) 
+
+
+# You will need to load rggobi 
+library(rggobi) 
+ggobi(newblood)
+
+The brush and spin plots show the points mainly lying in a fairly muddy
+plane (there is quite a bit of variability about the plane). We might
+proceed to look at some coplots to get an idea of how the variables 
+are interacting:
+  
+coplot(bp~size|lifefrac)
+coplot(bp~lifefrac|size)
+
+The coplots are not terribly illuminating: the first one shows little 
+change in the relationship between blood pressure and size as life fraction 
+increases. In all cases, blood pressure increases at roughly the same
+rate with size. It may be that the relationships in each panel of the
+coplot are not identical, but it is hard to tell. The second coplot
+shows that, after size has been accounted for, blood pressure seems to 
+fall slowly as life fraction increases, although the effect seems to disappear
+for larger sizes. Again, with relatively few points per panel, the effect is 
+hard to see well. Overall, we gain the impression that blood pressure
+seems to be strongly related to size, but that blood pressure eases as
+life fraction increases, except for large sizes.
+
+It's probably worth looking at some perspective and contour plots:
+
+library(akima) 
+
+par(mfrow=c(1,2),oma=c(0,0,5,0))
+surf <- interp(newblood[,2],newblood[,3],newblood[,1])
+surf$z <- ifelse(is.na(surf$z),0,surf$z)
+persp(surf$z,xlab="Life Fraction",ylab="Size",zlab="BP")
+title("Perspective plot")
+contour(surf,main="Contour Plot",xlab="Life Fraction",ylab="Size")
+points(newblood[,2],newblood[,3])
+mtext("3-D Plots for Blood Data",side=3,outer=T,cex=1.5)
+par(mfrow=c(1,1),oma=c(0,0,0,0))
+
+These plots tell us little we didn't already know. Blood pressure
+might be reasonably modelled by a plane involving size and life
+fraction.
+
+If we plot systolic blood pressure against life fraction ignoring size,
+we see that any relationship ignoring size is weak. Plotting blood
+pressure against size ignoring life fraction, we see a strong linear
+relationship showing that blood pressure increases with size.  This is
+simpler than the previous plot so we use it as a base and explore how
+best to incorporate life fraction into the plot.  A first try with a
+segment to represent life fraction is quite successful.  For each size,
+the subjects with a larger life fraction tend to have lower blood
+pressure.  This can be confirmed by categorizing life fraction into
+large and small values.
+
+plot(lifefrac,bp)
+plot(size,bp)
+
+(Note the leverage point in this plot. Robust regression is
+ affected by leverage points!)
+
+median(lifefrac)
+[1] 0.3939394
+life <- lifefrac < median(lifefrac)
+par(mfrow=c(1,2))
+plot(size[life],bp[life],xlim=c(min(size),max(size)),ylim=c(min(bp),max(bp)),
+     xlab="Size",ylab="Blood Pressure",main="Small Life Fractions")
+plot(size[!life],bp[!life],xlim=c(min(size),max(size)),ylim=c(min(bp),max(bp)),
+     xlab="Size",ylab="Blood Pressure",main="Large Life Fractions")
+
+This method of plotting is not so effective - it is hard to see the
+differences. We will instead plot different symbols for small and large 
+life fraction values.
+
+par(mfrow=c(1,1))
+plot(size,bp,type="n")
+points(size[life],bp[life],pch=2)
+points(size[!life],bp[!life],pch=3)
+
+This plot is much better, and we can see the general decline in blood 
+pressure as life fraction increases. The main effect is size, however.
+We now understand our data fairly well after pursuing a totally graphical
+analysis. We could try modelling the data, and here a linear model involving
+life fraction and size might be an obvious way to go:
+  
+  x <- cbind(size,lifefrac)
+mod <- rlm(bp~cbind(size,lifefrac))
+mod$coef
+(Intercept)     size  lifefrac
+58.60217 1928.807 -22.58838
+
+s <- mad(mod$resid)
+eta <- sum(abs(mod$resid) <= 1.345*s)/39
+tau <- sum(ifelse(abs(mod$resid/s)<=1.345,mod$resid/s,1.345)^2)/(39-2-1)
+se <- s^2*tau*(eta+(3/39)*(1-eta))/(eta^3)
+v <- se*solve(crossprod(cbind(1,x)))
+tstats <- mod$coef/sqrt(diag(v))
+tstats
+(Intercept)     size  lifefrac
+3.429602 4.358907 -2.851989
+
+qt(0.975,36)
+[1] 2.028094
+
+Both variables seem significant, at least as far as t-stats are concerned.
+
+plot(cbind(1,x) %*% mod$coef,mod$resid,main="Huber Residual Plot for Blood
+     Data",xlab="Fitted Values",ylab="Huber Residuals",sub="Model includes
+     all variables on raw scale")
+identify(cbind(1,x) %*% mod$coef,mod$resid,c(1:39))
+
+plot(cbind(1,x) %*% mod$coef,abs(mod$resid),main="Absolute Huber Residual Plot
+     for Blood Data",xlab="Fitted Values",ylab="Absolute Huber Residuals",
+     sub="Model includes all variables on raw scale")
+lines(lowess(cbind(1,x) %*% mod$coef,abs(mod$resid)))
+
+qqnorm(mod$resid,main="Quantile-Quantile Plot of Huber Residuals for Blood
+       Data",xlab="Gaussian Quantiles",ylab="Huber Residuals",sub="Model includes
+       all variables on raw scale")
+
+The residuals don't look too bad, although they don't look as healthy
+as they might. 
+The residuals seem to suffer from variance that rises as fits increase
+(this is more apparent from the residual plot than from the absolute 
+ residual plot where the lowess fit seems to suffer badly from edge effects
+ from the leverage point). This is potentially a serious problem. The 
+Q-Q plot looks OK. The fanning of residuals is mainly due to observations
+1, 8 and 39. Observation 1 is an outlier in the analysis, and
+observation 39 is clearly a leverage point that we can probably disregard.
+Considering these facts, we might be satisfied with the residuals and
+let the above model be our final model:
+  
+ round(mod$coef,3)
+(Intercept)     size lifefrac
+58.602 1928.807  -22.588
+round(sqrt(diag(v)),3)
+[1]  17.087 442.498   7.920
+
+Blood Pressure = 58.6  +  1928.8 size  -  22.6 life fraction
+(17.1)    (442.5)        (7.9)
+
+This is the final model. There doesn't seem to be any good reason to transform
+the data, given our graphical analysis that suggested linear fits were
+reasonable. In any event, an avas analysis:
+
+library(acepack) 
+
+expl <- avas(x,bp)
+plot(bp,expl$ty)
+plot(size,expl$tx[,1])
+plot(lifefrac,expl$tx[,2])
+
+suggests that blood pressure and life fraction are reasonable on the original
+scale. Avas suggests a rather strange (and difficult to interpret!) 
+transformation for size, but my inclination is to go with the simpler to 
+interpret approach of leaving all variables on the original scale.
+

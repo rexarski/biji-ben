@@ -1,0 +1,204 @@
+# The following is an R analysis of the Cheese Tasting example described on page 80 of the brick.
+# It is a slightly modified version of the analysis shown on pages 80 to 88 of the brick!
+
+chs <- read.table("Cheese.txt",header=T,row.names=1)
+chs
+attach(chs)
+
+rtot <- apply(chs,1,sum)
+rtot
+ctot <- apply(chs,2,sum)
+ctot
+eij <- rtot%*%t(ctot)/sum(rtot)
+row.names(eij) <- row.names(chs)
+eij
+
+# Which is the same as assuming all columns are distributed as per marginal row total distrbution:
+
+rtot/sum(rtot)
+mean(ctot)*rtot/sum(rtot)
+
+# Collapse first 3 rows and last 2 rows, so that all expected counts are greater than 5.
+
+chs1 <- chs[3:8,]
+chs1[1,] <- chs1[1,]+chs[1,]+chs[2,]
+chs1[6,] <- chs1[6,]+chs[9,]
+chs1
+
+oij1 <- as.matrix(chs1)
+oij1
+
+rtot1 <- apply(chs1,1,sum)
+rtot1
+
+eij1 <- rtot1%*%t(ctot)/sum(rtot1)
+row.names(eij1) <- names(rtot1)
+eij1
+
+mean(ctot)*rtot1/sum(rtot1)
+
+# Now for the Pearson chi-square analysis:
+
+rij1 <- (oij1-eij1)/sqrt(eij1)
+rij1
+rij1^2
+c(sum(rij1^2),1-pchisq(sum(rij1^2),(nrow(oij1)-1)*(ncol(oij1)-1)))
+
+# Where are the large residuals:
+
+tmp <- c(rij1[,1],0,rij1[,2],0,rij1[,3],0,rij1[,4])
+barplot(tmp,main="(a) - Barplot of Pearson Residuals (Grouped by Additive)")
+lines(c(8,8),c(6,-3.3),lty=3)
+lines(c(16.25,16.25),c(6,-3.3),lty=3)
+lines(c(24.5,24.5),c(6,-3.3),lty=3)
+text(4,-2.5,"A")
+text(12.25,-2.5,"B")
+text(20.5,-2.5,"C")
+text(28.75,-2.5,"D")
+
+# Unfortunately, this following command doesn't work in R - no direct equivalent of the plotfit() function in S-Plus
+
+# tmp <- list(grand=0,row=1:nrow(chs1),col=(1:ncol(chs1))*1.2,resid=as.vector(rij1))
+# plotfit(tmp,rowlab=dimnames(chs1)[[1]],collab=dimnames(chs1)[[2]],c=3,main="(b) - Pearson residuals by Cell",yaxt="n")
+
+# However, plot (see page 82 of the brick) is still potentially useful (just not easy to draw in R - needs more coding).
+
+# Note the above classical Pearson Chi-square analysis could just as easily have been done using a Poisson GLM:
+
+cheese.vector <- c(as.vector(chs1[,"A"]),as.vector(chs1[,"B"]),as.vector(chs1[,"C"]),as.vector(chs1[,"D"]))
+cheese.vector
+
+additive <- c(rep("A",6),rep("B",6),rep("C",6),rep("D",6))
+additive
+
+rating <- rep(row.names(chs1),4)
+rating
+
+data.frame(cheese.vector, additive, rating)
+
+cheese.glm <- glm(cheese.vector ~ additive + rating, family=poisson)
+
+residuals(cheese.glm, "pearson")
+rij1
+
+# The drop in deviance test is not exactly the same as the Pearson Chi-square test, rather it is the likelihood ratio
+# G-squared test:
+
+cheese.glm1 <- glm(cheese.vector ~ additive * rating, family=poisson)
+anova(cheese.glm1, test="Chisq")
+
+c(sum(rij1^2),1-pchisq(sum(rij1^2),(nrow(oij1)-1)*(ncol(oij1)-1)))
+
+# Read the discussion on pages 82 and 83 about the special case when the number of rows (or columns) of a contingency 
+# table is only 2 - which leads naturally to a (binomial) logisitic regression. We could apply this in this instance
+# by collapsing the cheese table even further:
+
+chs
+
+chs2 <- chs[5:6,]
+chs2[1,] <- chs[1,]+chs[2,]+chs[3,]+chs[4,]+chs[5,]
+chs2[2,] <- chs[6,]+chs[7,]+chs[8,]+chs[9,]
+chs2
+
+preferred <- as.vector(t(chs2[2,])/ctot)
+preferred
+
+additive2 <- factor(c("A", "B", "C", "D"))
+additive2
+
+cheese2.glm <- glm(preferred ~ additive2, family=binomial, weights=ctot)
+anova(cheese2.glm, test="Chisq")
+summary(cheese2.glm)
+
+# There is another example of applying a logisitic regression model to a 2 x c (or a r x 2) contingency table in
+# Tutorial 11. The advantage is that it allows us to include covariates (if there are any in the model), the 
+# disadvantage is that we have lost a lot of the information by totally collapsing the ordinal variable that was
+# the row dimension.
+
+# Ordered categories example (which is complex and will not be examinable this year)
+
+# Now to use a complementary log-log binomial GLM to model the cumulative hazard of getting each score for the 4 cheeses:
+
+chs1
+
+nij <- rbind(ctot,ctot,ctot,ctot,ctot)
+nij[-1,] <- nij[-1,] - apply(chs1,2,cumsum)[1:4,]
+nij
+
+zij <- chs1[1:5,]/nij
+zij
+
+rfct <- cbind(1:5,1:5,1:5,1:5)
+rfct
+cfct <- rbind(1:4,1:4,1:4,1:4,1:4)
+cfct
+
+# Now to create data for the binomial GLM:
+
+prp <- as.vector(as.matrix(zij))
+wgt <- as.vector(nij)
+rfct <- as.vector(rfct)
+cfct <- as.vector(cfct)
+cbind(prp, wgt, rfct, cfct)
+
+# Treatment coding for the row factors:
+
+rind1 <- ifelse(rfct==2,1,0)
+rind2 <- ifelse(rfct==3,1,0)
+rind3 <- ifelse(rfct==4,1,0)
+rind4 <- ifelse(rfct==5,1,0)
+rinds <- cbind(rind1,rind2,rind3,rind4)
+cbind(rfct, rinds)
+
+# Treatment coding for the column factors (the 4 cheese varieties):
+
+cind1 <- ifelse(cfct==2,1,0)
+cind2 <- ifelse(cfct==3,1,0)
+cind3 <- ifelse(cfct==4,1,0)
+cinds <- cbind(cind1,cind2,cind3)
+cbind(cfct, cinds)
+
+# Now fit the model:
+
+chs1.glm <- glm(prp ~ rinds + cinds, family=binomial(link=cloglog), weights=wgt)
+anova(chs1.glm, test="Chisq")
+summary(chs1.glm)$coef
+
+# But only the column coefficents are really of interest:
+
+summary(chs1.glm)$coef[length(coef(chs1.glm))+(-2:0),]
+c(qt(0.025,chs1.glm$df.residual), qt(0.975,chs1.glm$df.residual))
+
+# Compare original data with the fitted values:
+
+zij
+hatzij <- matrix(fitted(chs1.glm),ncol=4)
+hatzij
+
+# Use the fitted values to derive the cumulative & fitted probabilites:
+ 
+cumprbs <- matrix(0,5,4)
+cumprbs[1,] <- hatzij[1,]
+for (i in 2:5) {cumprbs[i,] <- hatzij[i,]+(cumprbs[i-1,]*(1-hatzij[i,]))}
+cumprbs
+matplot(1:6,rbind(cumprbs,1),type="b",ylab="Cumulative Probability",xlab="Row Number",main="(c) - Cumulative Probabilities for Each Cheese Additive")
+
+fitprbs <- rbind(cumprbs,1)- rbind(0,cumprbs)
+fitprbs
+matplot(1:6,fitprbs,type="b",ylab="Fitted Probability",xlab="Row Number",main="(d) - Fitted Probabilities for Each Cheese Additive")
+
+# Now check the assumptions behind the model and check for over (or under) dispersion:
+
+plot(chs1.glm)
+
+deviance(chs1.glm)
+chs1.glm$df.residual
+c(qchisq(0.025,chs1.glm$df.residual), qchisq(0.975, chs1.glm$df.residual))
+c(qchisq(0.05,chs1.glm$df.residual), qchisq(0.95, chs1.glm$df.residual))
+
+# Model still has problems ... 
+
+chs2.glm <- glm(prp ~ rinds * cinds, family=binomial(link=cloglog), weights=wgt)
+anova(chs2.glm, test="Chisq")
+summary(chs2.glm)$coef
+plot(chs2.glm)

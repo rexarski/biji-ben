@@ -1,0 +1,185 @@
+---
+title: "STAT7026 Assignment 1 Report"
+author: "Rui Qiu"
+date: '2017-08-18'
+output:
+  html_document:
+    df_print: paged
+  html_notebook: default
+  pdf_document: default
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.path='Figs/', dev = 'pdf', 
+                      out.height = '250px', out.width='750px', 
+                      fig.align="center",dpi=200,
+                      echo=FALSE, warning=FALSE, message=FALSE, cache=T)
+```
+
+## Background
+
+The heights of singers data from New York Choral Society (1979) contains components `soprano.1`, `soprano.2`, `alto.1`, `alto.2`, `tenor.1`, `tenor.2`, `bass.1` and `bass.2` which are in decreasing pitch order. The first four are female voices and the last four male. We are interested in the comparison of the height distributions, and what factors appear to be important in describing height. We transformed the ragged list into a 3-column dataframe. Those 3 columns represent the height (in inches) of the singer, the voice/pitch of the singer and the gender of the singer.
+
+```{r data prep}
+library(ggplot2)
+library(reshape2) # data cleaning
+library(plyr)
+# library(wesanderson)
+
+# pal <- wes_palette("Zissou", 100, type = "continuous")
+
+load("./classdata.RData")
+attach(singers)
+
+# melt the data
+heights <- melt(singers, measure.vars=c("soprano.1","soprano.2","alto.1","alto.2","tenor.1","tenor.2","bass.1","bass.2"))
+
+heights <- as.data.frame.list(heights)
+heights <- cbind(heights, c(rep("F",127),rep("M",101)))
+colnames(heights) <- c("value","voice","gender")
+
+attach(heights)
+
+male <- heights[heights$gender=='M',]
+female <- heights[heights$gender=='F',]
+
+cheights <- ddply(heights,"gender",summarise,h.mean=mean(value))
+# cheights
+# gender   h.mean
+# 1      F 64.73228
+# 2      M 70.34653
+
+female.mean <- cheights$h.mean[1]
+male.mean <- cheights$h.mean[2]
+soprano.1.mean <- mean(heights[heights$voice=='soprano.1',]$value) # 64.25
+soprano.2.mean <- mean(heights[heights$voice=='soprano.2',]$value) # 63.96667
+alto.1.mean <- mean(heights[heights$voice=='alto.1',]$value) # 64.88571
+alto.2.mean <- mean(heights[heights$voice=='alto.2',]$value) # 66.07692
+tenor.1.mean <- mean(heights[heights$voice=='tenor.1',]$value) # 68.90476
+tenor.2.mean <- mean(heights[heights$voice=='tenor.2',]$value) # 70.11111
+bass.1.mean <- mean(heights[heights$voice=='bass.1',]$value) # 70.71795
+bass.2.mean <- mean(heights[heights$voice=='bass.2',]$value) # 71.21739
+```
+
+## Visualization by Gender
+
+There are 3 variables in this question, _height, voice(pitch) and gender_. As _height_ is the response, we would like to start from _gender_. Conventionally, _gender_ is always a good classifier though sounds a little bit politically incorrect. Indeed, the _gender_ should contain more information about _height_ as the classification by pitch contains  some hidden information that all four groups of female voices are higher than those of male in pitch.
+
+```{r by-gender}
+ggplot(heights, aes(x=value)) + 
+  geom_density(alpha=.5) +
+  ylim(0, 0.2) +
+  geom_vline(data=cheights, aes(xintercept=cheights$h.mean),
+             linetype="dashed", size=1) +
+  facet_wrap(~gender,nrow=2) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))+
+  ggtitle("Singer Height Density Plot by Gender")
+```
+
+To start visualizing the distribution by gender, we choose **density plot** over histogram since the dimensions of two groups are not equal. The female groups has 127 entries while the male only has 101. Recall the fact that the group sizes of sample actually affect the shape of histogram. So if we want to get an intuitive impression about height distributions of two groups, density plots are our preferable choice.
+
+The **mean** of each group is plotted as dashed line in the plot above. Since the scale of two subplots are identical, we can compare them directly. In fact, we are convinced that **male singers on average is taller (mean is above 70) than female singers (mean is below 65)**, because the male height distribution is generally right-skewed while the female height distribution is generally left-skewed.
+
+## Visualization by Voice
+
+Now we switch to the other variable _voice_. For the same reason, we choose density plot rather than histogram. (In fact, the problem is more severe if we plot the histogram, because group like `tenor.2` is only half the size of group `soprano.1`, then the histograms of the former would be very flat and really hard to identify.) This time, we plot the 8 groups of voices into a 2-by-4 grid so that the first row only contains female singers.
+
+```{r by-voice-density}
+# reorder the data frame by certain voice pitch order
+target <- c("soprano.1", "soprano.2", "alto.1", "alto.2", "tenor.1", "tenor.2", "bass.1", "bass.2")
+# heights[match(target, heights$voice),]
+heights$voice <- factor(heights$voice, levels=unique(heights$voice))
+
+ggplot(heights, aes(value)) +
+  geom_density() +
+  facet_wrap(~voice,nrow=2) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))+
+  ggtitle("Height Density Plot by Voice")
+```
+
+By checking the density plots for each voice group, we may conclude that each voice group follows a **unimodal distribution**. (Although `soprano.1` and `alto.2` could be referred as bimodal distributions, we would rather strictly follow the definition of unimodality in this case.)
+
+Why are we so eager to confirm that they are unimodal? Because it is the precondition for us to construct **boxplot** to compare all eight groups in the same plot.
+
+```{r by-voice-box}
+ggplot(heights, aes(voice, value)) +
+  geom_boxplot() +
+  stat_summary(fun.y=mean, colour="black", geom="point", 
+               shape=18, size=3,show_guide = FALSE) +
+  theme(plot.title = element_text(hjust = 0.5, size = 20, face = "bold"))+
+  ggtitle("Height Distribution Boxplot by Voice")
+```
+
+As we can see, the boxplot helps us examine all 8 groups of data at the same time. The **means** are marked as black squares, and the **medians** are the bold lines in each box. We also rearrange the categorical variable _voice_ by decreasing pitch order on x-axis.
+
+Now if we move along the x-axis, which means the voice gets lower, then the corresponding distribution indicates a larger height. Let's rephrase this general trend again, that is, **the height of a singer and the voice of his/hers are negatively correlated**.
+
+Notice that this discovery is not 100% accurate since the group `soprano.1` has both larger median and mean than `soprano.2`. Hence, a refined addition to the discovery above states as: **the pitch affects height more within male group that it does within female group**.
+
+# Further Investigation
+
+But one would wonder, is that all? Probably not!
+
+So far we've confirmed the roles _gender_ and _voice_ play in _height_, but we want to see if there is anything extra hidden behind the curtain. We can achieve such goal by constructing a proof by contradiction.
+
+Suppose there is only _gender_ effect and _voice_ effect in describing the heights, and they are independent with each other. If we eliminate both effects, ideally, we would have some stochastic components left with no pattern. An informal expression is shown below:
+
+\[
+\begin{split}
+\text{height}&=\text{intercept} + \text{gender effect} + \text{voice effect} + \epsilon\ \text{where } \epsilon\sim N(0,\sigma^2)
+\end{split}
+\]
+
+What we do next is to subtract the group means (gender means and voice means) from the original height values. The results might seem odd as they are negative. This is because we subtract one more intercept from the height. Since all values are moved down a distance of intercept along y-axis, it doesn't prevent us from checking the "random noises".
+
+```{r other-effects}
+heights.sub <- heights
+for (i in 1:nrow(heights.sub)) {
+  if (heights.sub[i,]$gender == 'F') {
+    if (heights.sub[i,]$voice == 'soprano.1') {
+      heights.sub[i,]$value <- heights.sub[i,]$value - female.mean - soprano.1.mean
+    } else if (heights.sub[i,]$voice == 'soprano.2') {
+      heights.sub[i,]$value <- heights.sub[i,]$value - female.mean - soprano.2.mean
+    } else if (heights.sub[i,]$voice == 'alto.1') {
+      heights.sub[i,]$value <- heights.sub[i,]$value - female.mean - alto.1.mean
+    } else {
+      heights.sub[i,]$value <- heights.sub[i,]$value - female.mean - alto.2.mean
+    }
+  } else {
+    if (heights.sub[i,]$voice == 'tenor.1') {
+      heights.sub[i,]$value <- heights.sub[i,]$value - male.mean - tenor.1.mean
+    } else if (heights.sub[i,]$voice == 'tenor.2') {
+      heights.sub[i,]$value <- heights.sub[i,]$value - male.mean - tenor.2.mean
+    } else if (heights.sub[i,]$voice == 'bass.1') {
+      heights.sub[i,]$value <- heights.sub[i,]$value - male.mean - bass.1.mean
+    } else {
+      heights.sub[i,]$value <- heights.sub[i,]$value - male.mean - bass.2.mean
+    }
+  }
+}
+
+ggplot(heights.sub, aes(x=voice, y=value, shape=gender, colour=gender)) +
+  # geom_jitter(width=0.15) +
+  # geom_point() +
+  stat_sum() + 
+  scale_colour_manual(values = c("red","blue")) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold")) +
+  ggtitle("Scatterplot without Gender and Voice Effects")
+```
+
+Surprisingly, we find out that the scatterplot now displays a seemingly obvious pattern: the female values are generally larger than male values. So there is indeed some extra elements affect the height. Moreover, the _gender_ seems involved in this element. Therefore, the interactions between _gender_ and _voice_ is highly suspicous, but we cannot quantify it with this graph. However, a further stuy with two-way ANOVA might help us figure this out. This process also involves model selection and other tedious actions, so we are not going to expand this topic here.
+
+## Conclusions
+
+According to previous visualizations, we conclude that the followings are important in describing _height_:
+
+1. The gender of a singer is correlated with height. Male singers tend to be taller than female singers.
+2. The height of a singer is negatively correlated with the pitch of his/hers, i.e., a singer with lower voice tends to be taller.
+3. Some hidden elements also affects the height, which seems related with _gender_ again.
+
+One **intuitive explanation** is that we can consider human as a piccolo, the shorter air column it has, the frequency of vibration is higher, so that the pitch is higher. This is why, in most cases, male singers with `bass` voice are always taller than female `soprano`s.
+
+Since the two variables are categorical, we can always use logistic regression to contruct a linear model in details. We should also notice that a multiplicative model with interaction term is appropriate for this data. 
+
+## References
+- R for Data Science by Garrett Grolemund and Hadley Wickham, http://r4ds.had.co.nz/

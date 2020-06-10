@@ -1,0 +1,118 @@
+#
+library(splines)
+data<-read.table("crude.csv",header=T,sep=",")
+colnames(data)<-c("age","exposed","deaths","crude")
+attach(data)
+
+#graduating the number of deaths. need offset to allow 
+#for different exposed to risk
+#using knots from ALT 2005-07
+fit<-glm(deaths~ns(age,knots=c(4,16,19,21,22,32,57,60,73,75,78,89,94))+offset(log(exposed)),family="poisson")
+values<-age
+temp<-data.frame("age"=values)
+fit<-predict.glm(fit,temp)
+plot(age,log(crude),main="ALT knot placement")
+lines(values,log(exp(fit)/exposed),col="red")
+
+#using AIC and BIC to find "optimal" number of knots
+resAIC<-resBIC<-rep(0,30)
+
+for(i in 1:50) {
+fit<-glm(deaths~ns(age,df=i)+offset(log(exposed)),family="poisson")
+resAIC[i]<-AIC(fit)
+resBIC[i]<-AIC(fit,k=log(length(age)))
+}
+> sort.list(resAIC)[1]
+[1] 36
+> sort.list(resBIC)[1]
+[1] 17
+
+fit1<-glm(deaths~ns(age,df=36)+offset(log(exposed)),family="poisson")
+fit2<-glm(deaths~ns(age,df=17)+offset(log(exposed)),family="poisson")
+values<-age
+temp<-data.frame("age"=values)
+fit1<-predict.glm(fit1,temp)
+fit2<-predict.glm(fit2,temp)
+plot(age,log(crude),main="optimal knot placement")
+lines(values,log(exp(fit1)/exposed),col="red")
+lines(values,log(exp(fit2)/exposed),col="blue")
+
+
+
+
+
+#
+install.packages("MortalitySmooth")
+library(MortalitySmooth)
+data(HMDdata)
+
+x<-50:100
+y<-1950:2009
+newdata1<-selectHMDdata(country="Denmark",data="Rates",sex="Females",ages=x,years=y)
+newdata2<-selectHMDdata(country="Japan",data="Rates",sex="Females",ages=x,years=y)
+plot(newdata1,cut=10,col.regions=terrain.colors(11),main="Denmark")
+plot(newdata2,cut=10,col.regions=terrain.colors(11),main="Japan")
+
+#Looking at two different years
+
+Exposure<-selectHMDdata(country="Denmark",data="Exposures",sex="Females",ages=1:100,years=c(1950,2009))
+Deaths<-selectHMDdata(country="Denmark",data="Deaths",sex="Females",ages=1:100,years=c(1950,2009))
+
+#2009
+deaths<-round(Deaths[,2])
+exposed<-Exposure[,2]
+age<-1:100
+fit<-glm(deaths~ns(age,df=15)+offset(log(exposed)),family="poisson")
+values<-age
+temp<-data.frame("age"=values)
+fit<-predict.glm(fit,temp)
+plot(age,log(deaths/exposed),main="Denmark 2009 and 1950")
+lines(values,log(exp(fit)/exposed),col="red")
+
+#1950
+deaths<-round(Deaths[,1])
+exposed<-Exposure[,1]
+age<-1:100
+fit<-glm(deaths~ns(age,df=15)+offset(log(exposed)),family="poisson")
+values<-age
+temp<-data.frame("age"=values)
+fit<-predict.glm(fit,temp)
+points(age,log(deaths/exposed),main="ALT knot placement")
+lines(values,log(exp(fit)/exposed),col="blue")
+
+#Looking at two different years
+#Japan
+Exposure<-selectHMDdata(country="Japan",data="Exposures",sex="Females",ages=50,years=1950:2009)
+Deaths<-selectHMDdata(country="Japan",data="Deaths",sex="Females",ages=50,years=1950:2009)
+deaths<-round(Deaths)
+exposed<-Exposure
+year<-1950:2009
+fit<-glm(deaths~ns(year,df=5)+offset(log(exposed)),family="poisson")
+values<-year
+temp<-data.frame("year"=values)
+fit<-predict.glm(fit,temp)
+plot(year,log(deaths/exposed),main="Denmark and Japan (Red) aged 50")
+lines(values,log(exp(fit)/exposed),col="red")
+#Denmark
+Exposure<-selectHMDdata(country="Denmark",data="Exposures",sex="Females",ages=50,years=1950:2009)
+Deaths<-selectHMDdata(country="Denmark",data="Deaths",sex="Females",ages=50,years=1950:2009)
+deaths<-round(Deaths)
+exposed<-Exposure
+year<-1950:2009
+fit<-glm(deaths~ns(year,df=5)+offset(log(exposed)),family="poisson")
+values<-year
+temp<-data.frame("year"=values)
+fit<-predict.glm(fit,temp)
+points(year,log(deaths/exposed))
+lines(values,log(exp(fit)/exposed),col="blue")
+
+
+#Smoothing in two diminsions
+#code taken from "Camarda C (2012). "MortalitySmooth: An R Package for 
+#smoothing Poisson Counts with P-splines", Journal of Statistical Software. 
+x <- 10:100
+y <- 1930:2010
+Y <- selectHMDdata("Sweden", "Deaths", "Females", ages = x, years = y)
+E <- selectHMDdata("Sweden", "Exposures", "Females", ages = x, years = y)
+fit2D <- Mort2Dsmooth(x = x, y = y, Z = Y, offset = log(E))
+plot(fit2D,palette="terrain.colors")

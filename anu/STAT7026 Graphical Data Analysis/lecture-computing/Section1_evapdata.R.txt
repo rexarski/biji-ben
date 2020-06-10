@@ -1,0 +1,46 @@
+# Gather and examine data
+z <- cbind(evap.y,evap.x)
+
+# Basic scatterplot
+plot(z[,4],z[,2])
+
+# Scatterplot matrix
+pairs(z[,2:4])
+
+# Parallel Co-ordinate plot.  We need to plot matrices against matrices
+matplot(matrix(c(1:ncol(z[,2:4])),nrow=ncol(z[,2:4])),t(z[,2:4]),type="l")
+
+# Unfortunately, support for 3D graphics is scattered across several downloadable libraries in R. The libraries you will need to download are aplpack, rgl and Rcmdr as well as rggobi (after you install GGobi itself) and these can be installed using 
+
+install.packages("aplpack")
+install.packages("rgl")
+install.packages("Rcmdr")
+install.packages("rggobi")
+library(aplpack)
+library(rgl)
+library(Rcmdr)
+library(rggobi)
+
+# (you may find that when you attempt to load the libraries, RStudio will want to install additional packages - let it do so...). R's support for various 3D-graphics is not integrated - so you will need to install various packages. This is a one-time burden (but it is a pain). You will also want to install GGobi, a program, that allows various visualisations. You can download it from http://www.ggobi.org (follow the instructions there). As you install all these packages, you may need to restart R at the end to ensure everything will load properly.
+
+# To create a spinning 3-D plot, we will use the plot3d function from the rgl library. e.g. 
+
+plot3d(z[,2:4])
+
+# or the scatter3d function from Rcmdr:
+
+scatter3d(z[,2],z[,3],z[,4])
+
+# In order to use brushing in R, you first have to install GGobi, then use the ggobi function from the library rggobi:
+
+ggobi(evap)
+
+# You can then use the GGobi interface to explore. Select New Scatterplot Matrix from the Display menu, and Brush from the Interaction menu to explore how brushing works.
+
+# Finally, to use faces and stars to describe the data, the faces command from aplpack can be used, and the stars command likewise:
+
+faces(z[,2:4])
+
+stars(z[,2:4])
+
+

@@ -1,0 +1,413 @@
+RESEARCH SCHOOL OF FINANCE, ACTUARIAL STUDIES AND APPLIED STATISTICS
+GRAPHICAL DATA ANALYSIS
+TUTORIAL 8
+SAMPLE SOLUTION
+
+1. Let's start by examining the series:
+
+library(MASS) 
+
+z <- ts(snatch)
+
+plot(z,type="b",pch="*",main="Chicago Purse Snatching Data",ylab="Number of Snatchings",xlab="Time")
+
+A plot of the data shows what may be some unstable behaviour around the
+middle of the series.  This behaviour contributes to the impression
+that there is a quadratic trend to the series but if we downweight this
+region we may feel there is a linear trend or even no trend at all.  It
+may be helpful to reduce the amplitude of oscillation in this region by
+making a transformation.  It is difficult to perceive much of a
+seasonal effect or to be sure of exactly how to define it because there
+are 365.25/28 = 13.04 observations per year.  Is there a seasonal
+effect in crime rates?  This is an interesting question which we might
+wish to explore.  We can capture an approximate seasonal effect by
+rounding down and acting as if each year has been split into exactly 13
+periods.  We may then define a time series object as
+
+z <- ts(snatch,frequency=13)
+
+Since the data are in the form of counts, we expect a transformation
+(possibly the square root transformation) to be helpful.  
+plot(log(z),main="Log transformation")
+plot(sqrt(z),main="Sqrt transformation")
+plot((z)^(1/3),main="Cube root transformation")
+
+# Of these, log looks (marginally) the most stable.
+
+h=stl(log(z),s.window="periodic",t.window=41)
+plot(h)
+
+This transformation dampens the middle of the series without making the outliers as severe as the reciprocal transformation.  The square root transformation looks similar to the log, although the middle of the series is perhaps not damped down enough. The quadratic trend and seasonal effects are similar on the raw log and reciprocal scales.  The log scale seems like a reasonable compromise
+for this data, although square root would probably work well too. There
+certainly seems to be a quadratic trend over the series.  However, the
+series covers a reasonably short period of time and a quadratic trend
+is untenable over a longer period since crime would then simply
+continue to decrease.  There may be a cyclic effect over longer time
+periods but we cannot investigate this with the present data.  It is
+also possible that there is in fact no trend at all and that the
+behaviour in the middle of the series can be explained entirely by the
+irregular component of the series.  
+
+We can have a look at the seasonal subseries using:
+monthplot(stl(z,s.window="periodic",t.window=41),xlab="Season",ylab="Seasonal Effect",
+main="Monthly subseries for the Puse Snatch Data")
+
+The constant seasonal model looks a bit dubious given this graphic, but the
+different (linear) trends for the seasons might be suitably models by the
+irregular component of the model. Given that the data set has only 71
+observations, I would be a bit wary of fitting a separate trend for each
+of the 13 seasons. We may be able to combine some seasons together, of course;
+for example, seasons 2,3, and 4 look similar, as do seasons 10, 11, and 12.
+We might fit a constant seasonal model with different effects for seasons
+1, {2,3,4},5,6,7,8,9,{10,11,12}, and 13, although this may be too complicated
+as yet. In fact, the seasonal averages don't vary that much at all, and so
+it may be worthwhile pursuing a model with no seasonal effect! We'll take it
+as it comes...
+
+On the log scale,
+
+plot(log(z),type="b",pch="*",main="Chicago Purse Snatching Data",
+ylab="log(Number of Snatchings)",xlab="Time")
+
+For now, we will look at the series as irregular only (since a quadratic
+trend is not credible, and the seasonality is hard to see directly), and see
+what model is recommended by the ACF/PACF:
+
+Ident(log(z))
+
+(The frequency of the time series being 13 seems to mess up the x-axis in
+the ACF and PACF commands. We could go back to z <- ts(snatch) and try again
+with frequency 12, and this works fine (the x-axis does what it is supposed
+to). Either way, the picture can be clearly interpreted).
+
+fin <- Raic(log(z))
+
+par(mfrow=c(1,1),oma=c(4,0,6,0))
+
+c1 <- 2/sqrt(length(snatch))
+plot(fin$k,diag(fin$coef),ylim=range(diag(fin$coef),c1,-c1),type="b",lty=2,
+main="Robust PACF",
+xlab="Autoregression Order",
+ylab="Robust PACF")
+box(lty = 1)
+abline(h = c(-c1, c1), lty = 2)
+abline(h=0)
+segments(fin$k,0,fin$k,diag(fin$coef))
+
+mtext("Identification for the log(snatch) Data",3,1,outer
+=T,cex=1.5)
+
+The ACF/PACF shows a nicely decaying autocorrelation function and the partial
+autocorrelation function of an AR(2) process.  The autocorrelation
+function supports the view that the series is stationary as the
+autocorrelation function often fails to decay when the series is
+nonstationary.  The spike at lag 14 in the PACF indicates the presence
+of a seasonal effect.  Differencing does not seem to change these
+conclusions very much providing further support for there being no real
+trend. 
+
+Ident(diff(log(z)))
+
+The RAIC and robust PACF suggest an AR(2) is appropriate as well,
+although the AIC suggests an AR(1) which is probably not enough.
+
+We proceed to remove the seasonal effect of period 13 by typing
+
+v <- Factor(c(rep(1:13,5),1:6))
+mod <- rlm(log(z)~v)
+
+mod$coef
+(Intercept)          2          3         4          5          6          7 
+2.421004 0.09148728 0.07676712 0.1807397 -0.1950996 -0.3549441 0.07131278
+8         9        10        11        12        13 
+-0.0771676 0.1938721 0.2648474 0.1642765 0.4814046 0.3387614
+
+Examining the estimated seasonal effects, we see that there is a large
+positive effect towards the end of the year and a large negative effect
+in mid summer, both of which make some sense.  The irregular component
+of the series is in mod$resid so we can examine the dependence
+structure by typing
+
+Ident(mod$resid)
+
+fin <- Raic(mod$resid)
+
+par(mfrow=c(1,1),oma=c(4,0,6,0))
+
+c1 <- 2/sqrt(length(snatch))
+plot(fin$k,diag(fin$coef),ylim=range(diag(fin$coef),c1,-c1),type="b",lty=2,
+main="Robust PACF",
+xlab="Autoregression Order",
+ylab="Robust PACF")
+box(lty = 1)
+abline(h = c(-c1, c1), lty = 2)
+abline(h=0)
+segments(fin$k,0,fin$k,diag(fin$coef))
+
+mtext("Identification for the log(snatch) Data, constant seasonal fitted",3,1,
+outer=T,cex=1.5)
+
+The spike at lag 14 remains even though deseasonalising was an attempt
+to remove it!    Ignoring the spike, the ACF and PACF plots suggest an
+AR(2) model for the irregular component. We will investigate the
+use of an AR(2) model. Raic has given us the AR(2) fit as part of its
+output: the coefficients are in fin$coef[1:2,2]. Now to examine the
+residuals from the constant seasonal and AR(2) fit:
+
+res <- fin$resid[,2]
+fv <- mod$resid[-1]-res
+
+Ident(res)
+
+fin2 <- Raic(res)
+
+par(mfrow=c(1,1),oma=c(4,0,6,0))
+
+c1 <- 2/sqrt(length(snatch))
+plot(fin2$k,diag(fin2$coef),ylim=range(diag(fin2$coef),c1,-c1),type="b",lty=2,
+main="Robust PACF",
+xlab="Autoregression Order",
+ylab="Robust PACF")
+box(lty = 1)
+abline(h = c(-c1, c1), lty = 2)
+abline(h=0)
+segments(fin2$k,0,fin2$k,diag(fin2$coef))
+
+mtext("Identification for the log(snatch) Data, constant seasonal and 
+AR(2) fitted",3,1,outer=T,cex=1.5)
+
+There is no structure in the ACF or PACF so we seem to have captured
+the dependence structure. The robust PACF looks as if we have 
+captured the dependence structure. Now, we'll look at the residuals.
+
+par(mfrow=c(2,2),oma=c(0,0,6,0))
+
+plot(1:(length(snatch)-1),res,type="b",pch="*",xlab="Time",ylab="Residuals",
+     main="Residual plot")
+
+plot(fv,res,
+     main="Residuals versus fitted values",
+     ylab="Residuals",xlab="Fitted Values")
+
+qqnorm(res,main="Quantile-Quantile plot",
+       ylab="Residuals",xlab="Gaussian Quantiles")
+
+plot(fv,abs(res),
+     main="Absolute Residuals versus fitted values",
+     ylab="Absolute Residuals", xlab="Fitted Values")
+lines(lowess(fv,abs(res)))
+
+mtext("Residual plots from constant seasonal and AR(2) fit for sqrt(lynx) data",
+      outer=T,side=3,cex=1.5)
+
+The residual distribution is slightly
+long-tailed though the quantile-quantile plot for the bulk of the data
+is fairly linear.  There is no special structure in the residuals and
+no real evidence against the assumption of constant spread.  We may
+therefore conclude that the model seems reasonable.  
+
+It is interesting to explore what
+happens if we omit the seasonal effect from the model.  
+
+fin <- Raic(log(z))
+
+res <- fin$resid[,2]
+fv <- log(z)[-1]-res
+
+Ident(res)
+
+fin2 <- Raic(res)
+
+par(mfrow=c(1,1),oma=c(4,0,6,0))
+
+c1 <- 2/sqrt(length(snatch))
+plot(fin2$k,diag(fin2$coef),ylim=range(diag(fin2$coef),c1,-c1),type="b",lty=2,
+     main="Robust PACF",
+     xlab="Autoregression Order",
+     ylab="Robust PACF")
+box(lty = 1)
+abline(h = c(-c1, c1), lty = 2)
+abline(h=0)
+segments(fin2$k,0,fin2$k,diag(fin2$coef))
+
+mtext("Identification for the log(snatch) Data, AR(2) fitted",
+      3,1,outer=T,cex=1.5)
+
+The residuals from the AR(2) model show no real dependence structure: it looks
+as if the AR(2) alone is able to satisfactorily explain the data without the
+need for the seasonal effect. The spike at lag 14 is gone, and even the 
+Raic looks fine. We'll have a look at the residual diagnostics:
+
+
+par(mfrow=c(2,2),oma=c(0,0,6,0))
+
+plot(1:(length(snatch)-1),res,type="b",pch="*",xlab="Time",ylab="Residuals",
+main="Residual plot")
+
+plot(fv,res,
+main="Residuals versus fitted values",
+ylab="Residuals",xlab="Fitted Values")
+
+qqnorm(res,main="Quantile-Quantile plot",
+ylab="Residuals",xlab="Gaussian Quantiles")
+
+plot(fv,abs(res),
+main="Absolute Residuals versus fitted values",
+ylab="Absolute Residuals", xlab="Fitted Values")
+lines(lowess(fv,abs(res)))
+
+mtext("Residual plots from AR(2) fit for sqrt(lynx) data",
+outer=T,side=3,cex=1.5)
+
+Apart from one outlying value, the residuals look quite good, in fact very 
+similar to those for the seasonal/AR(2) model. The model looks adequate.
+In the interests of parsimony, we'll use the simple AR(2) model as our
+final model. The model is:
+  
+  log(snatch)_i = 2.498198 + X_i
+
+since mean(log(snatch))
+[1] 2.498198
+and where 
+
+X_i=0.259 X_{i-1} + 0.382 X_{i-2}
+
+(The intercept 2.498198 comes from fitting a constant trend to the data,
+ which we must always fit. The constant trend is just mean(log(snatch)))
+
+The text book analysis is to work on the raw scale and treat the series
+as stationary. The ACF/PACF shows no evidence of non-stationarity and
+identifies an AR(2) model.  The spike in the PACF at lag 14 occurs both
+in the data and in the residuals from the AR(2) model. If you like, you can
+examine this approach for yourself and judge which strategy was best, ours or
+the analysis on the raw scale.
+
+
+2.  Begin by plotting the data.
+
+library(MASS) 
+
+par(mfrow=c(1,1))
+
+plot(cig,xlab="Year",ylab="Cigarettes (10^6 kg of product weight)",
+       pch="*",type="b",main="Clearances of Australian Tobacco Products 1964-5 to 
+       1988-9")
+
+The series is a relatively short series, but the variance looks fairly 
+constant over the length of the series, so a transformation is probably not
+warranted.
+
+We seem to have a quadratic trend here.  This is believable (at least into the near future if we think cigarette consumption will continue to
+fall). At least in this instance, a quadratic trend is credible, although 
+it will not work well into the distant future. We can either fit the trend or take differences. I prefer to fit
+
+xt <- time(cig)-1976
+mod <- rlm(cig~cbind(xt,xt^2))
+mod$coef
+(Intercept)        xt             
+27.53084 0.2310358 -0.03254647
+
+The irregular series is in mod$resid, and the plot of the detrended series is
+
+plot(mod$resid,xlab="Year",ylab="Cigarettes (10^6 kg of product weight)",
+       pch="*",type="b",main="Detrended Clearances of Australian Tobacco 
+       Products 1964-5 to 1988-9")
+
+The detrended series shows long cycles typical of an AR model. We will examine
+the ACF/PACF and the Robust AIC.
+
+Ident(mod$resid,"Detrended Cigarette Data","Raw scale")
+
+fin <- Raic(mod$resid)
+
+par(mfrow=c(1,1),oma=c(4,0,6,0))
+
+
+c1 <- 2/sqrt(length(cig))
+plot(fin$k,diag(fin$coef),ylim=range(diag(fin$coef),c1,-c1),type="b",lty=2,
+     main="Robust PACF",
+     xlab="Autoregression Order",
+     ylab="Robust PACF")
+box(lty = 1)
+abline(h = c(-c1, c1), lty = 2)
+abline(h=0)
+segments(fin$k,0,fin$k,diag(fin$coef))
+
+mtext("Identification for the Cigarette Data, Quadratic Trend fitted",3,1,outer
+      =T,cex=1.5)
+
+The ACF shows exponential decay while the PACF shows an AR(1) or
+nothing. The robust PACF strongly suggests an AR(1). The time series 
+plot of the residuals from the quadratic trend fit show long cycles typical
+of an AR model, ruling out "no structure", and, since we have exponential 
+decay in the ACF, it is worth trying an AR(1) model.
+
+Raic fit an AR(1) model and the coefficient is in fin$coef[1,1]:
+  fin$coef[1,1]
+[1] 0.3972
+
+Now, let's examine the residuals from the AR(1) model fit:
+
+res <- fin$resid[,1]
+fv <- mod$resid[-1]-res
+
+Ident(res,"Cigarette Data","Residuals from Quadratic Trend and AR(1) fit")
+
+fin2 <- Raic(res)
+
+par(mfrow=c(1,2),oma=c(4,0,6,0))
+
+c1 <- 2/sqrt(length(cig))
+plot(fin2$k,diag(fin2$coef),ylim=range(diag(fin2$coef),c1,-c1),type="b",lty=2,
+main="Robust PACF",
+xlab="Autoregression Order",
+ylab="Robust PACF")
+box(lty = 1)
+abline(h = c(-c1, c1), lty = 2)
+abline(h=0)
+segments(fin2$k,0,fin2$k,diag(fin2$coef))
+
+mtext("Identification for the Cigarette Data, Quadratic trend and AR(1) fitted",
+3,1,outer=T,cex=1.5)
+
+The ACF/PACF shows no remaining dependence, and Raic suggests (again) an 
+AR(10) that is probably spurious. The robust PACF looks featureless, apart
+from a mild spike at lag 9 which we will ignore as not important. Overall,
+it looks as if an AR(1) captured most of the dependence. Now, we'll look 
+at some residual plots.
+
+par(mfrow=c(2,2),oma=c(0,0,6,0))
+
+plot(1:(length(cig)-1),res,type="b",pch="*",xlab="Time",ylab="Residuals",
+     main="Residual plot")
+
+plot(fv,res,
+     main="Residuals versus fitted values",
+     ylab="Residuals",xlab="Fitted Values")
+
+qqnorm(res,main="Quantile-Quantile plot",
+       ylab="Residuals",xlab="Gaussian Quantiles")
+
+plot(fv,abs(res),
+     main="Absolute Residuals versus fitted values",
+     ylab="Absolute Residuals", xlab="Fitted Values")
+lines(lowess(fv,abs(res)))
+
+mtext("Residual plots from quadratic trend and AR(1) fit to the cigarette data",
+      outer=T,side=3,cex=1.5)
+
+The diagnostics are not bad.  We seem to have all the dependence
+structure.  The residual plot looks fine.  There is no real evidence of
+increasing spread as the lowess spread curve is an artifact of the two
+points in the lower left corner.  The QQ-plot shows that the residuals
+have a non-normal distribution with a long left tail.  These points
+show up in the residual plot too. The model is not bad.
+
+The final model is:
+  
+  cig = 27.53084 + 0.2310358 (i-1976) - 0.03254647 (i-1976)^2 + X_i
+
+X_i = 0.3972 X_{i-1}.
+
+
+

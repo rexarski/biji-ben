@@ -1,0 +1,122 @@
+x <- raptor[,1]
+y <- raptor[,7]
+
+plot(x,y,
+     xlab="Female Weight",
+     ylab="Egg Volume",
+     main="Plot of Egg Volume against Female Weight for Raptor Data")
+
+plot(log(x),log(y),
+     xlab="log(Female Weight)",
+     ylab="log(Egg Volume)",
+     main="Plot of log(Egg Volume) against log(Female Weight) for Raptor Data")
+
+sum(is.na(x))
+# [1] 0
+sum(is.na(y))
+# [1] 2
+length(x)
+# [1] 269
+cbind(c(1:length(y)),is.na(y))
+x1 <- x[-c(16,149)]
+y1 <- y[-c(16,149)]
+
+# In the classdata library, the function rreg has been mapped to the function rlm. You can use either.
+# In R, use rlm from the MASS library rather than rreg
+library(MASS)
+fit = rlm(log(y1)~log(x1))
+
+par(mfrow=c(1,3),oma = c(8,0,10,0))
+
+qqnorm(fit$resid,
+       xlab="Gaussian Quantiles",
+       ylab="Huber Residuals",
+       main="QQ-Plot of Huber Residuals")
+
+plot(log(x1),fit$resid,
+     xlab="log(Female Weight)",
+     ylab="Huber Residuals",
+     main="Huber Residual Plot")
+
+plot(log(x1),abs(fit$resid),
+     xlab="log(Female Weight)",
+     ylab="Absolute Huber Residuals",
+     main="Absolute Huber Residual Plot")
+lines(lowess(log(x1),abs(fit$resid)))
+
+mtext("Diagnostics for the Raptor Data",side=3,line=2,outer=T,cex=1.5)
+mtext("Response is Log(Egg Volume) and Explanatory Variable Log(Female Weight)",side=1,line=2,outer=T,cex=1)
+
+fit2 = rlm(log(y1)~log(x1)+I(log(x1)^2)) # Use in R
+
+par(mfrow=c(1,3),oma = c(8,0,10,0))
+
+qqnorm(fit2$resid,
+       xlab="Gaussian Quantiles",
+       ylab="Huber Residuals",
+       main="QQ-Plot of Huber Residuals")
+
+plot(log(x1),fit2$resid,
+     xlab="log(Female Weight)",
+     ylab="Huber Residuals",
+     main="Huber Residual Plot")
+
+plot(log(x1),abs(fit2$resid),
+     xlab="log(Female Weight)",
+     ylab="Absolute Huber Residuals",
+     main="Absolute Huber Residual Plot")
+lines(lowess(log(x1),abs(fit2$resid)))
+
+mtext("Diagnostics for the Raptor Data",side=3,line=2,outer=T,cex=1.5)
+mtext("Response is Log(Egg Volume) and Explanatory Variable Log(Female Weight) and log(Female Weight)^2",
+side=1,line=2,outer=T,cex=1)
+
+s <- mad(fit2$resid)
+eta <- sum(abs(fit2$resid/s) <= 1.345)/length(x1)
+tau <- sum(ifelse(abs(fit2$resid/s)<=1.345,fit2$resid/s,1.345 )^2)/(length(x1)-3)
+se <- s^2*tau*(eta+(3/length(x1))*(1-eta))/(eta^3)
+v <- se*solve(crossprod(cbind(1,log(x1),log(x1)^2)))
+cbind(fit2$coef,sqrt(diag(v)),fit2$coef/sqrt(diag(v)))
+
+# [,1]        [,2]       [,3]
+# X1  5.25147101 0.231611857  22.673585
+# X2  0.97332976 0.073627082  13.219725
+# X3 -0.02289169 0.005735721  -3.991075
+
+par(oldpars)
+
+plot(log(x1),log(y1),
+     xlab="log(Female Weight)",
+     ylab="log(Egg Volume)",
+     main="Plot of log(Egg Volume) against log(Female Weight) for Raptor Data",
+     sub="Fitted Values superimposed on the plot")
+x2 <- sort(x1)
+lines(log(x2),cbind(1,log(x2),log(x2)^2) %*% fit2$coef)
+
+cbind(log(x2[1:15]),log(y[order(x1)])[1:15])
+# [,1]      [,2]
+# Ninox 3.401197 10.408490
+# Caprimulgus 3.784190  8.613957
+# Caprimulgus 3.850148  8.782996
+# Podargus 3.871201 10.023271
+# Caprimulgus 3.891820  8.816898
+# Caprimulgus 3.912023  8.285453
+# Glaucidium 3.951244  8.893481
+# Caprimulgus 3.951244  9.063380
+# Bubo 3.988984 10.645620
+# Caprimulgus 4.007333  8.285453
+# Caprimulgus 4.043051  8.613957
+# Aegolius 4.077537  9.165604
+# Podargus 4.234107 10.271197
+# Caprimulgus 4.262680  8.511370
+# Otus 4.290459  9.587608
+
+plot(log(x1),log(y1),
+     xlab="log(Female Weight)",
+     ylab="log(Egg Volume)",
+     main="Plot of log(Egg Volume) against log(Female Weight) for Raptor Data",
+     sub="Fitted values from lowess smooths superimposed on the plot")
+lines(lowess(log(x1),log(y1)))
+lines(lowess(log(x1),log(y1), f=1/3),lty=2)
+lines(lowess(log(x1),log(y1), f=1/6),lty=3)
+legend(7,9.5,c("f=2/3","f=1/3","f=1/6"),lty=1:3)

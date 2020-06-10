@@ -1,0 +1,297 @@
+---
+title: Tutorial 5 Solutions 
+author: STAT 3013/8027
+output:
+    pdf_document:
+        includes:
+            in_header: mystyletut.sty
+---
+
+---
+\large
+
+*  **Rice Chapter 8, Questions 13, 17 (a, b, c).**  **See handwritten solutions.**
+
+* **Question 25:**
+
+    + A priori I believe the probability of landing up ($\theta$)is between 0.10 and 0.40.  A specific value would be 0.25.
+    
+    + While you may not have found a thumbtack to throw, there is a data set in R of 100 tosses!  Use the first 20 observations (1 = "Up", 0 = "Down")
+    
+    ```{r}
+    library("isdals")
+    data(thumbtack)
+    
+    y <- thumbtack[1:20]
+    y
+    ```
+  
+    
+The likelihood of the data:
+
+\begin{eqnarray*}
+L(\theta | \bs{y}) &=& \prod_{i=1}^{n=20} \theta^{y_i} (1-\theta)^{1-y_i} \\
+&=& \theta^{\sum_{i=1}^{20}y_i} (1-\theta)^{20 -\sum_{i=1}^{20}y_i} \\
+&&\\
+\ell(\theta | \bs{y}) &=& \left(\sum_{i=1}^{20}y_i\right) log(\theta) + \left(20 -\sum_{i=1}^{20}y_i\right) log(1-\theta) 
+\end{eqnarray*}
+
+
+```{r}
+theta <- seq(0.1, 0.99, by=0.01)
+log.lik <- NULL
+for(i in 1:length(theta)){
+ log.lik <- c(log.lik, sum(dbinom(y, 1, theta[i], log=TRUE)))  
+}
+
+plot(theta, log.lik, type="l", lwd=3)
+```
+
+  + Now let's run the experiment a bit differently . . . let's flip till we get 5 Ups:    
+    
+    ```{r}
+    check <- 0
+    c <- 1
+    
+    while(check!=5){
+     z <- thumbtack[21:(21+c)]
+     check <- sum(z)
+     c <- c+1 
+    }
+      
+    z
+    ```
+
+Based on the experiment, the likelihood is based on a negative binomial (flip until we get 5 = r successes):
+
+\begin{eqnarray*}
+L(\theta | \bs{z}) &=& {11-1 \choose 5-1} \theta^{5} (1-\theta)^{14-5} \\
+\ell(\theta | \bs{z}) &=& log{11-1 \choose 5-1} + 5 log(\theta) + (11-5) log(1-\theta)
+\end{eqnarray*}
+
+Notice that this is the same likelihood as above except for a constant in front, which won't change the maximization!
+
+```{r}
+theta <- seq(0.1, 0.99, by=0.01)
+log.lik <- NULL
+for(i in 1:length(theta)){
+ log.lik.i <- log(choose(11-1, 5-1)) + 5*log(theta[i]) + (11-5)*log(1-theta[i])
+ log.lik <- c(log.lik, log.lik.i)
+}
+
+plot(theta, log.lik, type="l", lwd=3)
+```
+  
+  + Now let's determine the distribution for $\theta$ under a uniform prior for $\theta$.
+  
+  \begin{eqnarray*}
+  p(\theta \vert \bs{y} ) &=& \frac{p(\bs{y} \vert \theta) p(\theta) }{ p(\bs{y})} \\
+  &\propto&  p(\bs{y} \vert \theta) p(\theta) \\
+  &=& \theta^{\sum_{i=1}^{n}y_i} (1-\theta)^{n -\sum_{i=1}^{n}y_i} \times 1 \\
+  &=& \theta^{\sum_{i=1}^{n}y_i} (1-\theta)^{n -\sum_{i=1}^{n}y_i}
+  \end{eqnarray*}
+
+As $\theta$ is the random variable, we can see that this is a kernel for a beta$(a, b)$ distribution:
+
+$$\theta^{ \left(\sum_{i=1}^{n}y_i + 1\right) -1 } (1-\theta)^{ \left( n -\sum_{i=1}^{n}y_i + 1\right) - 1}$$
+
+Where $a = \left(\sum_{i=1}^{n}y_i + 1\right)$ and $b=\left( n -\sum_{i=1}^{n}y_i + 1\right)$.  Based on beta distribution the mean and variance are:
+
+\begin{eqnarray*}
+E[\theta|\bs{y}] &=& \frac{\sum_{i=1}^{n}y_i + 1}{\sum_{i=1}^{n}y_i + 1 + n -\sum_{i=1}^{n}y_i + 1} \\
+&=& \frac{\sum_{i=1}^{n}y_i + 1}{n+2}
+\end{eqnarray*}
+
+```{r}
+n <- length(y)
+a <- sum(y)+1
+b <- n - sum(y)+1
+
+m <- a/(a+b)
+v <- (a*b)/( (a+b)^2 * (a + b + 1))
+
+m
+v
+```
+
+
+
+
+
+  + Let's plot the posterior based on observing $\bs{y}$ along with a normal approximation based on the mean and variance above:
+  
+```{r}
+theta <- seq(0.1, 0.99, by=0.01)
+post <- NULL
+norm.approx <- NULL
+    
+for(i in 1:length(theta)){
+post.i <- dbeta(theta[i], sum(y)+1, 20-sum(y)+1)
+post <- c(post, post.i)
+    
+norm.approx.i <- dnorm(theta[i], m, sqrt(v))
+norm.approx <- c(norm.approx, norm.approx.i)
+}
+
+plot(theta, post, type="l", lwd=3)
+lines(theta, norm.approx, lwd=3, col="blue")
+```
+
+The normal approximation (blue) is very similar to the posterior (black).
+ 
+  + Now lets throw the tack 20 more times (label these $\bs{x}$) and examine the two posteriors.  
+  
+```{r}
+n.y <- length(y)
+
+x <- thumbtack[40:59]
+w <- c(y, x)
+n.w <- length(w)
+
+
+theta <- seq(0.1, 0.99, by=0.01)
+post.y <- NULL
+post.w <- NULL
+    
+for(i in 1:length(theta)){
+post.y.i <- dbeta(theta[i], sum(y)+1, n.y-sum(y)+1)
+post.y <- c(post.y, post.y.i)
+    
+post.w.i <- dbeta(theta[i], sum(w)+1, n.w-sum(w)+1)
+post.w <- c(post.w, post.w.i)
+    }
+
+    
+    
+plot(theta, post.y, type="l", lwd=3, ylim=c(0, 6))
+lines(theta, post.w, lwd=3, col="orange")
+```
+  
+From the figure, with the full 40 data points, we see that are beliefs have changed (orange posterior).  Also the variability is smaller.  
+
+  + **A question for you all: What would the posterior look like if I used the first 20 data points ($\bs{y}$) and clauclated a posterior.  Now used the posterior as the prior for $\theta$ and observed the next 20 data points ($\bs{x}$).  What would that posterior look like?**
+
+
+
+
+
+* **Question 43:**
+
+  a. Let's load in the data and examine a histogram of the data.
+  
+    ```{r}
+    data <- read.table("gamma-arrivals.txt")
+    y <- data$V1
+    hist(y, col="azure2")
+    ```
+
+Based on the histogram, an gamma(a,b) distribution does not seem like an unreasonable model for the data.  
+
+$$f(y) = \frac{1}{\gamma(a) b^{a}} y^{a-1} exp(-y/b)$$
+
+  b. Let's first determine the **Method of Moments** for $a$ and $b$.  Our system of equations is:
+  
+  \begin{eqnarray*}
+  E[Y] = a b &=& \frac{1}{n}\sum_{i=1}^n y_i = m_1\\
+  E[Y^2] = ab^2 + a^2 b^2 &=& \frac{1}{n}\sum_{i=1}^n y^2_i = m_2
+  \end{eqnarray*}
+  
+  Solving this system of equations we have:
+  
+  $$\tilde{a} = \frac{m_1^2}{m_2 - m_1^2} \ \ \  \tilde{b} = \frac{m_2 - m_1^2}{m_1}$$
+  
+```{r}
+    n <- length(y)
+    m1 <- mean(y)
+    m2 <- sum(y^2)/n
+    
+    a.mom <- m1^2/(m2-m1^2)
+    b.mom <- (m2-m1^2)/m1
+    
+    a.mom
+    b.mom
+```
+  
+  
+Now let's consider the **Maximum Likelihood** estimators.  
+
+\begin{eqnarray*}
+L(a,b) &=& \prod_{i=1}^n \frac{1}{\Gamma(a) \ b^a} y_i^{a-1} exp\left( -y_i/b \right) 
+\end{eqnarray*}
+
+
+Here we have the log-likelihood:
+
+ $$\ell(a, b) = -n \ log\left( \Gamma(a)\right) - n \ a \ log(b) + (a-1) \sum_{i=1}^n log(y_i) - \sum_{i=1}^n y_i/b$$ 
+    
+\begin{eqnarray}
+\frac{\partial \ell(a, b)}{\partial a} &=& -n \psi(a) -n log(b) + \sum_{i=1}^n log(y_i) \\
+\frac{\partial^2 \ell(a, b)}{\partial a^2} &=& -n \psi'(a)
+\end{eqnarray}
+
+    In Eqn (1), let's substitute in for $b = \sum_{i=1}^n y_i/(n a)$.  So we have an equation which only has $a$:
+    
+    
+\begin{eqnarray}
+\frac{\partial \ell(a, b)}{\partial a} &=& -n \psi(a) -n log\left(\sum_{i=1}^n y_i/(n a)\right) + \sum_{i=1}^n log(y_i) \\
+\frac{\partial^2 \ell(a, b)}{\partial a^2} &=& -n \psi'(a)
+\end{eqnarray}    
+    
+    
+* Where $\psi(a)=$ \texttt{digamma($a$)} and $\psi'(a)=$ \texttt{trigamma($a$)}.
+    
+```{r}
+    
+## Let's find the MLE of a using the N-R Approach.
+## Then we can solve for b analytically    
+## Write some functions for U and H
+U <- function(a){
+  n <- length(y)
+  out <-  -n* digamma(a) - n*log(sum(y)/(n*a)) + sum(log(y))
+  return(out)
+  }
+
+H <- function(a){
+	n <- length(y)
+	out <- -n*trigamma(a)
+	return(out)
+	}
+
+## Starting values - use MoM estimator 
+a <- mean(y)^2/( (n-1)*var(y)/n)
+
+## set a stopping point
+eps <- 1e-07
+check <- 10
+
+## Save the results. 
+out <- a
+
+## Run the algorithm
+while(check > eps){
+a.new <- a - U(a)/H(a)
+check <- sum(abs(a-a.new))
+a <- a.new
+out <- rbind(out, t(a))
+	}
+
+a.mle <- a	
+b.mle <- sum(y)/(n*a.mle)
+
+##
+a.mle
+b.mle
+    ```
+
+The ML and MoM estimates are very similar. 
+
+  c. Let's plot the two fitted densities on top of the histogram.
+
+```{r}
+hist(y, col="azure2", freq=FALSE, ylim=c(0, 0.013), xlab="Gamma Arrivals", main="MoM (blue) & MLE (orange)")
+x <- seq(0, 800, by=0.5)
+lines(x, dgamma(x, shape=a.mom, scale=b.mom), lwd=3, col="blue")
+lines(x, dgamma(x, shape=a.mle, scale=b.mle), lwd=3, col="orange")
+```
+
+We can see the results are very similar as the two lines essentiall overlap, except for a slight difference near 0.

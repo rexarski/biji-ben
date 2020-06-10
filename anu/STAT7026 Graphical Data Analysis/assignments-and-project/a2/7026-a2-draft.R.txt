@@ -1,0 +1,97 @@
+# The annual production in millions of net tons of bitumous coal between 1920 and 1968  are stored in a time series object called bicoal.tons.
+# Analyse this series.
+
+load("classData.RData")
+coal <- bicoal.tons
+length(coal) # 49
+coal
+years <- 1920:1968
+summary(coal)
+
+# ------------------------------------------------------------------------------------
+
+# A COMPLETE CHART SHOWCASE
+# 2017-09-18 14:40:45
+
+par(las=1, mgp=c(2,.5,0), cex.axis = 0.8)
+
+# bar chart
+cmtrx <- rbind(1920:1968,coal)
+rownames(cmtrx) <- c("year","coal")
+theplot <- barplot(cmtrx[2,],names.arg=cmtrx[1,],
+                   ylab='coal production',xlab='year',
+                   border=NA, space = 0.15, col="#002A5C", axes=FALSE)
+grid(nx=NA, ny=NULL, col="white", lty=1)
+abline(0, 0, h=0)
+abline(h=mean(coal),col='red')
+axis(1, at=theplot, labels=FALSE, pos=0)
+axis(2, mgp=c(3,1,0))
+mtext("Annual Bicoal Production (1920 to 1968)", adj=0, line=2, font=2, cex=1.2)
+mtext("unit: millions of net tons", adj=0, line=0.8, cex=0.9, font=3)
+
+# line plot
+plot(coal)
+
+# dot plot
+plot(coal, type='p')
+
+# both
+plot(coal, type='b')
+plot(coal, type='o') # line plot without spaces
+
+# area chart
+library(plotrix)
+stackpoly(coal,col='grey')
+
+# calendar heatmap
+# every 7 years?
+
+# animation!
+library(animation)
+ani.options(outdir = paste(getwd(), "./images", sep=""))
+
+saveGIF({
+  plot(cmtrx[1,],cmtrx[2,],type="n",
+       xlim=c(1920,1968),ylim=c(min(coal)-10,max(coal)+10),
+       xlab='Time',ylab='coal')
+  for (i in 1:length(coal)) {
+    plot(cmtrx[1,1:i],cmtrx[2,1:i],type='o',
+         xlim=c(1920,1968),ylim=c(min(coal)-10,max(coal)+10),
+         xlab='Time',ylab='coal')
+    abline(h=mean(coal),col='red')
+  }
+}, movie.name = "coal-ani.gif", interval=0.15, nmax=100, ani.width=650, ani.height=600)
+
+
+# ------------------------------------------------------------------------------------
+# If we only analyze the production difference?
+# The data presents as non-stationary, but first differences (called bc) appear stationary. We can now test whether these first differences are plausibly uncorrelated.
+
+timediff <- rep(0,length(coal)-1)
+for (i in 1:length(coal)-1){
+  timediff[i] <- coal[i+1]-coal[i] 
+}
+
+dmtrx <- rbind(1921:1968,timediff)
+rownames(cmtrx) <- c("year","diff") # Increment by last year
+plot(dmtrx[1,],dmtrx[2,],type='o',xlab='Increment By Last Year',ylab='Difference')
+
+# ------------------------------------------------------------------------------------
+# PROPHET (?)
+library(prophet)
+library(dplyr)
+df <- as.data.frame(cbind(1920:1968,coal))
+colnames(df) <- c("ds","y")
+df$ds <- as.Date(ISOdate(df$ds, 1, 1))
+m <- prophet(df)
+future <- make_future_dataframe(m, periods = 1)
+tail(future)
+forecast <- predict(m, future)
+tail(forecast[c('ds', 'yhat', 'yhat_lower', 'yhat_upper')])
+plot(m, forecast)
+prophet_plot_components(m, forecast)
+
+# ------------------------------------------------------------------------------------
+# References
+# - http://a-little-book-of-r-for-time-series.readthedocs.io/en/latest/src/timeseries.html
+# - https://facebook.github.io/prophet/docs/quick_start.html#r-api

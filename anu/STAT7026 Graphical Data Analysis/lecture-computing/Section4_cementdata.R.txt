@@ -1,0 +1,463 @@
+y <- c(78.5,74.3,104.3,87.6,95.9,109.2,102.7,72.5,93.1,115.9,
+       83.8,113.3,109.4)
+x <- c(7,1,11,11,7,11,3,1,2,21,1,11,10,26,29,56,31,52,55,71,31,54,47,
+  40,66,68,60,52,20,47,33,22,6,44,22,26,34,12,12,6,15,8,8,6,9,17,22,18,4,23,9,8)
+x <- matrix(x,nrow=13,dimnames=list(NULL,c("Ca3A","Ca3S","Ca2S","CaAF")))
+
+# Graphical exploration of the cement data
+
+pairs(cbind(y,x))
+
+library(MASS)
+pairs(cbind(y,x),
+      panel=function(x,y){points(x,y);abline(rlm(y~x))})
+
+symbols(x[,1],y,stars=cbind(x[,2]/max(x[,2]),x[,3]/max(x[,3]),x[,4]/max(x[,4])),
+        add=F,inches=1/4,
+        main="Plot of Cement Data",
+        xlab="Ca3A",
+        ylab="Heat evolved",
+        sub="Right = Ca2F, Left = CaAF, Top = Ca3S")
+
+symbols(x[,1],y,rectangles=cbind(x[,2]/max(x[,2]),x[,3]/max(x[,3])),
+        add=F,inches=1/4,
+        main="Plot of Cement Data",
+        xlab="Ca3A",
+        ylab="Heat evolved",
+        sub="Width = Ca3S, Height = Ca2F")
+
+symbols(x[,1],y,squares=cbind(x[,2]/max(x[,2])),add=F,inches=1/4,
+        main="Plot of Cement Data",
+        xlab="Ca3A",
+        ylab="Heat evolved",
+        sub="Side of Square = Ca3S")
+
+symbols(x[,1],y,stars=cbind(x[,2]/max(x[,2]),0,0),add=F,inches=1/4,
+        main="Plot of Cement Data",
+        xlab="Ca3A",
+        ylab="Heat evolved",
+        sub="Segment = Ca3S")
+
+sort(x[,2])
+# [1] 26 29 31 31 40 47 52 54 55 56 66 68 71
+sort(x[,3])
+# [1]  6 12 12 20 22 22 26 33 34 44 47 52 60
+sort(x[,4])
+# [1]  4  6  6  8  8  8  9  9 15 17 18 22 23
+
+x1 <- cbind(x[,1],ifelse(x[,2] >= 50,1,0),ifelse(x[,3] >= 25,1,0),ifelse(x[,4] >=8.5,1,0))
+x1
+# [,1] [,2] [,3] [,4]
+# [1,]    7    0    1    0
+# [2,]    1    0    1    1
+# [3,]   11    1    0    0
+# [4,]   11    0    1    0
+# [5,]    7    1    1    0
+# [6,]   11    1    0    1
+# [7,]    3    1    0    1
+# [8,]    1    0    1    1
+# [9,]    2    1    0    1
+# [10,]   21    0    1    0
+# [11,]    1    0    1    1
+# [12,]   11    1    0    1
+# [13,]   10    1    0    0
+
+par(mfrow=c(2,2),oma=c(0,0,4,0))
+an <- ifelse(x1[,2] ==1 & x1[,3] == 0 & x1[,4]==0,T,F)
+plot(x[an,1],y[an],ylim=range(y),xlim=range(x[,1]),
+     main = "Ca3S high, Ca2S, CaAF low",
+     ylab="Heat evolved",
+     xlab="Ca3A")
+an <- ifelse(x1[,2] ==1 & x1[,3] == 0 & x1[,4]==1,T,F)
+plot(x[an,1],y[an], ylim=range(y), xlim=range(x[,1]),
+     main = "Ca3S high, Ca2S low, CaAF high",
+     ylab="Heat evolved",
+     xlab="Ca3A")
+an <- ifelse(x1[,2] ==0 & x1[,3] == 1 & x1[,4]==1,T,F)
+plot(x[an,1],y[an],ylim=range(y),xlim=range(x[,1]),
+     main = "Ca3S low, Ca2S, CaAF high",
+     ylab="Heat evolved",
+     xlab="Ca3A")
+an <- ifelse(x1[,2] ==0 & x1[,3] == 1 & x1[,4]==0,T,F)
+plot(x[an,1],y[an],ylim=range(y),xlim=range(x[,1]),
+     main = "Ca3S low, Ca2S high, CaAF low",
+     ylab="Heat evolved",
+     xlab="Ca3A")
+mtext("Cement Data",3,1,outer=T,cex=1.5)
+
+
+par(mfrow=c(1,2),oma=c(0,0,4,0),pty="m")
+plot(x[(x[,2] <= 50),1],y[(x[,2] <= 50)],ylim=range(y),xlim=range(x[,1]),
+     main = "Ca3S <= 50",
+     ylab="Heat evolved",
+     xlab="Ca3A")
+plot(x[(x[,2] > 50),1],y[(x[,2] > 50)],ylim=range(y),xlim=range(x[,1]),
+     main = "Ca3S > 50",
+     ylab="Heat evolved",
+     xlab="Ca3A")
+mtext("Cement Data",3,1,outer=T,cex=1.5)
+
+par(mfrow=c(1,1))
+plot(x[,1],y,
+     main = "Cement Data",
+     ylab="Heat evolved",
+     xlab="Ca3A",
+     sub="* = Ca3S <= 50, + = Ca3S > 50",type="n")
+text(x[,1],y,ifelse(x[,2] <= 50,"*","+"))
+
+# In R, the interp function that is used to interpolate the 3D grid of points is
+# in the akima package. First, install the package
+install.packages("akima") # One time only
+library(akima)
+
+par(mfrow=c(1,2),oma=c(4,0,6,0))
+surf <- interp(x[,1],x[,2],y)
+surf$z <-ifelse(is.na(surf$z),0,surf$z)
+persp(surf$z/200,
+      xlab="Ca3A",
+      ylab="Ca3S",
+      zlab="Heat Evolved")
+title(main="Perspective Plot")
+contour(surf,
+        main="Contour Plot",
+        xlab="Ca3A",
+        ylab="Ca3S")
+points(x[,1],x[,2])
+mtext("Response Surface for Cement Data",3,1,outer=T,cex=1.5)
+
+# Explore the covariate space for mulitcollinearity
+
+pairs(x)
+round(cor(x),2)
+# [,1]  [,2]  [,3]  [,4]
+# [1,]  1.00  0.23 -0.25 -0.82
+# [2,]  0.23  1.00 -0.97 -0.14
+# [3,] -0.25 -0.97  1.00  0.03
+# [4,] -0.82 -0.14  0.03  1.00
+w <- sweep(x,2,apply(x,2,mean))
+s <- prcomp(w %*% diag(1/sqrt(diag(crossprod(w)))))
+s$sdev[1]/s$sdev
+# [1]  1.000000  1.191022  3.461339 37.106342
+round(s$rotation,2)
+# [,1]  [,2]  [,3]  [,4]
+# [1,]  0.48 -0.51  0.68 -0.24
+# [2,]  0.56  0.41 -0.31 -0.64
+# [3,] -0.55 -0.45 -0.20 -0.68
+# [4,] -0.39  0.60  0.64 -0.27
+
+pairs(s$x)
+
+plot(c(1:13),hat(x),ylim=c(0,max(hat(x))),
+     main="Leverage Points in the Cement Data",
+     xlab="Case Number",
+     ylab="Leverage")
+segments(c(1:13),0,c(1:13),hat(x))
+abline(h=5/13)
+
+#Ridge Trace
+
+ridgetrace <- function(x, y)
+{
+  betas <- solve(cor(x)) %*% cor(x, y)
+  for(const in seq(0.01, 0.99, 0.01)) {
+    ridge <- solve(cor(x) + const*diag(rep(1,length(x[1,]))))%*% cor(x, y)
+    betas <- cbind(betas, ridge)
+  }
+  matplot(seq(0, 0.99, 0.01), t(betas), type = "l", lty = 1:length(x[1,
+                                                                     ]), main =
+            "Ridge Trace for Standardized Regression Coefficients", ylab =
+            "Standardised Regression Coefficients", xlab =
+            "Biasing Constant")
+}
+
+
+ridgetrace(x,y)
+
+w <- sweep(x,2,apply(x,2,median))/rep(apply(x,2,median),rep(nrow(x),ncol(x)))
+abs(w) >= 3
+# Ca3A Ca3S Ca2S CaAF
+# [1,]    F    F    F    F
+# [2,]    F    F    F    F
+# [3,]    F    F    F    F
+# [4,]    F    F    F    F
+# [5,]    F    F    F    F
+# [6,]    F    F    F    F
+# [7,]    F    F    F    F
+# [8,]    F    F    F    F
+# [9,]    F    F    F    F
+# [10,]    F    F    F    F
+# [11,]    F    F    F    F
+# [12,]    F    F    F    F
+# [13,]    F    F    F    F
+
+# Smoothing methods
+
+# In R, the avas (additive variance-stabilized modelling) function is in the acepack library
+install.packages("acepack") # one-time only
+library(acepack)
+fit <-avas(x,y)
+fv <- apply(fit$tx,1,sum)
+res <- fit$ty-fv
+
+par(mfrow=c(1,3),oma = c(6,0,6,0))
+
+qqnorm(res,
+       main="Quantile-Quantile Plot",
+       xlab="Gaussian Quantiles",
+       ylab="AVAS Residuals")
+
+plot(fv,res,
+     main="Residual Plot",
+     xlab="Fitted Values",
+     ylab="AVAS Residuals")
+identify(fv,res,c(1:13))
+
+plot(fv,abs(res),
+     main="Absolute Residual Plot",
+     xlab="Fitted Values",
+     ylab="Absolute AVAS Residuals")
+lines(lowess(fv,abs(res),f=8/9))
+
+mtext("Diagnostics for the AVAS fit to the Cement data",
+      side=3,line=2,outer=T,cex=1.5)
+mtext("The model includes all variables on the raw scale",
+      side=1,line=2,outer=T,cex=1.5)
+
+plot(y,fit$ty,
+     main="Transformed Response vs Response for Cement Data",
+     xlab="Response",
+     ylab="Transformed Response",
+     sub="Model includes all Variables on raw scale")
+
+
+par(mfcol=c(2,2),oma=c(2,0,3,0))
+for (i in 1:4){
+  plot(x[,i],fit$tx[,i],
+       ylab=paste("Transformed x[,",i,"]"))
+  title(main=paste("Explanatory Variable",i),cex=0.75)
+}
+mtext("Additive Explanatory Variable Transformations for Cement Data",3,1,outer=T,cex=1.5)
+mtext("Model includes all variables on raw scale",1,1,outer=T)
+par(mfcol=c(1,1),oma=c(0,0,0,0))
+
+# Projection pursuit regression
+fit <-ppr(x,y,nterms=1,max.terms=4)
+res <- fit$residuals
+fv <- y-res
+round(fit$alpha,2)
+round(fit$beta,2)
+
+par(mfrow=c(1,3),oma = c(6,0,6,0))
+
+qqnorm(res,
+       main="Quantile-Quantile Plot",
+       xlab="Gaussian Quantiles",
+       ylab="PPR Residuals")
+
+plot(fv,res,
+     main="Residual Plot",
+     xlab="Fitted Values",
+     ylab="PPR Residuals")
+identify(fv,res,c(1:13))
+
+plot(fv,abs(res),
+     main="Absolute Residual Plot",
+     xlab="Fitted Values",
+     ylab="Absolute PPR Residuals")
+lines(lowess(fv,abs(res), f=8/9))
+
+mtext("Diagnostics for the PPR fit to the Cement data",
+      side=3,line=2,outer=T,cex=1.5)
+mtext("The model includes all variables on the raw scale & m=1",
+      side=1,line=2,outer=T,cex=1.5)
+
+
+plot(fit,ask=T) # This will plot each transformed variable, one by one
+
+# Force 4 terms
+
+fit <-ppr(x,y,nterms=4)
+res <- fit$residuals
+fv <- y-res
+round(fit$alpha,2)
+round(fit$beta,2)
+
+par(mfrow=c(1,3),oma = c(6,0,6,0))
+
+qqnorm(res,
+       main="Quantile-Quantile Plot",
+       xlab="Gaussian Quantiles",
+       ylab="PPR Residuals")
+
+plot(fv,res,
+     main="Residual Plot",
+     xlab="Fitted Values",
+     ylab="PPR Residuals")
+identify(fv,res,c(1:13))
+
+plot(fv,abs(res),
+     main="Absolute Residual Plot",
+     xlab="Fitted Values",
+     ylab="Absolute PPR Residuals")
+lines(lowess(fv,abs(res), f=8/9))
+
+mtext("Diagnostics for the PPR fit to the Cement data",
+      side=3,line=2,outer=T,cex=1.5)
+mtext("The model includes all variables on the raw scale & m=2",
+      side=1,line=2,outer=T,cex=1.5)
+
+
+par(mfcol=c(2,2),oma=c(2,0,3,0))
+plot(fit)
+
+par(mfcol=c(1,1),oma=c(0,0,0,0))
+
+# Parametric model fitting
+
+fit <- rlm(y~x)
+fv <- cbind(1,x) %*% fit$coef
+res <- fit$resid
+
+plot(c(1:length(y)), 1/fit$w,
+     main = "Huber Weights for Cement Data",
+     xlab = "Observation Number",
+     ylab = "Weight",
+     sub="Model includes all variables on raw scale")
+segments(c(1:13),1,c(1:13),1/fit$w)
+
+par(mfrow=c(1,3),oma = c(6,0,6,0))
+
+qqnorm(res,
+       main="Quantile-Quantile Plot",
+       xlab="Gaussian Quantiles",
+       ylab="PPR Residuals")
+
+plot(fv,res,
+     main="Residual Plot",
+     xlab="Fitted Values",
+     ylab="PPR Residuals")
+identify(fv,res,c(1:13))
+
+plot(fv,abs(res),
+     main="Absolute Residual Plot",
+     xlab="Fitted Values",
+     ylab="Absolute PPR Residuals")
+lines(lowess(fv,abs(res), f=8/9))
+
+mtext("Diagnostics for the model fit to the Cement data",
+      side=3,line=2,outer=T,cex=1.5)
+mtext("The model includes all variables on the raw scale",
+      side=1,line=2,outer=T,cex=1.5)
+
+
+par(mfcol=c(2,2),oma=c(2,0,3,0))
+for (i in 1:4) plot(x[,i],fit$resid+x[,i]*fit$coef[i+1],
+                    ylab=paste(i,"th Partial Residual"))
+mtext("Partial Residual Plots for Cement Data",3,1,outer=T)
+mtext("Model includes all variables on raw scale",1,1,outer=T)
+
+for (i in 1:4) {
+  plot(rlm(x[,i]~x[,-i])$resid,
+       rlm(y~x[,-i])$resid,
+       xlab=paste("Adjusted x[,",i,"]"),
+       ylab=paste("Adj y excl x[,",i,"]"))
+  identify(rlm(x[,i]~x[,-i])$resid,
+           rlm(y~x[,-i])$resid,c(1:13))
+}
+mtext("Added Variable Plots for Cement Data",3,1,outer=T)
+mtext("Model includes all variables on raw scale",1,1,outer=T)
+par(mfcol=c(1,1),oma=c(0,0,0,0))
+
+
+s <- median(abs(fit$resid))/0.6745
+eta <- sum(abs(fit$resid/s) <= 1.345)/nrow(x)
+tau <- sum(ifelse(abs(fit$resid/s) <= 1.345,fit$resid/s,1.345 )^2)/(nrow(x)-ncol(x)-1)
+se <- s^2*tau*(eta+(4/13)*(1-eta))/(eta^3)
+lam <- 2*eta/tau
+v <- se*solve(crossprod(cbind(1,x)))
+tstats <- fit$coef/sqrt(diag(v))
+
+tstats
+# 1      C3A       C3S        C2S       CAF
+# 0.7675795 2.056171 0.7448592 -0.1124211 0.2258053
+
+qfull <- sum(ifelse(abs(fit$resid/s) <= 1.345,((fit$resid/s)^2)/2 , 1.345*abs(fit$resid/s) - 1.345^2/2))
+fit0 <- rlm(y~1)
+qnull <- sum(ifelse(abs(fit0$resid/s) <= 1.345,((fit0$resid/s)^2)/2 , 1.345*abs(fit0$resid/s) - 1.345^2/2))
+1-pf((qnull - qfull)*lam/4,4,8)
+# [1] 7.371963e-05
+
+fit1 <- rlm(y~x[,1]+x[,2])
+q1 <-sum(ifelse(abs(fit1$resid/s) <= 1.345,((fit1$resid/s)^2)/2 , 1.345*abs(fit1$resid/s) - 1.345^2/2))
+1-pf((q1 - qfull)*lam/2,2,8)
+# [1] 0.5317387
+
+fit2 <- rlm(y~x[,1])
+q2 <-  sum(ifelse(abs(fit2$resid/s) <= 1.345,((fit2$resid/s)^2)/2 , 1.345*abs(fit2$resid/s) - 1.345^2/2))
+1-pf((q2 - qfull)*lam/3,3,8)
+# [1] 0.0002288084
+
+plot(c(1:length(y)), 1/fit1$w,
+     main = "Huber Weights for Cement Data",
+     xlab = "Observation Number",
+     ylab = "Weight",
+     sub="Model includes C3A and C3S on raw scale")
+segments(c(1:13),1,c(1:13),1/fit1$w)
+
+fv <- cbind(1,x[,1:2]) %*% fit1$coef
+res <- fit1$resid
+
+par(mfrow=c(1,3),oma = c(6,0,6,0))
+
+qqnorm(res,
+       main="Quantile-Quantile Plot",
+       xlab="Gaussian Quantiles",
+       ylab="PPR Residuals")
+
+plot(fv,res,
+     main="Residual Plot",
+     xlab="Fitted Values",
+     ylab="PPR Residuals")
+identify(fv,res,c(1:13))
+
+plot(fv,abs(res),
+     main="Absolute Residual Plot",
+     xlab="Fitted Values",
+     ylab="Absolute PPR Residuals")
+lines(lowess(fv,abs(res), f=8/9))
+
+mtext("Diagnostics for the model fit to the Cement data",
+      side=3,line=2,outer=T,cex=1.5)
+mtext("The model includes Ca3A and Ca3S on the raw scale",
+      side=1,line=2,outer=T,cex=1.5)
+
+par(mfcol=c(2,1),oma=c(2,0,3,0))
+for (i in 1:2){
+  plot(x[,i],fit1$resid+x[,i]*fit1$coef[i+1],
+       ylab=paste(i,"th Partial Residual"))
+}
+mtext("Partial Residual Plots for Cement Data",3,1,outer=T)
+mtext("Model includes C3A and C3S on raw scale",1,1,outer=T)
+
+for (i in 1:2){
+  plot(rlm(x[,i]~x[,c(-i,-3,-4)])$resid,
+       rlm(y~x[,c(-i,-3,-4)])$resid,
+       xlab=paste("Adjusted x[,",i,"]"),
+       ylab=paste("Adj y excl x[,",i,"]"))
+}
+mtext("Added Variable Plots for Cement Data",3,1,outer=T)
+mtext("Model includes C3A and C3S on raw scale",1,1,outer=T)
+par(mfcol=c(1,1),oma=c(0,0,0,0))
+
+fit1$coef
+# 1      C3A      C3S
+# 52.57372 1.463929 0.660748
+
+s <- median(abs(fit1$resid))/0.6745
+eta <- sum(abs(fit1$resid/s) <= 1.345)/nrow(x)
+tau <- sum(ifelse(abs(fit1$resid/s) <= 1.345,fit1$resid/s,1.345 )^2)/(nrow(x)-ncol(x)-1)
+se <- s^2*tau*(eta+(4/13)*(1-eta))/(eta^3)
+lam <- 2*eta/tau
+v <- se*solve(crossprod(cbind(1,x[,1:2])))
+sqrt(diag(v))
+# [1] 2.82808706 0.15005399 0.05672408

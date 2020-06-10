@@ -1,0 +1,371 @@
+---
+subtitle: "STAT7026 Final Project Part B"
+title: "The Detection of Redlining in Chicago Insurance Data"
+geometry: margin=1.8cm
+header-includes:
+   - \usepackage{amsmath}
+output:
+  pdf_document: default
+  html_document: default
+---
+
+<style type="text/css">
+body, td {
+   font-size: 14px;
+}
+code.r{
+  font-size: 14px;
+}
+pre {
+  font-size: 14px
+}
+</style>
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.path='Figs-b/', dev = 'png', 
+                      out.width='320px', out.height='200px',dpi=200,
+                      fig.align = "center",
+                      small.mar=TRUE,
+                      echo=FALSE, warning=FALSE, message=FALSE)
+```
+
+```{r prep}
+rm(list=ls(all=TRUE))
+library(car)
+library(MASS)
+library(zipcode) # 2012 zip code data
+library(ggplot2)
+library(GGally)
+library(ggthemes)
+library(ggmap)
+library(grid)
+library(png)
+
+load("classdata.RData")
+insure <- as.data.frame(insure)
+
+multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
+    require(grid)
+    
+    # Make a list from the ... arguments and plotlist
+    plots <- c(list(...), plotlist)
+    
+    numPlots = length(plots)
+    
+    # If layout is NULL, then use 'cols' to determine layout
+    if (is.null(layout)) {
+        # Make the panel
+        # ncol: Number of columns of plots
+        # nrow: Number of rows needed, calculated from # of cols
+        layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                         ncol = cols, nrow = ceiling(numPlots/cols))
+    }
+    
+    if (numPlots==1) {
+        print(plots[[1]])
+        
+    } else {
+        # Set up the page
+        grid.newpage()
+        pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+        
+        # Make each plot, in the correct location
+        for (i in 1:numPlots) {
+            # Get the i,j matrix positions of the regions that contain this subplot
+            matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+            
+            print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                            layout.pos.col = matchidx$col))
+        }
+    }
+}
+```
+
+## Background
+
+_Redlining_ is a practice of denying services, either directly or through selectively raising prices, to residents of certain areas based on the racial or ethnic composition of those areas.[^1] In this report, we are investigating data collected by the U.S. Commission on Civil Rights to examine charges that insurance companies were "redlining" certain neighbourhoods in Chicago in the 1970s. 
+
+[^1]: Redlining, Wikipedia, https://en.wikipedia.org/wiki/Redlining.
+
+<!-- ## Methodology -->
+<!-- We fit the data into a linear regression model and find out if each variable is significant. Specifically, the extent to which racial minority and age of housing affect insurability when other factors controlled is the our priority. If some other variables are highly correlated, we can use added variable plot to separate the effect -->
+
+## Data Cleaning and Manipulation
+
+The data is stored by Zip codes and each zip code has a series of corresponding variables `Fire`,`Theft`,`Income`,`Race` and `Age`. The dependent variables we are interested are `Volun` and `Invol`. Using `Invol` only to represent insurability of insurance companies might not be appropriate, since the willingness of people to buy insurance differs. In other words, low value of `Invol` in a district (zip code area) does not guarantee it is redlining-free. It could be due to educational background that people simple don't want to buy insurance. Therefore, we construct a new variable called `rRej` (rate of rejection) by calculating the ratio between `Invol` and `Volun+Invol`. In this way, `rRej` is the proportion of people who are rejected by private insurance companies (hence have to buy from government), to **roughly** all people who wanted to buy insurance.
+
+\[\text{rRej}=\frac{\text{Invol}}{\text{Invol+Volun}}\]
+
+The only drawback of rewriting is that some people could give up on buying insurance from government after being rejected by insurance companies. The main obstruction here is low income. People can stop buying or renewing insurance simply because they were not able to afford it. So there can be loss from `Volun` to `Invol`, hence our `rRej` is overestimated. But generally we believe this is a better expression than `Invol` itself.
+
+We transform the variable `Income` by taking logarithm and rename it as `LogIncome`. This is mainly a conventional action since the income distribution is usually skewed. Also, it is the predictor with largest scale. 
+
+```{r, log-income}
+insure$rRej <- insure$Invol/(insure$Invol+insure$Volun) # rate of insurance rejection
+par(mfrow=c(1,2))
+hist(insure$Income,prob=T,main="Income Distribution",xlab="Income")
+hist(log(insure$Income),prob=T,main="Log Income Distribution",xlab="Log(Income)")
+```
+
+Moreover, we extract the longitude and latitude from Jeffrey Breen's R package `zipcode`. [^2] One funny thing to notice is that Jeffrey's zipcode data was updated in 2011, but the zipcodes of Chicago we are dealing with can be traced back to 40 years ago. And in fact, by comparison, we find two of those zip codes $60627$ (near Dolton) and $60635$ (near Elmwood Park) are abandoned, so we input the missing geo-location information manually.
+
+[^2]: My first R package: zipcode, by Jeffrey Breen, https://jeffreybreen.wordpress.com/2011/01/05/cran-zipcode/.
+
+Lastly, based on a map of community areas in Chicago [^3], we divide 1970s zip code map into 9 major communities and save this information in a new variable `Suburb`. On a larger scale, we cluster the communities into 3 regions: _North side_, _West side_ and _South side_. The classification of regions is saved as a new variable `NSW`. Additionally, we add an alternative classification which combines North side and West side together as the new _North side_ and _South side_ as before.
+
+```{r colored-map, out.width='480px', out.height='300px'}
+img <- readPNG("./Figs-b/colored-chicago.png")
+grid.raster(img)
+```
+
+[^3]: Community areas in Chicago, Wikipedia, https://en.wikipedia.org/wiki/Community_areas_in_Chicago.
+
+```{r data-manipulation}
+insure$Income <- log(insure$Income)
+
+vars <- c(2,3,4,5,8,9)
+predictors <- c(2,3,4,5,8)
+
+# ADD geo data for zip codes
+
+data(zipcode)
+dict <- zipcode[zipcode$zip %in% insure$Zip,] # 45! 2 lost
+
+insure$lon <- rep(NA,47)
+insure$lat <- rep(NA,47)
+
+for (i in 1:47) {
+    if (insure$Zip[i] %in% as.numeric(dict$zip)) {
+        id <- which(as.numeric(dict$zip)==insure$Zip[i])
+        insure$lon[i] <- dict$longitude[id]
+        insure$lat[i] <- dict$latitude[id]
+    }
+}
+
+# insure[which(insure$Zip==60635),] # 41.9225, -87.815556 near Elmwood Park
+# insure[which(insure$Zip==60627),] # 41.6275, -87.598611 near Dolton
+
+insure[which(insure$Zip==60635),10] <- -87.815556 # lon
+insure[which(insure$Zip==60635),11] <- 41.9225 # lat
+insure[which(insure$Zip==60627),10] <- -87.598611 # lon
+insure[which(insure$Zip==60627),11] <- 41.6275 # lat
+
+
+insure$Suburb <- 
+    c("Far North Side", "Far North Side", "Far North Side", "North Side", "North Side", 
+      "West Side", "Central", "Far North Side", "Northwest Side", "North Side",
+      "West Side", "Far North Side", "Far North Side", "Far North Side", "Far North Side",
+      "Northwest Side", "Northwest Side", "Northwest Side", "Northwest Side", "West Side",
+      "West Side", "West Side", "West Side", "West Side", "West Side",
+      "West Side", "Central", "Southwest Side", "Southwest Side", "South Side",
+      "South Side", "Southwest Side", "Southwest Side", "Southwest Side", "Southwest Side",
+      "South Side", "Southwest Side", "Southwest Side", "South Side", "South Side",
+      "Far Southeast Side", "Far Southwest Side", "Far Southwest Side", "Far Southeast Side", "Far Southeast Side",
+      "Far Southeast Side", "Far North Side")
+
+NS <- rep(NA,nrow(insure))
+for (i in 1:length(insure$Suburb)) {
+    if (insure$Suburb[i] %in% c("Far North Side", "North Side", "Northwest Side", "West Side", "Central")) {
+        NS[i] <- "N"
+    } else {
+        NS[i] <- "S"
+    }
+}
+
+NSW <- rep(NA,nrow(insure))
+for (i in 1:length(insure$Suburb)) {
+    if (insure$Suburb[i] %in% c("Far North Side", "North Side", "Northwest Side")) {
+        NSW[i] <- "N"
+    } else if (insure$Suburb[i] %in% c("West Side","Central")) {
+        NSW[i] <- "W"
+    } else {
+        NSW[i] <- "S"
+    }
+}
+
+insure$NS <- NS;insure$NSW <- NSW
+
+colnames(insure) <- 
+    c("Zip","Race","Fire","Theft","Age","Volun","Invol","LogIncome","rRej","lon","lat","Suburb","NS","NSW")
+```
+
+## Exploratory Analysis
+We use scatter matrix to get a general idea about how variables are correlated.
+
+```{r corr,out.width='384px', out.height='240px'}
+# pairs(insure[,vars],
+#       panel=function(x,y){points(x,y);abline(lm(y~x))},upper.panel=NULL)
+# cor(insure[,vars])
+
+# insure.temp <- insure[,c(2,3,4,5,8,9,14)]
+# ggpairs(insure.temp,aes(color=NSW,alpha=0.4))
+ggpairs(insure[,vars],aes(alpha=0.4))+theme_minimal()
+```
+
+We notice that the response `rRej` is postively correlated with `Race` and `Fire`, which is not surprising. We doubt that insurance companies are indeed redlining, and traditionally, fire risk is a concern when evaluating an insurance case. As for `Race`, if it is the main cause of `rRej` then the redlining is confirmed. `LogIncome` is negatively correlated with `rRej`. Although may sound cruel, refusing selling or renewing insurance to poor people is legal. Another secret here is that `LogIncome` is highly correlated with `Race`. This entwinement can really produce some problems as high rejection rate can be explained by low income which is legal, or it can be explaiend by high percentage of minority races.
+
+```{r histograms}
+# histograms
+# par(mfrow=c(2,3))
+# for (i in vars){
+#     hist(insure[,i],main=names(insure)[i],xlab="",prob=T,col="white")
+#     lines(density(insure[,i]),col="red",lwd=2)
+# }
+
+# boxplots (maybe not?)
+par(mfrow=c(2,3))
+for (i in vars){
+    boxplot(insure[,i],main=names(insure)[i])
+}
+```
+
+Then we plot the boxplots of response and predictors. Note that the mid 50-percentile of `Race` has a rather large range approximately from $0$ to $60$. To conclude, the level of racial diversity of Chicago is very high. Districts vary from districts. Since we are studying the effects of `Race`, we really need to take locations into consideration.
+
+## Model Building
+Our goal in this part is to fit an appropriate linear model for rejection rate. And the target predictor is `Race`. We can simply fit in a reduced model with one predictor `Race` only. The result is quite satisfying, `Race` shows its significance when other variables are ignored. (Detailed summary table is left out.)
+
+```{r reduced}
+fit.red <- lm(rRej~Race,data=insure)
+# summary(fit.red)
+```
+
+The next step is trying to fit a full model with all predictors in an order of `Fire`, `Theft`, `LogIncome`, `Race` and `Age`. We particularly pick this order because we tend to treat `Race` and `Age` as extra reasons explaining variabilities when fitting the model. That is to say, we believe those insurance companies made their decisions first based on those legit reasons, then (probably) based on the those redlining-related factors.
+
+```{r full-raw}
+# full model 
+fit1 <- lm(rRej~Fire+Theft+LogIncome+Race+Age,data=insure)
+summary(fit1)
+# anova(fit1)
+```
+
+For this model, `Race` is significant along with `Fire` and `Theft`, while `LogIncome` and `Age` seem to be not that significant. Then we check the diagnostic plots of this model.
+
+```{r raw-diagnostic,out.width='384px', out.height='240px'}
+par(mfrow=c(2,3))
+plot(fit1, which=c(1,2,4,5))
+# absolute residual plot
+plot(fit1$fitted.values,abs(fit1$residuals),
+     main="Absolute Residuals vs fitted values",
+     ylab="Absolute residuals",xlab="Fitted values")
+lines(lowess(fit1$fitted.values,abs(fit1$residuals)),col="red")
+```
+
+In residuals vs fitted plot, the alignment of some points in the left part is a perfect linear line. We will investigate further later.
+
+It also suggests a huge problem of heteroscadasticity, then we might need to do some transformation on the response to stablize the variances. In this case, we transform the response `rRej` by taking a square root. So our full model is:
+
+\[
+\begin{split}
+\sqrt{\text{rRej}}=\underset{(1.120)}{1.230}+\underset{(0.003)}{0.012}\text{Fire}-\underset{(0.001)}{0.003}\text{Theft}-\underset{(0.116)}{0.139}\text{LogIncome}+\underset{(0.001)}{0.004}\text{Race}+\underset{(0.001)}{0.003}\text{Age}
+\end{split}
+\]
+
+```{r full-trans}
+fit11 <- lm(sqrt(rRej)~Fire+Theft+LogIncome+Race+Age,data=insure)
+summary(fit11)
+```
+
+The summary statistics of this model is even better. Only `LogIncome` and the intercept stay insignificant.
+
+```{r trans-diagnostic,out.width='384px', out.height='240px'}
+par(mfrow=c(2,3))
+plot(fit11,which=c(1,2,4,5))
+plot(fit11$fitted.values,abs(fit11$residuals),
+     main="Absolute Residuals vs fitted values",
+     ylab="Absolute residuals",xlab="Fitted values")
+lines(lowess(fit11$fitted.values,abs(fit11$residuals)),col="red")
+```
+
+```{r outlier}
+# insure[c(6,7,24),]
+```
+
+The linear alignment of data points in residuals vs fitted plot still exists. After some trials we identify that these points belong to data with zero `rRej`. Another common feature of these data is high `LogIncome`.
+
+Addtionally, we can find out that those three influential points standing out are zip codes $60610,60611,60607$ respectively. Coincidently, they are all zip codes near or in _Central_ area. And what make them speical are
+
+- $60610$ has quite high level of `Race` (near 3rd quantile), very high level of `Fire`, very high level of `Theft`, low level of `LogIncome`, but a level of `rRej` below 50 percentile.
+- $60611$ has low level of `Race`, high level of `Theft` and the highest level of `LogIncome`, and zero `rRej`. This also belongs to that weird straight line in residual plot.
+- $60607$ has high `Race`, the highest values of both `Theft` and `Fire` and low `LogIncome` and a rather low level of `rRej`.
+
+As discussed before, even with a significant p-value of `Race` and an insignificant p-value of `LogIncome`, one cannot simply separate the two from each other without doing some extra analysis. So far, the existence of redlining still remains as a myth.
+
+## Showdown of Two Nemesis
+
+A great tool to resume our redlining detection odyssey is the added variable plot which is capable of showing the relationship between `rRej` and `Race`/`LogIncome` adjusted for the other explanatory variables in the model.
+
+```{r avplot}
+# ADDED VARIABLE PLOT
+# Race
+par(mfrow=c(1,2))
+av1 <- lm(Race~Fire+Theft+LogIncome+Age,data=insure)
+av2 <- lm(sqrt(rRej)~Fire+Theft+LogIncome+Age,data=insure)
+plot(av1$residuals,av2$residuals,
+     xlab="Adjusted Race",ylab="Adjusted Sqrt(rRej) excl Race",
+     main="AVP (Race)")
+lines(lowess(av1$residuals,av2$residuals),col="red")
+
+
+av3 <- lm(LogIncome~Fire+Theft+Race+Age,data=insure)
+av4 <- lm(sqrt(rRej)~Fire+Theft+Race+Age,data=insure)
+plot(av3$residuals,av4$residuals,
+     xlab="Adjusted Race",ylab="Adjusted Sqrt(rRej) excl LogIncome",
+     main="AVP (LogIncome)")
+lines(lowess(av3$residuals,av4$residuals),col="red")
+```
+
+The added variable plots indicate that, the information of what `Race` knows about `rRej` is more than that of what `LogIncome` knows about `rRej`. The linearity in the left hand side plot is more obvious. Besides, the non-constant variance in the right hand side plot introduces some outliers, and may be responsible for the false impression that `LogIncome` is truly a competitor with `Race`. To conclude, **`Race` is the main cause of variabilities in our model instead of `LogIncome`, we can confirm that those insurance companies indeed redlined some of their cases.**
+
+## Considering Locations
+As mentioned, location seems to matter in our model. The auto-detected outliers in our model also outlines a certain part of Chicago City, which is the _Central_ area. We pick the North-South-West division and fit the previously refined model into different subsets, which only contains data from the same region. Then we check summary statistics to see if our prior knowledge still works.
+
+Surprisingly, `Race` is significant in none of these three models. Here we only show the model of _South side_, it is the only model with some significant terms as well.
+
+```{r location}
+# fit.NSW.N <- lm(sqrt(rRej)~Fire+Theft+LogIncome+Race+Age,
+               # data=insure[insure$NSW=="N",])
+fit.NSW.S <- lm(sqrt(rRej)~Fire+Theft+LogIncome+Race+Age,
+               data=insure[insure$NSW=="S",])
+# fit.NSW.W <- lm(sqrt(rRej)~Fire+Theft+LogIncome+Race+Age,
+                # data=insure[insure$NSW=="W",])
+# summary(fit.NSW.N)
+summary(fit.NSW.S)
+# summary(fit.NSW.W)
+```
+
+Basically, the model we selected performs rather badly in small isolated regions of Chicago. Hence, another problem is presented in front of us: a unified model can work in a macroscopic view, but it might fail when constrained to partial data. Realistically, different regions of a city differentiate in the process of urbanization. Due to administrative reasons, they form different neighbourhoods. While due to more cultrual or economical reasons, they form communities. And various classes of people inhabit in those areas based on their social status, thus there might be tremendously diverging social problems in those areas. In our case, redlining prevails in Chicago, but its severity in a smaller section of city can be either more or less than the whole city.
+
+A further study can be initiated with alternative separation methods, for example, splitting the area into smaller parts. 
+
+## Mapping Data
+
+A final act before wrapping up is to see our results plotted on a map. High rejection rate and high proportion of racial minority have overlaps in the _West side_ and and northern part of the _South side_. These are the suspicious "Redlining zone". But not all large points are painted with bright color. _Far Southeast side_ of Chicago have high `Race` values but does not seem to have a high rejection rate. And this agrees with our discovery when fitting the modified full model with subsetted data.
+
+```{r map-prep,out.width='480px', out.height='300px',dpi=200}
+a.map <- qmplot(lon,lat,data=insure,maptype="toner-lite",darken=0.5,size=Race,color=rRej,legend="right")+ scale_colour_gradient(low="black",high="yellow")
+a.map
+# b.map <- qmplot(lon,lat,data=insure,maptype="toner-lite",darken=0.5,size=Race,color=Race,legend="right")
+# multiplot(a.map,b.map, cols=2)
+```
+
+## Conlusion and Beyond
+
+Human sees this world as binary. No matter how various factors we take into consideration, when it comes to make a judgement, the ultimate question always remains, _to be or not to be?_ Even though we can list all the pros and cons of an single object, our mind pushes us to determine if it is good or bad. We would like to respond to the question "if there is redlining in Chicago" with an universal and deterministic answer. What makes us disappointed is that the reality has never been binary. On different scales, distinct judgements have to be made. 
+
+As we stated, if we treat Chicago as an inseparable entity, **`Race` is responsible for insurability, i.e. redlining exists.** We almost happily concluded the case with an agreement that `Race` played a significant role in affecting the insurability rejection rate. Nevertheless, for some parts of Chicago, redlining is not obsious. Luckily, this can be explained by common sense. The redlining phenomenon targets residents from minority communities, so it is not very likely that redlining happens in a district with few racial minorities.
+
+A proprer terminology to describe such dilemma is _ecological fallacy_ [^4]. In details, we have a stereotype that all individuals behave identically to the entity. After all, it is a family, a person who gets redlined. We believe this is the hidden gem in insurance data and we should handle those similar cases more carefully.
+
+Last but not least, aggregating data by zip codes is debatable. A zip code is usually assigned to one or several streets, sometimes it is shared by multiple communities. Therefore, the inter-community correlations can be possibly diluted. Thus our analysis is less interpretable under such circumstance.
+
+[^4]: Ecological fallacy, Wikipedia, https://en.wikipedia.org/wiki/Ecological_fallacy.
+
+---
+
+## References
+
+- Robert K. Nelson, LaDale Winling, Richard Marciano, Nathan Connolly, et al. Mapping Inequality. Retrieved October 25, 2017, from https://dsl.richmond.edu/panorama/redlining/#loc=0/-58/-148&opacity=0.8.
+- Encyclopedia of Chicago. Redlining, Retrieved October 25, 2017 from http://www.encyclopedia.chicagohistory.org/pages/1050.html.
+- Faraway, J. J. (2015). Linear models with R. Boca Raton: CRC Press, Taylor & Francis Group.
+- Stamen Maps. (n.d.). Retrieved October 25, 2017, from http://maps.stamen.com/#toner/12/41.8790/-87.6606
+- Multiple graphs on one page (ggplot2). (n.d.). Retrieved October 25, 2017, from http://www.cookbook-r.com/Graphs/Multiple_graphs_on_one_page_(ggplot2)/

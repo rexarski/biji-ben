@@ -1,0 +1,231 @@
+# The annual production in millions of net tons of bituminous coal between 1920 and 1968  are stored in a time series object called bicoal.tons.
+
+# Analyse this series.
+library(MASS)
+library(forecast)
+
+load("classData.RData")
+coal <- bicoal.tons
+length(coal) # 49
+coal
+min(time(coal))
+mid <- median(time(coal)) # 1944
+
+# TODO use ggplot2
+
+# log-scale is the same, no need to transform
+
+# normal-scale with lowess curve
+plot(coal,type="b",pch="*",
+     main="Plot of Annual Bituminous Coal Production from 1920 to 1968",
+     ylab="10^6 net tons", 
+     xlab="Year",
+     lwd=1.5)
+lines(lowess(coal),lty=1,col="red",lwd=2)
+
+layout(matrix(1:6,3,2,byrow=FALSE))
+
+# decompose the trend
+
+# linear
+fit.l <- rlm(coal~time(coal))
+plot(coal,type="b",pch="*",
+     main="Annual Bituminous Coal (1920-1968)",
+     sub="Linear trend",
+     ylab="10^6 net tons", 
+     # TODO change ylab to latex expression
+     xlab="Year")
+abline(fit.l,lty=2,col="red",lwd=2)
+
+# quadratic
+fit.quad <- rlm(coal~cbind(time(coal),time(coal)^2))
+plot(coal,type="b",pch="*",
+     main="Annual Bituminous Coal (1920-1968)",
+     sub="Quadratic trend",
+     ylab="10^6 net tons", 
+     # TODO change ylab to latex expression
+     xlab="Year")
+lines(as.vector(time(coal)),cbind(1,time(coal),time(coal)^2) %*% fit.quad$coef,
+      lty=3,col="red",lwd=2)
+
+# cubic
+fit.cubic <- rlm(coal~cbind(time(coal),time(coal)^2,time(coal)^3))
+plot(coal,type="b",pch="*",
+     main="Annual Bituminous Coal (1920-1968)",
+     sub="Cubic trend",
+     ylab="10^6 net tons", 
+     # TODO change ylab to latex expression
+     xlab="Year")
+lines(as.vector(time(coal)),cbind(1,time(coal),time(coal)^2,time(coal)^3) %*%
+        fit.cubic$coef,
+      lty=4,col="red",lwd=2)
+
+# detrended residuals
+
+plot(1:49,fit.l$resid,type="b",pch="*",
+     main="Detrended Annual Bituminous Coal (1920-1968)",
+     ylab="10^6 net tons",
+     xlab="Year",
+     sub="Linear trend removed")
+abline(h=0)
+
+plot(1:49,fit.quad$resid,type="b",pch="*",
+     main="Detrended Annual Bituminous Coal (1920-1968)",
+     ylab="10^6 net tons",
+     xlab="Year",
+     sub="Quadratic trend removed")
+abline(h=0)
+
+plot(1:49,fit.cubic$resid,type="b",pch="*",
+     main="Detrended Annual Bituminous Coal (1920-1968)",
+     ylab="10^6 net tons",
+     xlab="Year",
+     sub="Cubic trend removed")
+abline(h=0)
+
+par(mfrow=c(1,1))
+
+# No big difference, by [law of parsimony](https://en.wikipedia.org/wiki/Occam%27s_razor), we pick the simplest model with lowest order, i.e. the linear trend.
+
+# Also, we detect no seasonal trend here. Even though the data seems to have a dropdown in the 1930s, then hits a peak in the 1940s, then drops again in the 1950s. However, those data hardly make two whole periods, thus we cannot confirm the existence of a seasonality confidently.
+
+########################################################################
+
+# differencing
+# though looks not very satisfactory, we still want to check for stationarity
+
+coaldiff1 <- diff(coal,differences=1)
+plot.ts(coaldiff1)
+lines(lowess(coaldiff1),col="red",lwd=1.5)
+
+# the original data is not stationary
+# but the first-differencing looks pretty good
+
+layout(matrix(1:4,2,2,byrow=FALSE))
+Acf(coal,lag=20) # not stationary
+Pacf(coal,lag=20)
+Acf(coaldiff1,lag=20)
+Pacf(coaldiff1,lag=20)
+par(mfrow=c(1,1))
+
+# The patterns in ACF and PACF plot are not clear and it seem to be that both cut oﬀ.
+# p=q=2.
+# It is also possible that both ACF/PACF tail oﬀ exponentially, and hence (p, q) = (1, 1).
+# ARIMA(2,1,2), ARIMA(2,1,0), ARIMA(0,1,2), ARIMA(2,1,1)
+
+Ident(coal)
+Ident(coaldiff1)
+
+plotForecastErrors <- function(forecasterrors) { 
+  # make a histogram of the forecast errors:
+  mybinsize <- IQR(forecasterrors)/4
+  mysd <- sd(forecasterrors)
+  mymin <- min(forecasterrors) - mysd * 5 
+  mymax <- max(forecasterrors) + mysd * 3 
+  # generate normally distributed data with mean 0 and standard deviation mysd 
+  mynorm <- rnorm(10000, mean=0, sd=mysd) 
+  mymin2 <- min(mynorm) 
+  mymax2 <- max(mynorm) 
+  if (mymin2 < mymin) {
+    mymin <- mymin2 
+  } 
+  if (mymax2 > mymax) { 
+    mymax <- mymax2 
+  } 
+  # make a histogram of the forecast errors, with the normally distributed 
+  # data overlaid:
+  
+  mybins <- seq(mymin, mymax, mybinsize)
+  hist(forecasterrors, col="#7B84FC", freq=FALSE, breaks=mybins) 
+  # freq=FALSE ensures the area under the histogram = 1 
+  # generate normally distributed data with mean 0 and standard deviation mysd 
+  myhist <- hist(mynorm, plot=FALSE, breaks=mybins) 
+  # plot the normal curve as a blue line on top of the 
+  # histogram of forecast errors:
+  points(myhist$mids, myhist$density,type="l",col="blue",lwd=2)
+}
+
+### ARIMA(2,1,2)
+arima212 <- Arima(coal,c(2,1,2))
+arima012 <- Arima(coal,c(0,1,2))
+arima211 <- Arima(coal,c(2,1,1))
+arima210 <- Arima(coal,c(2,1,0))
+forecast212 <- forecast:::forecast.Arima(arima212,h=10)
+forecast012 <- forecast:::forecast.Arima(arima012,h=10)
+forecast211 <- forecast:::forecast.Arima(arima211,h=10)
+forecast210 <- forecast:::forecast.Arima(arima210,h=10)
+
+layout(matrix(1:8,2,4,byrow=FALSE))
+acf(forecast212$residuals,lag.max=20)
+pacf(forecast212$residuals,lag.max=20)
+acf(forecast012$residuals,lag.max=20)
+pacf(forecast012$residuals,lag.max=20)
+acf(forecast211$residuals,lag.max=20)
+pacf(forecast211$residuals,lag.max=20)
+acf(forecast210$residuals,lag.max=20)
+pacf(forecast210$residuals,lag.max=20)
+
+Box.test(forecast212$residuals,lag=20,type="Ljung-Box") # p-value = 0.9998
+Box.test(forecast012$residuals,lag=20,type="Ljung-Box") # p-value = 0.9388
+Box.test(forecast211$residuals,lag=20,type="Ljung-Box") # p-value = 0.9993
+Box.test(forecast210$residuals,lag=20,type="Ljung-Box") # p-value = 0.859
+
+# we can conclude that there is very little evidence for non-zero autocorrelations in the forecast errors at lags 1-20.
+
+par(mfrow=c(2,2))
+plot(forecast(arima212,h=10),include=80)
+plot(forecast(arima012,h=10),include=80)
+plot(forecast(arima211,h=10),include=80)
+plot(forecast(arima210,h=10),include=80)
+
+# To investigate whether the forecast errors are normally distributed with mean zero and constant variance, we can make a time plot and histogram (with overlaid normal curve) of the forecast errors:
+
+layout(matrix(1:8,2,4,byrow=FALSE))
+plot.ts(forecast212$residuals)
+plotForecastErrors(forecast212$residuals)
+plot.ts(forecast012$residuals)
+plotForecastErrors(forecast012$residuals)
+plot.ts(forecast211$residuals)
+plotForecastErrors(forecast211$residuals)
+plot.ts(forecast210$residuals)
+plotForecastErrors(forecast210$residuals)
+
+# qqplot
+par(mfrow=c(2,2))
+qqnorm(forecast212$residuals)
+qqline(forecast212$residuals)
+qqnorm(forecast012$residuals)
+qqline(forecast012$residuals)
+qqnorm(forecast211$residuals)
+qqline(forecast211$residuals)
+qqnorm(forecast210$residuals)
+qqline(forecast210$residuals)
+
+# The time plot of the in-sample forecast errors shows that the variance of the forecast errors seems to be roughly constant over time (though perhaps there is slightly higher variance for the second half of the time series). The histogram of the time series shows that the forecast errors are roughly normally distributed and the mean seems to be close to zero. Therefore, it is plausible that the forecast errors are normally distributed with mean zero and constant variance.
+
+# Since successive forecast errors do not seem to be correlated, and the forecast errors seem to be normally distributed with mean zero and constant variance, the ARIMA(0,1,1) does seem to provide an adequate predictive model for the ages at death of English kings.
+
+# MODEL write up
+arima212 # AIC=528.55 BIC=537.91
+accuracy(arima212)
+arima012 # AIC=527.86 BIC=533.47
+accuracy(arima012)
+arima211 # AIC=526.91 BIC=534.4
+accuracy(arima211)
+arima210 # AIC=529.79 BIC=535.4
+accuracy(arima210)
+
+# pick arima211 
+
+# \[\begin{split}
+# \Delta Y &= Y_t-Y_{t-1}\\
+# \Delta Y &= \phi_2 Y_{t-2} + \phi_1 Y_{t-1} + \theta_1\epsilon_{t-1} + \epsilon_t\\
+# &= -0.6648 Y_{t-2} -0.4336 Y_{t-1} + 0.6714\epsilon_{t-1} +\epsilon_t
+# \end{split}\]
+
+# References
+# - http://a-little-book-of-r-for-time-series.readthedocs.io/en/latest/src/timeseries.html
+# - https://facebook.github.io/prophet/docs/quick_start.html#r-api
+# - Occam's razor, https://en.wikipedia.org/wiki/Occam%27s_razor
+# - Forecasting: principles and practice, https://www.otexts.org/fpp/
+# - https://coolstatsblog.com/2013/08/14/using-aic-to-test-arima-models-2/

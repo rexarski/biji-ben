@@ -1,0 +1,215 @@
+"Country.Name" "Country.Code" "Y2013"
+"1" "Afghanistan" "AFG" 20724663536.8245
+"2" "Albania" "ALB" 12903854876.3724
+"3" "Algeria" "DZA" 210183410526.104
+"4" "American Samoa" "ASM" NA
+"5" "Andorra" "ADO" NA
+"6" "Angola" "AGO" 121703638683.744
+"7" "Antigua and Barbuda" "ATG" 1.23e+09
+"8" "Argentina" "ARG" 611755084645.166
+"9" "Armenia" "ARM" 10432169571.25
+"10" "Aruba" "ABW" NA
+"11" "Australia" "AUS" 1560597150412.22
+"12" "Austria" "AUT" 415843926201.396
+"13" "Azerbaijan" "AZE" 73560484384.9586
+"14" "Bahamas, The" "BHS" NA
+"15" "Bahrain" "BHR" 32788114767.1784
+"16" "Bangladesh" "BGD" 129856605444.79
+"17" "Barbados" "BRB" NA
+"18" "Belarus" "BLR" 71709513654.3393
+"19" "Belgium" "BEL" 508115693499.71
+"20" "Belize" "BLZ" 1604500000
+"21" "Benin" "BEN" 8307019674.52028
+"22" "Bermuda" "BMU" NA
+"23" "Bhutan" "BTN" 1883654335.14569
+"24" "Bolivia" "BOL" 30601157742.4023
+"25" "Bosnia and Herzegovina" "BIH" 17827710270.8574
+"26" "Botswana" "BWA" 14788476190.4762
+"27" "Brazil" "BRA" 2245673032353.76
+"28" "Brunei Darussalam" "BRN" 16111135788.9616
+"29" "Bulgaria" "BGR" 53009839847.9913
+"30" "Burkina Faso" "BFA" 11582556068.3345
+"31" "Burundi" "BDI" 2718232385.26388
+"32" "Cabo Verde" "CPV" 1888123343.77258
+"33" "Cambodia" "KHM" 15249684397.0785
+"34" "Cameroon" "CMR" 29274957493.3204
+"35" "Canada" "CAN" 1825096387908.98
+"36" "Cayman Islands" "CYM" NA
+"37" "Central African Republic" "CAF" 1538175744.07775
+"38" "Chad" "TCD" 13413893611.8533
+"39" "Channel Islands" "CHI" NA
+"40" "Chile" "CHL" 277198774856.807
+"41" "China" "CHN" 9240270452050.24
+"42" "Colombia" "COL" 378147773315.64
+"43" "Comoros" "COM" 657300888.251354
+"44" "Congo, Dem. Rep." "ZAR" 30629191170.4255
+"45" "Congo, Rep." "COG" 14108139017.0836
+"46" "Costa Rica" "CRI" 49621089476.1317
+"47" "Cote d'Ivoire" "CIV" 30905260389.2216
+"48" "Croatia" "HRV" 57538524788.8158
+"49" "Cuba" "CUB" NA
+"50" "Curacao" "CUW" NA
+"51" "Cyprus" "CYP" NA
+"52" "Czech Republic" "CZE" 198449884392.818
+"53" "Denmark" "DNK" 330813548787.382
+"54" "Djibouti" "DJI" 1456344495.0231
+"55" "Dominica" "DMA" 504814814.814815
+"56" "Dominican Republic" "DOM" 60613625980.4004
+"57" "Ecuador" "ECU" 90023493747.2
+"58" "Egypt, Arab Rep." "EGY" 271972822883.38
+"59" "El Salvador" "SLV" 24259100000
+"60" "Equatorial Guinea" "GNQ" 15573546338.6878
+"61" "Eritrea" "ERI" 3444097560.97561
+"62" "Estonia" "EST" 24476537986.0141
+"63" "Ethiopia" "ETH" 46869297570.6277
+"64" "Faeroe Islands" "FRO" NA
+"65" "Fiji" "FJI" 4027913544.04258
+"66" "Finland" "FIN" 256842118721.229
+"67" "France" "FRA" 2734949064748.58
+"68" "French Polynesia" "PYF" NA
+"69" "Gabon" "GAB" 19343506598.656
+"70" "Gambia, The" "GMB" 914293769.382577
+"71" "Georgia" "GEO" 16126548034.1469
+"72" "Germany" "DEU" 3634822579319.16
+"73" "Ghana" "GHA" 47928717948.7179
+"74" "Greece" "GRC" 241720741047.698
+"75" "Greenland" "GRL" NA
+"76" "Grenada" "GRD" 834074059.343795
+"77" "Guam" "GUM" NA
+"78" "Guatemala" "GTM" 53796711129.2129
+"79" "Guinea" "GIN" 6192819666.70282
+"80" "Guinea-Bissau" "GNB" 858651121.366691
+"81" "Guyana" "GUY" 3075733570.67529
+"82" "Haiti" "HTI" 8459326659.75657
+"83" "Honduras" "HND" 18550011298.1029
+"84" "Hong Kong SAR, China" "HKG" 274012815223.557
+"85" "Hungary" "HUN" NA
+"86" "Iceland" "ISL" 14619878414.2746
+"87" "India" "IND" 1876797199132.53
+"88" "Indonesia" "IDN" 868345645449.298
+"89" "Iran, Islamic Rep." "IRN" 368904351626.505
+"90" "Iraq" "IRQ" 222879355403.087
+"91" "Ireland" "IRL" 217815840202.114
+"92" "Isle of Man" "IMY" NA
+"93" "Israel" "ISR" 291357078729.999
+"94" "Italy" "ITA" 2071306890124.79
+"95" "Jamaica" "JAM" 14362262584.9078
+"96" "Japan" "JPN" 4901529519265.57
+"97" "Jordan" "JOR" 33678459200
+"98" "Kazakhstan" "KAZ" 224414773758.095
+"99" "Kenya" "KEN" 44101114723.6414
+"100" "Kiribati" "KIR" 168951535.045376
+"101" "Korea, Dem. Rep." "PRK" NA
+"102" "Korea, Rep." "KOR" 1304553972501.69
+"103" "Kosovo" "KSV" 6959638874.13702
+"104" "Kuwait" "KWT" NA
+"105" "Kyrgyz Republic" "KGZ" 7226295003.31351
+"106" "Lao PDR" "LAO" 11141187664.0212
+"107" "Latvia" "LVA" NA
+"108" "Lebanon" "LBN" 44352418120.4377
+"109" "Lesotho" "LSO" 2229735838.7396
+"110" "Liberia" "LBR" 1950960137.7301
+"111" "Libya" "LBY" 75456402199.5287
+"112" "Liechtenstein" "LIE" NA
+"113" "Lithuania" "LTU" NA
+"114" "Luxembourg" "LUX" 60383251105.6372
+"115" "Macao SAR, China" "MAC" 51753094764.2472
+"116" "Macedonia, FYR" "MKD" 10220781069.217
+"117" "Madagascar" "MDG" 10796551136.1785
+"118" "Malawi" "MWI" 3705386789.60511
+"119" "Malaysia" "MYS" 312435494620.585
+"120" "Maldives" "MDV" 2299843167.3684
+"121" "Mali" "MLI" 10942727309.5296
+"122" "Malta" "MLT" NA
+"123" "Marshall Islands" "MHL" 1.75e+08
+"124" "Mauritania" "MRT" 4162533271.22704
+"125" "Mauritius" "MUS" 11938403908.7948
+"126" "Mexico" "MEX" 1260914660977.14
+"127" "Micronesia, Fed. Sts." "FSM" 3.35e+08
+"128" "Moldova" "MDA" 7935229340.65847
+"129" "Monaco" "MCO" NA
+"130" "Mongolia" "MNG" 11516409581.2988
+"131" "Montenegro" "MNE" 4427771436.15609
+"132" "Morocco" "MAR" 104374278746.059
+"133" "Mozambique" "MOZ" 15318970099.6678
+"134" "Myanmar" "MMR" NA
+"135" "Namibia" "NAM" 12579618856.4894
+"136" "Nepal" "NPL" 19294348174.0026
+"137" "Netherlands" "NLD" 800173475309.514
+"138" "New Caledonia" "NCL" NA
+"139" "New Zealand" "NZL" 182594469395.133
+"140" "Nicaragua" "NIC" 11255642564.758
+"141" "Niger" "NER" 7355697919.19683
+"142" "Nigeria" "NGA" 522637871819.646
+"143" "Northern Mariana Islands" "MNP" NA
+"144" "Norway" "NOR" 512580425531.915
+"145" "Oman" "OMN" 80570458653.2623
+"146" "Pakistan" "PAK" 236624927697.901
+"147" "Palau" "PLW" 247043418.3
+"148" "Panama" "PAN" 42648100000
+"149" "Papua New Guinea" "PNG" 15289374025.3954
+"150" "Paraguay" "PRY" 29948866615.9682
+"151" "Peru" "PER" 202295635535.696
+"152" "Philippines" "PHL" 272017377291.725
+"153" "Poland" "POL" 517542808327.533
+"154" "Portugal" "PRT" 219961867282.386
+"155" "Puerto Rico" "PRI" NA
+"156" "Qatar" "QAT" 202450014109.589
+"157" "Romania" "ROM" 189638162013.271
+"158" "Russian Federation" "RUS" 2096777030571.25
+"159" "Rwanda" "RWA" 7451677748.56966
+"160" "Samoa" "WSM" 694376559.149197
+"161" "San Marino" "SMR" NA
+"162" "Sao Tome and Principe" "STP" 310684635.735921
+"163" "Saudi Arabia" "SAU" 745272533333.333
+"164" "Senegal" "SEN" 15149708525.6255
+"165" "Serbia" "SRB" 42520511655.2703
+"166" "Seychelles" "SYC" 1268018737.53153
+"167" "Sierra Leone" "SLE" 4929214079.6307
+"168" "Singapore" "SGP" 297941261088.468
+"169" "Sint Maarten (Dutch part)" "SXM" NA
+"170" "Slovak Republic" "SVK" NA
+"171" "Slovenia" "SVN" NA
+"172" "Solomon Islands" "SLB" 1096396926.91144
+"173" "Somalia" "SOM" NA
+"174" "South Africa" "ZAF" 350630133297.428
+"175" "South Sudan" "SSD" 13796610169.4915
+"176" "Spain" "ESP" 1358262668312.59
+"177" "Sri Lanka" "LKA" 67182015335.7602
+"178" "St. Kitts and Nevis" "KNA" 742962962.962963
+"179" "St. Lucia" "LCA" 1332222222.22222
+"180" "St. Martin (French part)" "MAF" NA
+"181" "St. Vincent and the Grenadines" "VCT" 725555555.555555
+"182" "Sudan" "SDN" 66547789473.6842
+"183" "Suriname" "SUR" 5230909090.90909
+"184" "Swaziland" "SWZ" 3791304347.82609
+"185" "Sweden" "SWE" 557938257330.461
+"186" "Switzerland" "CHE" 650781843978.122
+"187" "Syrian Arab Republic" "SYR" NA
+"188" "Tajikistan" "TJK" 8508103455.51497
+"189" "Tanzania" "TZA" 33225036864.8622
+"190" "Thailand" "THA" 387252164290.829
+"191" "Timor-Leste" "TMP" 1.615e+09
+"192" "Togo" "TGO" 4338575823.81993
+"193" "Tonga" "TON" 466259084.092744
+"194" "Trinidad and Tobago" "TTO" 24640839007.5918
+"195" "Tunisia" "TUN" 47128700683.203
+"196" "Turkey" "TUR" 820206962631.085
+"197" "Turkmenistan" "TKM" 41850877192.9825
+"198" "Turks and Caicos Islands" "TCA" NA
+"199" "Tuvalu" "TUV" 38134775.0530991
+"200" "Uganda" "UGA" 21482954236.7675
+"201" "Ukraine" "UKR" 177430609756.098
+"202" "United Arab Emirates" "ARE" NA
+"203" "United Kingdom" "GBR" 2522261112322.15
+"204" "United States" "USA" 1.68e+13
+"205" "Uruguay" "URY" 55707944641.5016
+"206" "Uzbekistan" "UZB" 56795656324.5823
+"207" "Vanuatu" "VUT" 834760110.267003
+"208" "Venezuela, RB" "VEN" 438283564814.815
+"209" "Vietnam" "VNM" 171391820359.682
+"210" "Virgin Islands (U.S.)" "VIR" NA
+"211" "West Bank and Gaza" "WBG" NA
+"212" "Yemen, Rep." "YEM" 35954502303.5041
+"213" "Zambia" "ZMB" 22383715314.8594
+"214" "Zimbabwe" "ZWE" 12801964992.8206

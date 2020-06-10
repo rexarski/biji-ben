@@ -1,0 +1,112 @@
+# STAT3015/STAT7030 GLMs
+# R command file for Tutorial 11
+
+# Question 1
+# (a)
+spg <- read.table("Sprngs.txt", header = T)
+attach(spg)
+head(spg)
+# fit a model without interaction terms
+spg.aov <- aov(hght ~ ftmp + htme + ttme + hdtme + qot)
+anova(spg.aov)
+# after excluding the insignificant "ttme", refit a model with interaction terms
+spg.aov2 <- aov(hght ~ ftmp + htme + qot+ hdtme + ftmp*htme +
+                  + ftmp*qot+ftmp*hdtme + htme*qot + htme*hdtme + qot*hdtme)
+anova(spg.aov2)
+# fit a model with significant interaction terms only
+spg.aov3 <- aov(hght ~ ftmp + htme + qot + hdtme + ftmp*qot + htme*qot)
+# create a design matrix manually
+ftmpset <- c(rep(0, 8),rep(1, 8))
+htmeset <- rep(c(rep(0, 4),rep(1, 4)), 2)
+qotset <- rep(c(rep(0, 2),rep(1, 2)), 4)
+hdtmeset <- rep(c(0, 1), 8)
+int1set <- ftmpset*qotset
+int2set <- htmeset*qotset
+settings <- cbind(1, ftmpset, htmeset, qotset, hdtmeset, int1set, int2set)
+# compute hght under these conditions
+inches <- settings%*%spg.aov3$coef
+bestset <- cbind(settings[, -1], inches)
+bestset <- bestset[rev(order(inches)), ]
+bestset[1:3, ]
+# alternatively, we can use the following commands
+settings2 <- model.matrix(spg.aov3)[seq(1, 46, 3), ]
+inches2 <- settings2%*%spg.aov3$coef
+bestset2 <- cbind(settings2[, -1], inches2)
+bestset2 <- bestset2[rev(order(inches2)), ]
+bestset2[1:3, ]
+
+# (b) calculate variance within each group
+gpdat <- matrix(hght, ncol=3, byrow=TRUE)
+s2 <- apply(gpdat, 1, var)
+s2
+
+# (c) using variances as the response and fit a gamma GLM
+preds <- cbind(ftmp, htme, hdtme, qot, ftmp*qot, htme*qot)[seq(1, 46, 3), ]
+s2.glm <- glm(s2 ~ preds ,family = Gamma(link = log), maxit = 50)
+anova(s2.glm, test = "Chisq")
+summary(s2.glm)$dispersion
+
+# (e) plot Cook's distance
+CooksD <- 0
+for(i in 1:16) {
+  tmp <- glm(s2[-i] ~ preds[-i, ], family = Gamma(link = log), maxit = 60)
+  CooksD[i] <- t(tmp$coef - s2.glm$coef)%*%
+    solve(summary(s2.glm)$cov.unscaled)%*%(tmp$coef - s2.glm$coef)/
+    (7*summary(s2.glm)$dispersion)}
+barplot(CooksD)
+# remove unusual observations and refit the model
+s2.glm1 <- glm(s2[-c(7, 9)] ~ preds[-c(7, 9), ], family = Gamma(link = log))
+anova(s2.glm1, test = "Chisq")
+summary(s2.glm1)$dispersion
+
+# (f) use within group variances and fit a weighted ANOVA model
+lgfts <- cbind(1, ftmp, htme, hdtme, qot, ftmp*qot, htme*qot)%*%s2.glm1$coef
+wgts <- as.vector(1/exp(lgfts))
+spg.aov4 <- lm(hght ~ (ftmp+htme)*qot + hdtme, weights = wgts)
+inches <- settings%*%spg.aov4$coef
+bestset <- cbind(settings[, -1], inches)
+bestset <- bestset[rev(order(inches)), ]
+bestset[1:3, ]
+
+# Question 2
+eyes <- read.table("Eyes.txt", header = T)
+attach(eyes)
+eyes
+
+# (a) Pearson Chi-squared test
+rtot <- apply(eyes, 1, sum)
+ctot <- apply(eyes, 2, sum)
+eij <- rtot%*%t(ctot)/sum(rtot)
+pres <- (eyes - eij)/sqrt(eij)
+c(sum(pres^2), 1-pchisq(sum(pres^2), (4-1)*(4-1)))
+
+# (b) Pearson Chi-squared test with the new expected values
+eij1 <- (eyes + t(eyes))/2
+pres1 <- (eyes - eij1)/sqrt(eij1)
+df <- (4*4)-(4+3+2+1)
+c(sum(pres1^2), 1-pchisq(sum(pres1^2), df))
+
+pres1
+
+# (c) do the test again following the given euqation of Eij
+thtahat <- sum(eyes[upper.tri(eyes, diag = FALSE)])/sum(eyes[lower.tri(eyes, diag = FALSE)])
+eij2 <- (eyes+t(eyes))/2
+rowi <- matrix(rep(1:4,4), ncol = 4)
+colj <- matrix(rep(1:4,4), ncol = 4, byrow = TRUE)
+eij2 <- (rowi != colj)*1*2*eij2/(1+thtahat) + (rowi == colj)*1*eij2
+eij2 <- (rowi < colj)*1*thtahat*eij2 + (rowi >= colj)*1*eij2
+pres2 <- (eyes-eij2)/sqrt(eij2)
+c(sum(pres2^2), 1-pchisq(sum(pres2^2), df-1))
+
+# Question 3
+hrtran <- read.table("hrtran.txt", header = TRUE)
+attach(hrtran)
+hrtran
+
+rtot <- apply(hrtran, 1, sum)
+ctot <- apply(hrtran, 2, sum)
+eij <- rtot%*%t(ctot)/sum(rtot)
+pres <- (hrtran-eij)/sqrt(eij)
+c(sum(pres^2), 1-pchisq(sum(pres^2), 3))
+
+eij

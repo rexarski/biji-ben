@@ -1,0 +1,55 @@
+## ------------------------------------------------------------------------
+x <- read.csv("gdp2013.csv")
+x <- log(na.omit(x$X2013))
+n <- length(x)
+
+##
+theta.0 <- 0
+xi.prior <- 0.0001
+alpha <- lambda <- 1
+
+##
+theta.store <- NULL
+xi.store <- NULL
+
+##
+xi <- 1 
+
+## Start the chain
+S <- 1000
+for(s in 1:S){
+
+##    
+v <- 1/(n*xi + xi.prior)
+m <- (xi *sum(x) + theta.0*xi.prior)/(n*xi + xi.prior)
+theta <- rnorm(1, m, sqrt(v)) 
+  
+##
+a <- alpha + n/2
+b <- sum( (x-theta)^2)/2 + lambda
+xi <- rgamma(1, a, b)  
+  
+  
+theta.store <- c(theta.store, theta)
+xi.store <- c(xi.store, xi)
+}
+
+  
+
+## ------------------------------------------------------------------------
+plot(theta.store, type="l", lwd=2)
+plot(xi.store, type="l", lwd=2)
+
+## ------------------------------------------------------------------------
+    par(mfrow=c(2,2))
+    library(LaplacesDemon)
+    plot(density(theta.store), lwd=3, main="theta")
+    plot(density(xi.store), lwd=3, main="xi")
+    joint.density.plot(theta.store, xi.store, contour=TRUE)
+
+## ------------------------------------------------------------------------
+mean(theta.store)
+var(theta.store)
+mean(xi.store)
+var(xi.store)
+

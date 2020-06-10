@@ -1,0 +1,47 @@
+lethargy<-read.table("lethargy.txt",header=TRUE)
+by(lethargy,lethargy$dose,summary)
+
+pdf("lethargy1.pdf")
+par(mfrow=c(1,1))
+plot(resttime~ factor(dose), lethargy)
+dev.off()
+
+pdf("lethargy2.pdf")
+par(mfrow=c(1,1))
+plot(resttime ~ age, pch=as.character(dose), lethargy)
+dev.off()
+
+
+
+g <- lm(resttime ~ age+factor(dose)+age:factor(dose),lethargy)
+summary(g)
+confint(g)
+
+pdf("lethargy3.pdf")
+par(mfrow=c(1,1))
+plot(resttime ~ age, pch=as.character(dose), lethargy)
+
+abline(52.4461,0.3247)
+abline(52.4461-6.6609,0.3247+5.2860,col="blue")
+abline(52.4461-6.6850,0.3247+8.1094,col="red")
+abline(52.4461-8.9955,0.3247+12.2169,col="green")
+dev.off()
+
+
+pdf("lethargy4.pdf")
+plot(fitted(g),residuals(g),pch=as.character(lethargy$dose),xlab="Fitted",ylab="Residuals")
+abline(h=0)
+dev.off()
+
+#linear combination test
+h<-c(0,2,0,0,0,3,0,-1)
+Xmat <- model.matrix(g)
+XtXi <- solve(t(Xmat)%*%Xmat)
+est <- t(h)%*%coefficients(g)
+sd<-summary(g)$sigma*sqrt(t(h)%*%XtXi%*%h)
+upper <- est + (qt(0.975,df.residual(g))*sd)
+ lower <- est - (qt(0.975,df.residual(g))*sd)
+ c(lower,est,upper)
+
+
+

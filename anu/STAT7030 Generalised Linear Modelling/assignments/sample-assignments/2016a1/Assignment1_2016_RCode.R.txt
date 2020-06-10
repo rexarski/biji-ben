@@ -1,0 +1,342 @@
+# STAT3015/STAT4030/STAT7030 Generalised Linear Models
+
+# Assignment 1 for 2016 - Appendix of R Commands
+
+# Question 1 (a)
+
+fruitfly <- read.csv("fruitfly.csv", header=T)
+fruitfly
+attach(fruitfly)
+names(fruitfly)
+
+levels(factor(Partners))
+levels(factor(Type))
+
+# There are three levels of the experimental factor Partners (number of companion females: 0, 1 or 8) and three levels of the
+# experimental factor Type (0 = pregnant female(s), 1 = virgin female(s) or 9 = not applicable), so there should be 3 x 3 = 9
+# possible treatments, however, due to the inter-related nature of Partners and Type, 4 of these are not possible and only
+# the remaining 5 combinations have been observed. We can create a single nominal indicator for these 5 experimental treatments:
+
+Activity <- c(rep("A", 125))
+Activity[1:25] <- "D"
+Activity[51:75] <- "B"
+Activity[76:100] <- "C"
+Activity[101:125] <- "E"
+levels(Activity)
+Activity <- factor(Activity)
+levels(Activity)
+data.frame(ID, Partners, Type, Activity, Thorax, Longevity)
+
+# We should then do a little exploratory data analysis on all the variables, in particular, exploring the relationship between 
+# the response variable, Longevity and the continuous covariate Thorax:
+
+plot(Thorax, Longevity)
+
+# Remember that what is important in a multiple regression model is the conditional mean distribution, i.e. the residual 
+# distribution, i.e. the distribution of the residuals, which are response variable adjusting for all the explanatory variables. 
+# This residual distribution is the distribution we are assuming is independent and identically (and normally) distributed. 
+
+# T view the residual distribution, I typically start by fitting initial plausible models on the original scale and only
+# if there is a problem with the residuals, do I then investigate possible transformations. In this instance, if we ignore
+# ID (presumably a uninformative nominal identifier) and the "made-up" variable Sleep, then, after we have recoded the
+# levels of Partner and Type into a single factor variable Activity, we have a fairly simple experimental design. The response 
+# variable is Longevity, the experimental factor is Activity (with 5 levels) and the continuous covariate is Thorax. The usual 
+# reference model will be an ANCOVA model containing both the covariate Thorax (included first in the model to control for any
+# possible effects) and the factor Activity. Usual practice is not to include any interactions between the covariates and the 
+# factors, unless they are both readily interpretable and are a significant addition to the model.
+
+fruitfly.firstlm <- lm(Longevity ~ Thorax + Activity)
+plot(fruitfly.firstlm, which=1)
+
+# This initial model shows strong signs of heteroscedasticty (non-constant variance) in the residual plot. Possible rememdies
+# are variance weights (proportional to Thorax or some function of Thorax) and/or variance stabilising transformation(s) to 
+# either or both of the continuous variables (the response Longevity and the covariate Thorax). In this instance, either 
+# solution can be successfully applied, though switching to a GLM would involve applying a combination of both solutions.
+
+
+# Question 1 (b)
+
+# My preference is to take transformations in the first instance and a log transformation to Longevity appears to fix most of
+# the problems, without creating too complicated a model:     
+
+fruitfly.lm <- lm(log(Longevity) ~ Activity + Thorax)
+
+plot(fitted(fruitfly.lm), rstandard(fruitfly.lm), type="n")
+title("Plot of the Internally Studentised Residuals vs Fitted Values\nfor model lm(log(Longevity) ~ Activity + Thorax)")
+points(fitted(fruitfly.lm)[Activity=="A"], rstandard(fruitfly.lm)[Activity=="A"],pch="A")
+points(fitted(fruitfly.lm)[Activity=="B"], rstandard(fruitfly.lm)[Activity=="B"],pch="B")
+points(fitted(fruitfly.lm)[Activity=="C"], rstandard(fruitfly.lm)[Activity=="C"],pch="C")
+points(fitted(fruitfly.lm)[Activity=="D"], rstandard(fruitfly.lm)[Activity=="D"],pch="D")
+points(fitted(fruitfly.lm)[Activity=="E"], rstandard(fruitfly.lm)[Activity=="E"],pch="E")
+abline(h=c(-2,0,2), lty=2)
+identify(fitted(fruitfly.lm), rstandard(fruitfly.lm))
+
+# There are now no obvious patterns or problems with non constant variance. See the model solutions for the discussion of 
+# other interesting features of this plot.
+
+
+# Question 1 (c)
+
+plot(fruitfly.lm, which=2)
+
+# The normal quantile plot looks pretty good (i.e. the assumption of normality appears okay). It is slightly too short in 
+# the positive tail and the 3 default observations highlighted by R are in the lower negative tail. 
+
+# My preferred outlier plot is page 4 of the default plots, which is a simple bar plot of the Cook's distance values:
+
+plot(fruitfly.lm, which=4)
+cooks.distance(fruitfly.lm)[c(67,76,101)]
+
+# Rather than comparing the Cook's D values with some arbitrary cut-off, I prefer to consider the most extreme values.
+# If there a single extreme value or a small group that stands out compared with the other Cook's D values, they may 
+# indicate potential problems. I will use the externally Studentised residuals and levarge values to take a closer look
+# at three observations highlighted by R on the above plots and at observation 66, which was the largest positive residual
+# and the only other observation outside the +/- 2 limits on the main residual plot in part (b):
+
+sort(rstudent(fruitfly.lm))
+
+# Recall that the externally Studentised residuals are calculated completely excluding the current observation and
+# so appropriate limits are based on a Student's t distribution with one less degree of freedom that the model:
+
+correct.df <- fruitfly.lm$df.residual - 1
+c(qt(0.025, correct.df), qt(0.975, correct.df))
+rstudent(fruitfly.lm)[c(66,67,76,101)]
+
+# Two of the four lie just outside the limits, but observation 76 (and possibly 67) are potential "mean shift" outliers.
+
+range(hatvalues(fruitfly.lm))
+2*length(coef(fruitfly.lm))/length(Longevity)
+hatvalues(fruitfly.lm)[c(66,67,76,101)]
+
+# None of the observations (including the 4 potential outliers) has notably high leverage, so none of the observations
+# has been particularly influential in the fit of the model. I do not feel there is a good case for excluding any 
+# observations (which would have the undesirable effect of making the experiment unbalanced). If you do try excluding
+# the most extreme observations, you will find that other observations become highlighted as potential problems, 
+# which suggests that we do not yet have the best possible model for the residual distribution - we could experiment
+# with a Gamma GLM, as a more flexible way of modelling this distribution (see Assignment 2). 
+
+
+# Question 1 (d)
+
+# The summary output provides a fairly complete statement of the fitted or sample model:
+
+summary(fruitfly.lm)
+
+# For a statement of the underyling population model, see the model solutions.
+
+# This is a "parallel lines" ANCOVA model (parallel lines on the log scale, but actually a series of curves on the scale
+# of the original data).
+
+
+# Question 1 (e)
+
+# The multiplicative model includes an interaction term which allows for different slopes as well as different intercepts
+# for the five different Activity groups:
+
+anova(lm(log(longergevity) ~ Thorax * Activity))
+qf(0.95, 4, 115)
+
+# The p-value associated with interaction term Thorax:Activity is greater than 0.05, suggesting this term is not a 
+# significant addition to the model and that different slopes are NOT required for the different Activity levels. Note that
+# I would trust this single F test in the ANOVA table over the four (multiple) t tests in the summary table, which suggest
+# that a model with a different slope (and intercept) is required for group E than the model for the reference group A (and
+# the three other groups).
+
+summary(lm(log(Longevity) ~ Thorax * Activity))
+
+
+# Question 1 (f)
+
+thorax <- min(Thorax) - 0.01 + (max(Thorax)-min(Thorax)+0.02)*(0:(length(Longevity)-1)/(length(Longevity)-1))
+plot(Thorax, Longevity, type="n", xlab="Thorax length (mm)", ylab="Lifespan (days)")
+title("Sexual activity and the lifespan of male fruitflies") 
+points(Thorax[(Activity=="A")], Longevity[(Activity=="A")], pch="A")
+points(Thorax[(Activity=="B")], Longevity[(Activity=="B")], pch="B")
+points(Thorax[(Activity=="C")], Longevity[(Activity=="C")], pch="C")
+points(Thorax[(Activity=="D")], Longevity[(Activity=="D")], pch="D")
+points(Thorax[(Activity=="E")], Longevity[(Activity=="E")], pch="E")
+points(Thorax[c(66,67,76,101)], Longevity[c(66,67,76,101)], pch="O", cex=2, lwd=2)
+lines(thorax, exp(predict(fruitfly.lm, newdata=data.frame(Thorax=thorax, Activity="A"))), lty=1, lwd=3)
+lines(thorax, exp(predict(fruitfly.lm, newdata=data.frame(Thorax=thorax, Activity="B"))), lty=4, lwd=3)
+lines(thorax, exp(predict(fruitfly.lm, newdata=data.frame(Thorax=thorax, Activity="C"))), lty=8, lwd=3)
+lines(thorax, exp(predict(fruitfly.lm, newdata=data.frame(Thorax=thorax, Activity="D"))), lty=3, lwd=3)
+lines(thorax, exp(predict(fruitfly.lm, newdata=data.frame(Thorax=thorax, Activity="E"))), lty=5, lwd=3)
+legend(0.64, 95, c("Many (8 pregnant females)", "One newly pregnant female", "Alone (kept isolated)", "Low (1 virgin female)", "High (8 virgin females)", "Problem Observations"), pch="DBACEO", lty=c(3,4,1,8,5,0), lwd=rep(3,6))
+identify(Thorax, Longevity)
+
+
+# Question 1 (g)
+
+anova(fruitfly.lm)
+
+summary(fruitfly.lm)
+
+# The ANOVA tables tell us there are significant differences between log(Longevity) for different Activity levels and that
+# there is a also a significant relationship between Thorax length and log(Longevity).
+
+# From the table of coefficients, we can see that the relationship between Thorax length and log(Longevity) is positive, i.e.
+# bigger insects tend to live longer. As log is a monotonic increasing function, there is also a positive relationship between
+# Thorax length and Longevity, as you seein part (f) from the graph of the data on the original scale.
+
+# The default coding for the factor Activity in the current version of R is treatment coding and the first level of Activity is
+# the one chosen as the reference group:
+
+contr.treatment(5)
+
+# The levels of Activity are by default ordered in alpha-numeric order, so "A" is the choice of reference level (and 
+# this is a sensible choice, which is why I suggested this particular coding for Activity):
+
+levels(Activity)
+
+# So the coefficients suggest that there are no real differences between the "A" group and the two groups that involve 
+# company (and possible competition for food), but NO sex, i.e. the "B" and "D" groups. There is a small, but significant
+# (if we disregard the outliers) difference between the reference group "A" and group "C" that includes the company of just one
+# partner who is available for sex and a big, significant difference between the reference "A" group and group "E" which
+# involves the company of multiple sexual partners.
+
+# I could reparameterise the model to investigate whether or not the "E" group differs signifantly from the "C" group,
+# but we appear to be fairly close to orthogonal contrasts and the standard errors for the differences between the Activity
+# groups are all between 0.051 and 0.056. Using a max standard error of 0.056, the apparent difference between these two groups
+# is (-0.41826) - (-0.12391). So a couple of quick calculations suggests the t statistic for this comparison would be less than
+# the t quartile for 119 residual degrees of freedom:
+
+((-0.41826) - (-0.12391))/0.056
+qt(0.05, fruitfly.lm$df.residual)
+
+# The significant Activity contrasts are all negative, suggesting that sex tends to lead to lower log(Longevity), i.e. sex tends
+# to shorten the lifespan of these male fruitflies and more sex tends to shorten lifespans even more. This can be seen fairly 
+# clearly on the graphing of the model and the data in part (f). Note for the sake of simplicity, I have used a model that 
+# includes the potential outliers (i.e. doesn't have indicator variables for particular observation), but I have highlighted the
+# potential outliers on the plot:
+
+
+# Question 1 (h)
+
+# Firstly attach the nlme library, so we can access the lme() function:
+
+library(nlme)
+
+# We can then add the ID variable as a random effect into our earlier model:
+
+fruitfly.lme <- lme(log(Longevity) ~ Thorax + Activity, random=~1|factor(ID))
+fruitfly.lme
+
+# Alternatively, we could use the other function for fitting random effects models in the examples covered in the lectures, 
+# which gives slightly different results (essentially because the two functions apply different convergrence criteria):
+
+library(lme4)
+
+fruitfly.lmer <- lmer(log(Longevity) ~ Thorax + Activity + (1|factor(ID)))
+fruitfly.lmer
+
+# The ID variable appears to be simply a label for the observations in each group. ID could be interpreted as a blocking factor
+# if there were some sensible connection between fruitflies with the same ID value (eg. all fruitflies labelled 1 came from the 
+# same genetic stock, which differed from fruitflies labelled 2 etc.). There is nothing in the description of the data to suggest
+# that this is the case. However, there does seem to be a increasing relationship between ID and Thorax:
+
+pairs(cbind(ID, Thorax, Longevity))
+tapply(Thorax, ID, range)
+tapply(Thorax, ID, mean)
+
+# This apparent relationship could have been a deliberate part of the experimental design, i.e. the frutiflies were sorted by
+# size and then the five smallest were randomly allocated, one each to the each of the Activity groups and given the ID value 1, 
+# followed by the next five smallest, which were given the ID value 2 and so on. This would have been a sensible move to ensure 
+# the full possible range of Thorax lengths were represented within each Activity group:
+
+tapply(Thorax, Activity, range)
+
+# Alternatively, it could simply that someone has sorted the results after the experiment by Activity and Thorax and then 
+# allocated the ID numbers, so it may just be a coincidence that the two "most significant" potential outliers in the analysis 
+# in question 1 (observations 76 and 101) happen to be the smallest fruitflies in their respective groups and therefore both have
+# an ID value of 1:
+ 
+fruitfly[c(66, 67, 76, 101),]
+
+# Even though there is nothing in all the material provided to support this, I strongly suspect that the earlier explanation is 
+# correct and that ID can be viewed as a 25 category summary of the information in Thorax. Given the two variables ID and Thorax
+# contain essentially the same information, it would probably be more sensible to include just one of them in the model. 
+# Treating ID as a blocking factor (and excluding Thorax from the model) means we actually have a balanced randomised block design:
+
+fruitfly.lme2 <- lme(log(Longevity) ~ Activity, random=~1|factor(ID))
+fruitfly.lme2
+
+fruitfly.lmer2 <- lmer(log(Longevity) ~ Activity + (1|factor(ID)))
+fruitfly.lmer2
+
+# This model has some appeal - it actually gives a lower estimate of the residual standard error that the fixed effects model.
+# However, if I had to chose between Thorax as a covariate or ID as a blocking factor, I would tend to favour Thorax over ID, 
+# as ID is only a categorical summary of the information contain in Thorax. 
+
+
+# Question 1 (i)
+
+anova(fruitfly.lme)
+
+summary(fruitfly.lme)
+
+# Pretty much the same results as before, slight differences due to ID have been included as a random effect and therefore
+# reducing the residual error variance, but this has not made much of a difference, judging by the variance components in 
+# the above summary. The variance component for ID is:
+
+ID.sigma2 <- 6.486293e-06^2
+ID.sigma2
+
+# Whilst the remaining residual variance is:
+
+Residual.sigma2 <- 0.192596^2
+Residual.sigma2
+
+# The total variance is therefore:
+
+Total.sigma2 <- ID.sigma2 + Residual.sigma2
+Total.sigma2
+
+# And the between ID group variability is only a very small portion of this overall variability:
+
+ID.sigma2/Total.sigma2
+
+# So, there does not appear to any real additional information in the ID variable (i.e. additional to what is already 
+# contained in Thorax).
+
+# You get similar results using the lmer model:
+
+anova(fruitfly.lmer)
+
+summary(fruitfly.lmer)
+
+ID.sigma2 <- 2.412e-17
+Residual.sigma2 <- 3.709e-02
+
+Total.sigma2 <- ID.sigma2 + Residual.sigma2
+Total.sigma2
+
+ID.sigma2/Total.sigma2
+
+# If we exclude Thorax, then ID does appear to play a sensible role as a blocking factor:
+
+anova(fruitfly.lme2)
+
+summary(fruitfly.lme2)
+
+ID.sigma2 <- 0.2241038^2
+Residual.sigma2 <- 0.1775302^2
+
+Total.sigma2 <- ID.sigma2 + Residual.sigma2
+Total.sigma2
+
+ID.sigma2/Total.sigma2
+
+# Or with the lmer model:
+
+anova(fruitfly.lmer2)
+
+summary(fruitfly.lmer2)
+
+ID.sigma2 <- 0.05022
+Residual.sigma2 <- 0.03152
+
+Total.sigma2 <- ID.sigma2 + Residual.sigma2
+Total.sigma2
+
+ID.sigma2/Total.sigma2
+

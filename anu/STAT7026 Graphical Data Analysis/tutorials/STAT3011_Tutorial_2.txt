@@ -1,0 +1,23 @@
+RESEARCH SCHOOL OF FINANCE, ACTUARIAL STUDIES AND APPLIED STATISTICS
+
+Graphical Data Analysis
+
+Tutorial 2
+
+This tutorial is intended to enable you to explore some of the ways of
+representing and comparing distributions.
+
+1.  The data matrix ozone contains the maximum daily ozone
+concentrations (in ppb) at Stamford, Connecticut and Yonkers, New York
+for the period 1 May to 30 September, 1974.  Compare the distributions
+of maximum daily ozone concentration at the two centres.   Try to give
+a concise verbal description of the data. (Clearly, in this question we
+are ignoring the time-structure of the data - we might like to reflect
+more on this later in the course.)
+
+2. The data matrix nickel contains measurements of the weights (gm) of
+five samples of 40 Canadian nickels (5c) from the five years
+1977-1981.  The official weight of the nickel is 4.53 gm.  However, the
+variability in weight and the way this changes from year to year are of
+particular interest.  Compare the distributions of weights from the
+five years.   Try to give a concise verbal description of the data.

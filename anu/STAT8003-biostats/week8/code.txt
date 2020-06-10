@@ -1,0 +1,51 @@
+#obtaining transition intensities and prob transitioning in 1 year.
+#code taken from http://www.jstatsoft.org/v38/i08/ by C Jackson 2011.
+
+library(msm)
+data("cav")
+cav<-cav[!is.na(cav$pdiag),]
+
+statetable.msm(state, PTNUM, data = cav)
+> statetable.msm(state, PTNUM, data = cav)
+    to
+from    1    2    3    4
+   1 1348  203   44  147
+   2   46  134   54   47
+   3    4   13  107   55
+
+twoway4.q <- rbind(c(0, 0.25, 0, 0.25), c(0.166, 0, 0.166, 0.166),c(0, 0.25, 0, 0.25), c(0, 0, 0, 0))
+rownames(twoway4.q) <- colnames(twoway4.q) <- c("Well", "Mild","Severe", "Death")
+cav.msm <- msm(state ~ years, subject = PTNUM, data = cav,qmatrix = twoway4.q, death = 4)
+cav.msm
+Call:
+msm(formula = state ~ years, subject = PTNUM, data = cav, qmatrix = twoway4.q,     death = 4)
+
+Maximum likelihood estimates: 
+Transition intensity matrix  
+ 
+       Well                     Mild                    
+Well   -0.1682 (-0.188,-0.1505) 0.1276 (0.111,0.1467)   
+Mild   0.2264 (0.1692,0.303)    -0.618 (-0.7195,-0.5309)
+Severe 0                        0.1226 (0.07308,0.2056) 
+Death  0                        0                       
+       Severe                    Death                   
+Well   0                         0.04057 (0.03227,0.051) 
+Mild   0.3375 (0.2713,0.4199)    0.05405 (0.02233,0.1308)
+Severe -0.4144 (-0.5245,-0.3275) 0.2919 (0.2274,0.3746)  
+Death  0                         0                       
+
+-2 * log-likelihood:  3945.363 
+
+
+pmatrix.msm(cav.msm, t = 1, ci = "normal")
+> pmatrix.msm(cav.msm, t = 1, ci = "normal")
+       Well                        Mild                     
+Well   0.8558 (0.8426,0.8685)      0.08785 (0.07751,0.09805)
+Mild   0.1559 (0.1189,0.1965)      0.5602 (0.5061,0.6017)   
+Severe 0.009393 (0.005577,0.01616) 0.07416 (0.04564,0.1183) 
+Death  0                           0                        
+       Severe                   Death                    
+Well   0.01458 (0.0116,0.01792) 0.04175 (0.03462,0.05111)
+Mild   0.2042 (0.1672,0.2402)   0.07974 (0.05931,0.1291) 
+Severe 0.6736 (0.6028,0.7264)   0.2429 (0.1965,0.3023)   
+Death  0                        1 (1,1)                  

@@ -1,0 +1,373 @@
+\documentclass[a4paper]{article}
+
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{tikz-cd}
+\usepackage{mathrsfs}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{enumitem}
+\usepackage{yfonts}
+
+\title{Biostats: The Second Half}
+
+\author{Rui Qiu}
+
+\date{\today}
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{lem}[thm]{Lemma}
+
+\newtheorem{defn}[thm]{Definition}
+\newtheorem{eg}[thm]{Example}
+\newtheorem{ex}[thm]{Exercise}
+\newtheorem{conj}[thm]{Conjecture}
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{claim}[thm]{Claim}
+\newtheorem{rmk}[thm]{Remark}
+
+\newcommand{\ie}{\emph{i.e.} }
+\newcommand{\cf}{\emph{cf.} }
+\newcommand{\into}{\hookrightarrow}
+\newcommand{\dirac}{\slashed{\partial}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\LieT}{\mathfrak{t}}
+\newcommand{\T}{\mathbb{T}}
+
+
+\begin{document}
+\maketitle
+
+\section{Cox Regression (week 5 continued and week 6)}
+
+\textbf{When?} When we are interested in the impact of a number of (usually continuous) covariates on the survival distribution.
+
+\textbf{Basic Cox Regression:} the hazard at time $t$ for an individual with covariates given by $p$-length vector $\mathbf{x}$:
+
+$$\lambda(t;x)=\lambda_0(t)\exp(\beta^Tx)$$
+
+$\beta$ is a $p$-vector of unknown parameters. $\lambda_0(t)$ is the \textbf{baseline hazard}: the hazard for a life at $t$ when all covariates are $0$, also it is arbitrary. So the whole $\lambda(t;x)$ is a semi-parametric model.
+
+\textbf{Cox Proportional Hazards Regression}
+
+Recall $S_0(t)=\exp\left(-\int^t_0\lambda_0(s)ds\right)$ is the survival function for an individual whose covariates are all zero. 
+
+\begin{equation}
+	\begin{split}
+		S(t)&=\exp \left(\int^t_0\lambda(s,x)\cdot ds \right)\\
+		&=\exp\left(-\int^t_0\lambda_0(s)\exp(\beta^T x)ds\right)\\
+		&=\exp\left(-\int^t_0\lambda_0(s)ds\cdot\exp\left(\beta^Tx\right)\right)\\
+		&=\left[\exp\left(-\int^t_0\lambda_0(s)ds\right)\right]^{\exp{(\beta^Tx)}}\\
+		&=S_0^{\exp{(\beta^Tx)}}
+	\end{split}
+\end{equation}
+
+Hence, \textbf{the survival functions for different covariate values cannot cross.}
+
+Cox regression estimations: maximizing the \textbf{partial likelihood (PL)}. Define
+\begin{itemize}
+	\item $x_{(i)}$ the covariates for the person that was observed to die at time $t_i$.
+	\item $R(t_i)$ the set of individuals still under study at $t_i$.
+\end{itemize}
+
+The calculation won't be tested. (Treat as a typical likelihood).
+
+\textbf{PL idea:} what is the probability that a person with covariate given by $x_{(s)}$ dies at $t_s$ given that one of the persons in $R(t_s)$ dies at this time?
+
+$$L(\beta)=\prod^m_{i=1}\frac{\exp(\beta^Tx_{(i)})}{\sum_{j\in R(t_i)}\exp(\beta^Tx)}$$
+
+$m$ is the number of deaths. When there are tied deaths,
+
+$$L(\beta)=\prod^m_{i=1}\frac{\exp(\beta^Ts_{(i)})}{[\sum_{j\in R(t_i)}\exp(\beta^Tx_j)]^{d_i}}$$
+
+where $s_{(i)}=x_{(i),1}+\dots+x_{(i),d}$ the sum of the covariates for the persons observed to die at $t$.
+
+\textbf{Significance of one parameter in Cox model:} test statistic $\frac{\hat{\beta}}{SE(\hat{\beta})}$ vs $N(0,1)$.
+
+\textbf{Overall significance of Cox model:} testing $H_0:\beta_1=\beta_2=\cdots=\beta_p=0$ vs. $H_1:$ at least one of $\beta_i\not=0, i=1,\dots, p$. Test statistic $-2(LL(H_0)-LL(H_1))\overset{D}\rightarrow \chi^2_{k}$ where $k$ is the number of different parameters in the model specified under the null and alternative. (Recall inference.)
+
+\textbf{Estimated survival curves} often plotted based on mean or median.
+
+\section{Two-state Markov model (week 7)}
+
+prob of trans between states
+
+\textbf{Two-state Markov model:} $\mu(x)=\mu_x$ is the hazard (aka \textbf{transition intensity}) at $x$. Alive to dead state is one-direction. Prob a life alive at a given age will be dead at any subsequent age is determined only by the transition intensity $\mu_{x+t}$ for $t\geq 0$.
+
+\textbf{assumption 1:} \textbf{Markov:} the prob of moving from one state to another depends \textbf{only on the current state}. Past events have no influence on the future.
+
+\textbf{assumption 2:} For a short time interval $dt$,
+
+$$\ _{dt}q_{x+t}\approx \mu_{x+t}dt+o(dt),$$ $o(dt)$ goes to zero faster than $dt$. Meaning: the probability of dying in a short time is roughly = the transition intensity times the length time interval.
+
+\textbf{assumption 3:} \textbf{Transition intensity} $\mu_{x+t}$ is a constant between 0 and 1.
+
+\textbf{A model example:}
+\begin{itemize}
+	\item $x+a_i$ is the age that individual $i$ comes under observation.
+	\item $x+b_i$ is the age that individual $i$ will cease being observed if life survives to that age $x+b_i$.
+	\item $x+T_i$ is the age at which observation of life $i$ ends.
+	\item $V_i$ is a rv: the length of time that individual $i$ is under observation, called \textbf{waiting time}.
+	\item $\delta_i$ is an indicator variable that equals to 1 if $i$ dies and $0$ otherwise. (censored = 0) If $\delta_i=0\implies V_i=b_i-a_i, T_i=b_i$. If $\delta_i=1\implies V_i=T_i-a_i.$
+\end{itemize}
+
+\textbf{From model to likelihood}: For data $(V_i,\delta_i), i=1,\dots, N$.\begin{itemize}
+	\item For $\delta_i=0$, lives from $x+a_i$ to $x+a_i+v_i$, contribution of this event to the likelihood is $\ _{v_i}p_{a+x_i}$.
+	\item For $\delta_i=1$, lives from $x+a_i$ to $x+a_i+v_i$ and dies at $x+a_i+v_i$, the contribution to the likelihood is $\ _{v_i}p_{x+a_i}\mu(x+a_i+v_i)$
+	\item Thus the individual contribution to the likelihood is $\ _{v_i}p_{x+a_i}\mu(x+a_i+v_i)^{\delta_i}.$
+	\item Recall $\ _{v}p_{x+a}=\exp(-\int^{x+a+v}_{x+a}\mu(s)ds)$.
+	\item Recall assumption $\mu(s)=\mu$.
+	\item \begin{equation}
+		\begin{split}
+			L&=\prod^N_{i=1}\exp(-v_i\mu)\mu^{\delta_i}\\
+			&=\exp(-\mu\sum^N_{i=1}v_i)\mu^{\sum^{N}_{i=1}\delta_i}\\
+			&\implies l =-\mu\sum^N_{i=1}v_i+\log(\mu)\sum^N_{i=1}\delta_i\\
+			&=-\mu v+\log(\mu)\delta
+		\end{split}
+	\end{equation}
+	$v=\sum^N_{i=1}v_i$ is the total time under observation of all $N$ individuals.
+	
+	$\delta=\sum^N_{i=1}\delta_i$ is the total number of deaths.
+	
+	\textbf{MLE of }$\hat{\mu}$ is 
+	
+	$$\hat{\mu}=\frac{\delta}{v}$$
+	\item asymptotically, $\hat{y}\approx N(\mu,\frac{\mu^2}{E(\delta)})$, use $\hat{\mu}=\mu$ and $\delta=E(\delta)$.
+\end{itemize}
+
+\section{Multi-state Markov model (week 7 and week 8)}
+
+\textbf{Notations:}\begin{itemize}
+	\item $\ _tp^{gh}_x$ is the prob a person in state $g$ at age $x$ is in state $h$ at age $x+t$.
+	\item $\ _tp^{\overline{gg}}_x$ is the prob a person in state $g$ at age $x$ remains in that state continuously until age $x+t$.
+	\item $\mu^{gh}$ is the transition intensity (or hazard) between state $g$ and $h$. Assuming hazard is constant over each year of age.
+	\item $v_i^g$ is the amount of time spent by individual $i$ in state $g$.
+	\item $\delta_i^{gh}$ is the number of transitions by individual $i$ from state $g$ into state $h$.
+\end{itemize}
+
+\textbf{Kolmogorov Forward Equations:} compute probabilities of interest from our estimated hazards or transition intensities:
+
+\begin{equation}
+	\begin{split}
+		\frac{d}{dt}\ _tp_x^{gh}&=\sum_{r\not=h}(\ _tp_x^{gr}\mu(x+t)^{rh}-\ _tp_x^{gh}\mu(x+t)^{hr})\\
+		\frac{d}{dt}\ _tp_x^{\overline{gg}}&=-\ _tp_x^{\overline{gg}}\sum_{r\not= g}\mu(x+t)^{gr}
+	\end{split}
+\end{equation}
+
+NB: $$\ _tp_x^{\overline{gg}}=\exp(-t\sum_{r\not=g}\mu^{gr})$$
+
+Further derivation leads to the MLEs:
+
+\begin{equation}
+	\begin{split}
+		\hat{\mu}^{gh}&=\frac{\delta^{gh}}{v^g}\\
+		\hat{\mu}^{gh}&\approx N(\mu^{gh},\frac{\delta^{gh}}{(v^g)^2}).
+	\end{split}
+\end{equation}
+
+\textbf{$\delta^{gh}$ is the total number of transitions from state $g$ to $h$ and $v^g$ is the total time spent in state $g$.}
+
+Then $$\hat{p}^{\overline{gg}}=\exp(-t\sum_{r\not=g}\hat{\mu}^{gr})$$
+
+$$V(\hat{p}^{\overline{NN}})=V(\hat{\mu}^{NC}+\hat{\mu}^{NT})\cdot(\hat{p}^{\overline{NN}})^2$$
+
+Find SE, find CI.
+
+\section{Binomial Markov Model (week 8)}
+
+Instead of estimating hazard $\mu_x$, we estimate $q_x$ the \textbf{probability an individual aged $x$ dies before reaching age $x+1$.}
+
+Setup: $x+a_i$ enter, $x+b_i$ stop, $\delta_i$ indicating death. To estimate $q_x$ we need to write the likelihood for $\delta_i$:
+
+$$L=\prod^N_{i=1}\ _{b_i-a_i}q_{x+a_i}^{\delta_i}(1-\ _{b_i-a_i}q_{x+a_i})^{(1-\delta_i)}$$
+
+\textbf{assumption 1:} UDD $\ _tq_x=tq_x$
+
+\textbf{assumption 2:} constant hazard $\ _tq_x=1-\exp(-\mu t)$
+
+\textbf{assumption 3:} behaviour between 0, 1 $\mu_x(t)=\frac{q_x}{1-tq_x}$
+
+\textbf{Example for calculating MLE:} let $a_i=b_i=0.5$, $\omega=$ the number of censored individuals,$\delta=$ total number of observed deaths, then likelihood:
+
+$$q^\delta_x(1-q_x)^{N-\omega-\delta}(1-q_x)^{0.5\omega}$$
+
+MLE: $$\hat{q}_x=\frac{\delta}{N-0.5\omega}$$
+
+\section{Statistical Tests (week 9)}
+
+\textbf{graduation: smoothing a set of crude mortality rates}. \textbf{Why?} 1. pooling of information, 2. belief is that mortality rates are a smooth function of age, 3. practical reasons.
+
+tradeoff: smoothness vs adherence. 
+
+\textbf{focus:} statistical tests of whether a set of crude mortality rates are consistent with a \textbf{standard table} or a set of smoothed rates.
+
+\subsection{Chi-square Test}
+
+overall assessment of the closeness of the observed mortality and that expected given by the standard table.
+
+Under null hypo, the obs deaths is binomial $Bino(E_x, q_x)$.
+
+TS: $$\chi^2=\sum_{\text{age groups}}\frac{(\theta_x-E_xq_x)^2}{E_xq_x}$$
+
+$\theta_x$ is obs. death, DegOfFreedom is the number of age groups (constraints).
+
+\begin{itemize}
+	\item Within each group should be homogeneous.
+	\item Rule of thumb: each group should contain about 5 deaths.
+	\item advantage: can detect a single difference between observed and expected
+	\item disadvantage: fail to detect certain issues like all observed deaths slightly greater than the expected deaths; may not detect large groups of positive or negative deviations
+\end{itemize}
+
+\subsection{Standard Deviation Test}
+
+TS: $$Z_x=\frac{\theta_x-E_xq_X}{\sqrt{E_xq_x(1-q_x)}}\overset{\cdot}\sim N(0,1)$$
+
+\begin{enumerate}
+	\item Decide on a set of intervals (equal lengths)
+	\item compute the observed number of $Z_x$ falling in each interval
+	\item compute the expected number of $Z_x$ falling in each interval, under null. The expected number is the number of age ranges times the appropriate area from the standard normal.
+	\item use a $\chi^2$ test to compare the observed and expected value.
+\end{enumerate}
+
+DegOfFreedom is the number of intervals -1 
+
+\textbf{can detect situation of a few large deviations being masked by an excessive number of smaller deviations.}
+
+\subsection{Sign Test}
+
+\textbf{Compare the observed number of positive deviations to the Binomial($m, 1/2$) dist.}  $m$ is the number of age groups. Approx to $N(0.5m, 0.25m)$.
+
+\textbf{Two sided test: both too many or two few positive deviations are evidence against $H_0$.} Can detect an excessive number of positive or negative deviations.
+
+Generally, same result from sign test and standard deviation test.
+
+\subsection{Cumulative Deviation Test}
+
+TS: $$\frac{\sum^b_a(\theta_x-E_xq_x)}{\sqrt{\sum^b_a(E_xq_xp_x)}}\overset{\cdot}\sim N(0,1)$$
+
+can be applied to the whole age range or over particular ranges. \textbf{two-sided}
+
+\subsection{Runs Test}
+
+The \textbf{runs test} is based on the \textbf{observed number of runs of positive deviations}. A run is a groupings of positive (or negative deviations). E.g. $1,2,-1,-2,3,1$ have 2 runs of positive deviations.
+
+The possibility of seeing $t$ or less positive runs:
+
+$$\sum^t_{j=1}\frac{{n_1-1\choose j-1}{n_0+1\choose j}}{{m\choose n_1}}$$
+
+where $n_1$ and $n_0$ are the number of positive/negative deviations. $m$ is the number of age groups. For large values of $m$ a normal approximation can be used,
+
+$$t\overset{\cdot}\sim N\left(\frac{n_1(n_0+1)}{n_0+n_1},\frac{(n_0n_1)^2}{(n_0+n_1)^3}\right)$$
+
+\textbf{One-sided}, a small number of runs is evidence against the null hypothesis. (too stacked! too grouped!)
+
+\begin{table}[htbp!] 
+	\centering
+	\begin{tabular}{|l|c|r|}
+		\hline
+		test name & TS approx & one or two sided \\
+		\hline
+		$\chi^2$ test & $\chi^2_{(m)}$ & one-sided\\
+		\hline
+		Std-dev test (under Normal approx) & $\chi^2_{(-1)}$ & one-sided\\
+		\hline
+		cum-dev test & Z & separate groups (two-sided)\\
+		\hline
+		sign test & Z & two-sided\\
+		\hline
+		runs test & Z & one-sided\\
+		\hline
+	\end{tabular}
+\end{table}
+
+\section{Methods of Graduations/Smoothing (week 10)}
+
+\subsection{Kernel Smoothing}
+
+\textbf{idea:} estimate $f(x^*)$ using information contained in observations that are close to the point of interest $x^*$. The weight assigned to each obs is determined by the form of the \textbf{kernel}. 
+
+\textbf{Kernel properties:} 1. obs further away from $x^*$ receive less weight. 2. symmetric kernel
+
+kernel smoothed value at $x^*$:
+
+$$\hat{f}(x^*)=\hat{y}(x^*)=\sum^n_{j=1}w_jy_j$$
+
+$$w_j=\frac{K\left(\frac{|x^*-x_j|}{b}\right)}{\sum^n_{m=1}K\left(\frac{|x^*-x_m|}{b}\right)}$$
+
+where $K(t)$ is the kernel and $b$ is the bandwidth. $b$ decreases, $t$ increases, the smaller $b$ the quicker the weights assigned to observations decline. (in fact, observations very close to $x^*$ receive larger weights. So the weights decline for majority of observations but increase for the observations close to $x^*$. So we get a least smooth curve. So vice versa, greater $b$, smoother.
+
+\textbf{bandwidth} ($b$) is the tuning parameter.
+
+\subsection{Spline Smoothing}
+
+\textbf{natural cubic splines} estimate $f(x)$ by using piece-wise cubic polynomials. Fitting them with \textbf{constraints:}
+
+\begin{itemize}
+	\item pieces are connected
+	\item smooth = derivatives of endpoints should be the same
+	\item the 2nd derivative at the connection points should be the same
+\end{itemize}
+
+We customize the number of \textbf{knots}. Knots = connection points. The num of knots is the tuning parameter for splines. More knots, less smooth.
+
+\textbf{Knots selection:} minimize AIC or BIC (measure goodness of fit, also penalize for the number of parameters used)
+\begin{itemize}
+	\item AIC = $-2\ln(L)+2\times p$
+	\item BIC = $-2\ln(L)+\log(n)\times p$
+\end{itemize}
+
+\textbf{Other smoothers loess} = locally weighted scatterplot smoothing...
+
+\section{Graduation: ALT 2005-07 (week 11)}
+
+Manual graduation will be used at the extremes of age. Cubic splines used to graduate (the crude rates) as well. For cubic splines, the number of knots is undetermined yet. Tests will be conducted to assess the appropriateness of graduated rates.
+
+Knots selected by minimizing
+
+$$\frac{(A_x-E^c_xm_x)^2}{E^c_xm'_x(1-m'_x)}$$
+
+where $A_x$ is the observed number of deaths aged $x$, $E^c_x$ is the central exposed to risk aged $x$, $m_x$ is the graduated value of the central mortality rate at age $x$. $m'_x$ is a preliminary value of $m_x$.
+
+\section{Exposed to Risk: how to obtain crude mortality (week 12)}
+
+\textbf{what is involved?} Requires a measure of the number of deaths and the population which was at risk of dying, the exposed-to-risk- over the same period.
+
+\begin{equation}
+	\begin{split}
+		\hat{q}_x&=\frac{d_x}{E_x}\\
+		\hat{\mu}_x&=\frac{d_x}{E^c_x}
+	\end{split}
+\end{equation}
+
+$d_x$ is the number of deaths and $E_x$ and $E_x^c$ are initial and central exposed to risk.
+
+Under constant force of mortality, central mortality=force of mortality:
+\begin{equation}
+	\begin{split}
+		m_x&=\frac{d_x}{\int^1_0l_{x+t}dt}=\frac{q_x}{\int^1_0\ _tp_xdt}\\
+		&=\frac{1-e^{-\mu}}{\int^1_0e^{-\mu t}dt}=\frac{1-e^{-\mu}}{\frac{1}{\mu}[-e^{-\mu t}]^1_0}\\
+		&=\frac{1-e^{-\mu}}{\frac{1}{\mu}(1-e^{-\mu})}\\
+		&=\mu
+	\end{split}
+\end{equation}
+
+$E^c_x$: is the total time that all individuals under study are observed. This is the same as the waiting time.
+
+$E_x$: a less natural quantity than $E^c_x$, requires adjustment for individuals who die while under observation.
+
+Under the assumption that on average deaths occur half way through the year, the following approx can be used to estimate $E_x$:
+
+$$E_x\approx E_x^c+0.5d_x$$
+
+But computation $E_x^c$ requires lots of detailed information. Sometimes we only have information at one or more times, we use $E_x^c=\int P(x,t)dt$.
+
+Use the \textbf{Trapezium approx} to estimate the area of trapezium: \textbf{(sum of sides / 2 ) * height}.
+
+\textbf{Rate intervals:} intervals of time over which an individual's age remains the same. if die in this interval, contribute to $d_x$. age definition is important. 
+
+\end{document}

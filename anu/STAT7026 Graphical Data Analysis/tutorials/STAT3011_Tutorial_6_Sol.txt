@@ -1,0 +1,389 @@
+RESEARCH SCHOOL OF FINANCE, ACTUARIAL STUDIES AND APPLIED STATISTICS
+GRAPHICAL DATA ANALYSIS
+TUTORIAL 6
+SAMPLE SOLUTION
+
+Question 1.
+
+We start by having a look at a scatterplot matrix of the entire data:
+  
+  pairs(cbind(indus$y,indus$x),panel=function(x,y){points(x,y);
+                        abline(rlm(y~x,method=wt.huber))})
+
+First we examine the covariates, noting all features of interest.  
+These include:
+  
+  Explanatory variables on raw scales:
+a) strong linear relationship between fatty acid and glycerine
+- most likely we will reduce the dimension of the covariate space by
+not using one of these two variables
+
+b) one observation each for 2 & 3 startups
+
+c) 2 occasions when number of operating days = 11; same data as for few 
+startups
+
+d) Calendar days is a highly discrete variable, with most observations having
+values 30 or 31. It is unlikely this variable will be terribly useful in 
+explaining the response.
+
+It is worth investigating the covariate space for multicollinearity; we have
+already seen the potential for reducing the covariate space by at least one
+variable (either fatty acid or glycerine)
+
+library(MASS)
+w <- sweep(indus$x,2,apply(indus$x,2,mean))
+w <- w %*% diag(1/sqrt(diag(crossprod(w))))
+s <- prcomp(w)
+s$sdev[1]/s$sdev
+[1] 1.000000 1.109512 1.788665 2.396854 3.105468 3.855555 5.562012 9.954579
+
+There does appear to be some evidence of multicollinearity (probably due to
+the presence of the fatty acid/glycerine relationship). We will delete one
+of these variables (fatty acid) and see if the problem disappears:
+  
+x <- indus$x[,-1]
+w <- sweep(x,2,apply(x,2,mean))
+w <- w %*% diag(1/sqrt(diag(crossprod(w))))
+s <- prcomp(w)
+s$sdev[1]/s$sdev
+[1] 1.000000 1.070808 1.636937 2.175511 2.813343 4.114102 5.189609
+
+This seems to solve the multicollinearity problem. There do not seem to be 
+any other problematic relationships.
+
+It is sometimes helpful to examine relationships with the response variable:
+  
+a) weak, positive relationships with glycerine and fatty acid
+b) negative linear relationship with av air temp
+
+There are some other reasonably weak-looking relationships, but the ones 
+mentioned here seem to be the most obvious ones from the scatterplot matrix.
+Note though that there may be other relationships which are not visible
+in the particular projections used here.
+
+The next strategy is probably to go ahead and fit the full model, including
+all variables except calendar days.
+
+x=indus$x[,-4]
+mod=rlm(indus$y~x)
+
+plot(cbind(1,x) %*% mod$coef,mod$resid,main="Huber Residual Plot for Steam 
+     Data",xlab="Fitted Values",ylab="Huber Residuals",sub="Model includes 
+     all variables on raw scale except calendar days")
+identify(cbind(1,x) %*% mod$coef,mod$resid,c(1:25))
+
+plot(cbind(1,x) %*% mod$coef,abs(mod$resid),main="Absolute Huber Residual Plot 
+     for Steam Data",xlab="Fitted Values",ylab="Absolute Huber Residuals",
+     sub="Model includes all variables on raw scale except calendar days")
+lines(lowess(cbind(1,x) %*% mod$coef,abs(mod$resid)))
+
+qqnorm(mod$resid,main="Quantile-Quantile Plot of Huber Residuals for Steam 
+       Data",xlab="Gaussian Quantiles",ylab="Huber Residuals",sub="Model includes 
+       all variables on raw scale except calendar days")
+
+mod$coef
+(Intercept) Fatty Acid Glycerine   Wind km/h Operating Days Freezing Days 
+3.078214  0.9683927 -4.315214 -0.02263337     0.09542142  -0.009163171
+Temperature   Startups 
+-0.07309994 -0.1385763
+
+(Note that Glycerine has a large negative coefficient, despite the positive
+ slope of its relationship with the response noted in the scatterplot matrix.
+ This effect is due entirely to its collinear relationship with fatty acid.) 
+
+Diagnostic plots of this model shows that there is a roughly constant variation
+in residuals with fitted values (extreme points 11 & 23 are downweighted)
+
+The quantile-quantile plot is slightly short-tailed, with extreme values in
+lower tail corresponding to downweighted observations
+
+We can calculate some t-values for this data as follows:
+  
+  s <- mad(mod$resid)
+eta <- sum(abs(mod$resid) <= 1.345*s)/(25)
+tau <- sum(ifelse(abs(mod$resid/s)<=1.345,mod$resid/s,1.345)^2)/17
+se <- s^2*tau*(eta+(8/25)*(1-eta))/(eta^3)
+lam <- 2*eta/tau
+v <- se*solve(crossprod(cbind(1,x)))
+tstats <- mod$coef/sqrt(diag(v))
+qfull <- sum(ifelse(abs(mod$resid/s)<=1.345,(mod$resid/s)^2/2,
+                    1.345*abs(mod$resid/s)-1.345^2/2))
+
+tstats
+(Intercept) Fatty Acid Glycerine Wind km/h Operating Days Freezing Days
+4.340571    1.91004 -1.120423 -0.804132       2.551551    -0.7722236
+Temperature  Startups
+-5.480014 -1.511009
+
+Several variables can be removed from the model on the basis of their
+t-statistics: we may be able to delete Fatty Acid, Glycerine, Wind speed, 
+Freezing Days and Startup Days:
+  
+  x <- indus$x[,-c(1:4,6,8)]
+mod0 <- rlm(indus$y~x)
+qnull <- sum(ifelse(abs(mod0$resid/s)<=1.345,(mod0$resid/s)^2/2,
+                    1.345*abs(mod0$resid/s)-1.345^2/2))
+(qnull-qfull)*lam/5
+[1] 1.845515
+1-pf((qnull-qfull)*lam/5,5,17)
+[1] 0.1574742
+
+The result is non-significant at 5 and 10%, so we can delete the 5 variables 
+mentioned above. The model now involves only Operating Days and Temperature.
+Removing variables on the basis of their t-statistics is a risky move, mainly
+because of the fact that t-statistics are to be interpreted marginally, and
+the presence of collinearity in the data can make it hard to make decisions
+that are essentially joint using a marginal-based method. We can also try a
+stepwise approach. 
+
+Model simplification:
+  A series of models were fitted, successively eliminating from the model those
+variables with the smallest t-statistics until the F-test for the hypothesis
+that all these variables can be removed becomes significant at the 5% level.
+
+Start by trying to delete Freezing days:
+  
+  x <- indus$x[,-c(4,6)]
+mod <- rlm(indus$y~x)
+qnull <- sum(ifelse(abs(mod$resid/s)<=1.345,(mod$resid/s)^2/2,
+                    1.345*abs(mod$resid/s)-1.345^2/2))
+(qnull-qfull)*lam/1
+[1] 0.4207679
+1-pf((qnull-qfull)*lam/1,1,17)
+[1] 0.5252205
+
+Clearly, non-significant: Freezing Days deleted. Now calculate t-stats
+for the new model and find our next candidate for deletion:
+  
+  s1 <- mad(mod$resid)
+eta <- sum(abs(mod$resid) <= 1.345*s1)/(25)
+tau <- sum(ifelse(abs(mod$resid/s1)<=1.345,mod$resid/s1,1.345)^2)/18
+se <- s1^2*tau*(eta+(7/25)*(1-eta))/(eta^3)
+v <- se*solve(crossprod(cbind(1,x)))
+tstats <- mod$coef/sqrt(diag(v))
+tstats
+(Intercept) Fatty Acid  Glycerine  Wind km/h Operating Days Temperature
+4.837844    2.04673 -0.9255967 -0.4665282       2.389785   -8.503321
+Startups
+-1.72074
+
+Now try to delete wind:
+  
+  x <- indus$x[,-c(3,4,6)]
+mod <- rlm(indus$y~x)
+qnull <- sum(ifelse(abs(mod$resid/s)<=1.345,(mod$resid/s)^2/2,
+                    1.345*abs(mod$resid/s)-1.345^2/2))
+(qnull-qfull)*lam/2
+[1] 0.2936511
+1-pf((qnull-qfull)*lam/2,2,17)
+[1] 0.7492425
+
+Again non-significant: delete wind from the model. Calculate t-stats:
+  s1 <- mad(mod$resid)
+eta <- sum(abs(mod$resid) <= 1.345*s1)/(25)
+tau <- sum(ifelse(abs(mod$resid/s1)<=1.345,mod$resid/s1,1.345)^2)/19
+se <- s1^2*tau*(eta+(6/25)*(1-eta))/(eta^3)
+v <- se*solve(crossprod(cbind(1,x)))
+tstats <- mod$coef/sqrt(diag(v))
+tstats
+(Intercept) Fatty Acid  Glycerine Operating Days Temperature  Startups
+5.580843   2.106368 -0.8525316       2.502024   -10.15273 -1.747499
+
+The next candidate for deletion is Glycerine:
+  
+  x <- indus$x[,-c(2,3,4,6)]
+mod <- rlm(indus$y~x)
+qnull <- sum(ifelse(abs(mod$resid/s)<=1.345,(mod$resid/s)^2/2,
+                    1.345*abs(mod$resid/s)-1.345^2/2))
+(qnull-qfull)*lam/3
+[1] 0.4354124
+1-pf((qnull-qfull)*lam/3,3,17)
+[1] 0.7304657
+
+Non-significant: Glycerine is deleted from the model. Calculate t-stats:
+  s1 <- mad(mod$resid)
+eta <- sum(abs(mod$resid) <= 1.345*s1)/(25)
+tau <- sum(ifelse(abs(mod$resid/s1)<=1.345,mod$resid/s1,1.345)^2)/20
+se <- s1^2*tau*(eta+(5/25)*(1-eta))/(eta^3)
+v <- se*solve(crossprod(cbind(1,x)))
+tstats <- mod$coef/sqrt(diag(v))
+tstats
+(Intercept) Fatty Acid Operating Days Temperature  Startups
+8.330522    3.06586       2.743326   -12.46919 -2.011556
+
+Next, try to delete Startups:
+  
+  x <- indus$x[,-c(2,3,4,6,8)]
+mod <- rlm(indus$y~x)
+qnull <- sum(ifelse(abs(mod$resid/s)<=1.345,(mod$resid/s)^2/2,
+                    1.345*abs(mod$resid/s)-1.345^2/2))
+(qnull-qfull)*lam/4
+[1] 0.952099
+1-pf((qnull-qfull)*lam/4,4,17)
+[1] 0.4584537
+
+Non-significant: delete Startups. Check t-stats:
+  s1 <- mad(mod$resid)
+eta <- sum(abs(mod$resid) <= 1.345*s1)/(25)
+tau <- sum(ifelse(abs(mod$resid/s1)<=1.345,mod$resid/s1,1.345)^2)/21
+se <- s1^2*tau*(eta+(4/25)*(1-eta))/(eta^3)
+v <- se*solve(crossprod(cbind(1,x)))
+tstats <- mod$coef/sqrt(diag(v))
+tstats
+(Intercept) Fatty Acid Operating Days Temperature
+6.935494   2.333067        1.95437   -10.56189
+
+Next candidate for deletion is Operating Days:
+  
+  x<- indus$x[,-c(2:6,8)]
+mod <- rlm(indus$y~x)
+qnull <- sum(ifelse(abs(mod$resid/s)<=1.345,(mod$resid/s)^2/2,
+                    1.345*abs(mod$resid/s)-1.345^2/2))
+(qnull-qfull)*lam/5
+[1] 1.550798
+1-pf((qnull-qfull)*lam/5,5,17)
+[1] 0.2269321
+
+Non-significant: delete Operating Days. Check t-stats:
+  s1 <- mad(mod$resid)
+eta <- sum(abs(mod$resid) <= 1.345*s1)/(25)
+tau <- sum(ifelse(abs(mod$resid/s1)<=1.345,mod$resid/s1,1.345)^2)/22
+se <- s1^2*tau*(eta+(3/25)*(1-eta))/(eta^3)
+v <- se*solve(crossprod(cbind(1,x)))
+tstats <- mod$coef/sqrt(diag(v))
+tstats
+(Intercept) Fatty Acid Temperature
+7.635668   4.711364   -10.28916
+
+Now try to delete Fatty Acids:
+  
+  x <- indus$x[,-c(1:6,8)]
+mod <- rlm(indus$y~x)
+qnull <- sum(ifelse(abs(mod$resid/s)<=1.345,(mod$resid/s)^2/2,
+                    1.345*abs(mod$resid/s)-1.345^2/2))
+(qnull-qfull)*lam/6
+[1] 4.876729
+1-pf((qnull-qfull)*lam/6,6,17)
+[1] 0.004542427
+
+The result is now significant! This means that we cannot delete Fatty 
+Acids from the model, and our final model contains Fatty Acids and 
+Temperature. Note that this is different from the model we produced above
+by simply looking at t-stats from the full model fit. Remember: we may have 
+been able to take Operating days out of the model under our original 
+considerations, but we decded to keep it on the basis of its t-value being
+marginally above 2.5 (t(17,0.975)=2.109816), but remember, marginal tests
+are dangerous, and the backwards elimination procedure we've just implemented
+is based on a sequence of (joint) F tests. We should still be careful about
+our interpretation! The results of sequential testing can be troublesome,
+and it may be that neither fatty acids nor operating days belong in the
+model. Temperature looks safe because of its relatively high t-value.
+
+Final Reduced Model from Stepwise Procedure.  
+This model explains the variation in steam produced with fatty acids and
+temperature only
+
+The diagnostic plots from this model were very similar to those from the full
+model:
+
+x <- indus$x[,-c(2:6,8)]
+mod <- rlm(indus$y~x)
+
+plot(cbind(1,x) %*% mod$coef,mod$resid,main="Huber Residual Plot for Steam
+Data",xlab="Fitted Values",ylab="Huber Residuals",sub="Model includes
+temperature and fatty acids")
+identify(cbind(1,x) %*% mod$coef,mod$resid,c(1:25))
+
+plot(cbind(1,x) %*% mod$coef,abs(mod$resid),main="Absolute Huber Residual Plot
+for Steam Data",xlab="Fitted Values",ylab="Absolute Huber Residuals",
+sub="Model includes temperature and fatty acids")
+lines(lowess(cbind(1,x) %*% mod$coef,abs(mod$resid)))
+
+qqnorm(mod$resid,main="Quantile-Quantile Plot of Huber Residuals for Steam
+Data",xlab="Gaussian Quantiles",ylab="Huber Residuals",sub="Model includes
+temperature and fatty acids")
+
+The diagnostics don't look too bad. Points 11,12,23 are downweighted
+in the analysis. The residual plot shows variance that is rising with 
+the fitted values, but the effect does not look too serious. The 
+Q-Q plot looks fine.
+
+Now to find the model parameters:
+  
+  round(mod$coef,3)
+(Intercept) Fatty Acid Temperature
+3.134      0.762      -0.064
+
+s1 <- mad(mod$resid)
+eta <- sum(abs(mod$resid) <= 1.345*s1)/(25)
+tau <- sum(ifelse(abs(mod$resid/s1)<=1.345,mod$resid/s1,1.345)^2)/22
+se <- s1^2*tau*(eta+(3/25)*(1-eta))/(eta^3)
+v <- se*solve(crossprod(cbind(1,x)))
+tstats <- mod$coef/sqrt(diag(v))
+
+round(sqrt(diag(v)),3)
+[1] 0.410 0.162 0.006
+
+tstats
+(Intercept) Fatty Acid Temperature
+7.635668   4.711364   -10.28916
+
+Model is:
+  
+  
+  steam (kg/month) = 3.134 + 0.762 Fatty Acid - 0.064 Temperature
+(0.410)  (0.162)            (0.006)
+
+
+Further exploration:
+  
+  To further investigate whether Operating Days should be included in
+the model, we can look at an added variable plot:
+  
+  oper <- indus$x[,5]
+mod0 <- rlm(oper~x)
+plot(mod$resid,mod0$resid,main="Added Variable Plot for Operating Days",
+     xlab="Residuals of Operating Days given fatty acid and temp",
+     ylab="Model residuals from model with fatty acids and temp")
+abline(rlm(mod0$resid~mod$resid)$coef)
+
+The added variable plot has a small positive trend. This suggests that
+Operating Days should be included in the model. We shall include it and 
+see if its t-stat suggests it should be deleted:
+  
+  x <- indus$x[,-c(2,3,4,6,8)]
+mod <- rlm(indus$y~x)
+s1 <- mad(mod$resid)
+eta <- sum(abs(mod$resid) <= 1.345*s1)/(25)
+tau <- sum(ifelse(abs(mod$resid/s1)<=1.345,mod$resid/s1,1.345)^2)/21
+se <- s1^2*tau*(eta+(4/25)*(1-eta))/(eta^3)
+v <- se*solve(crossprod(cbind(1,x)))
+tstats <- mod$coef/sqrt(diag(v))
+tstats
+(Intercept) Fatty Acid Operating Days Temperature
+6.935494   2.333067        1.95437   -10.56189
+
+qt(0.975,21)
+[1] 2.079614
+
+The t-statistic  for Operating Days is non-significant at 5%, and so we 
+once again delete it from the model.
+
+The final model is therefore as given above.
+
+Use of the avas function suggests a quadratic term in wind may be useful in the
+full model.  To explore this further a full model including this term could be
+fitted, the diagnostic plots for this model checked and the model then
+simplified in the same way.  The inclusion of this term results in a more
+complicated model with more terms.  There is no gain in terms of diagnostic
+plots, so no benefit. The results are therefore not presented here. Remember, that
+to use avas in R, you will need to load library(acepack) before issuing the avas command.
+
+Final point:
+  
+  It is tempting to divide steam by the number of operating day to get the
+steam/day usage.  However, the covariates remain on a monthly basis -
+  we would like to relate steam usage to the temperature on that day
+rather than the monthly average temperature.  Thus it is
+more comfortable to work on the monthly data provided.

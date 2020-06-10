@@ -1,0 +1,89 @@
+#Looking at ovarian cancer data availabe in the R survival package.
+library(survival)
+data(ovarian)
+km.est1<-survfit(Surv(ovarian$futime,ovarian$fustat)~1,conf.type="plain")
+km.est2<-survfit(Surv(ovarian$futime,ovarian$fustat)~1,conf.type="log")
+km.est3<-survfit(Surv(ovarian$futime,ovarian$fustat)~1,conf.type="log-log")
+lower<-cbind(summary(km.est1)$lower,summary(km.est2)$lower,summary(km.est3)$lower)
+upper<-cbind(summary(km.est1)$upper,summary(km.est2)$upper,summary(km.est3)$upper)
+bounds<-round(cbind(lower,upper),2)
+colnames(bounds)<-rep(c("plain","log","log-log"),2)
+bounds[1:4,]
+     plain  log log-log plain log log-log
+[1,]  0.89 0.89    0.76  1.00   1    0.99
+[2,]  0.82 0.83    0.73  1.00   1    0.98
+[3,]  0.76 0.77    0.68  1.00   1    0.96
+[4,]  0.71 0.72    0.64  0.98   1    0.94
+
+#Example of log-rank test
+#kidney data: times to infection once catheter is inserted. 
+data(kidney)
+km.est<-survfit(Surv(kidney$time,kidney$status)~kidney$disease)
+plot(km.est,col=c("red","blue","green","black"))
+legend(x="topright",c("other","GN","AN","PKD"),lty=1,col=c("red","blue","green","black"))
+survdiff(Surv(kidney$time,kidney$status)~kidney$disease,rho=0)
+
+#Example of NA estimator
+library(survival)
+data(ovarian)
+NA.est<-survfit(Surv(ovarian$futime,ovarian$fustat)~1,type="fleming-harrington")
+KM.est<-survfit(Surv(ovarian$futime,ovarian$fustat)~1,type="kaplan-meier")
+summary(NA.est)
+> summary(NA.est)
+Call: survfit(formula = Surv(ovarian$futime, ovarian$fustat) ~ 1, type = "fleming-harrington")
+
+ time n.risk n.event survival std.err lower 95% CI upper 95% CI
+   59     26       1    0.962  0.0377        0.891        1.000
+  115     25       1    0.925  0.0523        0.827        1.000
+  156     24       1    0.887  0.0628        0.772        1.000
+  268     23       1    0.849  0.0710        0.721        1.000
+  329     22       1    0.811  0.0776        0.673        0.979
+  353     21       1    0.774  0.0831        0.627        0.955
+.
+.
+.
+plot(NA.est)
+lines(KM.est,col="red")
+
+
+#addict example
+
+addict = read.table("http://www-stat.stanford.edu/~rag/stat222/heroin.dat", header = TRUE)
+addict[1:5,]
+  id clinic status time prison dose
+1  1      1      1  428      0   50
+2  2      1      1  275      1   55
+3  3      1      1  262      0   55
+4  4      1      1  183      0   30
+5  5      1      1  259      1   65
+
+KM.est<-survfit(Surv(addict$time,addict$status)~addict$clinic)
+plot(KM.est,col=c("red","blue"))
+legend(x="topright",c("clinic 1","clinic 2"),lty=1,col=c("red","blue"))
+survdiff(Surv(addict$time,addict$status)~addict$clinic,rho=0)
+
+KM.est<-survfit(Surv(addict$time,addict$status)~addict$clinic+addict$prison)
+plot(KM.est,col=c("red","blue","green","black"))
+legend(x="topright",c("clinic=1, prison=0","clinic=1, prison=1","clinic=2, prison=0","clinic=2, prison=1"),lty=1,col=c("red","blue","green","black"))
+survdiff(Surv(addict$time,addict$status)~addict$clinic+addict$prison,rho=0)
+
+KM.est<-survfit(Surv(addict$time,addict$status)~1,conf.type="log")
+plot(KM.est)
+abline(h=0.5,col="red")
+abline(v=399,col="blue")
+abline(v=560,col="blue")
+abline(v=504,col="green")
+
+########################
+library(RcmdrPlugin.survival)
+data(Rossi) #see J fox notes for more details
+Rossi[1:3,1:10]
+> Rossi[1:3,1:10]
+  week arrest fin age  race wexp         mar paro prio educ
+1   20      1  no  27 black   no not married  yes    3    3
+2   17      1  no  18 black   no not married  yes    8    4
+3   25      1  no  19 other  yes not married  yes   13    3
+
+cox.fit<-coxph(Surv(week,arrest)~fin+age+race+wexp+mar+prio,data=Rossi)
+summary(cox.fit)
+

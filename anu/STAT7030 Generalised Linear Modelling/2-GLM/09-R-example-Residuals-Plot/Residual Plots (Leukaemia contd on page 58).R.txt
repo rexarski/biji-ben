@@ -1,0 +1,269 @@
+# This example follows on from the leukaemia example from page 36 of the brick and the following
+# R code will produce the plots shown on page 58, along with some additional analysis:
+
+leuk.pos <- read.table("LeukPos.txt", header=T)
+attach(leuk.pos)
+leuk.pos
+plot(wbc, surv)
+identify(wbc,surv)
+
+# Model using a log link:
+
+leuk.glm <- glm(surv ~ log(wbc), family=Gamma(link=log))
+
+# My preferred residual plots for GLMs - firstly the main residual vs fitted values plot:
+
+plot(leuk.glm$linear.predictors, residuals(leuk.glm, "deviance"), xlab="Linear Predictors", ylab="Deviance Residuals", main="Deviance Residual Plot", sub="glm(surv ~ log(wbc), family=Gamma(link=log))")
+abline(h=0, lty=2)
+identify(leuk.glm$linear.predictors, residuals(leuk.glm, "deviance"))
+
+# Now the normal quantile plot:
+
+qqnorm(residuals(leuk.glm, "pearson"), ylab="Pearson Residuals Quantiles", main="Normal Quantile Plot", sub="glm(surv ~ log(wbc), family=Gamma(link=log))")
+qqline(residuals(leuk.glm, "pearson"))
+abline(0,1, lty=2)
+
+# Finally, if required, an appropriate outlier (Cook's D) plot 
+
+plot(leuk.glm, which=4) 
+
+# Compare with the default plots produced by R:
+
+plot(leuk.glm)
+
+# In this instance, I might actually prefer the normal quantile plot from the default group, 
+# which uses standardised (studentised) residuals.
+
+# Now for the plot shown on page 58 of the brick:
+
+plot(leuk.glm$linear.predictors, abs(residuals(leuk.glm, "deviance")), xlab="Linear Predictor Value",ylab="|Deviance Residuals|", main="(f) - Absolute Deviance Residual Plot for Log Link")
+
+# Model using an inverse link:
+
+leuk.glm1 <- glm(surv ~ wbc, family=Gamma)
+
+# My preferred set of plots:
+
+plot(leuk.glm1$linear.predictors, residuals(leuk.glm1, "deviance"), xlab="Linear Predictors", ylab="Deviance Residuals", main="Deviance Residual Plot", sub="glm(surv ~ wbc, family=Gamma)")
+abline(h=0, lty=2)
+identify(leuk.glm1$linear.predictors, residuals(leuk.glm1, "deviance"))
+
+qqnorm(residuals(leuk.glm1, "pearson"), ylab="Pearson Residuals Quantiles", main="Normal Quantile Plot", sub="glm(surv ~ wbc, family=Gamma)")
+qqline(residuals(leuk.glm1, "pearson"))
+abline(0,1, lty=2)
+
+plot(leuk.glm1, which=4) 
+
+# Again, compare with the default plots:
+
+plot(leuk.glm1)
+
+# Now for the plot shown on page 58 of the brick:
+
+plot(leuk.glm1$linear.predictors, abs(residuals(leuk.glm1, "deviance")), xlab="Linear Predictor Value",ylab="|Deviance Residuals|", main="(g) - Absolute Deviance Residual Plot for Inverse Link")
+
+# The assumed deviance used by R in fitting a gamma GLM is the CV estimator shown towards the end
+# of page 43 of the brick. Because this is not 1 (as it would be for a Poisson or binomial model), 
+# the Pearson  and the deviance residuals for gamma GLMs are not approximately standardised (even
+# though the scale on the residual plot neatly ranges between -2 and +2. The CV estimator of 
+# dispersion is shown in the model summaries:
+
+summary(leuk.glm)
+summary(leuk.glm1)
+
+# In both cases this is not too far from 1, suggesting a value close to 1 for alpha (the dispersion 
+# parameter for a gamma distribution should be 1/alpha), which is the value for the exponential 
+# distribution - a special case of the gamma distribution and a distribution often used in modelling
+# survival data.
+
+# However, the above plots suggest there are problems with the underlying assumption with either
+# model. We can also examine the alternative dispersion estimates (discussed on page 57 of the 
+# brick) for these models, using values from the Analysis of Deviance tables:
+
+anova(leuk.glm)
+anova(leuk.glm1)
+
+# Because the assumed dispersion is not exactly equal to 1, the estimated changes in deviance in 
+# these Analysis of Deviance tables are not already scaled, we have to first scale them using the
+# CV estimate of the dispersion:
+
+scaled.dev <- anova(leuk.glm)$Deviance/summary(leuk.glm)$dispersion
+chisq.pvalues <- 1 - pchisq(scaled.dev, anova(leuk.glm)$Df)
+cbind(anova(leuk.glm), "Scaled Dev"=scaled.dev, "Pr(Chi)"=chisq.pvalues)
+
+# Note that R can be used to produce the scaled drop in deviance and a chi-square p-value or
+# a different p-value associated with an F distribution, rather than a chi-square p-value.
+# This second version is treating the CV estimator of the dispersion as a variance component
+# rather than as an assumed constant:
+
+anova(leuk.glm, test="Chisq")
+anova(leuk.glm, test="F")
+
+# For more details, see:
+
+help(anova.glm)
+
+# For the second model:
+
+scaled.dev <- anova(leuk.glm1)$Deviance/summary(leuk.glm1)$dispersion
+chisq.pvalues <- 1 - pchisq(scaled.dev, anova(leuk.glm1)$Df)
+cbind(anova(leuk.glm1), "Scaled Dev"=scaled.dev, "Pr(Chi)"=chisq.pvalues)
+
+# Note there is also an option to specify the dispersion estimate to use in the denominator:
+
+anova(leuk.glm1, dispersion=summary(leuk.glm1)$dispersion, test="Chisq")
+anova(leuk.glm1, dispersion=summary(leuk.glm1)$dispersion, test="F")
+
+# But note the warning, if you decide the assumed dispersion should be constant.
+
+anova(leuk.glm1, test="F")
+
+# The alternative estimates of the dispersion are larger than the CV estimator in both cases:
+
+summary(leuk.glm)$dispersion
+anova(leuk.glm)
+leuk.glm$deviance
+leuk.glm$df.residual
+leuk.glm$deviance/leuk.glm$df.residual
+fitted(leuk.glm)
+leuk.glm$linear.predictors
+
+summary(leuk.glm1)$dispersion
+anova(leuk.glm1)
+leuk.glm1$deviance
+leuk.glm1$df.residual
+leuk.glm1$deviance/leuk.glm1$df.residual
+fitted(leuk.glm1)
+leuk.glm1$linear.predictors
+
+# Some evidence of over-dispersion for both models! For the inverse model there are some fitted values
+# close to zero (at least on the link transformed scale, i.e. small values of the linear predictors).
+# Page 57 of the brick suggests that these small values may affect the "alternative" estimate of the
+# dispersion found by dividing the residual deviance by the residual df, so it may not be a reliable
+# estimate in this instance. We can apply the formal test on the scaled residual deviance suggested
+# in lectures to check if there is a problem:
+
+summary(leuk.glm)$deviance/summary(leuk.glm)$dispersion
+c(qchisq(0.025, leuk.glm$df.residual), qchisq(0.975, leuk.glm$df.residual))
+
+# Note in S-Plus using just model$df is a sufficient abbreviation in S-Plus to get the residual df,
+# but in R, you need to specify model$df.residual.
+
+summary(leuk.glm1)$deviance/summary(leuk.glm1)$dispersion
+c(qchisq(0.025, leuk.glm1$df.residual), qchisq(0.975, leuk.glm1$df.residual))
+
+# Neither model appears to have a significant problem with over-dispersion, even if we apply a more
+# powerful 1-tailed test (even though there is probably no prior justification for doing so):
+
+summary(leuk.glm)$deviance/summary(leuk.glm)$dispersion
+qchisq(0.95, leuk.glm$df.residual)
+
+summary(leuk.glm1)$deviance/summary(leuk.glm1)$dispersion
+qchisq(0.95, leuk.glm1$df.residual)
+
+# However, the above residual plots do cast serious doubts on the appropriateness of either model
+# and as the brick suggests on page 58, these tests are only really relevant if the gamma family
+# is the correct assumption for modelling the error distribution! The above residual plots 
+# definitely lead us to question this assumption, regardless of the results of any test on a 
+# simple summary measure.
+
+# Note that in this case that as the dispersion was close to one, the standardised residuals are
+# close to the unstandardised residuals and was also why the vertical scale on the residual plots
+# was close to the range -2 to +2. This is not always the case for gamma GLMs. We could approx.
+# standardise the residuals by dividing by the square root of the dispersion (page 64 of the brick
+# suggests that the approximate variance of both the Pearson and deviance residuals is close
+# to the estimated dispersion multiplied by 1 minus the hat or leverage values):
+
+approx.studentised.residuals <- leuk.glm$residuals/sqrt(summary(leuk.glm)$dispersion)
+approx.studentised.residuals
+
+# Note that when model is a stored GLM, then residuals(model) by default will produce deviance
+# residuals (see help(residuals.glm) for details), but model$residuals in this instance gives
+# the "pearson"  residuals, so the above are approximately standardised Pearson residuals. 
+# The safest way to  be sure which residuals you are getting is to use the residuals function 
+# and specify the type = argument, i.e. for deviance residuals:
+
+residuals(leuk.glm, type="deviance")
+residuals(leuk.glm, "deviance")
+residuals(leuk.glm)
+
+residuals(leuk.glm, "pearson")
+leuk.glm$residuals
+
+# Note that for GLMs, model$residuals are a strange beast - in this instance, they appear to 
+# be the Pearson residuals, but this is not always the case (they are the "working" residuals, 
+# weighted residuals from late in the iteration process), so the safest thing to do is use
+# the residuals function (deviance residuals by default) or, as suggested above, use the 
+# type argument to ask for the residuals you want.
+
+# In R we have the influence function to calculate the hat values (a direct equivalent doesn't 
+# appear to exist in S-Plus), so we can get even closer to properly standardised residuals: 
+
+studentised.residuals <- residuals(leuk.glm)/sqrt(summary(leuk.glm)$dispersion * (1 - influence(leuk.glm)$hat))
+studentised.residuals
+
+# Note that standardising residuals is a relatively common task so a good idea might be to 
+# create a function to do this routinely:
+
+std.residuals <- function(model, type="deviance"){
+  # Function to standardise residuals from a GLM model object
+  # Produces standardised deviance residuals, unless type="pearson" requested
+  std.error <- sqrt(summary(model)$dispersion * (1 - influence(model)$hat))
+  std.res <- residuals(model)/std.error
+  if (type=="pearson") std.res <- residuals(model, "pearson")/std.error
+  std.res
+}
+
+# I would recommend sticking to just one sort of residuals for the sake of consistency and my
+# preference, at least for the purposes of this course, would be to use the deviance residuals.
+# Note that for a large sample size, you could use Z = +/-1.96 as an arbitrary and approximate
+# cut-off for these standardised residuals, I would also recommend comparing them against a 
+# Student's t distribution cut-off for smaller sample sizes. However, these cut-offs are only
+# advisory and for an observation to be an outlier, it must be outlying, i.e. remote from 
+# the other observations (especially in the vertical direction) on a residual plot.
+
+# Using the above function, my preferred residual plots could then be produced 
+# (for just the first model), starting with the main residual plot:
+
+plot(leuk.glm$linear.predictors, std.residuals(leuk.glm), xlab="Linear Predictors", ylab="Studentised Deviance Residuals")
+abline(0,0,lty=2)
+title("Standardised Residuals vs Fitted Values", sub="Leukaemia data log gamma GLM: surv ~ log(wbc)")
+identify(leuk.glm$linear.predictors, std.residuals(leuk.glm))
+
+# The default residual plot in the latest version of R is already fairly close to my preferred
+# version of the normal quantile plot:
+
+plot(leuk.glm, which=2, sub="Leukaemia data log gamma GLM: surv ~ log(wbc)")
+abline(0,1)
+
+# Note the default normal plot has a strange scale for some binomial and Poisson GLMs, so
+# you could do your own using:
+
+qqnorm(std.residuals(leuk.glm), sub="Leukaemia data log gamma GLM: surv ~ log(wbc)")
+qqline(std.residuals(leuk.glm), lty=2)
+abline(0,1)
+temp <- qqnorm(std.residuals(leuk.glm), plot.it=F)
+identify(temp$x, temp$y)
+
+# My preferred outlier plot is one of the hidden default plots:
+
+plot(leuk.glm, which=4, sub="Leukaemia data log gamma GLM: surv ~ log(wbc)")
+
+# Though you could again do your own using:
+
+barplot(cooks.distance(leuk.glm), xlab="Observation number", ylab="Cook's distance")
+title("Bar plot of Cook's distances", sub="Leukaemia data log gamma GLM: surv ~ log(wbc)")
+
+# I'll leave it to you to produce the residual plots for the inverse model as an exercise.
+
+# If there is a consistent story emerging out of the above analysis, it is not with the fit of 
+# either the log or inverse models (do we really expect such a small sample to look approx.
+# normal on the normal quantile plot), it is with the lack of fit for observation 17.
+
+# We will consider outliers in GLMs later in the course in a different example, but I would 
+# very reluctant to delete even 1 observation in such a small sample, so even if we do decide
+# observation 17 is an outlier, there is no obvious satisfactory treatment.
+
+# We will revisit a expanded version of these data one of the later tutorials (using more 
+# data seems preferable to arbitrarily deleting observations) and see if we can find a better
+# model for the bigger and more general dataset.

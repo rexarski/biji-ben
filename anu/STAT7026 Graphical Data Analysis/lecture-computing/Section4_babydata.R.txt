@@ -1,0 +1,65 @@
+pairs(baby)
+
+pairs(baby,panel=
+	function(x,y){
+		points(x,y);lines(lowess(x,y))
+	})
+
+pairs(baby,panel=
+	function(x,y){
+		points(x,y); prep <- Nreps(x,y);Sunflowers(prep$x,prep$y,prep$rays)
+	})
+
+plot(baby[,3],baby[,2],type="n",
+	xlab="Age (weeks)",
+	ylab="Weight (gms)",
+	main="Plot of Baby Data",
+	sub="Height = pH, width= 1 min Apgar, a shaded symbol indicates survival")
+surv <- (baby[,1] == 1)
+symbols(baby[,3],baby[,2],thermometers=cbind(baby[,4],baby[,6],surv), add=T,inches = 1/12)
+
+prep <- Nreps(baby[,2],baby[,1])
+Sunflowers(prep$x,prep$y,prep$rays,add=F,
+	main="Sunflower Plot of Survival against Weight",
+	xlab="Weight",
+	ylab="Survival",
+	sub="Each ray represents one observation")
+
+plot(baby[,3],baby[,2],type="n",
+	xlab="Age (weeks)",
+	ylab="Weight (gms)",
+	main="Plot of Survival Against Weight and Age",
+	sub="A shaded point indicates survival")
+surv <- (baby[,1] == 1)
+points(baby[!surv,3],baby[!surv,2],pch=2)
+points(baby[surv,3],baby[surv,2],pch=17)
+
+
+plot(baby[,6],baby[,4],type="n",
+	xlab="Blood pH",
+	ylab="1 Min Apgar",
+	main="Plot of Survival Against 1 min Apgar and Blood pH",
+	sub="A shaded point indicates survival")
+surv <- (baby[,1] == 1)
+points(baby[!surv,6],baby[!surv,4],pch=2)
+points(baby[surv,6],baby[surv,4],pch=17)
+
+ind <- (baby[,4] <= 4)
+par(mfrow=c(1,2),oma=c(4,0,6,0))
+plot(baby[ind,3],baby[ind,2],type="n",
+	xlab="Age (weeks)",
+	ylab="Weight (gms)",
+	main="Low 1 min Apgars",
+	sub="A shaded point indicates survival")
+surv <- (baby[,1] == 1)
+points(baby[as.logical(ind*!surv),3],baby[as.logical(ind*!surv),2],pch=2)
+points(baby[as.logical(ind*surv),3],baby[as.logical(ind*surv),2],pch=17)
+plot(baby[ind,3],baby[ind,2],type="n",
+	xlab="Age (weeks)",
+	ylab="Weight (gms)",
+	main="High 1 min Apgars",
+	sub="A shaded point indicates survival")
+surv <- (baby[,1] == 1)
+points(baby[as.logical((!ind)*!surv),3],baby[as.logical((!ind)*!surv),2],pch=2)
+points(baby[as.logical((!ind)*surv),3],baby[as.logical((!ind)*surv),2],pch=17)
+mtext("Plot of Survival against Weight and Age",3,1,outer=T,cex=1.5)

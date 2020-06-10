@@ -1,0 +1,71 @@
+---
+title: "tutnotes3"
+author: "Rui Qiu"
+date: '2017-08-09'
+output: html_document
+---
+
+## two-way ANOVA model
+two commonly used constraints:
+
+- the 'baseline' or 'control group structure' $\tau_1=\alpha_1=0$ or
+- the 'grand mean' constraint $\sum^I_{i=1}\tau_i = \sum^J_{j=1}\alpha_j=0$
+
+- also can use matrix form to represent (with the idea of multiple regression)
+
+a two-way ANOVA model
+
+\[Y_{ijk}=\mu+\tau_i+\alpha_j+\epsilon_{ijk}\]
+
+```{r, eval=F}
+aov(Y~X)
+aov(Y~X1+X2)
+```
+
+## Q2
+load data
+
+```{r}
+resp <- c(9, 11, 20, 19, 23, 19, 12, 10, 17, 18, 21, 20, 16, 24, 28, 25, 15, 25)
+btyp <- c(rep("O-", 2), rep("O+", 4), rep("A-", 2), rep("A+", 4), "B-", rep("B+", 3), "AB-", "AB+")
+```
+
+
+###(a)
+Bfactor: B-, B+, AB-, AB+
+Rhfactor: O+, A+, B+, AB+
+
+set up the level factors:
+```{r}
+Bfact <- iflelse(btype=="B-", "B", "notB")
+Bfact <- iflelse(btype=="B+", "B", Bfact)
+Bfact <- iflelse(btype=="AB-", "B", Bfact)
+Bfact <- iflelse(btype=="AB+", "B", Bfact)
+Rhfact <- iflelse(btype=="O+", "+", "-")
+Rhfact <- iflelse(btype=="A+", "+", Rhfact)
+Rhfact <- iflelse(btype=="B+", "+", Rhfact)
+Rhfact <- iflelse(btype=="AB+", "+", Rhfact)
+```
+
+
+Fit 2-way ANOVA models:
+```{r}
+btyp.aov <- aov(resp ~ Bfact + Rhfact)
+summary(btyp.aov)
+```
+
+Alternatively, use `lm()`
+```{r}
+btyp.aov <- lm(resp ~ Bfact + Rhfact)
+summary(btyp.aov)
+```
+
+> Note: order changed, the results won't change a lot (for this case). It's kind of special.
+
+### (b)
+```{r}
+```
+
+### (c)
+
+

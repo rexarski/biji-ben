@@ -1,0 +1,127 @@
+# STAT3015/STAT7030 GLMs
+# R command file for the Tutorial 3
+
+
+# Set-up the libraries needed for fitting random effect models:
+library(lme4)
+library(arm)
+
+#Q1
+coagulation <- read.csv("coag.csv", row.names = 1, sep = ",", header = TRUE)
+coagulation
+attach(coagulation)
+
+# Building an one-way ANOVA model treating diet as random effect:
+model <- lmer(coag ~ (1|diet))
+summary(model)
+
+# Estimates of the random effects:
+ranef(model)
+
+# Estimated coagulation times:
+coef(model)
+# Alternatively, we can use 
+fixef(model)+ranef(model)$diet
+
+# Standard error for each estimate:
+se.ranef(model)
+
+# 95% CI for the effect of each diet
+lower.bound <- coef(model)$diet[, 1] - 1.96 * se.ranef(model)$diet[, 1]
+upper.bound <- coef(model)$diet[, 1] + 1.96 * se.ranef(model)$diet[, 1]
+cbind(lower.bound, upper.bound)
+
+# An intercept only model:
+mean(coag)
+nullmod <- lm(coag ~ 1)
+summary(nullmod)
+
+# A likelihood ratio test to compare the two models with and without the random effect:
+as.numeric(2*(logLik(model)-logLik(nullmod)))
+
+# and the p-value is:
+pchisq(15.95007, 1, lower=FALSE)
+
+#Q2
+# First, read in data:
+resp <- c(9, 11, 20, 19, 23, 19, 12, 10, 17, 18, 21, 20, 16, 24, 28, 25, 15, 25)
+btyp <- c(rep("O-", 2), rep("O+", 4), rep("A-", 2), rep("A+", 4), "B-", rep("B+", 3), "AB-", "AB+")
+
+# (a)
+# Then create indicator variables:
+Bfact <- ifelse(btyp=="B-", "B", "notB")
+Bfact <- ifelse(btyp=="B+", "B", Bfact)
+Bfact <- ifelse(btyp=="AB-", "B", Bfact)
+Bfact <- ifelse(btyp=="AB+", "B", Bfact)
+Rhfact <- ifelse(btyp=="O+", "+", "-")
+Rhfact <- ifelse(btyp=="A+", "+", Rhfact)
+Rhfact <- ifelse(btyp=="B+", "+", Rhfact)
+Rhfact <- ifelse(btyp=="AB+", "+", Rhfact)
+
+# Fit two ANOVA models:
+btyp.aov <- aov(resp ~ Bfact + Rhfact)
+summary(btyp.aov) 
+# Alternalively, we can use "btyp.lm <- lm(resp ~ Bfact + Rhfact)" and
+# "anova(btyp.lm)", which is done in part (b).
+
+btyp.aov <- aov(resp ~ Rhfact + Bfact)
+summary(btyp.aov)
+# We fit the model in both orders because the design was unbalanced.
+
+# (b)
+Bind <- ifelse(Bfact=="B", 1, 0)
+Rhind <- ifelse(Rhfact=="+", 1, 0)
+btyp.lm <- lm(resp ~ Bind + Rhind)
+anova(btyp.lm)
+
+#(c)
+summary(btyp.lm)
+# These estimates are close to the estimates arrived at in Tutorial 2 (5.4375 for Bind and 9.5626 for Rhind), 
+# but they are not exactly the same. This is a consequence of the unbalanced design.
+
+#(d)
+int <- Bind*Rhind
+btyp.lm1 <- lm(resp ~ Bind + Rhind + int)
+anova(btyp.lm1)
+# The interaction term is clearly non-significant.
+
+# Q3
+
+# (a)
+# We fit a two-way ANOVA model with interaction terms to see if there is any evidence
+# of an interaction effect.
+ses <- read.csv("SES.csv", sep=",", header=TRUE)
+ses
+attach(ses)
+ses.lm1 <- lm(IQ~ADOPTIVE*BIOLOGIC, data=ses)
+summary(ses.lm1)
+
+
+# (b)
+# Test the effect of one factor after accounting for the effect of the other factor.
+# For example, test whether there is strong evidence that mean IQ is associated with
+# biological parents' SES after accounting for the association with adoptive parents' SES.
+ses.lm2 <- lm(IQ~ADOPTIVE+BIOLOGIC)
+drop1(ses.lm2, test="F")
+
+# Estimated coefficients for ADOPTIVE and BIOLOGICal SES 
+summary(ses.lm2)
+
+# Formal test of whether the effect of biological parents' SES appears to be stronger than 
+# the effect of adoptive parents' SES
+h <- c(0,-1,1)
+a.low <- with(ses, ifelse(ADOPTIVE=="Low", 1, 0))
+b.low <- with(ses, ifelse(BIOLOGIC=="Low", 1, 0))
+ses.lm3 <- lm(IQ ~ a.low+b.low)
+summary(ses.lm3)
+
+sigma <- summary(ses.lm3)$sigma
+Xmat <- cbind(1, a.low,b.low)
+XtXi <- solve(t(Xmat)%*%Xmat)
+est <- t(h)%*%coefficients(ses.lm3)
+sd <- sigma*sqrt(t(h)%*%XtXi%*%h)
+upper <- est + (qt(0.975, df.residual(ses.lm3))*sd)
+lower <- est - (qt(0.975, df.residual(ses.lm3))*sd)
+c(lower, est, upper)
+2*(1-pt(abs(est/sd), ses.lm3$df.residual))
+

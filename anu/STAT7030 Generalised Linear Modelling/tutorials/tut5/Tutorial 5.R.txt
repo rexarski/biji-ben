@@ -1,0 +1,46 @@
+# STAT3015/4030/STAT7030 GLMs
+# R command file for Tutorial 5
+
+# Question 1
+# (a)
+bp <- read.table("BP.txt", header = TRUE, sep="")
+attach(bp)
+
+# Fit a simple linear regression
+bp.lm <- lm(diasbp ~ age)
+coef(bp.lm)
+summary(bp.lm)$sigma^2
+
+# Plot residuals against predictor
+plot(age, residuals(bp.lm))
+# Variability of the response is increasing as the value of the predictor increases
+# Need to find a method to acoount for heteroscedasticity in the data.
+
+# (b)
+w1 <- 1/age
+w2 <- 1/age^2
+# The first weights implies that Sigma_i^2 = xi * sigma^2 while the second suggests Sigma_i^2 = (xi * sigma)^2
+
+bp.w1 <- lm(diasbp ~ age, weights = w1)
+coef(bp.w1)
+summary(bp.w1)$sigma^2
+anova(bp.w1)
+
+plot(age, residuals(bp.w1)/sqrt(age))
+
+bp.w2 <- lm(diasbp ~ age, weights = w2)
+coef(bp.w2)
+summary(bp.w2)$sigma^2
+anova(bp.w2)
+
+plot(age, residuals(bp.w1)/age)
+
+data.frame(Linear = summary(bp.lm)$sigma^2, Weights1 = summary(bp.w1)$sigma^2, Weights2 = summary(bp.w2)$sigma^2)
+data.frame(rbind(coef(bp.lm), coef(bp.w1), coef(bp.w2)), row.names =c("Linear", "Weights1", "Weights2"))
+
+# Estimated parameters do not change dramatically. Sigma^2 drop dramatically after applying weights. 
+# The second weighted residual plot shows homoscedasticity. Notice that the sum of squares in the ANOVA table
+# for a weighted regression is a weighted sum of squares.
+
+# (c)
+# Sigma_i^2 is not constant as sigma^2. In linear regression we assume constant sigma^2.

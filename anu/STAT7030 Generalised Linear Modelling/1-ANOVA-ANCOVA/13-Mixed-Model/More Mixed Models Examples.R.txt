@@ -1,0 +1,137 @@
+# Additional material on linear mixed models.
+
+# The following code involves loading and/or accessing some libraries, so if you are using one
+# of the ANU InfoCommons machines or any machine where you don't have administrator access, you
+# will need to specify an area where you do have write access to hold these libraries:
+# .libPaths("H:/R")
+
+# The cholestrol data is from a "paired" experiment - each subject was given an active treatment
+# and a placebo in random order. Note that subject is also the simplest example of a blocking
+# variable - we know there are random differences between blocks, but we control for this
+# by randomly allocating treatments within blocks, so that the comparisons between treatments
+# can be made within each block.
+ 
+Chol <- read.table("Cholesterol.txt", header=T)
+Chol
+attach(Chol)
+
+# Change the default contrasts to fit sum contrasts to factor variables:
+
+options(contrasts=c(factor="contr.sum", ordered="contr.poly"))
+
+# As a paired experiment, this data should certainly be analysed within blocks (Subject),
+# but we will start by ignoring the differences between Subjects:
+
+Chol.lm <- lm(Cholesterol ~ Treatment)
+
+# Now include Subject as a fixed effect:
+
+Chol.lm1 <- lm(Cholesterol ~ Treatment + factor(Subject))
+
+# Alternatively, treat Subject as a random effect:
+
+# There are a couple of ways to do this in R - the older version uses the nlme library 
+# which contains the lme function:
+
+library(nlme)
+
+Chol.lme <- lme(Cholesterol ~ Treatment, random= ~1 | factor(Subject))
+
+# A more up to date version is in the lme4 library and uses the lmer function: 
+
+library(lme4)
+
+Chol.lmer <- lmer(Cholesterol ~ Treatment + (1|factor(Subject)))
+
+# Note the differences in model specification - see help(lme) and help(lmer) for details.
+
+# Compare the output from the various models:
+
+plot(Chol.lm)
+
+plot(Chol.lm1)
+
+plot(Chol.lme)
+
+plot(Chol.lmer)
+
+anova(Chol.lm)
+
+anova(Chol.lm1)
+
+anova(Chol.lme)
+
+anova(Chol.lmer)
+
+# All models give the same Mean Sq for the Treatment effects, but the only in the models
+# where we have made some allowance for differences between Subjects is the Treatment
+# F statistic significant.
+
+summary(Chol.lm)$coef
+
+summary(Chol.lm1)$coef
+
+summary(Chol.lme)$coef
+
+summary(Chol.lmer)$coef
+
+# The coefficients for Subject in the second and third models look similar (fitted by REML
+# rather than ML), but the interpretation has changed - the Subject coefficients are now
+# predictors of random effects -  see the full summaries for the two mixed effects model:
+
+summary(Chol.lme)
+
+summary(Chol.lmer)
+
+# In model 2, the square roots of the variance components are now given in the section
+# of the summary labelled random effects. The variance component for Subjects is: 
+
+Subject.sigma2 <- 24.46144 * 24.46144
+Subject.sigma2
+
+# And the residual variance is:
+
+Residual.sigma2 <- 2.74414 * 2.74414
+Residual.sigma2
+
+# These are the values given in output for the fourth model and the total is the residual 
+# variance for the first model:
+
+Total.sigma2 <- Subject.sigma2 + Residual.sigma2
+Total.sigma2
+
+# The between subject variability is by far the larger component, which is summarised in the
+# intraclass correlation coefficient:
+
+Subject.sigma2/Total.sigma2
+
+# So the pairing (the simplest form of blocking) has definitely been effective in reducing
+# the variability for the comparison of the two treatments - though this example has not
+# really demonstrated the effectiveness of treating blocks as a random rather than fixed effect.
+  
+# Mixed effects models really make a difference in analysing more complicated data.
+# The following is a more complicated example from a typical agricultural experiment:
+
+Carrot <- read.table("Carrot.txt", header=T)
+Carrot
+attach(Carrot)
+
+Carrot.lm <- lm(Yield ~ Stock * SowingRate + Blocks)
+Carrot.lme <- lme(Yield ~ Stock * SowingRate, random = ~ 1 | Blocks)
+
+plot(Carrot.lm)
+
+plot(Carrot.lme)
+
+anova(Carrot.lm)
+
+anova(Carrot.lme)
+
+summary(Carrot.lm)$coef
+
+summary(Carrot.lme)$coef
+
+summary(Carrot.lme)
+
+# This time blocking has not made any real difference, but is arguably worth doing anyway,
+# and as this is an experimental design model, we will keep it in the model. 

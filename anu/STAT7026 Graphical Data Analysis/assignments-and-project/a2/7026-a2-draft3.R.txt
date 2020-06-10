@@ -1,0 +1,81 @@
+library(MASS)
+load("classData.RData")
+coal <- bicoal.tons
+
+par(mfrow=c(1,1),oma=c(4,0,6,0))
+plot(coal,type="b",pch="*",
+     main="Plot of Annual Bituminous Coal Production from 1920 to 1968",
+     ylab="10^6 net tons", 
+     xlab="Year",
+     lwd=1.5)
+
+lines(lowess(coal),lty=1,col="red",lwd=2)
+mod <- rlm(coal~time(coal))
+abline(mod,lty=2,col="blue",lwd=2)
+legend("topright",legend=c("lowess","linear"),lty=1:2,col=c("red","blue",lwd=c(2,2)))
+mod$coef
+# not constant variance
+
+# no seasonal trend # reasons...
+# coal2 <- ts(coal,frequency=20)
+# h=stl(coal2,s.window="periodic",t.window=32)
+# plot(h)
+
+# 6. Once the trend seasonal model is fit, I start to examine the residuals from that fit for dependence. There is a function Ident in the class data that produces plots of the ACF and PACF from which we discuss stationarity and then try to choose an order for an AR model. Use the ACF to determine whether the series is stationary (which will be the case if the ACF damps down to zero (within the dotted blue lines) as the lag increases). Then use the PACF to work out which AR model to fit - choose an AR(k) where k is the last significant spike in the PACF (significant means going outside the blue dotted lines). Ident is used to work out a simple dependence model. There is another function Raic (e.g. fin =  Raic(fits$resid) which is the command) that can then be used to fit models to the trend-seasonal residuals ranging from an AR(1) to AR(10) and then, for example, if the choice was to fit an AR(3) you would use fin$coef[,3] to get the coefficients and fin$resid[,3] to get the residuals from the AR(3) fit. We use Raic to fit all models between an AR(1) and an AR(10) so it will be easy to find the coefficients for the model we choose.
+
+plot(1:49,mod$residuals,type="b",pch="*",
+     main="Detrended Annual Bituminous Coal (1920-1968)",
+     ylab="10^6 net tons",
+     xlab="Year",
+     sub="Linear trend removed")
+abline(h=0)
+
+# 7. Then the residuals from the fit to the irregular series is assessed (using Ident and Raic again) to check that the AR fit has managed to clean out all the dependence). Also, at this stage, we would look at the standard diagnostic plots (residual plots, absolute residual plots, QQ plots) to check that all the usual assumptions seem valid.
+
+# 8. A wrinkle that can occur is when the ACF tells us that the irregular series is not stationary, and if this occurs, we go back and consider strategies like differencing to induce stationarity in the irregular series. The analysis then goes through the above steps with differenced data.
+
+par(mfrow=c(1,1),oma=c(4,0,6,0))
+Ident(mod$residuals,"Residuals","Raw Scale") # not stationary
+# so we cut the crap and go back to differencing 
+
+coal.diff <- diff(coal,differences=1)
+mod2 <- rlm(coal.diff~time(coal.diff))
+mod2$coefficients
+Ident(mod2$residuals,"Residuals","1st Difference")
+
+par(mfrow=c(1,1),oma=c(4,0,6,0))
+plot(mod2$residuals,xlab="Year",ylab="10^6 net tons",
+     pch="*",type="b",main="Detrended Annual Bituminous Coal (1920-1968)",
+     sub="1st Difference")
+
+fin <- Raic(mod2$resid)
+c(fin$coef[1,2],fin$coef[2,2]) # coef of AR(2) model
+res <- fin$resid[,2]
+fv <- mod2$resid[-1]-res
+Ident(res,"Residuals","AR(2)")
+fin2 <- Raic(res)
+
+# final residual plots
+par(mfrow=c(2,2),oma=c(0,0,6,0))
+plot(1:(length(coal.diff)-1),res,type="b",pch="*",
+     xlab="Time",ylab="10^6 net tons",
+     main="Residual Plot")
+
+plot(fv,res,main="Residuals vs fitted values",
+     ylab="Residuals",xlab="Fitted values")
+
+qqnorm(res,main="Quantile-Quantile plot",
+       ylab="Residuals",xlab="Gaussian Quantiles")
+qqline(res)
+
+plot(fv,abs(res),
+     main="Absolute Residuals vs fitted values",
+     ylab="Absolute residuals",xlab="Fitted values")
+lines(lowess(fv,abs(res)))
+
+# mtext("1st Differenced Residual plots \n fitted linear trend and AR(2)",
+      # outer=T,side=3,cex=1.5)
+
+# 9. Make sure you write your final model down in the simplest form possible. Generally, this will be written over two lines:
+#     Z(t) = Trend component + Seasonal Component + X(t) (where X(t) is the irregular series) and
+# X(t) = a1*X(t-1)+...+ap*X(t-p) (for an AR(p) model).

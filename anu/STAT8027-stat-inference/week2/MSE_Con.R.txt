@@ -1,0 +1,15 @@
+p <- seq(0,1, by=0.001)
+par(mfrow=c(1,2))
+n <- 4
+MSE.mle <- p*(1-p)/n
+MSE.con <- 0 + (0.5-p)^2
+
+plot(p, MSE.mle, type="l", lwd=3, main="n=4", ylab="MSE")
+abline(h = 1/(4*(sqrt(n) + 1)^2), lwd=3, col="blue")
+lines(p, MSE.con, lwd=3, col="red")
+
+n <- 400
+MSE.mle <- p*(1-p)/n
+plot(p, MSE.mle, type="l", lwd=3, main="n=400", ylab="MSE")
+abline(h = 1/(4*(sqrt(n) + 1)^2), lwd=3, col="blue")
+lines(p, MSE.con, lwd=3, col="red")

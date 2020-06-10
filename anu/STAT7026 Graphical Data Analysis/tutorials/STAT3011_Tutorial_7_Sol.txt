@@ -1,0 +1,397 @@
+RESEARCH SCHOOL OF FINANCE, ACTUARIAL STUDIES AND APPLIED STATISTICS
+GRAPHICAL DATA ANALYSIS
+Tutorial 7
+Sample Solution.
+
+1.  Examine the series using a time series plot.
+
+library(MASS) 
+
+plot(lynx,type="b",pch="*",main="Lynx Data",ylab="Number of
+       Trappings",xlab="Time")
+
+Since we have annual data, there is no "seasonal" component so stl crashes:
+>Error in stl(lynx): Time series must have frequency > 1
+>Dumped
+
+There seems to be no trend.  The main feature is a strong periodic or cyclic
+structure.  But first we need to get on the right scale.  Since we have
+counts, we try the square root and log scales. Hopefully, the variance
+structure will look better on those scales, as on the original scale the
+variance does not look constant through time.
+
+plot(sqrt(lynx),type="b",pch="*",main="sqrt(Lynx) Data",ylab="Number of
+       Trappings",xlab="Time")
+
+plot(log(lynx),type="b",pch="*",main="log(Lynx) Data",ylab="Number of 
+       Trappings",xlab="Time")
+
+Both of these choices stabilise the series and seem better than the raw scale.
+It is hard to choose between them.  The classical choice is the log
+scale but I will work with the square root scale, mainly because the data
+were counts. The main issue is that the strange variance structure on the
+original scale has been improved on the transformed scale.
+
+We need to think about the cycle.  There are at least two options:
+  
+1. Treat the series as irregular and model it as long ARMA models
+in the hope that this will capture the structure
+
+2. Use dummy variables to remove a cylcic component and then
+use short ARMA models on the resulting irregular component.
+
+Taking a preliminary look at the series using
+
+Ident(sqrt(lynx),"sqrt(lynx) Data","Raw Data")
+
+fin <- Raic(sqrt(lynx))
+
+par(mfrow=c(1,1),oma=c(4,0,6,0))
+
+c1 <- 2/sqrt(length(lynx))
+plot(fin$k,diag(fin$coef),ylim=range(diag(fin$coef),c1,-c1),type="b",lty=2,
+     main="Robust PACF",
+     xlab="Autoregression Order",
+     ylab="Robust PACF")
+box(lty = 1)
+abline(h = c(-c1, c1), lty = 2)
+abline(h=0)
+segments(fin$k,0,fin$k,diag(fin$coef))
+
+mtext("Identification for the sqrt(lynx) Data",3,1,outer
+      =T,cex=1.5)
+
+
+We find that the ACF decays pretty slowly, suggesting that the series is
+not stationary (this would be a problem for strategy 1), while the PACF 
+suggests an AR(4), possibly an AR(8) and lag 11 is almost a spike.
+The near-spike at lag 11 suggests the data may have a period of around
+10 or 11, and we can take another look at the time series plot to confirm this.
+Examining the series more closely, we see that the period of the cycle
+is actually 10. 
+
+Rather than model the series as an AR(11) in the hope that this will capture 
+the cycle, I prefer to use dummy variables to remove the cycle.  We treat the 
+cycle exactly as a seasonal except that it involves several years rather than
+several seasons occurring within a year.
+
+Set up the dummy variables:
+  
+length(lynx)
+[1] 114
+
+Setting up the dummy variable, starting at "season" 1:
+v <- Factor(c(rep(1:10,11),1,2,3,4))
+v1 <- cbind(1-apply(v,1,sum),v)
+apply(v1,2,sum)
+
+mod <- rlm(sqrt(lynx)~v)
+
+mod$coef
+(Intercept)          x2          x3          x4          x5          x6          x7          x8          x9         x10 
+20.5115861   2.1232743  11.5293114  20.7062979  30.6600358  32.5374342  20.7688537   6.4500851   1.0761711  -0.1535903 
+
+Now, check that the residuals of this model fit (which is the irregular part of the series) looks OK.
+
+Ident(mod$resid,"sqrt(lynx) Data","Residuals from cyclic model")
+
+fin <- Raic(mod$resid)
+par(mfrow=c(1,1),oma=c(4,0,6,0))
+
+c1 <- 2/sqrt(length(lynx))
+plot(fin$k,diag(fin$coef),ylim=range(diag(fin$coef),c1,-c1),type="b",lty=2,
+     main="Robust PACF",
+     xlab="Autoregression Order",
+     ylab="Robust PACF")
+box(lty = 1)
+abline(h = c(-c1, c1), lty = 2)
+abline(h=0)
+segments(fin$k,0,fin$k,diag(fin$coef))
+
+mtext("Identification for the irregular component of the sqrt(lynx) Data",3,1,
+      outer=T,cex=1.5)
+
+The ACF/PACF still shows considerable structure. The ACF is still not
+decaying to zero fast enough, and the PACF has spikes at 2 and 8 (the 
+near-spike at 11 is gone because of our periodic model fit). The robust PACF suggests an AR(2) might be 
+enough. We may still need a high order AR model (maybe an AR(8)),
+but let's try first with an AR(2), which is suggested by the PACF. An 
+AR(2) model has already been fit by Raic and its coefficients are contained in 
+fin$coef[1,2] and fin$coef[2,2]. The residuals for such a model are 
+contained in fin$resid[,2]:
+
+c(fin$coef[1,2],fin$coef[2,2])
+[1]  1.1956798 -0.5781996
+
+res <- fin$resid[,2]
+fv <- mod$resid[-1]-res
+
+Ident(res,"Residuals for sqrt(lynx) Data","Cycle and AR(2) fitted")
+
+fin2 <- Raic(res)
+par(mfrow=c(1,1),oma=c(4,0,6,0))
+
+c1 <- 2/sqrt(length(lynx))
+plot(fin2$k,diag(fin2$coef),ylim=range(diag(fin2$coef),c1,-c1),type="b",lty=2,
+main="Robust PACF",
+xlab="Autoregression Order",
+ylab="Robust PACF")
+box(lty = 1)
+abline(h = c(-c1, c1), lty = 2)
+abline(h=0)
+segments(fin2$k,0,fin2$k,diag(fin2$coef))
+
+mtext("Identification for residuals from cycle and AR(2) fit of the 
+sqrt(lynx) Data",3,1,outer=T,cex=1.5)
+
+par(mfrow=c(2,2),oma=c(0,0,6,0))
+
+plot(1:(length(lynx)-1),res,type="b",pch="*",xlab="Time",ylab="Residuals",
+main="Residual plot")
+
+plot(fv,res,
+main="Residuals versus fitted values",
+ylab="Residuals",xlab="Fitted Values")
+
+qqnorm(res,main="Quantile-Quantile plot",
+ylab="Residuals",xlab="Gaussian Quantiles")
+
+plot(fv,abs(res),
+main="Absolute Residuals versus fitted values",
+ylab="Absolute Residuals", xlab="Fitted Values")
+lines(lowess(fv,abs(res)))
+
+mtext("Residual plots from cycle and AR(2) fit for sqrt(lynx) data",outer=T,
+side=3,cex=1.5)
+
+The diagnostics look great!  We have much better decay of the ACF.  There is
+still a spike at lag 7 on the PACF, but we can probably ignore it. 
+
+The QQ-plot shows the residuals are normal.  The residual plot and absolute
+residual plots show that we have a good model.  (The changes in spread in
+the absolute residual plot are due to edge effects.)   Thus we can afford
+to ignore the spike in the PACF.
+
+The final model is
+
+sqrt(lynx)=20.5115861 + 2.1232743 I(2) + 11.5293114 I(3) + 20.7062979 I(4) + 30.6600358 I(5) + 32.5374342 I(6) + 20.7688537 I(7) +  6.4500851 I(8) +  1.0761711 I(9) -0.1535903 I(10) + X_i
+
+X_i = 1.2 X_{i-1} - 0.58 X_{i-2}.
+
+
+2.  Examine the series.
+
+library(MASS) 
+
+plot(co2,type="b",pch="*",main="Mauna Loa Data",ylab="Carbon Dioxide
+Concentration",xlab="Time")
+
+The data has a clear, possibly linear trend; the variance seems stable;
+and there is a strong seasonal component.
+
+This is monthly data so we can take advantage of sabl to explore the
+need for transformation.
+
+In R, we must examine possible transformations manually, and then we can examine the result using stl:
+
+plot(co2)
+plot(sqrt(co2))
+plot(log(co2))
+plot(co2^(1/3))
+plot(co2^(1/4))
+# Again, there does not seem much difference, visually, in terms of spread
+h=stl(co2,s.window="periodic",t.window=41)
+plot(h)
+h=stl(co2^(1/4),s.window="periodic",t.window=41)
+plot(h)
+# Really very little difference
+
+Next, explore the trend. We'll try linear, quadratic, and cubic and see
+which seems to fit best.
+
+xt <- time(co2)-1967 # centre time to fit a cubic effect, as in lectures
+
+plot(co2,type="b",pch="*",main="Fourth Root of Mauna Loa 
+       Data",ylab="Carbon Dioxide Concentration",xlab="Time")
+abline(rlm(co2~time(co2)))
+lines(as.vector(time(co2)),cbind(1,time(co2),time(co2)^2)%*%rreg(cbind(time(co2),
+                                                                       time(co2)^2),co2,method=wt.huber)$coef,lty=2)
+lines(as.vector(time(co2)),cbind(1,xt,xt^2,xt^3)%*%rlm(co2~cbind(xt,xt^2,xt^3))$coef,lty=3)
+
+The quadratic trend seems somewhat better than the linear and there is not much
+difference between the cubic and quadratic trends. We would probably go with 
+the quadratic trend because it is simpler to interpret and fits about as 
+well as the cubic.
+
+We can look at the monthly subseries using monthplot:
+  
+monthplot(stl(co2,s.window="periodic",t.window=41))
+
+A model involving constant seasonal terms seems reasonable as the monthly 
+subseries vary about constant levels.
+
+We will now fit a constant seasonal effect. Set up the seasonal dummy 
+variables:
+  
+length(co2)/12
+[1] 39 # You get 32 in S-Plus... different data, same source...
+
+v <- Factor(c(rep(1:12,length(co2)/12)))
+v1 <- cbind(1-apply(v,1,sum),v)
+apply(v1,2,sum)
+
+Remove the quadratic trend and seasonal effects.
+
+mod <- rlm(co2~cbind(xt,xt^2,v))
+
+mod$coef
+
+The resulting irregular component of the series is in mod$resid.
+
+plot(mod$resid,main="Plot of Irregular Component of Fourth Root of Mauna Loa
+       Data",ylab="Carbon Dioxide Concentration",xlab="Time",sub="Quadratic trend 
+       and constant seasonal removed",type="b",pch="*")
+abline(h=0)
+
+There seems to be still some periodicity to the data (or is it just me?)
+We will now try to identify a model for the irregular component.
+
+Ident(mod$resid,"Fourth Root of Mauna Loa Data","Quadratic trend and constant
+      seasonal removed")
+
+fin <- Raic(mod$resid)
+
+par(mfrow=c(1,1),oma=c(4,0,6,0))
+
+c1 <- 2/sqrt(length(co2))
+plot(fin$k,diag(fin$coef),ylim=range(diag(fin$coef),c1,-c1),type="b",lty=2,
+     main="Robust PACF",
+     xlab="Autoregression Order",
+     ylab="Robust PACF")
+box(lty = 1)
+abline(h = c(-c1, c1), lty = 2)
+abline(h=0)
+segments(fin$k,0,fin$k,diag(fin$coef))
+
+mtext("Identification for the co2 Data",3,1,outer
+      =T,cex=1.5)
+
+The ACF decays rather slowly.  The PACF shows an AR(1) or AR(2) though there
+is slight evidence of spikes at higher lags.  It seems
+unlikely that an AR(1) will be sufficient, and we may still need a high order
+AR model but let's try first with an AR(1), then see if an AR(2) does better.
+
+res <- fin$resid[,1]
+fv <- mod$resid[-1]-res
+
+par(mfrow=c(2,2),oma=c(0,0,6,0))
+
+plot(1:(length(co2)-1),res,type="b",pch="*",xlab="Time",ylab="Residuals",
+main="Residual plot")
+
+plot(fv,res,
+main="Residuals versus fitted values",
+ylab="Residuals",xlab="Fitted Values")
+
+qqnorm(res,main="Quantile-Quantile plot",
+ylab="Residuals",xlab="Gaussian Quantiles")
+
+plot(fv,abs(res),
+main="Absolute Residuals versus fitted values",
+ylab="Absolute Residuals", xlab="Fitted Values")
+lines(lowess(fv,abs(res)))
+
+mtext("Residual plots from quadratic trend, constant seasonal and AR(1) fit for co2^(1/4) data",outer=T,
+side=3,cex=1.5)
+
+Ident(res,"Residuals for Fourth Root of Mauna Loa  Data","Quadratic trend, 
+Cycle and AR(1) fitted")
+
+fin2 <- Raic(res)
+
+par(mfrow=c(1,1),oma=c(4,0,6,0))
+
+c1 <- 2/sqrt(length(co2))
+plot(fin2$k,diag(fin2$coef),ylim=range(diag(fin2$coef),c1,-c1),type="b",lty=2,
+main="Robust PACF",
+xlab="Autoregression Order",
+ylab="Robust PACF")
+box(lty = 1)
+abline(h = c(-c1, c1), lty = 2)
+abline(h=0)
+segments(fin2$k,0,fin2$k,diag(fin2$coef))
+
+mtext("Identification for the co2 Data",3,1,outer
+=T,cex=1.5)
+
+Although the residuals look very good, the ACF/PACF and the Raic both 
+recommend further fitting an AR(1) to the residuals from the AR(1) fit. This
+suggests that the AR(2) model on the residuals of the trend/seasonal fit 
+was more appropriate than an AR(1). Now, we'll go ahead and examine the 
+AR(2) fit to the trend/seasonal residuals.
+
+res <- fin$resid[,2] # residuals from AR(2) fit
+fv <- mod$resid[-1]-res
+
+
+par(mfrow=c(2,2),oma=c(0,0,6,0))
+
+plot(1:(length(co2)-1),res,type="b",pch="*",xlab="Time",ylab="Residuals",
+     main="Residual plot")
+
+plot(fv,res,
+     main="Residuals versus fitted values",
+     ylab="Residuals",xlab="Fitted Values")
+
+qqnorm(res,main="Quantile-Quantile plot",
+       ylab="Residuals",xlab="Gaussian Quantiles")
+
+plot(fv,abs(res),
+     main="Absolute Residuals versus fitted values",
+     ylab="Absolute Residuals", xlab="Fitted Values")
+lines(lowess(fv,abs(res)))
+
+mtext("Residual plots from quadratic trend, constant seasonal and AR(2) fit for
+      co2 data",outer=T,
+      side=3,cex=1.5)
+
+Ident(res,"Residuals for Fourth Root of Mauna Loa  Data","Quadratic trend,
+      Cycle and AR(2) fitted")
+
+fin2 <- Raic(res)
+
+par(mfrow=c(1,1),oma=c(4,0,6,0))
+
+c1 <- 2/sqrt(length(co2))
+plot(fin2$k,diag(fin2$coef),ylim=range(diag(fin2$coef),c1,-c1),type="b",lty=2,
+     main="Robust PACF",
+     xlab="Autoregression Order",
+     ylab="Robust PACF")
+box(lty = 1)
+abline(h = c(-c1, c1), lty = 2)
+abline(h=0)
+segments(fin2$k,0,fin2$k,diag(fin2$coef))
+
+mtext("Identification for the co2 Data",3,1,outer
+      =T,cex=1.5)
+
+
+The diagnostics look great!  We have much better decay of the ACF.  There is
+still a spike at lag 9 on the PACF but the residuals plots look almost perfect.
+The QQ-plot shows the residuals are normal with two possible outliers.  
+The residual plot and absolute residual plots show that we have a good model
+with constant variance. Thus we can afford to ignore the spike in the PACF.
+The final model fits a quadratic trend, constant seasonal and an AR(2) model
+for the irregular. 
+
+The final model is:
+  
+  co2 = 322.04934597 + 1.01461603 (i-1967) + 0.01285228 (i-1967)^2 +
+  0.65665347 I(Feb) + 1.42283530 I(March) + 2.54163502 I(April) +
+  3.01733472 I(May) + 2.38783489 I(June) + 0.85547918 I(July) +
+  -1.19341456 I(August) + -3.00589909 I(September) + 
+  -3.21899250 I(October) + -2.04144061 I(November) +
+  -0.92789709 I(December) + X_i
+
+X_i = 0.714 X_{i-1} + 0.209 X_{i-2}.
+

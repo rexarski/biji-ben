@@ -1,0 +1,321 @@
+set.seed(100) #set initial seed for random number generator
+n <- 100
+x <- (1:n)/n  #we will use 100 equally spaced design point from 0 to 1
+true <- ((exp(1.2*x)+1.5*sin(7*x))-1)/3 #true function in this simulation
+noise <- rnorm(n, 0, 0.15)
+#generate n independent normal random number with 0 mean and variance 0.15
+y <- true + noise #y is observed values (true value + noise)
+
+plot(x,y,ylab="y",xlab="y",main="box kernel")
+fit<-ksmooth(x,y,kernel="box",bandwidth=1)
+lines(fit$x,fit$y,col="red")
+fit<-ksmooth(x,y,kernel="box",bandwidth=0.5)
+lines(fit$x,fit$y,col="blue")
+fit<-ksmooth(x,y,kernel="box",bandwidth=0.25)
+lines(fit$x,fit$y,col="green")
+fit<-ksmooth(x,y,kernel="box",bandwidth=0.1)
+lines(fit$x,fit$y)
+
+plot(x,y,ylab="y",xlab="y",main="normal kernel")
+fit<-ksmooth(x,y,kernel="normal",bandwidth=1)
+lines(fit$x,fit$y,col="red")
+fit<-ksmooth(x,y,kernel="normal",bandwidth=0.5)
+lines(fit$x,fit$y,col="blue")
+fit<-ksmooth(x,y,kernel="normal",bandwidth=0.25)
+lines(fit$x,fit$y,col="green")
+fit<-ksmooth(x,y,kernel="normal",bandwidth=0.1)
+lines(fit$x,fit$y)
+
+plot(x,y,ylab="y",xlab="y",main="Natural splines")
+library(splines)
+# number of knots = df - 1
+
+fit<-lm(y~ns(x,df=2)) 
+values<-seq(0,1,0.01)
+temp<-data.frame("x"=values)
+fit<-predict(fit,temp)
+lines(values,fit,col="red")
+
+fit<-lm(y~ns(x,df=3)) 
+values<-seq(0,1,0.01)
+temp<-data.frame("x"=values)
+fit<-predict(fit,temp)
+lines(values,fit,col="blue")
+
+fit<-lm(y~ns(x,df=6)) 
+values<-seq(0,1,0.01)
+temp<-data.frame("x"=values)
+fit<-predict(fit,temp)
+lines(values,fit,col="green")
+
+fit<-lm(y~ns(x,df=12)) 
+values<-seq(0,1,0.01)
+temp<-data.frame("x"=values)
+fit<-predict(fit,temp)
+lines(values,fit)
+
+plot(x,y,ylab="y",xlab="y",main="Natural splines")
+library(splines)
+# Giving exact knot location
+
+fit<-lm(y~ns(x,knots=c(0.33,0.66))) 
+values<-seq(0,1,0.01)
+temp<-data.frame("x"=values)
+fit<-predict(fit,temp)
+lines(values,fit,col="red")
+
+
+heart<-read.table("https://web.stanford.edu/~hastie/ElemStatLearn/datasets/SAheart.data", sep=",",head=T,row.names=1)
+names(heart)
+> names(heart)
+ [1] "sbp"       "tobacco"   "ldl"       "adiposity" "famhist"   "typea"    
+ [7] "obesity"   "alcohol"   "age"       "chd"      
+
+fit<-glm(chd~ns(sbp,df=4)+ns(tobacco,df=4)+ns(ldl,df=4)+ns(adiposity,df=4)
++as.factor(famhist)+ns(typea,df=4)+ns(obesity,df=4)+ns(alcohol,df=4)
++ns(age,df=4),family="binomial")
+
+par(mfrow=c(2,3))
+termplot(fit)
+
+
+
+fit1<-glm(chd~sbp+I(sbp^2)+tobacco+ldl+adiposity
++as.factor(famhist)+typea+obesity+I(obesity^2)
++alcohol+age+I(age^2),family="binomial")
+summary(fit1)
+> summary(fit1)
+
+Call:
+glm(formula = chd ~ sbp + I(sbp^2) + tobacco + ldl + adiposity + 
+    as.factor(famhist) + typea + obesity + I(obesity^2) + alcohol + 
+    age + I(age^2), family = "binomial")
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-1.8008  -0.7857  -0.4125   0.8504   2.4473  
+
+Coefficients:
+                            Estimate Std. Error z value Pr(>|z|)    
+(Intercept)                7.1889033  5.2489532   1.370 0.170816    
+sbp                       -0.0831110  0.0545694  -1.523 0.127751    
+I(sbp^2)                   0.0002937  0.0001790   1.641 0.100884    
+tobacco                    0.0805346  0.0272292   2.958 0.003100 ** 
+ldl                        0.1868630  0.0606021   3.083 0.002046 ** 
+adiposity                  0.0369953  0.0310429   1.192 0.233361    
+as.factor(famhist)Present  0.9595617  0.2314061   4.147 3.37e-05 ***
+typea                      0.0394953  0.0124809   3.164 0.001554 ** 
+obesity                   -0.5754962  0.2418426  -2.380 0.017330 *  
+I(obesity^2)               0.0087517  0.0039770   2.201 0.027768 *  
+alcohol                    0.0013104  0.0045619   0.287 0.773924    
+age                        0.0452748  0.0122008   3.711 0.000207 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 596.11  on 461  degrees of freedom
+Residual deviance: 464.58  on 450  degrees of freedom
+AIC: 488.58
+
+Number of Fisher Scoring iterations: 5
+
+#some very rough model selection leads to fit2 
+fit2<-glm(chd~tobacco+ldl+as.factor(famhist)
++typea+obesity+I(obesity^2)
++age,family="binomial")
+> summary(fit2)
+
+Call:
+glm(formula = chd ~ tobacco + ldl + as.factor(famhist) + typea + 
+    obesity + I(obesity^2) + age, family = "binomial")
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-1.9292  -0.7907  -0.4294   0.8780   2.3935  
+
+Coefficients:
+                           Estimate Std. Error z value Pr(>|z|)    
+(Intercept)               -0.514835   2.914800  -0.177 0.859801    
+tobacco                    0.081354   0.026187   3.107 0.001892 ** 
+ldl                        0.199392   0.059227   3.367 0.000761 ***
+as.factor(famhist)Present  0.925414   0.227819   4.062 4.86e-05 ***
+typea                      0.037843   0.012276   3.083 0.002051 ** 
+obesity                   -0.424623   0.206184  -2.059 0.039452 *  
+I(obesity^2)               0.006812   0.003575   1.905 0.056732 .  
+age                        0.054138   0.010295   5.259 1.45e-07 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 596.11  on 461  degrees of freedom
+Residual deviance: 470.37  on 454  degrees of freedom
+AIC: 486.37
+
+Number of Fisher Scoring iterations: 5
+
+
+library(splines)
+
+for(i in 1:20) {
+fit<-lm(y~ns(x,df=i)) 
+print(c(i,AIC(fit)))
+}
+
+#minimum when df=4
+
+plot(x,y,ylab="y",xlab="y",main="Natural splines")
+values<-seq(0,1,0.01)
+temp<-data.frame("x"=values)
+fit<-lm(y~ns(x,df=4)) 
+fit<-predict(fit,temp)
+lines(values,fit,col="red")
+
+
+
+fit<-lm(y~ns(x,df=3)) 
+values<-seq(0,1,0.01)
+temp<-data.frame("x"=values)
+fit<-predict(fit,temp)
+lines(values,fit,col="blue")
+
+fit<-lm(y~ns(x,df=6)) 
+values<-seq(0,1,0.01)
+temp<-data.frame("x"=values)
+fit<-predict(fit,temp)
+lines(values,fit,col="green")
+
+fit<-lm(y~ns(x,df=12)) 
+values<-seq(0,1,0.01)
+temp<-data.frame("x"=values)
+fit<-predict(fit,temp)
+lines(values,fit)
+
+
+set.seed(100) #set initial seed for random number generator
+n <- 100
+x <- (1:n)/n  #we will use 100 equally spaced design point from 0 to 1
+true <- ((exp(1.2*x)+1.5*sin(7*x))-1)/3 #true function in this simulation
+noise <- rnorm(n, 0, 0.15)
+#generate n independent normal random number with 0 mean and variance 0.15
+y <- true + noise #y is observed values (true value + noise)
+
+plot(x,y)
+fit <- loess(y ~ x, span=2, degree=2)
+lines(x,fit$fitted,col="red")
+fit <- loess(y ~ x, span=1, degree=2)
+lines(x,fit$fitted,col="green")
+fit <- loess(y ~ x, span=0.5, degree=2)
+lines(x,fit$fitted,col="blue")
+fit <- loess(y ~ x, span=0.25, degree=2)
+lines(x,fit$fitted)
+
+
+plot(x,y)
+fit <- loess(y ~ x, span=0.4, degree=2)
+lines(x,fit$fitted,col="red")
+fit<-lm(y~ns(x,df=4)) 
+values<-seq(0,1,0.01)
+temp<-data.frame("x"=values)
+fit<-predict(fit,temp)
+lines(values,fit,col="blue")
+fit<-ksmooth(x,y,kernel="normal",bandwidth=0.15)
+lines(fit$x,fit$y,col="green")
+
+
+
+#Writing some simple smoothers in R
+
+#each point in window gets equal weight
+smoother1<-function(x,y,window) {
+
+values<-seq(min(x),max(x),by=0.01)
+
+fitted<-rep(0,length(values))
+
+for(i in 1:length(values)) {
+
+x.range<-c(values[i]-window,values[i]+window)
+ind <- which(x.range[1] < x & x < x.range[2])
+fitted[i]<-mean(y[ind])
+
+}
+
+return(fitted)
+
+}
+
+
+#fitting SLR to get smoothed value
+smoother2<-function(x,y,window) {
+
+values<-seq(min(x),max(x),by=0.01)
+
+fitted<-rep(0,length(values))
+
+for(i in 1:length(values)) {
+
+x.range<-c(values[i]-window,values[i]+window)
+ind <- which(x.range[1] < x & x < x.range[2])
+fit<-lm(y[ind]~x[ind])
+fitted[i]<-fit$coef[1]+fit$coef[2]*values[i]
+
+}
+
+return(fitted)
+
+}
+
+#Using normal Kernel
+smoother3<-function(x,y,b) {
+
+values<-seq(min(x),max(x),by=0.01)
+
+fitted<-rep(0,length(values))
+
+for(i in 1:length(values)) {
+
+t<-abs(x-values[i])/b
+kt<-exp(-2*t^2)/sqrt(2*pi)
+w<-kt/sum(kt)
+fitted[i]<-sum(y*w)
+
+}
+
+return(fitted)
+
+}
+
+#Using normal Kernel weights in SLR
+smoother4<-function(x,y,b) {
+
+values<-seq(min(x),max(x),by=0.01)
+
+fitted<-rep(0,length(values))
+
+for(i in 1:length(values)) {
+
+t<-abs(x-values[i])/b
+kt<-exp(-2*t^2)/sqrt(2*pi)
+w<-kt/sum(kt)
+fit<-lm(y~x,weights=w)
+fitted[i]<-fit$coef[1]+fit$coef[2]*values[i]
+
+}
+
+return(fitted)
+
+}
+
+
+#Example of use
+plot(x,y)
+fit<-smoother1(x,y,window=0.1)
+lines(x,fit,col="blue")
+fit<-smoother2(x,y,window=0.1)
+lines(x,fit,col="red")
+fit<-smoother3(x,y,b=0.2)
+lines(x,fit,col="green")
+fit<-smoother4(x,y,b=0.2)
+lines(x,fit,col="purple")

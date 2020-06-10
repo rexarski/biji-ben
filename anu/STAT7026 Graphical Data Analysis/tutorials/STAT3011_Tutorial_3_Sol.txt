@@ -1,0 +1,144 @@
+RESEARCH SCHOOL OF FINANCE, ACTUARIAL STUDIES AND APPLIED STATISTICS
+GRAPHICAL DATA ANALYSIS
+Tutorial 3 
+Sample Solution
+
+First, we separate out the components of the list:
+  
+normal=antibody$normal
+diabetic=antibody$diabetic
+insulin=antibody$insulin
+
+First, we will check some numerical summaries:
+  
+mean(normal)
+[1] 186.0255
+median(normal)   
+[1] 124.41
+mean(diabetic)
+[1] 181.8178
+> median(diabetic) 
+[1] 139.26
+mean(insulin)
+[1] 112.72
+median(insulin)
+[1] 82.5
+
+The mean and median values suggest that the data is strongly skewed; perhaps
+we should try transforming the data values to get a more symmetric set of
+distributions. Before we do that, we will take a look at some histograms of
+the data on the raw scale:
+  
+anti=c(normal,diabetic,insulin)
+xl=range(anti)
+par(mfrow=c(3,1))
+hist(normal,main="Nitrogren Binding for Normal Group",probability=T,xlim=xl)
+lines(density(normal,window="c",width=250),type="l")
+hist(diabetic,main="Nitrogren Binding for Alloxan Group",probability=T,xlim=xl)
+lines(density(diabetic,window="c",width=250),type="l")
+hist(insulin,main="Nitrogren Binding for Insulin Group",probability=T,xlim=xl)
+lines(density(insulin,window="c",width=250),type="l")
+
+par(mfrow=c(1,3),pty="s")
+qqnorm(normal)
+qqnorm(diabetic)
+qqnorm(insulin)
+par(pty="m")
+
+These histograms are not particularly satisfying, especially in view of the
+skewed nature of all three histograms. Now, we will try a few transformations
+to get more symmetric histograms. First, we'll try log:
+
+anti=c(log(normal),log(diabetic),log(insulin))
+xl=range(anti)
+par(mfrow=c(3,1))
+hist(log(normal),main="Nitrogren Binding for Normal Group",probability=T,xlim=xl)
+lines(density(log(normal),window="c",width=5),type="l")
+hist(log(diabetic),main="Nitrogren Binding for Alloxan Group",probability=T,xlim=xl)
+lines(density(log(diabetic),window="c",width=5),type="l")
+hist(log(insulin),main="Nitrogren Binding for Insulin Group",probability=T,xlim=xl)
+lines(density(log(insulin),window="c",width=5),type="l")
+
+The results look pretty good, but the skewness of the three histograms seems
+to have gone in the other direction. Maybe a milder transformation will do 
+the trick. We will try the square root transformation.
+
+anti=c(sqrt(normal),sqrt(diabetic),sqrt(insulin))
+xl=range(anti)
+par(mfrow=c(3,1))
+hist(sqrt(normal),main="Nitrogren Binding for Normal Group",probability=T,xlim=xl)
+lines(density(sqrt(normal),window="c",width=20),type="l")
+hist(sqrt(diabetic),main="Nitrogren Binding for Alloxan Group",probability=T,xlim=xl)
+lines(density(sqrt(diabetic),window="c",width=20),type="l")
+hist(sqrt(insulin),main="Nitrogren Binding for Insulin Group",probability=T,xlim=xl)
+lines(density(sqrt(insulin),window="c",width=20),type="l")
+
+Square root doesn't work too bad. It may be worth trying the cube-root 
+transformation also.
+
+cube=function(x){
+  x^(1/3)
+}
+anti=c(cube(normal),cube(diabetic),cube(insulin))
+xl=range(anti)
+par(mfrow=c(3,1))
+hist(cube(normal),main="Nitrogren Binding for Normal Group",probability=T,xlim=xl)
+lines(density(cube(normal),window="c",width=5),type="l")
+hist(cube(diabetic),main="Nitrogren Binding for Alloxan Group",probability=T,xlim=xl)
+lines(density(cube(diabetic),window="c",width=5),type="l")
+hist(cube(insulin),main="Nitrogren Binding for Insulin Group",probability=T,xlim=xl)
+lines(density(cube(insulin),window="c",width=5),type="l")
+
+The cube-root transformation seems to work quite well. We could decide which of
+log, sqrt, or cube-root transformations to use by going to symmetry plots or
+QQ plots.
+
+par(mfrow=c(1,3),pty="s")
+qqnorm(normal)
+qqnorm(diabetic)
+qqnorm(insulin)
+
+
+(The characteristic concave shape indicates the skewness we've already seen)
+ 
+ qqnorm(log(normal))
+ qqnorm(log(diabetic))
+ qqnorm(log(insulin))
+ 
+ (Mild skewness in the other direction)
+ 
+ qqnorm(sqrt(normal))
+ qqnorm(sqrt(diabetic))
+ qqnorm(sqrt(insulin))
+ 
+ (Looks pretty good)
+ 
+ qqnorm(cube(normal))
+ qqnorm(cube(diabetic))
+ qqnorm(cube(insulin))
+ 
+ (Also looks pretty good)
+ par(pty="m")
+
+ At this point, it looks like a toss-up between square roots or cubed-roots;
+ we'll go with square root since the transformation is a little easier to
+interpret. We could also try some symmetry plots, but that seems like overkill
+for such small data sets. (You can try them if you want!!) On the square root
+scale: the histograms and approximate densities suggest that the normal and
+diabetic groups behave somewhat similarly, but seem to be located a little 
+above the insulin group. We can check this out further by looking at some
+side-by-side boxplots:
+
+anti=c(sqrt(normal),sqrt(diabetic),sqrt(insulin))
+par(mfrow=c(1,1))
+boxplot(split(anti,c(rep(1,length(normal)),rep(2,length(diabetic)),
+rep(3,length(insulin)))),main="Boxplots of Nitrogren Binding for three groups 
+(sqrt scale)",ylab="Binding Capacity",names=c("Normal","Diabetic","Insulin"),
+style.bxp="old")
+
+The boxplot graphic gives us even more information: The groups also seem to
+have different spreads, the normal being most spread and the insulin group
+the least. The normal and diabetic groups seem to have roughly equal binding
+capacity, although the normal group exhibits greater spread in binding
+capacities. The insulin group seems to have lowest binding capacity, and it
+also has less spread in capacities.

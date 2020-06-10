@@ -1,0 +1,125 @@
+# This is an additional and simpler example on analysis of covariance (ANCOVA) to supplement the 
+# one shown on pages 13 to 18 of the brick.
+
+# The example uses a set of data reported in Daniel (1995) comparing the Birthweight (gms)
+# and the Gestation periods (weeks) of mothers who do Smoke with mothers who do not. 
+# Firstly, read in and attach the data:
+
+SmokersBabies <- read.table("SmokersBabies.txt",header=T)
+summary(SmokersBabies)
+attach(SmokersBabies)
+
+# Separate the data into smokers and non-smokers:
+
+Smokers <- SmokersBabies[Smoker=="Y",]
+NonSmokers <- SmokersBabies[Smoker=="N",]
+
+# Fit separate models for smokers and non-smokers and examine the coefficients:
+
+Smokers.lm <- lm(Birthweight ~ Gestation, data=Smokers)
+coef(Smokers.lm)
+NonSmokers.lm <- lm(Birthweight ~ Gestation, data=NonSmokers)
+coef(NonSmokers.lm)
+
+# Fit a model for the two groups combined:
+
+All.lm <- lm(Birthweight ~ Gestation)
+coef(All.lm)
+
+# Create a blank plot:
+
+plot(Gestation, Birthweight, type="n", xlab="Gestastion Period (weeks)", ylab="Birthweight (gms)")
+
+# Add the observations and regression lines for the two groups:
+
+points(Smokers$Gestation, Smokers$Birthweight, pch="Y")
+abline(Smokers.lm)
+points(NonSmokers$Gestation, NonSmokers$Birthweight, pch="N")
+abline(NonSmokers.lm)
+
+# Add the combined regression line:
+
+abline(All.lm, lty=2)
+
+# Fit an ANCOVA model which allows for two lines with differing intercepts and slopes,
+# using dummy variable coding (treatment contrasts), which is actually the default in R:
+
+SmokersBabies.ancova <- aov(Birthweight ~ Gestation + Smoker + Gestation:Smoker, contrasts=list(Smoker=contr.treatment))
+
+# Note that the much shorter version below would also have fitted the same model:
+# SmokersBabies.ancova <- aov(Birthweight ~ Gestation*Smoker)
+
+# Compare coefficients with earlier models:
+
+coef(SmokersBabies.ancova)
+coef(NonSmokers.lm)
+coef(Smokers.lm)
+
+# Fit an ANCOVA model which allows for two lines with differing intercepts and slopes, 
+# using effect variable coding (sum constrasts):
+
+SmokersBabies.ancova2 <- aov(Birthweight ~ Gestation + Smoker + Gestation:Smoker, contrasts=list(Smoker=contr.sum))
+
+# Again compare coefficients with earlier models:
+
+coef(SmokersBabies.ancova2)
+coef(NonSmokers.lm)
+coef(Smokers.lm)
+
+# Finally decide on a final model (using either of the above ANCOVA models):
+
+summary(SmokersBabies.ancova)
+summary(SmokersBabies.ancova2)
+
+# The interaction term is not significant, so different slopes are not required, just different
+# intercepts. Note that here I am assuming this is observational data, not some sort of 
+# quasi-experimental design (even though there were equal numbers of smokers and non-smokers). 
+# If it were an experimental design, the model with interaction (i.e. all possible combinations
+# of the factors) would probably have been the reference model assumed as part of the design,
+# rather than just the null (or intercept only) model we use with purely observational data. 
+# As with terms that are a crucial to the research question with observational models,we do
+# NOT delete terms that are part of the assumed reference model, rather we interpret them in 
+# the context of the reference model (assuming that is the best estimate of the MSE), starting
+# with the most complex higher order or interaction term. In an observational context, the 
+# interaction is not significant and not part of any assumed design model nor is it crucial
+# to the research question, so we can follow the principle of parsimony and delete it to give
+# a simpler model:
+
+SmokersBabies.ancova3 <- aov(Birthweight ~ Gestation + Smoker, contrasts=list(Smoker=contr.treatment))
+
+# Examine the summary for the final model and (something we probably should have started doing 
+# a little earlier in the process), check the assumptions:
+
+summary(SmokersBabies.ancova3)
+plot(SmokersBabies.ancova3, which=c(1,2,4,5))
+
+# No real problems with the plots and all the terms are now significant, so a model with parallel
+# lines is required, rather than a single simple linear regression model for the two groups:
+
+coef(SmokersBabies.ancova3)
+summary.lm(SmokersBabies.ancova3)
+
+# Note that I requested treatment coding for the Smoker "factor" and by default the first 
+# treatment is used as the reference category, which in the case of Smoker will be the "N"
+# category:
+
+contr.treatment(2)
+levels(Smoker)
+
+# Conclusion - Given similar Gestation periods, the babies of mothers who Smoke have on average
+# about 245 grams less Birthweight than the babies of mothers who don't Smoke. Note that in the 
+# context of the larger epidemiological study of which this dataset is but a subset, that this
+# is definitely considered to be a poor outcome for the babies of mothers who Smoke, as low 
+# birthweight is strongly associated with a number of poor health outcomes.
+
+# Note, that if I hadn't requested treatment contrasts, the default category would have depended
+# on the version of S-Plus or R. This default can be checked and, if necessary changed:
+
+temp <- options()                                # store the current options
+temp$contrasts                                   # display the stored default contrasts
+levels(Smoker)                                   # display the levels of Smoker
+contrasts(Smoker)                                # display the default coding for these levels
+options(contrasts=c("contr.sum", "contr.poly"))  # reset the default coding to sum contrasts 
+# see help(contrasts) and help(contr.treatment) etc for further details of contrast options.
+contrasts(Smoker)                                # display treatment coding for Smoker
+options(temp)                                    # reset the options back to the stored defaults

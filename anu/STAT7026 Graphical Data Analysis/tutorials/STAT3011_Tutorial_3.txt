@@ -1,0 +1,17 @@
+RESEARCH SCHOOL OF FINANCE, ACTUARIAL STUDIES AND APPLIED STATISTICS
+Graphical Data Analysis
+Tutorial 3
+
+
+1. Dolkart, Halpern and Perlman (1971) compared the circulating
+antibody responses in normal, alloxan diabetic and insulin-treated
+diabetic mice injected with bovine serum albumin.  Animals were bled
+from the orbital sinus and the serum analysed for antigen binding
+capacity of BSA, glucose concentration and serum proteins.  BSA was
+iodinated with I-131 and the antigen binding capacity of each serum
+sample was determined as micrograms of BSA nitrogen bound by 1 ml of
+undiluted serum.  The results are contained in a list called antibody
+with components normal, diabetic and insulin.  Describe and compare the
+nitrogen binding capacities of the three groups.
+
+

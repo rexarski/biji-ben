@@ -1,0 +1,125 @@
+########################
+install.packages("RcmdrPlugin.survival")
+library(RcmdrPlugin.survival)
+
+data(Rossi) #see J fox notes for more details
+
+
+cox.null<-coxph(Surv(week,arrest)~1,data=Rossi)
+cox.alt<-coxph(Surv(week,arrest)~fin+age+race+wexp+mar+prio,data=Rossi)
+cox.null$loglik
+cox.alt$loglik
+TS<--2*(cox.null$loglik[1]-cox.alt$loglik[2])
+TS
+1-pchisq(TS,df=6)
+summary(cox.alt)
+
+> summary(cox.alt)
+Call:
+coxph(formula = Surv(week, arrest) ~ fin + age + race + wexp + 
+    mar + prio, data = Rossi)
+
+  n= 432, number of events= 114 
+
+                   coef exp(coef) se(coef)      z Pr(>|z|)    
+finyes         -0.37352   0.68831  0.19082 -1.957 0.050295 .  
+age            -0.05640   0.94516  0.02184 -2.583 0.009796 ** 
+raceother      -0.30983   0.73357  0.30780 -1.007 0.314133    
+wexpyes        -0.15331   0.85786  0.21218 -0.723 0.469957    
+marnot married  0.44339   1.55799  0.38136  1.163 0.244958    
+prio            0.09336   1.09785  0.02832  3.296 0.000981 ***
+---
+Signif. codes:  0 ?**?0.001 ?*?0.01 ??0.05 ??0.1 ??1 
+
+               exp(coef) exp(-coef) lower .95 upper .95
+finyes            0.6883     1.4528    0.4735    1.0005
+age               0.9452     1.0580    0.9056    0.9865
+raceother         0.7336     1.3632    0.4013    1.3410
+wexpyes           0.8579     1.1657    0.5660    1.3003
+marnot married    1.5580     0.6419    0.7378    3.2898
+prio              1.0979     0.9109    1.0386    1.1605
+
+Concordance= 0.642  (se = 0.027 )
+Rsquare= 0.074   (max possible= 0.956 )
+Likelihood ratio test= 33.08  on 6 df,   p=1.013e-05
+Wald test            = 32.01  on 6 df,   p=1.625e-05
+Score (logrank) test = 33.43  on 6 df,   p=8.68e-06
+
+
+cox.null<-coxph(Surv(week,arrest)~fin+age+wexp+prio,data=Rossi)
+cox.alt<-coxph(Surv(week,arrest)~fin+age+wexp+prio+race+mar,data=Rossi)
+cox.null$loglik
+cox.alt$loglik
+TS<--2*(cox.null$loglik[2]-cox.alt$loglik[2])
+TS
+1-pchisq(TS,df=2)
+anova(cox.alt,cox.null)
+########################
+##set categorical variables as indicator variables
+Rossi<-read.table("Rossi.txt",header=T)
+
+cox.full<-coxph(Surv(week,arrest)~fin+age+race+wexp+mar+prio,data=Rossi)
+plot(survfit(cox.full))
+
+
+attach(Rossi)
+new.info <- data.frame(fin=c(0,1), age=rep(mean(age),2), race=rep(mean(race),2),wexp=rep(mean(wexp),2), mar=rep(mean(mar),2), paro=rep(mean(paro),2),prio=rep(mean(prio),2))
+plot(survfit(cox.full, newdata=new.info), conf.int=T,col=c("red","blue"), ylim=c(.6, 1))
+legend(x="topright",legend=c("fin = 0", "fin = 1"), lty=c(1,1),col=c("red","blue"))
+
+new.info <- data.frame(fin=rep(mean(fin),2), age=rep(mean(age),2), race=c(0,1),wexp=rep(mean(wexp),2), mar=rep(mean(mar),2), paro=rep(mean(paro),2),prio=rep(mean(prio),2))
+plot(survfit(cox.full, newdata=new.info), conf.int=T,col=c("red","blue"), ylim=c(.6, 1))
+legend(x="topright",legend=c("race = other", "race = black"), lty=c(1,1),col=c("red","blue"))
+
+###############
+#addict data
+#addict example
+addict = read.table("http://www-stat.stanford.edu/~rag/stat222/heroin.dat", header = TRUE)
+attach(addict)
+cox.mod<-coxph(Surv(time,status)~as.factor(clinic)+prison+dose,data=addict)
+summary(cox.mod)
+> cox.mod<-coxph(Surv(time,status)~as.factor(clinic)+prison+dose,data=addict)
+> summary(cox.mod)
+Call:
+coxph(formula = Surv(time, status) ~ as.factor(clinic) + prison + 
+    dose, data = addict)
+
+  n= 238, number of events= 150 
+
+                        coef exp(coef)  se(coef)      z Pr(>|z|)    
+as.factor(clinic)2 -1.009896  0.364257  0.214889 -4.700 2.61e-06 ***
+prison              0.326555  1.386184  0.167225  1.953   0.0508 .  
+dose               -0.035369  0.965249  0.006379 -5.545 2.94e-08 ***
+---
+Signif. codes:  0 ?**?0.001 ?*?0.01 ??0.05 ??0.1 ??1 
+
+                   exp(coef) exp(-coef) lower .95 upper .95
+as.factor(clinic)2    0.3643     2.7453    0.2391    0.5550
+prison                1.3862     0.7214    0.9988    1.9238
+dose                  0.9652     1.0360    0.9533    0.9774
+
+Concordance= 0.665  (se = 0.026 )
+Rsquare= 0.238   (max possible= 0.997 )
+Likelihood ratio test= 64.56  on 3 df,   p=6.228e-14
+Wald test            = 54.12  on 3 df,   p=1.056e-11
+Score (logrank) test = 56.32  on 3 df,   p=3.598e-12
+
+cox.mod<-coxph(Surv(time,status)~as.factor(clinic)+prison+dose+I(prison*dose),data=addict)
+summary(cox.mod)
+
+cox.mod<-coxph(Surv(time,status)~as.factor(clinic)+prison+dose+I(dose^2),data=addict)
+summary(cox.mod)
+
+
+#compare KM and Cox
+
+par(mfrow=c(1,2))
+
+KM.est<-survfit(Surv(addict$time,addict$status)~addict$clinic)
+plot(KM.est,col=c("red","blue"))
+
+cox.mod<-coxph(Surv(time,status)~as.factor(clinic)+prison+dose,data=addict)
+new.info <- data.frame(clinic=c(1,2), prison=rep(mean(prison),2), dose=rep(mean(dose),2))
+plot(survfit(cox.mod, newdata=new.info), conf.int=F,col=c("red","blue"), ylim=c(0, 1))
+legend(x="topright",c("clinic 1","clinic 2"),lty=1,col=c("red","blue"))
+survdiff(Surv(addict$time,addict$status)~addict$clinic,rho=0)

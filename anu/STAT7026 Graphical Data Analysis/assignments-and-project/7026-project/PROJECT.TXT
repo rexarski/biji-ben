@@ -1,0 +1,135 @@
+The Project:
+
+Remember that the project is in two parts: Part A is graphical
+awareness and requires you to find and comment on graphics from
+various sources. For details of what you need to do, refer to the
+original sheet describing assessment for the course. If you are in
+STAT3011 you must hand in and comment on 3 graphics. If you are
+in STAT7026, you must hand in and comment on 5 graphics.
+
+Part B is graphical analysis, and requires you to carry out an analysis
+as described below:
+
+You should select one of the two data sets described below, define a
+substantive problem of interest to you and then attempt to produce a
+substantially graphical analysis of the data.  The data sets have been
+selected for their complexity and the fact that they are not
+necessarily readily amenable to standard analyses.
+
+There is no "right answer" to any question you formulate but there are
+certainly good answers and unhelpful ones.  I have not analysed these
+data sets so can only be of limited assistance to you.  It is intended
+that you should do this work substantially on your own.  Of course, I
+will do my best to help with technical questions but persistent seeking
+of assistance will count against you. ALSO, YOU MAY NOT DISCUSS THE PROJECT
+WITH OTHER MEMBERS OF THE CLASS OR ANYBODY ELSE!! This requirement is
+serious, and evidence of plagiarism will result in you FAILING the course.
+PLEASE, play by the rules. You are NOT ALLOWED to use sources outside the
+lecture and class materials made available on Wattle. Really.
+
+As always, you should attempt to reduce data to a succinct written
+report and a small number of informative graphics.  The written part of
+the report should be no longer than 4-5 pages in length.  You should
+begin with a clear statement of which data set you are analysing and
+what problem you are trying solve in your analysis.  You should then
+describe the various steps in your analysis, why you have done what you
+have done, your reactions to each step and any interesting comments on
+the data.  Finally, there should be a brief conclusion in which you
+explain what you have found.  You should restrict the number of
+graphics you present though of course, you may describe graphics you
+have constructed but not actually presented.  For Part B, the total report must
+be no more than 8 pages. If you choose Data set C below, the 8 pages includes
+any maps you might display, so 8 pages is a hard limit. Pages beyond the 
+8th will not be read.
+
+The 8 page limit applies only to Part B. 
+There is no page limit for Part A, but I
+would expect about 3 or 5 pages (depending on which course code you are in, 
+about one for each graphic). 
+Please don't go crazy and hand in 20 pages for Part A - 
+3-5ish is fine.
+
+The project must be handed in as a single stack of paper, stapled in the top
+left hand corner. Do not use plastic coverslips, plastic folders, binders or have the work spiral or otherwise bound. No marks will be awarded for binding or
+other likewise presentation.
+
+Marks are available for flair, creativity and those difficult to define
+aspects of the project.
+
+The project is due at noon, Thursday, 26 October, 2017, and is compulsory. 
+
+Select ONE of the two data sets described below 
+(NOTE: The project data is in the following R objects in the class data:  otter (Option 1); and insure (Option 2))
+
+Project Option 1: Social Grooming in North American River Otters
+
+As part of a large study on the social behaviour of Lutra canadensis,
+data on the grooming behaviour of five groups of captive otters was
+obtained.  It is generally believed that grooming is the social cement
+of animal groups and plays an important role in bonding.
+
+The questions of interest include:
+
+1) Do animals within a group groom equally or are some groomed more
+than they groom others?
+
+2) In multi-member groups (A and H) do individuals exhibit preferences
+in who they groom?
+
+3) Do females groom males more than males groom females?
+
+4) Do grooming rates change in the breeding season?
+
+The data provided identifies the group, whether the season is breeding
+(B) or not (N), the time in minutes of observation, the animals involved
+and the frequency of grooming. The groups are
+
+	A: F1 (adult female)  M2, M3, M4 (adult males)
+
+	B: F7 (adult female)  M8 (adult male)
+
+	C: F9 (adult female)  M15 (adult male)
+
+	D: F5 (adult female)  M6 (adult male) siblings
+
+	H: F21 (subadult female) F22(young adult female)
+	   M23 (subadult male) M24 (young adult male)
+
+The data is in a list called otter. Each component is a vector of
+length 394.  $group is the group, $season is the season, $time is the
+time observed in minutes (it is the time the groups are watched, NOT the 
+length of time they spend grooming), $groomer is the groomer, $groomee is the
+groomee and $frequency is the frequency (number of observed) of grooming.
+
+Project Option 2: Insurance availability in Chicago
+
+The U.S. Commission on Civil Rights collected data in an attempt to
+examine charges that insurance companies were "redlining" certain
+neighbourhoods.  i.e.  cancelling and/or refusing to renew policies.
+The data provided include the number of cancellations, nonrenewals, new
+policies and renewals of home and fire policies for each neighbourhood
+by zip code for the months December 1977 - February 1978.  This
+information is combined into a single variable denoted Voluntary market
+activity which is the number of new policies and renewals minus the
+number of cancellations and nonrenewals expressed per 100 housing
+units.  In addition, information on the number of FAIR plan policies
+was obtained.  These policies are obtained after applicants have been
+rejected for other policies so this information also reflects the
+availability of policies.  This information is provided as the
+involuntary market activity, the number of FAIR plan policies and
+renewals per 100 housing units.  In addition, the Chicago Police
+provided theft data and the Fire Department provided fire data from
+1975 for each neighbourhood.  These data are the number of incidents
+per 1000 housing units in 1975.  (The insurance companies claim to use
+a three year lag on crime data when they set their premiums.) Finally,
+the Census Bureau provide data on the racial composition (in per cent
+minority), income and the age of housing units.  The income is the
+median family income and the age is coded as the percentage of units
+built in or before 1939.
+
+The objectives of the study are to explore the extent to which racial
+composition and age of housing affect underwriting practices after
+controlling for factors like fire and theft.
+
+The data is provided in a 47x8 data matrix called insure.  A map of the
+neighbourhoods with their zip codes is available as a pdf file.

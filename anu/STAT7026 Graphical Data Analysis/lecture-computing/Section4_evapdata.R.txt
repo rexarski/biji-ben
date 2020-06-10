@@ -1,0 +1,44 @@
+set=cbind(evap.y,evap.x[,1],evap.x[,4])
+pairs(set,labels=c("Evaporation","Soil Temp","Air Temp"))
+evap=evap.y
+soil=evap.x[,1]
+air=evap.x[,4]
+coplot(evap ~ air | soil,xlab=c("Air","Soil"),ylab="Evaporation")
+coplot(evap ~ soil | air,xlab=c("Soil","Air"),ylab="Evaporation")
+
+par(mfrow=c(1,2),oma=c(0,0,3,0))
+ord=order(soil,air)
+set2=set[ord,]
+k=rep(0,46)
+for(i in 2:46){
+  if((set2[i,2]==set2[i-1,2])&&(set2[i,3]==set2[i-1,3])) k[i]=1
+}
+set2=set2[k==0,]
+surf=interp(set2[,2],set2[,3],set2[,1])
+surf$z=ifelse(is.na(surf$z),0,surf$z)
+persp(surf$z,xlab="Soil Temp",ylab="Air Temp",zlab="Evaporation")
+title("Perspective Plot")
+contour(surf,xlab="Soil Temp",ylab="Air Temp",main="Contour Plot")
+points(soil,air)
+mtext("Response Surface for Evaporation Data",side=3,outer=T,cex=1.5)
+par(mfrow=c(1,1),oma=c(0,0,0,0))
+wind=evap.x[,10]
+set=cbind(evap.x[,1],evap.x[,4],evap.x[,10])
+pairs(set,labels=c("Soil Temp","Air Temp","Wind"))
+coplot(soil ~ air | wind,xlab=c("Air","Wind"),ylab="Soil")
+coplot(soil ~ wind | air,xlab=c("Wind","Air"),ylab="Soil")
+par(mfrow=c(1,2),oma=c(0,0,3,0))
+ord=order(wind,air)
+set2=set[ord,]
+k=rep(0,46)
+for(i in 2:46){
+  if((set2[i,2]==set2[i-1,2])&&(set2[i,3]==set2[i-1,3])) k[i]=1
+}
+set2=set2[k==0,]
+surf=interp(set2[,2],set2[,3],set2[,1])
+surf$z=ifelse(is.na(surf$z),0,surf$z)
+persp(surf$z,xlab="Soil Temp",ylab="Air Temp",zlab="Evaporation")
+title("Perspective Plot")
+contour(surf,xlab="Soil Temp",ylab="Air Temp",main="Contour Plot")
+points(air,wind)
+mtext("Response Surface for Evaporation Data",side=3,outer=T,cex=1.5)

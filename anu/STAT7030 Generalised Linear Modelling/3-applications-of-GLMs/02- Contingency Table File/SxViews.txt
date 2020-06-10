@@ -1,0 +1,6 @@
+East.Coast South Midwest West.Coast Outside.U.S.
+Very.Acceptable 82 201 30 169 13
+Somewhat.Acceptable 72 251 20 96 7
+Somewhat.Unacceptable 49 122 26 36 4
+Very.Unacceptable 36 149 13 28 3
+

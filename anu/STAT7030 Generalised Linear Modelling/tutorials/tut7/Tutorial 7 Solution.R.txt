@@ -1,0 +1,125 @@
+# STAT3015/STAT7030 GLMs
+# R command file for Tutorial 7
+
+# Question 3
+# (a)
+hrt <- read.table("Heart.txt", header=TRUE)
+attach(hrt)
+names(hrt)
+# modify 0 & 1 to 0.05 & 0.95
+prptn <- disease/ssize
+nwprp <- ifelse(prptn==0, 0.05, prptn)
+nwprp <- ifelse(nwprp==1, 0.95, nwprp)
+lgtdse <- log(nwprp/(1-nwprp))
+hrt.reg1 <- lm(lgtdse~age)
+c1.05 <- coef(hrt.reg1)
+c1.05
+# modify 0 & 1 to 0.005 and 0.995
+nwprp2 <- ifelse(prptn==0, 0.005, prptn)
+nwprp2 <- ifelse(nwprp2==1, 0.995, nwprp2)
+lgtdse2 <- log(nwprp2/(1-nwprp2))
+hrt.reg2 <- lm(lgtdse2~age)
+c1.005 <- coef(hrt.reg2)
+c1.005
+# plot of the two curves
+plot(age, prptn)
+ages <- 20:70
+invlogit <- function(x) exp(x)/(1+exp(x))
+lines(ages,invlogit(coef(hrt.reg1)[1]+coef(hrt.reg1)[2]*ages), lty=1)
+lines(ages,invlogit(coef(hrt.reg2)[1]+coef(hrt.reg2)[2]*ages), lty=2)
+legend(20, 1, lty=1:2, c("Using 0.05 and 0.95", "Using 0.005 and 0.995"))
+
+# (b) weighted least-squares
+ft1 <- exp(fitted(hrt.reg1))/(1+exp(fitted(hrt.reg1)))
+wgt <- ssize*ft1*(1-ft1)
+hrt.reg1 <- lm(lgtdse ~ age, weights = wgt)
+coef(hrt.reg1)
+
+# using the iterative scheme and 0.05 & 0.95 settings
+for(i in 1:100){
+ft1 <- exp(fitted(hrt.reg1))/(1+exp(fitted(hrt.reg1)))
+wgt <- ssize*ft1*(1-ft1)
+hrt.reg1 <- lm(lgtdse ~ age, weights=wgt)
+}
+c2.05 <- coef(hrt.reg1)
+c2.05
+# using the iterative scheme and 0.005 & 0.995 settings
+for(i in 1:100){
+  ft2 <- exp(fitted(hrt.reg2))/(1+exp(fitted(hrt.reg2)))
+  wgt2 <- ssize*ft2*(1-ft2)
+  hrt.reg2 <- lm(lgtdse2 ~ age, weights = wgt2)
+}
+c2.005 <- coef(hrt.reg2)
+c2.005
+# (c) logistic regression
+hrt.glm <- glm(prptn ~ age, family = binomial, weights = ssize)
+c3 <- coef(hrt.glm)
+c3
+# coefficients of the settings 0.05 & 0.95
+data.frame(rbind(c1.05, c2.05, c3), row.names = c("(a)", "(b)", "(c)"))
+# coefficients of the settings 0.005 & 0.995
+data.frame(rbind(c1.005, c2.005, c3), row.names = c("(a)", "(b)", "(c)"))
+
+# plot of the two fitted curves
+plot(age, prptn)
+ages <- 20:70
+invlogit <- function(x) exp(x)/(1+exp(x))
+lines(ages, invlogit(coef(hrt.reg1)[1]+coef(hrt.reg1)[2]*ages), lty=1)
+lines(ages, invlogit(coef(hrt.glm)[1]+coef(hrt.glm)[2]*ages), lty=2)
+legend(20, 1, lty=1:2, c("Weighted Empirical Logit", "Logistic Regression"))
+
+# (d)
+exp(10*c3[2])
+
+# Question 4
+# (a) 95% confidence intervals for the estimate of x_0.5
+# Probit link function
+ansth <- read.table("AnsthcSum.txt", header = TRUE)
+ansth.prbt <- glm(prptn ~ conc, family = binomial(link = probit), 
+                  weights = ssize, data = ansth)
+est <- (0-as.vector(coef(ansth.prbt))[1])/as.vector(coef(ansth.prbt))[2]
+dh <- c(-1/as.vector(coef(ansth.prbt))[2],
+          as.vector(coef(ansth.prbt))[1]/as.vector(coef(ansth.prbt)[2]^2))
+sd <- sqrt(t(dh)%*%summary(ansth.prbt)$cov.unscaled%*%dh)
+upper <- est + qt(0.975, 4)*sd
+lower <- est - qt(0.975, 4)*sd
+c(lower, est, upper)
+# logit link function
+ansth.lgt <- glm(prptn ~ conc, family = binomial(link = logit), 
+                  weights = ssize, data = ansth)
+est <- (0-as.vector(coef(ansth.lgt))[1])/as.vector(coef(ansth.lgt))[2]
+dh <- c(-1/as.vector(coef(ansth.lgt))[2],
+        as.vector(coef(ansth.lgt))[1]/as.vector(coef(ansth.lgt)[2]^2))
+sd <- sqrt(t(dh)%*%summary(ansth.lgt)$cov.unscaled%*%dh)
+upper <- est + qt(0.975, 4)*sd
+lower <- est - qt(0.975, 4)*sd
+c(lower, est, upper)
+# complementary log-log link function
+ansth.cll <- glm(prptn ~ conc, family = binomial(link = cloglog),
+                 weights = ssize, data = ansth)
+g05 <- log(-log(1-0.5))
+est <- (g05-as.vector(coef(ansth.cll))[1])/as.vector(coef(ansth.cll))[2]
+dh <- c(-1/as.vector(coef(ansth.cll))[2],
+          (as.vector(coef(ansth.cll))[1]-g05)/as.vector(coef(ansth.cll)[2]^2))
+sd <- sqrt(t(dh)%*%summary(ansth.cll)$cov.unscaled%*%dh)
+upper <- est + qt(0.975, 4)*sd
+lower <- est - qt(0.975, 4)*sd
+c(lower, est, upper)
+
+# 95% confidence intervals for beta_0 and beta_1
+# Probit link function
+sds <- sqrt(diag(summary(ansth.prbt)$cov.unscaled))
+upper <- coef(ansth.prbt)+(qt(0.975, 4)*sds)
+lower <- coef(ansth.prbt)-(qt(0.975, 4)*sds)
+cbind(lower, upper)
+# logit link function
+sds <- sqrt(diag(summary(ansth.lgt)$cov.unscaled))
+upper <- coef(ansth.lgt)+(qt(0.975, 4)*sds)
+lower <- coef(ansth.lgt)-(qt(0.975, 4)*sds)
+cbind(lower, upper)
+# complementary log-log link function
+sds <- sqrt(diag(summary(ansth.cll)$cov.unscaled))
+upper <- coef(ansth.cll)+(qt(0.975, 4)*sds)
+lower <- coef(ansth.cll)-(qt(0.975, 4)*sds)
+cbind(lower, upper)
+

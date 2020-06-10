@@ -1,0 +1,79 @@
+#read in the data
+troutegg <- read.table("F:/STAT/STAT3015 - 7030/Datasets/troutegg.csv",header=TRUE,sep=",")
+troutegg
+attach(troutegg)
+
+#display table in contingency table format
+xtabs(cbind(survive,total) ~ location+period, troutegg)
+ftable(xtabs(cbind(survive,total) ~ location+period, troutegg))
+
+#fit model
+bmod <- glm(cbind(survive,total-survive) ~ factor(location)+factor(period), family=binomial,troutegg)
+summary(bmod)
+
+#goodness-of-fit test
+1-pchisq(deviance(bmod),df.residual(bmod))
+
+#Drop in deviance tests
+drop1(bmod,test="Chi")
+
+bmod2 <- glm(cbind(survive,total-survive) ~ factor(location), family=binomial,troutegg)
+anova(bmod2,bmod,test="Chi")
+
+#model diagnostics
+#scatterplot of empirical logits 
+#add 0.5 to prevent infinite values for groups consisting of all
+#successes or failures
+elogits <- log((troutegg$survive+0.5)/(troutegg$total-troutegg$survive+0.5))
+#construct interaction plot
+plot(period,elogits)
+plot(location,elogits)
+interaction.plot(period,location,elogits)
+
+#Deviance residual versus linear predictor plot
+plot(residuals(bmod) ~ predict(bmod,type="link"),xlab=expression(hat(eta)),ylab="Deviance residuals")
+abline(h=0)
+
+#partial residual plots
+l2<-ifelse(location==2,1,0)
+l3<-ifelse(location==3,1,0)
+l4<-ifelse(location==4,1,0)
+l5<-ifelse(location==5,1,0)
+p7<-ifelse(period==7,1,0)
+p8<-ifelse(period==8,1,0)
+p11<-ifelse(period==11,1,0)
+
+bmod <- glm(cbind(survive,total-survive) ~ l2+l3+l4+l5+p7+p8+p11, family=binomial,troutegg)
+
+#partial residual plots - location
+l<-cbind(l2,l3,l4,l5)
+u <- elogits-predict(bmod) + l%*%coef(bmod)[2:5]
+plot(u ~ location,ylab="Partial Residual")
+
+#partial residual plots - period
+pp<-cbind(p7,p8,p11)
+u <-elogits-predict(bmod) + pp%*%coef(bmod)[6:8]
+plot(u ~ period,ylab="Partial Residual")
+
+#Absolute Deviance Residual Plot
+plot(abs(residuals(bmod))~predict(bmod),ylab="|Deviance Residual|",xlab="Linear Predictor")
+
+#Outlier and leverage point diagnostics
+par(mfrow=c(2,2))
+halfnorm(residuals(bmod),main="Deviance residuals")
+#leverage
+bmod.inf <- influence(bmod)
+halfnorm(bmod.inf$hat,main="Leverage")
+halfnorm(cooks.distance(bmod),main="Cooks distance")
+barplot(cooks.distance(bmod),main="Cooks distance")
+
+#overdispersion test
+bmod <- glm(cbind(survive,total-survive) ~ factor(location)+factor(period), family=binomial,troutegg)
+
+dp <- sum(residuals(bmod,type="pearson")^2)/bmod$df.res
+dp
+1-pchisq(sum(residuals(bmod,type="pearson")^2),bmod$df.res)
+
+bmod.q<-glm(cbind(survive,total-survive) ~ factor(location)+factor(period), family=quasibinomial,troutegg)
+summary(bmod.q)
+drop1(bmod.q,test="F")

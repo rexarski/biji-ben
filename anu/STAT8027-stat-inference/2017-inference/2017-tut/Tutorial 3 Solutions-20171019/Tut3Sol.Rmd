@@ -1,0 +1,243 @@
+---
+title: "Tutorial 3 Solutions"
+author: "STAT 3013/8027"
+output:
+    pdf_document:
+        includes:
+            in_header: mystyletut.sty
+---
+---
+\large
+
+1.  **Rice Chapter 5 Question 20**:  We have $X_1, \ldots, X_n \iid \textrm{uniform}(0,1)$.  Let's determine the $Var\left( \frac{1}{n} \sum_{i=1}^n f(x_i) \right)$:
+
+
+\begin{eqnarray*}
+Var\left( \frac{1}{n} \sum_{i=1}^n f(x_i) \right) &=& \frac{1}{n^2} Var\left( \sum_{i=1}^n f(x_i) \right) \\
+&=& \frac{1}{n^2} \sum_{i=1}^n Var\left(f(x_i) \right) \textrm{  \tg{Due to independence we have no cross terms.}}\\
+&=& \frac{1}{n^2} \sum_{i=1}^n \left[ E(f(x_i)^2) - [E(f(x_i)]^2  \right] \\
+&=& \frac{1}{n^2} n \left[ E(f(x_i)^2) - [E(f(x_i)]^2  \right] \\
+&=& \frac{1}{n} \left[ \int_0^1 f(x)^2 dx - \left[ \int_0^1 f(x) dx\right]^2  \right] \\
+&=& \frac{1}{n} \left[ \int_0^1 f(x)^2 dx - \left[ I(f) \right]^2  \right] \\
+\end{eqnarray*}
+
+Let's work out the exact result:
+
+\begin{eqnarray*}
+\int_0^1 f(x) dx &=& \int_0^1 cos(2 \pi x) dx \\
+&=& 0
+\end{eqnarray*}
+
+
+\begin{eqnarray*}
+\int_0^1 f(x)^2 dx &=& \int_0^1 cos^2(2 \pi x) dx \\
+&=& 1/2
+\end{eqnarray*}
+
+
+\begin{eqnarray*}
+Var\left( \frac{1}{n} \sum_{i=1}^n f(x_i) \right) &=& \frac{1}{n} \left[ \int_0^1 f(x)^2 dx - \left[ I(f) \right]^2  \right] \\
+&=& \frac{1}{n} \left[ 1/2 - \left[ 0 \right]^2  \right] \\
+&=& \frac{1}{2n}
+\end{eqnarray*}
+
+
+Now let's use Monte Carlo approximation which leads to:
+
+
+\begin{eqnarray*}
+\frac{1}{n} \left[ \int_0^1 f(x)^2 dx - \left[ I(f) \right]^2  \right] &=& \frac{1}{n} \left[ \frac{1}{n} \sum_{i=1}^n f(x_i)^2 - \left[ \frac{1}{n} \sum_{i=1}^n f(x_i) \right]^2  \right] \\
+&=& \frac{1}{n} \left[ \frac{1}{n} \sum_{i=1}^n f(x_i)^2 - \frac{1}{n^2} \left[  \sum_{i=1}^n f(x_i) \right]^2  \right] \\
+&=&  \frac{1}{n^2} \left[ \sum_{i=1}^n f(x_i)^2 - \frac{1}{n} \left[ \sum_{i=1}^n f(x_i) \right]^2  \right] \\
+&=& \frac{1}{n^2} \left[ \sum_{i=1}^n cos^2(2 \pi x) - \frac{1}{n} \left[ \sum_{i=1}^n cos(2 \pi x) \right]^2  \right]
+\end{eqnarray*}
+
+
+  + Let's do $n=100$
+
+```{r}
+set.seed(1001)
+n <- 100
+x <- runif(n)
+
+Var.mc <- (1/n^2)*( sum( cos(2*pi*x)^2 ) - (1/n)*( sum(cos(2*pi*x)) )^2)
+Var.mc
+0.5/n
+abs(0.5/n - Var.mc)
+```
+
+  + Let's do $n=1000$
+
+```{r}
+set.seed(1001)
+n <- 1000
+x <- runif(n)
+
+Var.mc <- (1/n^2)*( sum( cos(2*pi*x)^2 ) - (1/n)*( sum(cos(2*pi*x)) )^2)
+Var.mc
+0.5/n
+abs(0.5/n - Var.mc)
+```
+
+
+  * **Rice Chapter 5 Question 21 (a):**
+
+
+In this question we wish to determine the following integral:
+
+$$I(f) = \int_b^a f(x) dx$$
+
+We note that by multiply and dividing by the density $g(x)$ we have:
+
+\begin{eqnarray*}
+I(f) &=& \int_b^a f(x) dx \\
+&=& \int_b^a f(x) \frac{g(x)}{g(x)}dx \\
+&=& \int_b^a \frac{f(x)}{g(x)} g(x) dx \\
+&=& E\left(\frac{f(x)}{g(x)} \right)
+\end{eqnarray*}
+
+* Note: $g(x)$ is a density function on $[a,b]$.  We can approximate $I(f)$ by the taking random samples from $g(x)$ and calculating:
+
+$$\hat{I}(f) = \frac{1}{n} \sum_{i=1}^n \frac{f(x)}{g(x)}$$
+
+As in question 20, let's get the $E\left(\hat{I}(f)\right)$:
+
+\begin{eqnarray*}
+E\left(\hat{I}(f)\right) &=& E\left(\frac{1}{n} \sum_{i=1}^n \frac{f(x)}{g(x)}\right) \\
+&=& \frac{1}{n} \sum_{i=1}^n E\left( \frac{f(x)}{g(x)}\right) \\
+&=& \frac{1}{n} n E\left( \frac{f(x)}{g(x)}\right) \\
+&=& E\left( \frac{f(x)}{g(x)}\right) \\
+&=& I(f) = \int_b^a f(x) dx
+\end{eqnarray*}
+
+2. Now let's consider a Monte Carlo integration for the following:
+
+$$I = \int_0^{\infty} 25 x^2 cos(x^2) exp(-25 x) dx$$
+
+Note that if $X \sim \textrm{exponential}(25)$, where the $E(X)=1/25$, then we have the following density on $[0,\infty)$:
+
+$$g(x) = 25 exp(-25 x)$$
+
+  + Consider the following algorithm:
+  
+    a. Generate $n$ random samples from an exponential distribution (we know how to do this based on uniform random variables and the CDF inverse method).
+
+    b. Calculate:
+    
+    $$\hat{I}(f) = \frac{1}{n} \sum_{i=1}^n  x_i^2 cos(x_i^2)$$
+    
+    
+```{r}
+set.seed(1001)
+n <- 10000
+x <- rexp(n, rate=1/25)  # the true mean is 25
+mean(x)
+
+I.f.samples <- x^2 * cos(x^2)
+I.f.hat <- mean(I.f.samples)
+I.f.hat
+```
+
+3.  **Answer:**  We assume that $U \sim \textrm{uniform}(0,1)$.
+
+    a.)  Let's consider the first case: Let $Y = - log(U)$.  To find the density of $Y$ let's use the cdf method:
+    
+    \begin{eqnarray*}
+    P(Y \leq y) &=& P(- log(U) \leq y) \\
+    &=& P(- log(U) \leq y) = P(log(U) > -y) \\
+    &=& P(U > exp(-y)) = 1- P(U \leq exp(-y)) \\
+    &=& 1 - exp(-y)
+    \end{eqnarray*}
+    
+    So we have $F_Y(y) = 1 - exp(-y)$ and $f_Y(y) = exp(-y)$ which is the density for an exponential distribution with $\beta=1$ for $0 \leq y \leq \infty$.
+    
+    * Now let's consider the next case:  $Y = - log(1-U)$.  All we need to show is that $V = 1- U$ is also a uniform $(0,1)$ random variable and use the previous result.  Let's directly use the `pdf method' (note: $V$ is monotone for $0 \leq v \leq 1$):
+    
+    
+    \begin{eqnarray*}
+    V = 1- U = g(u) &\rightarrow& U = 1- V = g^{-1}(v) \\
+    && \frac{d}{dv} g^{-1}(v) = -1
+    \end{eqnarray*}
+    
+    \begin{eqnarray*}
+    f_V(v) &=& f_U\left(g^{-1}(v) \right) \bigg|   \frac{d}{dv} g^{-1}(v) \bigg| \\
+    &=& 1 \times \bigg|  -1 \bigg| = 1 \textrm{ for } 0 \leq v \leq 1
+    \end{eqnarray*}
+    
+    *  We can see that $V \sim \textrm{uniform}(0,1)$, which means $Y \sim \textrm{exponential}(\beta=1)$. 
+    
+    b.) Let $X = \log \left( \frac{U}{1-U} \right)$.  Let's visually check that $X$ is monotone on $0 \leq u \leq 1$.  
+    
+    
+    ```{r}
+    u <- seq(0, 1, by=0.001)
+    plot( log(u/(1-u)), u, type="l", lwd=3)
+    ```
+    
+    \begin{eqnarray*}
+    x = \log \left( \frac{u}{1-u} \right) = g(u) &\rightarrow& u = \frac{exp(x)}{1+ exp(x)} =  \frac{1}{1 + exp(-x)} =  g^{-1}(x) \\
+    && \frac{d}{dx} g^{-1}(x) = \frac{exp(-x)}{\left(1+exp(-x)\right)^2}
+    \end{eqnarray*}
+    
+    \begin{eqnarray*}
+    f_X(x) &=& f_U\left(g^{-1}(x) \right) \bigg|   \frac{d}{dx} g^{-1}(x) \bigg| \\
+    &=& 1 \times \bigg|  \frac{exp(-x)}{\left(1+exp(-x)\right)^2} \bigg| \\
+    &=& = \frac{exp(-x)}{\left(1+exp(-x)\right)^2} \textrm{ for } -\infty \leq x \leq \infty
+    \end{eqnarray*}
+    
+    * We can see that $X$ has the density of a logistic distribution with $\mu=0$ and $\beta=1$.
+    
+    c.) Now let's generate from $Y \sim \textrm{logistic}(\mu=3, \beta=2)$.
+    
+      + We know how to generate $X \sim  \textrm{logistic}(\mu=0, \beta=1)$
+      + Now we want to generate $Y$ which has a pdf:
+      
+      \begin{eqnarray*}
+      f_{Y}(y) &=& \frac{1}{\beta} \frac{exp\left( - \frac{(y-\mu)}{\beta} \right)}{\left[1 + exp\left( - \frac{(y-\mu)}{\beta} \right)\right]^2} \\
+      &=& \frac{1}{\beta} f_X \left( \frac{(y-\mu)}{\beta} \right)
+      \end{eqnarray*}
+    
+      This suggests that the right transformation would be:
+      
+      $$Y = \beta X + \mu$$
+      
+    \begin{eqnarray*}
+    Y = \beta X + \mu = g(x) &\rightarrow& X = \frac{(Y-\mu)}{\beta} = g^{-1}(y) \\
+    && \frac{d}{dy} g^{-1}(y) = 1/\beta
+    \end{eqnarray*}
+    
+    \begin{eqnarray*}
+    f_Y(y) &=& f_X\left(g^{-1}(y) \right) \bigg|   \frac{d}{dy} g^{-1}(y) \bigg| \\
+    &=& \frac{exp\left( - \frac{(x-\mu)}{\beta} \right)}{\left[1 + exp\left( - \frac{(x-\mu)}{\beta} \right)\right]^2}  \frac{1}{\beta} 
+    \end{eqnarray*}
+    
+    * Generate $U$ from uniform(0,1).
+    * Generate $Y$ from $\beta \log \left( \frac{U}{1-U} \right) + \mu$
+    
+    
+    ```{r}
+    set.seed(1001)
+    S <- 25000
+    mu <- 3
+    beta <- 2 
+    
+    
+    ## empirical 
+    u <- runif(S, 0, 1)
+    y <- beta* log( u/(1-u) ) + mu
+    plot(density(y), type="l", col="blue", lwd=3, 
+         main="Blue = empirical, Red=analytical")
+    
+    ## analytical 
+    y.an <- seq(-15, 15 , by=0.01)
+    f.y.an <- (1/beta)*( exp( - (y.an - mu)/beta )/ ( 1 + exp( - (y.an - mu)/beta ))^2 )
+    lines(y.an, f.y.an, col="red", lwd=3)
+    ```
+      
+
+
+
+
+
+
+

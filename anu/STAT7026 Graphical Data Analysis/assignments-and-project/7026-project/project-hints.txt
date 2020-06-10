@@ -1,0 +1,57 @@
+Hints for the Project
+
+Option 1: The Otter Data.
+
+The otter data is in a list where each list element describes a particular viewing session, so for this question identifying meaningful subsets in the data can be done by subsetting. For example, if you wanted to know the total number of times for group A that otter F1 groomed otter M2, you could get this using
+
+sum(otter$frequency[otter$groomer=="F1"&otter$groomee=="M2"])
+ 
+or, if you wanted to know the number of times in group H that a female otter groomed a male otter, you could get this by using
+
+sum(otter$frequency[(otter$groomer=="F21"|otter$groomer=="F22")&(otter$groomee=="M23"|otter$groomee=="M24")])
+
+The frequencies are the number of grooms, so summing them up gives you grooming totals for various conditions.
+
+You can construct conditions using & and | in this way. So, for example, if you wanted to know the total number of grooms in the breeding season in group A, you could use
+
+sum(otter$frequency[otter$group=="A"&otter$season=="B"])
+
+While otter$frequency measures the number of grooms, otter$time tells you how long the viewing session was. If you have a look at otter$time, you will see the time periods that otters were watched, but note that the times are repeated because each pair of groomer/groomee is listed for each viewing period. So, group A was initially watched for a 127 minute period, and there are 12 possible groomer-groomee pairings, so the number 127 appears 12 times in the otter$time vector - this is the same 127 minute period, so if you work out total times remember that the same time periods appear several times in the otter$time component. 
+
+Within a group, the otters are all watched for the same time, but different groups are watched for different time periods, so if you want to compare across groups you can't just use frequency since the otters are watched for different times; for instance, if for one group 50 grooms were observed in 200 minutes, while for another group 40 grooms were observed in 100 minutes, you would not just compare 50 to 40, but rather you would have to take time into account.
+
+Basically, you can answer the four questions asked by combining the data using the kind of subsetting techniques described above and then using graphics to display the frequencies or rates you want to compare. As you look at the four questions, you will probably want to make a lot of different conditions so use copy-paste-edit to form different conditions quickly - e.g. to consider all pairings in group A, there are 12 pairings, but using copy-paste and editing can save a lot of typing: the following took only a couple of minutes
+
+f1m2freq=sum(otter$groomer=="F1"&otter$groomee=="M2")
+f1m3freq=sum(otter$groomer=="F1"&otter$groomee=="M3")
+f1m4freq=sum(otter$groomer=="F1"&otter$groomee=="M4")
+m2f1freq=sum(otter$groomer=="M2"&otter$groomee=="F1")
+m3f1freq=sum(otter$groomer=="M3"&otter$groomee=="F1")
+m4f1freq=sum(otter$groomer=="M4"&otter$groomee=="F1")
+m2m3freq=sum(otter$groomer=="M2"&otter$groomee=="M3")
+m2m4freq=sum(otter$groomer=="M2"&otter$groomee=="M4")
+m3m2freq=sum(otter$groomer=="M3"&otter$groomee=="M2")
+m3m4freq=sum(otter$groomer=="M3"&otter$groomee=="M4")
+m4m2freq=sum(otter$groomer=="M4"&otter$groomee=="M2")
+m4m3freq=sum(otter$groomer=="M4"&otter$groomee=="M3")
+
+The kinds of graphs that may come in useful for this data are graphs like bar charts (see help(barplot) in R) or box plots to compare frequencies or rates of grooming across groups, genders, and seasons.
+
+Option 2: The Insurance Data.
+
+The data set is in a matrix called insure. The idea is that people seeking to buy home insurance in Chicago are either accepted by the insurance company (Volun) or their initial request to buy insurance is rejected and they can then buy (usually more expensive) insurance under a government plan (Invol). So Volun is a rate of "accepted" requests to purchase insurance, while Invol is a rate of "rejected" requests. Insurance companies can legally reject requests for a variety of reasons (e.g. high theft rates, high fire rate) but it is not legal for them to reject requests for reasons like race (this being discrimination) or because a house is old (age). So, rejection rates in neighbourhoods with high racial composition might be evidence of discrimination, but the data set is high-dimensional so you need to try to separate out the effect of race from the other effects (fire, theft, etc.) 
+
+The data is organised by Zip code (postcode) and you have a map of Chicago so you can see where each zip code is. Although zip codes are numbers, they are really just codes, so you should not put zip code into any models you fit just as numbers as this is meaningless.
+
+There are several issues to consider for this data set:
+
+1. How to compare neighbourhoods. Neighbourhoods have different sizes, so the total amount of insurance sold into each neighbourhood differs. For instance, one neighbourhood might have 100 voluntary (accepted) policies and 10 involuntary (rejected) policies, while another neighbourhood might have 200 voluntary (accepted) policies and 50 involuntary policies, so even though the second neighbourhood has more insurance accepted than the first, it also has relatively more rejected. Think about how to use Voluntary and Invol together to measure insurability in each neighbourhood.
+
+2. A regression approach makes sense, since you are trying to relate insurability to a range of other variables (rage, age of housing, fire, theft, income). But the key is to be able to see if, for example, race is important to describe insurability BEYOND THE EFFECTS OF, e.g., fire, theft, etc. Fitting models that relate insurability to the variables race, fire, theft, etc. and working out which variables are significant would be a place to start, but seeing how the variables relate to each other is also important - e.g. through scatterplot matrices, symbol plots, coplots, etc.  
+
+3. The map is there to help you see whether location matters - I do not expect complex uses of the map, but you could use it to visualise how insurability varies by location and see how that matches up to, for example, how racial composition varies by location. Printing and colouring the map may be one way to get an idea of how, for example, race and insurance relate. The zip codes are there so you can match up to the map - DO NOT include the raw zip codes into a model since they are location codes and have no numerical meaning in a modelling sense.
+
+4. When using regression models, make sure you check and include the usual diagnostic plots: an absolute residual plot and a QQ plot of residuals so you can check model assumptions. Also, make sure you write down any final model that you fit.
+
+The kinds of tools you might use to visualise and analyse this data are scatterplots and symbol plots or co-plots to try to summarise the relationship between (say) a measure of insurability and the variables race, age, income, fire and theft. You should also make sure to include diagnostic plots (absolute residual plots, QQ plots of residuals) to confirm model assumptions.
+

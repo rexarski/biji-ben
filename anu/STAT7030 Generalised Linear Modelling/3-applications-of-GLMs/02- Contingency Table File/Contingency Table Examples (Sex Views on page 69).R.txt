@@ -1,0 +1,135 @@
+# Hair and eye colour example outlined in Bronwyn's slides:
+
+# Might need to reset the library location to access the faraway library
+# .libPaths("H:/R")
+
+library(faraway)
+haireye
+help(haireye)
+ct<-xtabs(y~hair+eye,haireye)
+ct
+
+# Poisson sampling model
+
+PSmodel <- glm(y ~ hair+eye, poisson, data=haireye)
+anova(PSmodel,test="Chi")
+summary(PSmodel)
+
+PSmodel2 <- glm(y ~ hair*eye, poisson, data=haireye)
+anova(PSmodel2,test="Chi")
+summary(PSmodel2)
+
+# Multinomial sampling
+
+# Observed counts
+
+oij<-ct
+
+rtot <- apply(ct,1,sum)
+rtot
+ctot <- apply(ct,2,sum)
+ctot
+eij <- rtot%*%t(ctot)/sum(rtot)
+row.names(eij) <- names(rtot)
+
+# Check all eij's are greater than 5
+
+eij
+
+# log Likelihood & Pearson statistics
+
+2*sum(oij*log(oij/eij))
+1-pchisq(2*sum(oij*log(oij/eij)),9)
+
+sum((oij-eij)^2/eij)
+1-pchisq(sum((oij-eij)^2/eij),9)
+
+# Where are the large residuals
+
+rij <- (oij-eij)/sqrt(eij)
+rij
+
+# Note compare these rij's with:
+
+residuals(PSmodel,type="pearson")
+
+# Now for a tailored residual plot:
+
+tmp <- c(rij[,1],0,rij[,2],0,rij[,3],0,rij[,4])
+barplot(tmp,main="Barplot of Pearson Residuals (Grouped by Eye colour)",xaxt="n")
+lines(c(5.5,5.5),c(6,-4),lty=3)
+lines(c(11.5,11.5),c(6,-4),lty=3)
+lines(c(17.5,17.5),c(6,-4),lty=3)
+text(3,-3.5,"Green")
+text(9,-3.5,"Hazel")
+text(15,-3.5,"Blue")
+text(20,-3.5,"Brown")
+
+levels(haireye$hair)
+title(sub="Hair colours: BLACK, BROWN, RED, BLOND")
+abline(h=qt(0.025,9),lty=2)
+abline(h=qt(0.975,9),lty=2)
+
+# Sex Views example (page 69 from Section 3 of the "brick" of lecture notes)
+
+# The following R code is a slightly modified version of the code shown on pages 76-79 of the brick, 
+# used to analyse the data (from page 69) on the views of American university students towards pre-marital sex.
+
+sexviews <- read.table("SxViews.txt", header=T)
+sexviews
+
+rowtots <- apply(sexviews,1,sum)
+rowtots
+coltots <- apply(sexviews,2,sum)
+coltots
+
+oij <- as.matrix(sexviews)
+eij <- rowtots %*% t(coltots) / sum(rowtots)
+row.names(eij) <- names(rowtots)
+oij
+eij
+
+# Note that a couple of the expected values are just less than 5
+
+pearsonX2 <- sum((oij - eij)^2/eij)
+pearsonX2
+qchisq(0.95, (nrow(sexviews)-1)*(ncol(sexviews)-1))
+1 - pchisq(pearsonX2, (nrow(sexviews)-1)*(ncol(sexviews)-1))
+
+yij <- as.vector(as.matrix(sexviews))
+view <- rep(row.names(sexviews),5)
+region <- c(rep("East.Coast",4),rep("South",4),rep("Midwest",4),rep("West.Coast",4),rep("Outside.U.S.",4))
+sexviews.glm <- glm(yij ~ view + region, family=poisson)
+sexviews.glm
+fitted(sexviews.glm)
+
+# Compare with the earlier eij
+
+eij
+
+sum(residuals(sexviews.glm,"pearson")^2)
+qchisq(0.95,sexviews.glm$df.residual)
+1 - pchisq(sum(residuals(sexviews.glm,"pearson")^2), sexviews.glm$df.residual)
+
+anova(sexviews.glm, test="Chisq")
+1-pchisq(sexviews.glm$deviance, sexviews.glm$df.residual)
+
+sexviews.glm1 <- glm(yij ~ view * region, family=poisson)
+anova(sexviews.glm1, test="Chisq")
+
+# Plot from the top of page 79:
+
+plot(sexviews.glm$linear.predictor, residuals(sexviews.glm, "pearson"), xlab="Linear Predictor Values", ylab="Pearson Residuals")
+title("(a) - Pearson residuals for Independence model")
+
+# Compare with:
+
+plot(sexviews.glm)
+
+# Unfortunately, we can't easily produce the Second plot from the top of page 79 using R, 
+# as plotfit was just an S-Plus function and I am still looking for an R equivalent.
+
+# tmp <- list(grand=0, row=1:nrow(sexviews), col=(1:ncol(sexviews))*1.4, resid=residuals(sexviews.glm, "pearson"))
+# plotfit(tmp, rowlab=row.names(sexviews), collab=names(sexviews),c=3,main="(b) - Significant Pearson residuals by cell", yaxt="n")
+
+

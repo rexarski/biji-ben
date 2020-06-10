@@ -1,0 +1,202 @@
+pairs(moorhen)
+
+library(MASS)
+pairs(moorhen,
+      panel=function(x,y){points(x,y);abline(rlm(y~x))})
+
+y <- moorhen[,1]
+x <- moorhen[,-1]
+
+w <- sweep(x,2,apply(x,2,mean))
+s <- prcomp(w %*% diag(1/sqrt(diag(crossprod(w)))))
+s$sdev[1]/s$sdev
+# [1] 1.000000 1.727144 2.431249 4.173639 4.334497
+
+pairs(s$x)
+
+plot(c(1:43),hat(x),ylim=c(0,max(hat(x))),
+     main="Leverage Points in the Moorhen Data",
+     xlab="Case Number",
+     ylab="Leverage")
+segments(c(1:43),0,c(1:43),hat(x))
+abline(h=5/43)
+
+w <- sweep(x,2,apply(x,2,median))/rep(apply(x,2,median),rep(nrow(x),ncol(x)))
+any(abs(w) >= 3)
+# [1] F
+
+fit <- rlm(y~x)
+fv <- cbind(1,x) %*% fit$coef
+res <- fit$resid
+hwt <- 1/fit$w
+
+par(mfcol=c(2,2),oma = c(6,0,6,0))
+
+plot(c(1:nrow(moorhen)), hwt,
+     main = "Huber Weights for Moorhen Data",
+     xlab = "Observation Number",
+     ylab = "Weight")
+segments(c(1:43),1,c(1:43),hwt)
+
+qqnorm(res,
+       main="Quantile-Quantile Plot",
+       xlab="Gaussian Quantiles",
+       ylab="Residuals")
+
+plot(fv,res,
+     main="Residual Plot",
+     xlab="Fitted Values",
+     ylab="Residuals")
+
+plot(fv,abs(res),
+     main="Absolute Residual Plot",
+     xlab="Fitted Values",
+     ylab="Absolute Residuals")
+lines(lowess(fv,abs(res)))
+
+mtext("Diagnostics for the model fit to the Moorhen data",
+      side=3,line=2,outer=T,cex=1.5)
+mtext("The model includes all variables on the raw scale",
+      side=1,line=2,outer=T)
+
+fit <- rlm(log(y)~x)
+fv <- cbind(1,x) %*% fit$coef
+res <- fit$resid
+hwt <- 1/fit$w
+
+par(mfcol=c(2,2),oma = c(6,0,6,0))
+
+plot(c(1:nrow(moorhen)), hwt,
+     main = "Huber Weights for Moorhen Data",
+     xlab = "Observation Number",
+     ylab = "Weight")
+segments(c(1:43),1,c(1:43),hwt)
+
+qqnorm(res,
+       main="Quantile-Quantile Plot",
+       xlab="Gaussian Quantiles",
+       ylab="Residuals")
+
+plot(fv,res,
+     main="Residual Plot",
+     xlab="Fitted Values",
+     ylab="Residuals")
+
+plot(fv,abs(res),
+     main="Absolute Residual Plot",
+     xlab="Fitted Values",
+     ylab="Absolute Residuals")
+lines(lowess(fv,abs(res)))
+
+mtext("Diagnostics for the model fit to the Moorhen data",
+      side=3,line=2,outer=T,cex=1.5)
+mtext("The model includes all variables with shield area on the log scale",
+      side=1,line=2,outer=T)
+
+
+n <- nrow(x)
+p <- ncol(x)
+s <- median(abs(res))/0.6745
+eta <- sum(abs(res/s) <= 1.345)/n
+tau <- sum(ifelse(abs(res/s) <= 1.345,res/s,1.345 )^2)/(n-p-1)
+se <- s^2*tau*(eta+(p/n)*(1-eta))/(eta^3)
+lam <- 2*eta/tau
+v <- se*solve(crossprod(cbind(1,x)))
+tstats <- fit$coef/sqrt(diag(v))
+tstats
+# Weight    Stern         Hb     TandT    Adult
+# 1.333897 0.2116106 1.668388 -0.3245005 0.6927865 9.370454
+
+qfull <- sum(ifelse(abs(res/s) <= 1.345,((res/s)^2)/2 , 1.345*abs(res/s) - 1.345^2/2))
+
+fit0 = rlm(log(y)~x[,c(-1,-3,-4)])
+res <- fit0$resid
+qnull <- sum(ifelse(abs(res/s) <= 1.345,((res/s)^2)/2 , 1.345*abs(res/s) - 1.345^2/2))
+1-pf((qnull - qfull)*lam/3,3,37)
+# [1] 0.8063552
+
+fit1 <- rlm(log(y)~x[,5])
+res <- fit1$resid
+qnull <- sum(ifelse(abs(res/s) <= 1.345,((res/s)^2)/2 , 1.345*abs(res/s) - 1.345^2/2))
+1-pf((qnull - qfull)*lam/4,4,37)
+# [1] 0.09740043
+
+fv <- cbind(1,x[,5]) %*% fit1$coef
+res <- fit1$resid
+hwt <- 1/fit1$w
+
+par(mfcol=c(2,2),oma = c(6,0,6,0))
+
+plot(c(1:nrow(moorhen)), hwt,
+     main = "Huber Weights for Moorhen Data",
+     xlab = "Observation Number",
+     ylab = "Weight")
+segments(c(1:43),1,c(1:43),hwt)
+
+qqnorm(res,
+       main="Quantile-Quantile Plot",
+       xlab="Gaussian Quantiles",
+       ylab="Residuals")
+
+plot(fv,res,
+     main="Residual Plot",
+     xlab="Fitted Values",
+     ylab="Residuals")
+
+plot(fv,abs(res),
+     main="Absolute Residual Plot",
+     xlab="Fitted Values",
+     ylab="Absolute Residuals")
+lines(lowess(fv,abs(res)))
+
+mtext("Diagnostics for the model fit to the Moorhen data",
+      side=3,line=2,outer=T,cex=1.5)
+mtext("The model includes adult with shield area on the log scale",
+      side=1,line=2,outer=T)
+
+par(mfcol=c(1,2),oma = c(6,0,6,0))
+qqnorm(log(y[x[,5]==0]),ylim=range(log(y)),type="n",
+       main="QQ-Plot",
+       xlab="Gaussian Quantiles",
+       ylab="log(Shield Area)",
+       sub="A shaded triangle indicates an adult")
+points(qqnorm(log(y[x[,5]==0]),plot=F),pch=2)
+points(qqnorm(log(y[x[,5]==1]),plot=F),pch=17)
+
+boxplot(split(log(y),x[,5]),style.bxp="old",
+        names=c("Juveniles","Adults"),
+        ylab="log(Shield Area)",
+        main="Boxplots")
+
+mtext("Results for the Moorhen data",
+      side=3,line=2,outer=T,cex=1.5)
+mtext("The relationship between log(Shield Area) and status",
+      side=1,line=2,outer=T)
+
+res <- fit1$resid
+n<- nrow(x)
+p <- 1
+s <- median(abs(res))/0.6745
+eta <- sum(abs(res/s) <= 1.345)/n
+tau <- sum(ifelse(abs(res/s) <= 1.345,res/s,1.345 )^2)/(n-p-1)
+se <- s^2*tau*(eta+(p/n)*(1-eta))/(eta^3)
+v <- se*solve(crossprod(cbind(1,x[,5])))
+cbind(coef=fit1$coef,se=sqrt(diag(v)),tstat=fit1$coef/sqrt(diag(v)))
+
+# coef         se    tstat
+# 4.8535712 0.06217747 78.05996
+# x 0.8485636 0.07996144 10.61216
+
+
+par(mfrow=c(1,1),oma=c(0,0,0,0))
+plot(x[,2],log(y),type="n",
+     main="Plot of log(Shield area) against Stern Length",
+     xlab="Stern Length",
+     ylab="log(Shield Area)",
+     sub="A shaded triangle indicates an adult")
+adult <- (x[,5]==1)
+points(x[!adult,2],log(y[!adult]),pch=2)
+points(x[adult,2],log(y[adult]),pch=17)
+abline(fit0$coef[1],fit0$coef[2])
+abline(fit0$coef[1]+fit0$coef[3],fit0$coef[2])
+

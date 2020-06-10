@@ -1,0 +1,92 @@
+# The following S-plus code is from pages 92-93 of the brick. It still works in R.
+
+# The Berkeley Admissions data is a example which was invented to illustrate Simpson's paradox - an internet search will give
+# a number of example of where Simpson's paradox has occured with real data.  In particular, see: Westbrooke, I. (1998), 
+# "Simpson's Paradox: An Example in a New Zealand Survey of Jury Composition", Chance , 11(2), 40-42, which is currently 
+# available on the internet at http://www.stats.govt.nz 
+
+yijk <- array(0, c(2,2,2), dimnames=list(c("male","female"),c("admit","deny"),c("science","arts")))
+yijk[,,1] <- matrix(c(90,30,90,30),ncol=2)
+yijk[,,2] <- matrix(c(15,30,45,90),ncol=2)
+yijk
+
+# Collapsing the multi-way table over faculty:
+
+oij <- apply(yijk,c(1,2),sum)
+oij
+
+gtot <- apply(oij,1,sum)
+atot <- apply(oij,2,sum)
+eij <- gtot %*% t(atot) / sum(atot)
+attributes(eij) <- attributes(oij)
+eij
+
+chi2 <- sum(((oij - eij)^2)/eij)
+c(chi2, 1-pchisq(chi2,1))
+
+# But, we have collpsed over faculty and faculty is not independent of both gender and result:
+
+yijk
+
+eij12 <- array(0, c(2,2,2), dimnames=list(c("male","female"),c("admit","deny"),c("science","arts")))
+ftot <- apply(yijk,3,sum)
+agtot <- apply(yijk,c(1,2),sum)
+eij12[,,1] <- ftot[1]*agtot/sum(ftot)
+eij12[,,2] <- ftot[2]*agtot/sum(ftot)
+eij12
+
+chi2 <- sum(((yijk - eij12)^2)/eij12)
+c(chi2, 1-pchisq(chi2,1))
+
+# The appropriate Pearson's chi-square analysis is:
+
+yijk
+ 
+yi.k <- apply(yijk,c(1,3),sum)
+yi.k
+y.jk <- apply(yijk,c(2,3),sum)
+y.jk
+y..k <- apply(yijk,3,sum)
+y..k
+eijk <- array(0, c(2,2,2), dimnames=list(c("male","female"),c("admit","deny"),c("science","arts")))
+eijk[,,1] <- yi.k[,1] %*% t(y.jk[,1]) / y..k[1]
+eijk[,,2] <- yi.k[,2] %*% t(y.jk[,2]) / y..k[2]
+eijk
+
+chi2 <- sum(((yijk - eijk)^2)/eijk)
+c(chi2, 1-pchisq(chi2,1))
+
+# i.e. gender and result are independent when we condition on faculty!
+
+# Or, as a Poisson GLM:
+
+berkeleyGAD <- as.vector(yijk)
+gender <- c(1,0,1,0,1,0,1,0)
+result <- c(1,1,0,0,1,1,0,0)
+faculty <- c(1,1,1,1,0,0,0,0)
+cbind(berkeleyGAD, gender, result, faculty)
+
+bGAD.glm <- glm(berkeleyGAD ~ gender*result*faculty, family=poisson)
+anova(bGAD.glm, test="Chisq") 
+summary(bGAD.glm)
+
+# The gender:result interaction is very similar to the Pearson chi-square shown above in the incorrect analysis,
+# which suggested a relationship between gender and result, but note that the coefficient of gender:result 
+# in the table of coefficients is almost equal to zero!
+
+# These variables are confounded (definitely not orthogonal) and order does makes a difference, for example:
+
+bGAD.glm1 <- glm(berkeleyGAD ~ faculty*result*gender, family=poisson)
+anova(bGAD.glm1, test="Chisq") 
+summary(bGAD.glm1) 
+
+# A model in which the "tests" in the analysis of deviance table and the table of coefficients at least appear 
+# to be consistent is:
+
+bGAD.glm2 <- glm(berkeleyGAD ~ faculty + result + gender + faculty:gender + faculty:result, family=poisson)
+anova(bGAD.glm2, test="Chisq")
+summary(bGAD.glm2)
+
+# Like the analysis in the brick, this model suggests that there are relationships between faculty and gender and
+# between faculty and result. If we ignore faculty, then there appears to be a relationship between gender and result,
+# which does not exist if we correctly account for the other two relationships! 

@@ -1,0 +1,101 @@
+#Galapagos island case study
+library(faraway)
+
+help(gala)
+
+gala <- gala[,-2]
+
+modl <- lm(Species ~ . , gala)
+plot(predict(modl),residuals(modl),xlab="Fitted",ylab="Residuals")
+
+modt <- lm(sqrt(Species) ~ . , gala)
+plot(predict(modt),residuals(modt),xlab="Fitted",ylab="Residuals")
+summary(modt)
+
+modp <- glm(Species ~ .,family=poisson,gala)
+summary(modp)
+
+halfnorm(residuals(modp))
+plot(residuals(modp) ~ predict(modp,type="link"),xlab=expression(hat(eta)),ylab="Deviance residuals")
+plot(residuals(modp,type="response") ~ predict(modp,type="link"),xlab=expression(hat(eta)),ylab="Response residuals")
+
+dp <- sum(residuals(modp,type="pearson")^2)/modp$df.res
+1-pchisq(sum(residuals(modp,type="pearson")^2),modp$df.res)
+
+modp.q<-glm(Species ~ .,family=quasipoisson,gala)
+summary(modp.q)
+drop1(modp.q,test="F")
+
+#Partial residual for Area - no transformations on predictors
+par(mfrow=c(2,2))
+u <- log(gala$Species)-predict(modp) + coef(modp)[2]*(gala$Area)
+plot(u ~ (Area), gala,ylab="Partial Residual")
+
+#Take log of all predictors - - note add 0.1 to Scruz to avoid errors since log of zero is undefined.  
+modpl <- glm(Species ~ log(Area) + log(Elevation) + log(Nearest) + log(Scruz+0.1) + log(Adjacent), family=poisson, gala)
+c(deviance(modp),deviance(modpl)) #check reduction in deviance
+#Partial residual for area after log transformation
+u <- log(gala$Species)-predict(modpl) + coef(modpl)[2]*log(gala$Area)
+plot(u ~ log(Area), gala,ylab="Partial Residual")
+abline(0,coef(modpl)[2])
+
+#Absolute Deviance Residual Plot
+plot(abs(residuals(modpl))~predict(modpl),ylab="|Deviance Residual|",xlab="Linear Predictor")
+
+#Assess link function - g(Y) - versus linear predictor
+mu<-predict(modpl,type="response")
+z<-predict(modpl)+(gala$Species-mu)/mu
+plot(z~ predict(modpl),gala, xlab="Linear predictor", ylab="Linearized response")
+
+#Half normal plots - seek outliers which may be identified as points off the trend. 
+halfnorm(rstudent(modpl))
+
+gali <- influence(modpl)
+halfnorm(gali$hat)
+halfnorm(cooks.distance(modpl))
+
+#Leverage plot and Cooks distance plot indicate case 25 may be influential.  Observed change in coefficient for Scruz   
+plot(gali$coef[,5],ylab="Change in Scruz coef",xlab="Case no.")
+
+#Refit data without case=25 and examine coefficients. Observe the sign change for Scruz coefficient.
+modplr <- glm(Species ~ log(Area) + log(Elevation) + log(Nearest) + log(Scruz+0.1) + log(Adjacent), family=poisson, gala, subset=-25)
+cbind(coef(modpl),coef(modplr))
+
+##overdispersion test
+phi<-sum(residuals(modpl,type="pearson")^2)/df.residual(modpl)
+phi
+1-pchisq(sum(residuals(modpl,type="pearson")^2),df.residual(modpl))
+
+summary(modpl,dispersion=phi)
+drop1(modp,scale=phi,test="F")
+
+modpl <- glm(Species ~ log(Area) + log(Elevation) + log(Nearest) + log(Scruz+0.1) + log(Adjacent), family=quasipoisson, gala)
+summary(modpl)
+
+
+#Gamma radiation case study
+library(faraway)
+help(dicentric)
+dicentric$dosef<-factor(dicentric$doseamt)
+
+#try modelling the rate directly (identity link - normal error distribution)
+
+lmod<-lm(ca/cells~log(doserate)*dosef,dicentric)
+summary(lmod)$adj
+plot(residuals(lmod)~fitted(lmod),xlab="Fitted",ylab="Residuals")
+abline(h=0)
+
+rmod <- glm(ca ~ offset(log(cells))+log(doserate)*dosef, family=poisson,dicentric)
+summary(rmod)
+plot(residuals(rmod)~predict(rmod))
+dp <- sum(residuals(rmod,type="pearson")^2)/rmod$df.res
+1-pchisq(sum(residuals(rmod,type="pearson")^2),rmod$df.res)
+
+#Try binomial GLM
+bmod <- glm(cbind(ca,cells-ca) ~ log(doserate)*dosef, family=binomial,dicentric)
+summary(rmod)
+
+
+
+
+

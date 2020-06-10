@@ -1,0 +1,32 @@
+oring <- read.csv('oring.csv',header=T)
+oring
+attach(oring)
+
+model <- glm(as.factor(FAILURE) ~ TEMP,family=binomial(link='logit'))
+summary(model)
+
+library(aod)
+wald.test(b=coef(model),Sigma=vcov(model),Terms=2) # this is two sided p-value
+# pnorm(-0.17132/0.08344) # this is only one sided p-value
+
+pchisq(summmary(model)$null.deviance - summary(model)$deviance,
+       summary(model)$df.null - summary(model)$df.residual, lower.tail = F)
+
+confint.default(model)
+# c(-0.17132-1.96*0.08344, -0.17132+1.96*0.08344)
+
+pred.31 <- as.numeric(c(1,31)%*%coef(model))
+prob <- 1/(1+exp(-pred.31))
+prob # 99.61828% of failure rate
+# or just use predict() function to
+# predict(..., type='response') to predict p.hat
+# predict(..., type='link') to predict eta.hat
+
+
+# -------------
+owl <- read.csv('owl.csv')
+attach(owl)
+
+olm <- glm(as.factor(SITE)~PCTRING1+PCTRING2+PCTRING3+PCTRING4+
+             PCTRING5+PCTRING6+PCTRING7,
+           family=binomial(link='logit'))

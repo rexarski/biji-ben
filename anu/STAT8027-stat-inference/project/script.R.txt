@@ -1,0 +1,100 @@
+library(rjags)
+library(coda)
+library(mcmcplots)
+
+# 2015-2016 Premier League result table
+# data source: https://github.com/vijinho/epl_mysql_db/blob/master/csv/E0-2015.csv
+
+dat <- read.csv("E0-2015.csv")
+head(dat)
+dat <- dat[,3:6]
+
+# team <- dat$HomeTeam[order(unique(dat$HomeTeam))]
+teams <- unique(dat$HomeTeam)
+
+home_id <- rep(0, length(dat))
+away_id <- rep(0, length(dat))
+
+for (i in 1:nrow(dat)){
+    home_id[i] <- match(dat$HomeTeam[i], teams)
+    away_id[i] <- match(dat$AwayTeam[i], teams)
+}
+
+dat$home_id <- home_id
+dat$away_id <- away_id
+colnames(dat) <- c("HomeTeam", "AwayTeam", "HomeGoals", "AwayGoals", "home_id", "away_id")
+head(dat)
+
+set.seed(8027)
+
+hist(dat$AwayGoal, breaks=-0.5:7, xlim=c(-0.5, 8), col=rgb(1,0,0,0.5), main="title" )
+hist(dat$HomeGoals, breaks=-0.5:7, xlim=c(-0.5, 8), col=rgb(0,0,1,0.5), add=T)
+legend("topright", legend=c("Away","Home"), col=c(rgb(1,0,0,0.5), rgb(0,0,1,0.5)), pt.cex=2, pch=15 )
+
+data_list <- list(HomeGoals = dat$HomeGoals, AwayGoals = dat$AwayGoals,
+                  HomeTeam = dat$home_id, AwayTeam = dat$away_id,
+                  n_teams = length(teams), n_games = nrow(dat))
+
+m1_string <- "model {
+
+for(i in 1:n_games) {
+    HomeGoals[i] ~ dpois(lambda_home[HomeTeam[i],AwayTeam[i]])
+    AwayGoals[i] ~ dpois(lambda_away[HomeTeam[i],AwayTeam[i]]) 
+}
+
+for(home_id in 1:n_teams) { 
+    for(away_id in 1:n_teams) {
+        lambda_home[home_id, away_id] <- exp(baseline + skill[home_id] - skill[away_id]) 
+        lambda_away[home_id, away_id] <- exp(baseline + skill[away_id] - skill[home_id])
+    }
+}
+
+skill[1] <- 0 
+for(j in 2:n_teams) { 
+    skill[j] ~ dnorm(group_skill, group_tau) 
+}
+
+group_skill ~ dnorm(0, 0.0625)
+group_tau <- 1 / pow(group_sigma, 2) 
+group_sigma ~ dunif(0, 3) 
+baseline ~ dnorm(0, 0.0625) 
+}"
+
+m1 <- jags.model(textConnection(m1_string), data=data_list, n.chains=3, n.adapt=5000)
+update(m1, 5000)
+s1 <- coda.samples(m1, variable.names=c("baseline", "skill", "group_skill", "group_sigma"),
+                  n.iter=10000, thin=2)
+ms1 <- as.matrix(s1)
+
+col_name <- function(name, ...){
+    paste0(name, "[", paste(..., sep=","), "]")
+}
+
+plot(s1[,col_name("skill", which(teams == "Leicester"))])
+
+plot_goals <- function(home_goals, away_goals){
+    n_matches <- length(home_goals)
+    goal_diff <- home_goals - away_goals
+    match_result <- ifelse(goal_diff < 0, "away wins", ifelse(goal_diff > 0, "home wins", "equal"))
+    hist(home_goals, xlim=c(-0.5, 10), breaks=(0:100)-0.5)
+    hist(away_goals, xlim=c(-0.5, 10), breaks=(0:100)-0.5)
+    hist(goal_diff, xlim=c(-6,6), breaks=(-100:100)-0.5)
+    barplot(table(match_result)/n_matches, ylim=c(0,1))
+}
+
+plot_pred_comp1 <- function(home_team, away_team, ms){
+    # Simulates and plots game goals scores using the MCMC samples from the m1 model.
+    par(mfrow=c(2,4))
+    baseline <- ms[, "baseline"] 
+    home_skill <- ms[, col_name("skill", which(teams == home_team))]
+    away_skill <- ms[, col_name("skill", which(teams == away_team))]
+    home_goals <- rpois(nrow(ms), exp(baseline + home_skill - away_skill))
+    away_goals <- rpois(nrow(ms), exp(baseline + away_skill - home_skill))
+    plot_goals(home_goals, away_goals) 
+    # Plots the actual distribution of goals between the two teams
+    home_goals <- dat$HomeGoals[dat$HomeTeam == home_team & dat$AwayTeam == away_team] 
+    away_goals <- dat$AwayGoals[dat$HomeTeam == home_team & dat$AwayTeam == away_team]
+    plot_goals(home_goals, away_goals)
+}
+plot_pred_comp1("Leicester", "Man United", ms1) #???
+plot_pred_comp1("Man United", "Leicester", ms1) #???

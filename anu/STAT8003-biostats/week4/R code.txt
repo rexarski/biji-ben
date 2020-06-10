@@ -1,0 +1,55 @@
+#problems with (1) and (2) if censored observations
+#investigation last for 4 years
+set.seed(1)
+enter<-runif(50,0,4)
+uncensored<-rexp(50,0.2)
+censored<-ifelse(uncensored+enter>4,4-enter,uncensored)
+iscensored<-ifelse(uncensored+enter>4,1,0)
+round(rbind(uncensored,censored,iscensored)[,1:5],1)
+
+#using complete data
+plot(ecdf(uncensored),verticals=T,main=NULL)
+#treating censored as actual values
+lines(ecdf(censored),verticals=T,col="red")
+#removing censored values
+lines(ecdf(censored[-which(iscensored==1)]),verticals=T,col="blue")
+#actual exp(0.2) cdf
+lines(ecdf(rexp(1000,0.2)),verticals=T,col="green")
+
+####################
+library(survival)
+data(lung)
+lung[1:3,]
+
+
+#one curve for both males and females
+censored<-ifelse(lung$status==2,1,0)
+km.est<-survfit(Surv(lung$time,censored)~1,conf.type="plain")
+plot(km.est,ylab="survival function",xlab="time")
+
+#last observation is censored
+which.max(lung$time)
+lung[6,]
+
+#different curves for males and females
+km.est1<-survfit(Surv(lung$time,censored)~lung$sex)
+plot(km.est1,ylab="survival function",xlab="time")
+
+####################
+
+#how does KM perform for the simulated data?
+#investigation last for 30 years
+set.seed(1)
+enter<-runif(50,0,30)
+uncensored<-rexp(50,0.1)
+censored<-ifelse(uncensored+enter>30,30-enter,uncensored)
+iscensored<-ifelse(uncensored+enter>30,0,1)
+#complete data
+km.est<-survfit(Surv(uncensored)~1)
+plot(km.est,ylab="Survival function",xlab="time")
+#censored data using KM
+km.est1<-survfit(Surv(censored,iscensored)~1)
+lines(km.est1,col="red")
+#treading censored values as actual values
+km.est2<-survfit(Surv(censored)~1)
+lines(km.est2,col="blue")

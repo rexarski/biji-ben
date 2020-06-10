@@ -1,0 +1,107 @@
+# STAT3015/4030/STAT7030 GLMs
+# R command file for Tutorial 12
+
+
+# Question 1
+# (a) 
+lot <- read.table("Lot.txt", header=TRUE)
+attach(lot)
+lot
+# Pearson Chi-squared test
+rtot <- apply(lot, 1, sum)
+ctot <- apply(lot, 2, sum)
+eij <- rtot%*%t(ctot)/sum(rtot)
+pres <- (lot-eij)/sqrt(eij)
+c(sum(pres^2), 1-pchisq(sum(pres^2), (9-1)*(6-1)))
+
+# (b)
+oij <- as.matrix(lot)
+yij <- as.vector(oij)
+rfact <- rep(1:6, 9)
+cfact <- rep(1:9, rep(6, 9))
+rind2 <- ifelse(rfact==2, 1, 0)
+rind3 <- ifelse(rfact==3, 1, 0)
+rind4 <- ifelse(rfact==4, 1, 0)
+rind5 <- ifelse(rfact==5, 1, 0)
+rind6 <- ifelse(rfact==6, 1, 0)
+cind2 <- ifelse(cfact==2, 1, 0)
+cind3 <- ifelse(cfact==3, 1, 0)
+cind4 <- ifelse(cfact==4, 1, 0)
+cind5 <- ifelse(cfact==5, 1, 0)
+cind6 <- ifelse(cfact==6, 1, 0)
+cind7 <- ifelse(cfact==7, 1, 0)
+cind8 <- ifelse(cfact==8, 1, 0)
+cind9 <- ifelse(cfact==9, 1, 0)
+rinds <- cbind(rind2, rind3, rind4, rind5, rind6)
+cinds <- cbind(cind2, cind3, cind4, cind5, cind6, cind7, cind8, cind9)
+
+lot.glm <- glm(yij ~ rinds*cinds, family = poisson)
+anova(lot.glm)
+1-pchisq(48.09458,40)
+
+# (c)
+# Drop-in-deviance tests
+# Test of "rbinds"
+1-pchisq(11.57692,5)
+# Test of "cbinds"
+1-pchisq(2.11547,8)
+# significant row effects while no column effects
+
+# Refitting the model and examining the estimated effect values 
+lot.glm1 <- glm(yij ~ rinds + cinds, family = poisson)
+summary(lot.glm1)$coef
+
+# (d)
+lot.glm2 <- glm(yij ~ rind6 + cbind(rind2, rind3, rind4, rind5), family = poisson)
+anova(lot.glm2)
+
+1-pchisq(3.250624, 4)
+
+summary(lot.glm2)$coef[2, ]
+
+(-0.5166907-(-0.7073))/0.2166924
+
+lot.glm3 <- glm(yij ~ rind6, family = poisson)
+summary(lot.glm3)$coef[2, ]
+
+# Question 2
+# (a)
+hw <- read.table("HWCon.txt", header = TRUE)
+attach(hw)
+hw
+
+rtot <- apply(hw, 1, sum)
+ctot <- apply(hw, 2, sum)
+eij <- rtot%*%t(ctot)/sum(rtot)
+pres <- (hw-eij)/sqrt(eij)
+c(sum(pres^2), 1-pchisq(sum(pres^2), (3-1)*(5-1)))
+
+# varaibles appear to be independent
+
+# (b)
+nij <- sweep(-rbind(0, apply(hw, 2, cumsum)[1, ]), 2, ctot, FUN = "+")
+zij <- hw[1:2, ]/nij
+rfct <- as.vector(matrix(rep(1:2, 5), ncol=5))
+cfct <- as.vector(matrix(rep(1:5, 2), ncol=5, byrow=TRUE))
+prp <- c(zij$A, zij$B, zij$C, zij$D, zij$E)
+wgt <- as.vector(nij)
+hw.glm <- glm(prp ~ factor(rfct) + factor(cfct), family = binomial(link = cloglog), 
+              weights = wgt)
+anova(hw.glm, test = "Chisq")
+
+1-pchisq(9.9629,4)
+
+1-pchisq(2.1498,4)
+
+# (c)
+hatzij <- matrix(fitted(hw.glm), ncol=5)
+cumprbs <- matrix(0, 2, 5)
+cumprbs[1,] <- hatzij[1, ]
+for(i in 2:2) 
+{
+  cumprbs[i,] <- hatzij[i, ]+(cumprbs[i-1, ]*(1-hatzij[i, ]))
+}
+matplot(1:3,rbind(cumprbs, 1), xlab="Row Number", type="b",
+          ylab="Cumulative Probability")
+
+

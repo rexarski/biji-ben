@@ -1,0 +1,260 @@
+# STAT3015/STAT7030 Generalised Linear Models
+
+# Assignment 2 for 2015 - R code appendix to the solutions
+ 
+# Question 1 (a)
+
+geriatric <- read.table("Geriatric.txt", header=T)
+attach(geriatric)
+
+# Either of the following models seems appropriate for these data:
+
+geriatric.glm <- glm(falls ~ strength + balance + gender + training, family = poisson)
+geriatric.glm
+
+# Or
+
+geriatric.glm1 <- glm(falls ~ strength + balance + training, family = poisson)
+geriatric.glm1
+
+# The choice of a Poisson regression with a default log link is fairly obvious considering the nature of the response variable
+# (counts of the number of falls in a six month period). Each observation represents a single patient, rather than a group of
+# patients, so there is no need to modify the weights.  No interaction terms were significant, so none have not been included
+# and none of the usual experimenting with transformations of explanatory variables or changing the link function appeared to
+# noticeably improve the residual plot (see part (b) below).
+
+# Note that the main effects are not orthogonal and the analysis of deviance table (see below) changed considerably, depending
+# on the order in which the explanatory variables were included in the model.  However, the t statistics in the table of
+# coefficients give a fairly consistent story and training, balance and (in most instances), strength appear to be consistently 
+# significant. Gender could either be excluded from the model on the grounds it is not significant, or could be included as
+# part (d) of the question seems to suggest that (a priori) we want a model which examines the effects of training on falls, 
+# controlling for gender, balance and strength and in both models these control variables are included in the model prior to 
+# training, so the effects of training can be examined after the effects of the control variables have been accounted for.  
+
+# Note that whilst training was balanced (50 persons with and without training), there were 53 males to 47 females, whereas in 
+# most geriatric populations you would expect to find more females than males if selections had made been at random - for
+# example, assuming these data are from a population similar to Australia, where the population 65 and over has been steadily
+# increasing as Australia's population ages, the proportion of males in the 65 and over population has been relatively steady
+# at around 45% of the total and has been less than 50% for at least the past 70 years. (Based on a few quick calculations
+# using the historical age and sex distributions in the time series spreadsheet Table 2.1 of the ABS publication 3105.0.65.001
+# Australian Historical Population Statistics - available at www.abs.gov.au).
+
+# So, gender could possibly have been a design factor in a quasi-experimental design (i.e. there might originally have been
+# equal numbers of both genders, but more females than males were lost when some observations with missing data were deleted),
+# however, the following calculations suggest this was probably NOT the case:
+
+table(training, gender)
+sum(gender)
+sum(training)
+
+# So, we are a long way from having equal numbers of the four combinations of training and gender, which would have suggested 
+# these data were from a designed experiment with gender as a design factor. So, whilst training might have been a design
+# factor, gender is more likely to have been an observed covariate like strength and balance. However, unless we have a chance
+# to check with the researchers about exactly what design they had in mind, I think that controlling for all the covariates we
+# have available is a sensible approach, as well as the fact that they decided to collect these covariates in the first place
+# as part of their design. 
+
+# There are only small differences in the coefficients for the above two models and differences in predictions using the two 
+# models should only be marginal as the effects of gender are not significant - whether or not gender is included is more a
+# matter of interpretation of the underlying research question and background scientific theory.
+
+# Note that this is not a required part of the assignment, but the following graphs illustrate the chosen model on the scale
+# of the original variables:
+
+plot(0:100, 0:100/(100/15), type="n", xlab="Balance index (0 to 100 - higher values indicate greater stability)", ylab="Number of falls", xaxp=c(0,100,10),yaxp=c(0,15,5))
+title("Falls in geriatric patients (65 and over) in a six month period")
+points(balance[training==0 & gender == 0], falls[training==0 & gender == 0], pch="f") 
+points(balance[training==0 & gender == 1], falls[training==0 & gender == 1], pch="m")
+points(balance[training==1 & gender == 0], falls[training==1 & gender == 0], pch="F") 
+points(balance[training==1 & gender == 1], falls[training==1 & gender == 1], pch="M")
+new <- data.frame(training=rep(0,101),gender=rep(0,101),balance=0:100,strength=rep(mean(strength),101))
+lines(0:100, predict(geriatric.glm, new, type="response"), lty=1, lwd=2)
+new <- data.frame(training=rep(0,101),gender=rep(1,101),balance=0:100,strength=rep(mean(strength),101))
+lines(0:100, predict(geriatric.glm, new, type="response"), lty=2, lwd=2)
+new <- data.frame(training=rep(1,101),gender=rep(0,101),balance=0:100,strength=rep(mean(strength),101))
+lines(0:100, predict(geriatric.glm, new, type="response"), lty=3, lwd=2)
+new <- data.frame(training=rep(1,101),gender=rep(1,101),balance=0:100,strength=rep(mean(strength),101))
+lines(0:100, predict(geriatric.glm, new, type="response"), lty=4, lwd=2)
+legend(15, 15, c("Education only - Females", "Education only - Males", "Educ. and Training - Females", "Educ. and Training - Males"), pch=c("f","m","F","M"), lty=1:4, lwd=2)
+
+plot(0:100, 0:100/(100/15), type="n", xlab="Strength index (0 to 100 - higher values indicate greater strength)", ylab="Number of falls", xaxp=c(0,100,10),yaxp=c(0,15,5))
+title("Falls in geriatric patients (65 and over) in a six month period")
+points(strength[training==0 & gender == 0], falls[training==0 & gender == 0], pch="f") 
+points(strength[training==0 & gender == 1], falls[training==0 & gender == 1], pch="m")
+points(strength[training==1 & gender == 0], falls[training==1 & gender == 0], pch="F") 
+points(strength[training==1 & gender == 1], falls[training==1 & gender == 1], pch="M")
+new <- data.frame(training=rep(0,101),gender=rep(0,101),balance=rep(mean(balance),101),strength=0:100)
+lines(0:100, predict(geriatric.glm, new, type="response"), lty=1, lwd=2)
+new <- data.frame(training=rep(0,101),gender=rep(1,101),balance=rep(mean(balance),101),strength=0:100)
+lines(0:100, predict(geriatric.glm, new, type="response"), lty=2, lwd=2)
+new <- data.frame(training=rep(1,101),gender=rep(0,101),balance=rep(mean(balance),101),strength=0:100)
+lines(0:100, predict(geriatric.glm, new, type="response"), lty=3, lwd=2)
+new <- data.frame(training=rep(1,101),gender=rep(1,101),balance=rep(mean(balance),101),strength=0:100)
+lines(0:100, predict(geriatric.glm, new, type="response"), lty=4, lwd=2)
+legend(15, 15, c("Education only - Females", "Education only - Males", "Educ. and Training - Females", "Educ. and Training - Males"), pch=c("f","m","F","M"), lty=1:4, lwd=2)
+
+# Question 1 (b)
+
+# You can produce appropriate residual plot for a GLM in a variety of ways, the easiest of which is to examine the deviance
+# residual plot shown on the first page of the output from:
+
+plot(geriatric.glm)
+
+# Most of the default plots look reasonably good, however, the main residual plot does shows some interesting features, 
+# of the sort which are often indicative of clustering in multiple regression models. These features could be investigated
+# by labelling points on the residual plot to show the different values of each of the variables involved in the model.  
+
+# Most of the apparent patterns in the plot are in the horizontal direction, i.e. mainly a feature of the values of the
+# explanatory variables, though there is some in the vertical (residual) direction which are a bit of a worry, but may not
+# be too serious. If you use the number of falls as the plotting symbol, the reason for the apparent clustering in the
+# data becomes obvious:
+
+plot(fitted(geriatric.glm), residuals(geriatric.glm, "deviance"), type="n" ,xlab="Fitted values (symbol indicates # falls: T=10, E=11)", ylab="Deviance residuals")
+title("Poisson regression on the geriatric data")
+abline(0,0,lty=2)
+points(fitted(geriatric.glm)[falls==0], residuals(geriatric.glm)[falls==0], pch="0")
+points(fitted(geriatric.glm)[falls==1], residuals(geriatric.glm)[falls==1], pch="1")
+points(fitted(geriatric.glm)[falls==2], residuals(geriatric.glm)[falls==2], pch="2")
+points(fitted(geriatric.glm)[falls==3], residuals(geriatric.glm)[falls==3], pch="3")
+points(fitted(geriatric.glm)[falls==4], residuals(geriatric.glm)[falls==4], pch="4")
+points(fitted(geriatric.glm)[falls==5], residuals(geriatric.glm)[falls==5], pch="5")
+points(fitted(geriatric.glm)[falls==6], residuals(geriatric.glm)[falls==6], pch="6")
+points(fitted(geriatric.glm)[falls==7], residuals(geriatric.glm)[falls==7], pch="7")
+points(fitted(geriatric.glm)[falls==8], residuals(geriatric.glm)[falls==8], pch="8")
+points(fitted(geriatric.glm)[falls==9], residuals(geriatric.glm)[falls==9], pch="9")
+points(fitted(geriatric.glm)[falls==10], residuals(geriatric.glm)[falls==10], pch="T")
+points(fitted(geriatric.glm)[falls==11], residuals(geriatric.glm)[falls==11], pch="E")
+
+# The above plot shows the fitted values rather than the linear predictors (the fitted values on the link transformed
+# scale) and make it obvious that even if the model is a reasonable fit around the mean number of the data, it is
+# consistently over-predicting for the persons who had zero falls and is also under-predicting the higher values of 
+# falls (8, 9, 10 & 11) and these two tails represent 18% of the data:
+
+mean(falls)
+table(falls)
+range(fitted(geriatric.glm))
+
+# We can produce a slightly improved version of the above plot by using the linear predictors on the x axis (as the
+# link scale is the scale on which we actually expect the model to be approximately linear) and also by properly 
+# standardising the deviance residuals on the vertical scale (as the assumed dispersion for a Poisson
+# GLM is equal to 1, the deviance residuals are already approximately standardised):
+
+std.devres <- residuals(geriatric.glm, "deviance")/sqrt(summary(geriatric.glm)$dispersion*(1 - hatvalues(geriatric.glm)))
+
+plot(geriatric.glm$linear.predictors, std.devres, type="n" ,xlab="Linear predictors (symbol indicates # falls: T=10, E=11)", ylab="Std. deviance residuals")
+title("Poisson regression on the geriatric data")
+abline(0,0,lty=2)
+points(geriatric.glm$linear.predictors[falls==0], std.devres[falls==0], pch="0")
+points(geriatric.glm$linear.predictors[falls==1], std.devres[falls==1], pch="1")
+points(geriatric.glm$linear.predictors[falls==2], std.devres[falls==2], pch="2")
+points(geriatric.glm$linear.predictors[falls==3], std.devres[falls==3], pch="3")
+points(geriatric.glm$linear.predictors[falls==4], std.devres[falls==4], pch="4")
+points(geriatric.glm$linear.predictors[falls==5], std.devres[falls==5], pch="5")
+points(geriatric.glm$linear.predictors[falls==6], std.devres[falls==6], pch="6")
+points(geriatric.glm$linear.predictors[falls==7], std.devres[falls==7], pch="7")
+points(geriatric.glm$linear.predictors[falls==8], std.devres[falls==8], pch="8")
+points(geriatric.glm$linear.predictors[falls==9], std.devres[falls==9], pch="9")
+points(geriatric.glm$linear.predictors[falls==10], std.devres[falls==10], pch="T")
+points(geriatric.glm$linear.predictors[falls==11], std.devres[falls==11], pch="E")
+
+# The range of the standardised deviance residuals is reasonable, with only 8% outside of[-2, +2].
+
+range(std.devres)
+sum(abs(std.devres)>2)/length(falls)
+
+# Overall, after a lot of playing with the model (experimenting with non-signifcant interaction terms), there seems to
+# be no obvious way of further improving the appearance of the plot, and given the discrete nature of the response variable,
+# this is probably as good a result as we can hope for.
+
+# Question 1 (c)
+
+# Estimating the dispersion using the residual deviance and df:
+
+geriatric.glm$deviance/geriatric.glm$df.residual
+
+# The value of 1.145157 is greater than the assumed dispersion of 1 for a Poisson GLM, which suggests slight over-dispersion,
+# but this is not significant using the very conservative rule of thumb shown in the brick:
+
+1 + 3*sqrt(2/geriatric.glm$df.residual)
+
+# As 1.145157 < 1.435286, the apparent over-dispersion is not over-significant, or we also get the same answer using the 
+# approach described in lectures, where we use the residual deviance to estimate a p-value for a test of over-dispersion:
+
+1 - pchisq(geriatric.glm$deviance, geriatric.glm$df.residual)
+
+# As this p-value 0.157792 > alpha=0.05, we conclude that the apparent over-dispersion is not significant (note this is both 
+# a more powerful test and a more formal hypothesis test than the rule of thumb shown in the brick).
+
+# Note that both the above are one-tailed "tests" for over-dispersion and there was no obvious a priori reason to assume
+# over-dispersion, so we really should have conducted a two-tailed hypothesis test for under- or over-dispersion.
+# This can done be based on the scaled residual deviance (scaled by dividing by the assumed dispersion - which is 1 for a 
+# Poisson GLM), which should have a chi-square distribution with the residual df:
+
+geriatric.glm$deviance
+geriatric.glm$df.residual
+c(qchisq(0.025, geriatric.glm$df.residual), qchisq(0.975, geriatric.glm$df.residual))
+
+# As the observed deviance (108.7899) lies within the interval (69.92487, 123.85797), we would accept the null hypothesis 
+# that the dispersion = 1 and conclude that there is no evidence of either significant under or over-dispersion.
+
+
+# Question 1 (d) 
+
+anova(geriatric.glm, test="Chisq")
+summary(geriatric.glm)$coef
+qt(0.975, geriatric.glm$df.residual)
+
+# The p-values in the analysis of deviance table and the t statistics in the table of coefficients give a consistent story - 
+# training is significant (i.e. the aerobic training made a big difference) as is balance (so it was important to control
+# for its effects), strength is "marginally" significant (a p-value of slightly less than 0.05 and a t statistic of just above 
+# the critical value), whilst gender, if you had decided to include it in the model, as discussed in part (a), is not
+# significant.
+
+# Note that the signs of the coefficients suggest that training (with a negative coefficent) reduces the expected number of
+# falls, but that increases in both balance and strength (with positive coefficients) tend to increase the number of falls. 
+# This unusual result is not simply a feature of a model that includes the training intervention, as if you fit a model which 
+# does not include training, then strength and balance still have positive coefficients - possibly people who have better
+# ratings on strength and balance are more active and therefore more vulnerable to having falls, but it is really a question
+# for the researchers who collected these data to consider the underlying science to see if this makes any sense!
+
+
+# Question 1 (e)
+
+# Firstly, we need to make sure we have access to the code from the earlier example on "Predictions using GLMs"
+# that will add Student's t confidence intervals to the output from predict.glm():
+
+add.ci <- function(object, fit.se, conf.level=0.95){
+  fit <- fit.se$fit
+  se.fit <- fit.se$se.fit
+  residual.scale <- fit.se$residual.scale
+  pi.se <- sqrt(residual.scale^2 + se.fit^2) 
+  tquantile <- qt(1 - (1 - conf.level)/2, object$df.residual)
+  ci.fit <- cbind(lower = fit - tquantile*se.fit, upper = fit + tquantile*se.fit)
+  pi.fit <- cbind(lower = fit - tquantile*pi.se, upper = fit + tquantile*pi.se)
+  list(fit = fit, se.fit = se.fit, residual.scale = residual.scale, ci.fit = ci.fit, pi.fit = pi.fit)
+}
+
+# Then the required predictions are relatively straight-forward:
+
+new <- data.frame(training=c(0,0,1,1),gender=c(0,1,0,1),balance=mean(balance),strength=mean(strength))
+new
+
+temp <- predict(geriatric.glm, newdata=new, type="link", se.fit=T)
+predictions <- add.ci(geriatric.glm, temp)
+
+exp(predictions$fit)
+
+exp(predictions$ci.fit)
+
+# Rounding outwards (to ensure at least 95% confidence), for persons of average strength and balance, we expect on average:
+#   for persons with training - between 1.1 and 1.9 falls in a six month period for men and between 1.1 and 2.1 falls for women;
+#   and for persons without training - between 3.5 and 5.3 falls for men and between 3.8 and 5.4 falls for women.
+
+# Given that most of the underlying assumptions about the residuals appear to be satisfied, as discussed in parts (b) and (c)
+# above, I would be reasonably confident in using this model to make this sort of inference (especially around the mean of the
+# data). However, the slight patterns on the residual plot noted in part (b) do suggest some remaining correlation between the
+# X variables and the response variable. Given that the assumption that the distribution of the response variable is Poisson 
+# appears reasonable (on the basis that there was no evidence of under or over-dispersion), I suspect this may be a result of
+# some unobserved heterogeneity (i.e. there might be some other, as yet unrecorded, explanatory variable we could measure and
+# include in our model), however, I would need to discuss this further with the researchers (the "clients" for whom I, as the 
+# statistical consultant, performed this analysis).  

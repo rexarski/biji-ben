@@ -1,0 +1,89 @@
+## ------------------------------------------------------------------------
+##
+set.seed(10)
+x <- rbinom(60, 1, 0.5)
+x[x==0] <- -1
+x <- x*50
+
+w <- cumsum(x)
+
+##
+plot(w, type="l", lwd=3, main="A Realization of the Drunkard's Walk")
+
+
+## Let's examine the sampling distirbution of W
+set.seed(10)
+S <- 10000
+W <- rep(0, S)
+
+for(s in 1:S){
+  x <- rbinom(60, 1, 0.5)
+  x[x==0] <- -1
+  x <- x*50
+  W[s] <- sum(x)
+}
+
+##
+mean(W)
+var(W)
+
+##
+hist(W, col="yellow")
+
+## ------------------------------------------------------------------------
+set.seed(1001)
+S1 <- 100
+
+u <- runif(S1)
+g.u <- cos(2*pi*u)
+mean(g.u)
+
+## ------------------------------------------------------------------------
+set.seed(1001)
+S2 <- 1000
+
+u <- runif(S2)
+g.u <- cos(2*pi*u)
+mean(g.u)
+
+## ------------------------------------------------------------------------
+S <- 50:5000
+g.u <- rep(0, length(S))
+
+c <- 1
+for(s in S){
+g.u[c] <- mean(cos(2*pi* runif(s)))
+c <- c+1
+}
+
+plot(S, g.u, type="l", lwd=3, col="blue") 
+abline(h=0, col="red", lwd=4)
+
+## ------------------------------------------------------------------------
+set.seed(1001)
+S1 <- 100
+
+u <- runif(S1)
+g.u <- cos(2*pi*u^2)
+mean(g.u)
+
+## ------------------------------------------------------------------------
+set.seed(1001)
+S2 <- 1000
+
+u <- runif(S2)
+g.u <- cos(2*pi*u^2)
+mean(g.u)
+
+## ------------------------------------------------------------------------
+S <- 50:5000
+g.u <- rep(0, length(S))
+
+c <- 1
+for(s in S){
+g.u[c] <- mean(cos(2*pi* runif(s)^2))
+c <- c+1
+}
+
+plot(S, g.u, type="l", lwd=3, col="blue") 
+

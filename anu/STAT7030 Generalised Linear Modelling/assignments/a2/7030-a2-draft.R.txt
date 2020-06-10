@@ -1,0 +1,180 @@
+set.seed(7030)
+
+# ------------------------------- Q1 -------------------------------
+dat <- read.table("Earinf.txt",header=T)
+
+# ------------------------------- (a) -------------------------------
+inf.glm <- glm(Infections~Swimmer*Location*Age*Sex,data=dat,family=poisson)
+par(mfrow=c(2,2))
+plot(inf.glm,which=c(1,2,4,5))
+par(mfrow=c(1,1))
+
+# ------------------------------- (b) -------------------------------
+anova(inf.glm,test="F")
+
+# rule of thumb for overdispersion
+inf.glm$deviance/inf.glm$df.residual
+c(1-3*sqrt(2/inf.glm$df.residual),1+3*sqrt(2/inf.glm$df.residual))
+
+# formal test for over/underdispersion
+inf.glm$deviance/summary(inf.glm)$dispersion # where summary(inf.glm)$dispersion==1
+c(qchisq(0.025, inf.glm$df.residual),qchisq(0.975, inf.glm$df.residual))
+
+# ------------------------------- (c) -------------------------------
+anova(inf.glm,test="Chisq")
+
+
+est.dispersion <- inf.glm$deviance/inf.glm$df.residual
+anova(inf.glm,dispersion=est.dispersion,test="Chisq")
+703.72/263
+1+3*sqrt(2/263)
+
+
+library(DHARMa)
+testZeroInflation(simulateResiduals(inf.glm,refit=T),plot=F)
+
+
+# ------------------------------- (d) -------------------------------
+inf.glm2 <- glm(Infections~Swimmer+Location,data=dat,family=poisson(link=sqrt))
+unique(inf.glm2$weights)
+
+
+# ------------------------------- (e) -------------------------------
+std.residuals <- function(model, type="deviance"){
+    # Function to standardise residuals from a GLM model object
+    # Produces standardised deviance residuals, unless type="pearson" requested
+    std.error <- sqrt(summary(model)$dispersion * (1 - influence(model)$hat))
+    std.res <- residuals(model)/std.error
+    if (type=="pearson") std.res <- residuals(model, "pearson")/std.error
+    std.res
+}
+par(mfrow=c(2,2))
+plot(inf.glm2$linear.predictors,std.residuals(inf.glm2),type="n", xlab="Linear Predictors", ylab="Studentised Deviance Residuals")
+abline(h=c(qt(0.025,inf.glm2$df.residual),0,qt(0.975,inf.glm2$df.residual)), lty=2)
+title("Standardised Residuals vs Fitted Values", sub="Ear Infection data sqrt Poisson GLM: Infections~Swimmer+Location")
+points(inf.glm2$linear.predictors[dat$Swimmer=="Freq"&dat$Location=="Beach"], std.residuals(inf.glm2)[dat$Swimmer=="Freq"&dat$Location=="Beach"])
+points(inf.glm2$linear.predictors[dat$Swimmer=="Occas"&dat$Location=="Beach"], std.residuals(inf.glm2)[dat$Swimmer=="Occas"&dat$Location=="Beach"])
+points(inf.glm2$linear.predictors[dat$Swimmer=="Freq"&dat$Location=="NonBeach"], std.residuals(inf.glm2)[dat$Swimmer=="Freq"&dat$Location=="NonBeach"])
+points(inf.glm2$linear.predictors[dat$Swimmer=="Occas"&dat$Location=="NonBeach"], std.residuals(inf.glm2)[dat$Swimmer=="Occas"&dat$Location=="NonBeach"])
+qqnorm(std.residuals(inf.glm2), sub="Ear Infection data sqrt Poisson GLM: Infections~Swimmer+Location")
+qqline(std.residuals(inf.glm2), lty=2)
+abline(0,1)
+plot(inf.glm2,which=c(4,5))
+par(mfrow=c(1,1))
+inf.glm2$deviance
+c(qchisq(0.025, inf.glm2$df.residual),qchisq(0.975, inf.glm2$df.residual))
+# still overdispersion
+
+(est.dispersion2 <- inf.glm2$deviance/inf.glm2$df.residual)
+anova(inf.glm2, dispersion=est.dispersion2, test="Chisq")
+
+summary(inf.glm2,dispersion=inf.glm2$deviance/inf.glm2$df.residual)
+
+# ------------------------------- (f) -------------------------------
+Xnew=data.frame(Swimmer=c("Freq","Freq","Occas","Occas"),
+                Location=c("Beach","NonBeach","Beach","NonBeach"))
+temp <- predict(inf.glm2, newdata=Xnew, type="link", se.fit=T)
+
+add.ci <- function(object, fit.se, conf.level=0.95){
+    fit <- fit.se$fit
+    se.fit <- fit.se$se.fit
+    residual.scale <- fit.se$residual.scale
+    pi.se <- sqrt(residual.scale^2 + se.fit^2) 
+    tquantile <- qt(1 - (1 - conf.level)/2, object$df.residual)
+    ci.fit <- cbind(lower = fit - tquantile*se.fit, upper = fit + tquantile*se.fit)
+    pi.fit <- cbind(lower = fit - tquantile*pi.se, upper = fit + tquantile*pi.se)
+    list(fit = fit, se.fit = se.fit, residual.scale = residual.scale, ci.fit = ci.fit, pi.fit = pi.fit)
+}
+
+temp <- add.ci(inf.glm2, temp)
+(CI <- temp$ci.fit^2)
+temp$pi.fit <- ifelse(temp$pi.fit<0,0,temp$pi.fit)
+(PI <- temp$pi.fit^2)
+
+rm(list=ls())
+
+# ------------------------------- Q2 -------------------------------
+# ------------------------------- (a) -------------------------------
+titanic <- read.csv("titanic_combined2017.csv",header=T)
+which(titanic$Pclass==1 & titanic$Class != "1st Class")
+which(titanic$Pclass==2 & titanic$Class != "2nd Class")
+which(titanic$Pclass==3 & titanic$Class != "3rd Class")
+
+# ------------------------------- (b) -------------------------------
+train <- titanic[titanic$Kaggle_Set=="train",]
+test <- titanic[titanic$Kaggle_Set=="test",]
+
+library(MASS)
+
+ti.full1 <- glm(Survived~Age+factor(Sex)+factor(Pclass)+SibSp+ParCh+Fare,
+                family=binomial(link=logit),data=train)
+ti.full2 <- glm(Survived~Age*factor(Sex)*factor(Pclass)+Age*SibSp+Age*ParCh+Fare,
+                family=binomial(link=logit),data=train)
+ti.red <- glm(Survived~Age+factor(Sex)+factor(Pclass),
+              family=binomial(link=logit),data=train)
+ti.full3 <- glm(Survived~Age*factor(Sex)*factor(Pclass)*SibSp*ParCh,
+                family=binomial(link=logit),data=train)
+
+ti.glm1 <- step(ti.full1,scope=ti.red,trace=F,direction="both")
+ti.glm2 <- step(ti.full2,scope=ti.red,trace=F,direction="both")
+ti.glm3 <- step(ti.full3,scope=ti.red,trace=F,direction="backward")
+anova(ti.glm1,ti.glm2,ti.glm3,test="Chisq")
+anova(ti.glm2,test="Chisq")
+anova(ti.glm3,test="Chisq")
+
+ti.glm3 <- glm(Survived~Age+factor(Sex)+factor(Pclass)+SibSp+
+                   Age:factor(Sex)+factor(Sex):factor(Pclass),
+               family=binomial(link=logit),data=train)
+anova(ti.glm3,test="Chisq")
+
+ti.glm4 <- glm(Survived~factor(Pclass)+factor(Sex)+SibSp+Age+
+                   factor(Sex):factor(Pclass)+Age:factor(Sex),
+               family=binomial(link=logit),data=train)
+anova(ti.glm4,test="Chisq")
+
+# ------------------------------- (c) -------------------------------
+summary(ti.glm4)
+par(mfrow=c(1,1))
+library(arm)
+binnedplot(predict(ti.glm4),resid(ti.glm3))
+
+par(mfrow=c(2,2))
+plot(ti.glm4,which=c(1,2,4,5))
+
+simple.cv <- function(model,mode) {
+    pred.surv <- logit(model$fitted.values)
+    pred.surv <- ifelse(pred.surv>0,1,0)
+    sens.train <- sum(pred.surv==1 & train$Survived==1)/sum(train$Survived==1)
+    spec.train <- sum(pred.surv==0 & train$Survived==0)/sum(train$Survived==0)
+    accu.train <- mean(pred.surv==train$Survived)
+    
+    pred.surv2 <- logit(predict(model,test,type="response"))
+    pred.surv2 <- ifelse(pred.surv2>0,1,0)
+    sens.test <- sum(pred.surv2==1 & test$Survived==1)/sum(test$Survived==1)
+    spec.test <- sum(pred.surv2==0 & test$Survived==0)/sum(test$Survived==0)
+    accu.test <- mean(pred.surv2==test$Survived)
+    
+    if (mode=="test") {
+        final <- cbind(c(sens.train,spec.train,accu.train),
+                       c(sens.test,spec.test,accu.test))
+        colnames(final) <- c("train","test")
+    } else if (mode=="train") {
+        final <- cbind(c(sens.train,spec.train,accu.train))
+        colnames(final) <- c("train")
+    }
+    rownames(final) <- c("sensitivity","specificity","accuracy")
+    return(final)
+}
+
+simple.cv(ti.glm4,"train")
+
+simple.cv(ti.glm4,"test")
+
+library(boot)
+cost_classification <- function(r, pi) mean(abs(r-pi) > 0.5)
+cv.res <- cv.glm(data=titanic,
+                 glmfit=glm(Survived~factor(Pclass)+factor(Sex)+SibSp+Age+
+                                factor(Sex):factor(Pclass)+Age:factor(Sex),
+                            family=binomial(link=logit),data=titanic),
+                 K=10,cost=cost_classification)
+cv.res$delta[1]

@@ -1,0 +1,108 @@
+# The following R code uses the Grasshopper Insecticide Potency data described on page 58 of the "brick":
+
+# First read in and examine the data
+ghp <- read.table("Grasshopper.txt",header=T)
+attach(ghp)
+names(ghp)
+ghp
+
+# Calculate the (binomial) proportion of the number killed to use as the response variable
+prp <- klld/ssize
+
+# A few exploratory plots to examine the relationships:
+plot(idose, prp)
+plot(sdose, prp)
+
+# The canonical link for a binomial model is the logit:
+plot(idose, log(prp/(1-prp)))
+plot(sdose, log(prp/(1-prp)))
+
+# Not particularly linear, but could try the following as an initial plausbile model:
+ghp.glm <- glm(prp ~ idose+sdose,family=binomial,weights=ssize)
+plot(ghp.glm)
+anova(ghp.glm, test="Chisq")
+
+# As there are a number of small proprotions, we could try the complementary log-log as an alternative link function:
+ghp.glma <- glm(prp ~ idose+sdose,family=binomial(link=cloglog),weights=ssize)
+plot(ghp.glma)
+anova(ghp.glma, test="Chisq")
+
+# Both models show over-dispersion (cf. the residual deviance to the residual degrees of freedom), so we need to work on
+# finding the right scale for the explanatory variables, following the graphs and arguments shown on pages 59 to 63:
+
+u1 <- log(prp/(1-prp))-ghp.glm$coef[1]-(ghp.glm$coef[3]*sdose)
+u2 <- log(prp/(1-prp))-ghp.glm$coef[1]-(ghp.glm$coef[2]*idose)
+plot(idose,u1,xlab="Dose of Insecticide",ylab="Partial Residual",main="(a) - Partial Residual Plot for Insecticide Dose")
+
+plot(sdose,u2,xlab="Dose of Synergist",ylab="Partial Residual",main="(b) - Partial Residual Plot for Synergist Dose")
+
+ghp.glm1 <- glm(prp ~ log(idose)+sdose,family=binomial,weights=ssize)
+u1 <- log(prp/(1-prp))-ghp.glm1$coef[1]-(ghp.glm1$coef[3]*sdose)
+u2 <- log(prp/(1-prp))-ghp.glm1$coef[1]-(ghp.glm1$coef[2]*log(idose))
+plot(log(idose),u1,xlab="ln(Dose of Insecticide)",ylab="Partial Residual",main="(c) - Partial Residual Plot for ln(Insecticide Dose)")
+
+plot(sdose,u2,xlab="Dose of Synergist",ylab="Partial Residual",main="(d) - Partial Residual Plot for Synergist Dose")
+
+nwsdose <- sdose/(1+sdose)
+ghp.glm2 <- glm(prp ~ log(idose)+nwsdose,family=binomial,weights=ssize)
+u1 <- log(prp/(1-prp))-ghp.glm2$coef[1]-(ghp.glm2$coef[3]*nwsdose)
+u2 <- log(prp/(1-prp))-ghp.glm2$coef[1]-(ghp.glm2$coef[2]*log(idose))
+plot(log(idose),u1,xlab="ln(Dose of Insecticide)",ylab="Partial Residual",main="(e) - Partial Residual Plot for ln(Insecticide Dose)")
+
+plot(nwsdose,u2,xlab="Dose/(1+Dose) of Synergist",ylab="Partial Residual",main="(f) - Partial Residual Plot for Synergist Dose/(1+Dose)")
+
+nwsdse1 <- log(1+sdose)
+ghp.glm3 <- glm(prp ~ log(idose)+nwsdse1,family=binomial,weights=ssize)
+u1 <- log(prp/(1-prp))-ghp.glm3$coef[1]-(ghp.glm3$coef[3]*nwsdse1)
+u2 <- log(prp/(1-prp))-ghp.glm3$coef[1]-(ghp.glm3$coef[2]*log(idose))
+plot(log(idose),u1,xlab="ln(Dose of Insecticide)",ylab="Partial Residual",main="(g) - Partial Residual Plot for ln(Insecticide Dose)")
+
+plot(nwsdse1,u2,xlab="ln(1+Dose of Synergist)",ylab="Partial Residual",main="(h) - Partial Residual Plot for ln(1 + Synergist Dose)")
+
+plot(ghp.glm2$linear.predictor,log(prp/(1-prp)),xlab="Linear Predictor Values",main="(i) - Diagnostic Plot for Logit Link")
+
+ghp.glm2a <- glm(prp ~ log(idose)+nwsdose,family=binomial(link=cloglog),weights=ssize)
+plot(ghp.glm2a$linear.predictor,log(-log(1-prp)),xlab="Linear Predictor Values",main="(j) - Diagnostic Plot for Complementary Log-Log Link")
+
+plot(ghp.glm$linear.predictor,log(prp/(1-prp)),xlab="Linear Predictor Values",main="(k) - Diagnostic Plot for Logit Link")
+
+plot(ghp.glma$linear.predictor,log(-log(1-prp)),xlab="Linear Predictor Values",main="(l) - Diagnostic Plot for Complementary Log-Log Link")
+
+# The brick suggests choosing either model ghp.glm2 (with a logit link) or ghp.glm2a (with a complementary log-log link):
+plot(ghp.glm2)
+anova(ghp.glm2, test="Chisq")
+
+plot(ghp.glm2a)
+anova(ghp.glm2a, test="Chisq")
+
+# Better, but still not a great fit - there appears to be a problem with a potential outlier - which leads to the next topic!
+
+# Note before we start "dealing" with outliers by modifiying a very small dataset. we should do all we can to model the data
+# as it currently. Let's say that we have gone as far as possible in modifying the mean model - is there anything we can
+# do about the over-dispersion? We have a couple of options - instead of blaming the apparent over-dispersion on outliers,
+# (if we do delete the worst outlier, do we simply promote another observation to problem status?), we could treat the data
+# as genuinely over-dispersed , i.e. the true variance is larger than would be predicted by the binomial model. 
+
+# Firstly check that the model is over-dispersed (I'll do this for ghp.glm2 and leave ghp.glm2a as an exercise):
+
+deviance(ghp.glm2)
+df.residual(ghp.glm2)
+c(qchisq(0.025,df.residual(ghp.glm2)), qchisq(0.975,df.residual(ghp.glm2)))
+
+# One possible modification to allow for the over-dispersion is to allow the dispersion to be larger than one. Using the
+# first model (arguably the better fitting of our chosen models) to estimate the actual dispersion:
+
+est.dispersion <- deviance(ghp.glm2)/df.residual(ghp.glm2)
+est.dispersion
+
+anova(ghp.glm2, test="Chisq")
+anova(ghp.glm2, dispersion=est.dispersion, test="Chisq")
+
+# Note, if we were introduce an estimated dispersion, rather than treating this estimate as a constant, we could treat it
+# as a quasi variance estimate and assume an approximate F distribution, but for binomial models, R gives a warning and 
+# produces the Chisq test anyway:
+
+anova(ghp.glm2, dispersion=est.dispersion, test="F")
+
+# Yet another alternative is to use the "quasi" family - a little outside the scope of this course, but see help(glm)
+# and help(family) for more details.

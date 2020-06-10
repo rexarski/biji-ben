@@ -1,0 +1,61 @@
+﻿Comments on Assignment 1
+
+Assignment 1 has been marked - nominally out of 50, though the mark might be better considered as a mark out of 40 in terms of how it might be scaled at the end. By this, I do not mean it will literally be out of 40 - that is just my guess now at how it would scale for now. As I have said a number of times in class, the number itself reflects your order in the class and has little "absolute" meaning beyond that relative ordering. The grades are given in the gradebook on Wattle. Your mark, out of 50, is comprised of three components: an element for how well the work was written and communicated; an element for the graphics included; and an element for any further statistical analysis of the data.
+
+What was expected:
+
+Writing: I wanted a report-style piece of writing, in plain English, setting out the features of the data and answering the main issue posed: what factors are associated with height. I was looking for good quality writing, effective communication, an elegant mix of text, numbers and graphics. It was important to write a conclusion that set out the main findings.
+
+What was received:
+
+Writing: The quality of the writing was reasonably good, but the number of assignments with poor English, muddled arguments, and plain wrong or nonsensical statements was higher than I had hoped. There were exceptions where people showed evidence of thinking about the data, and then expressed their findings well. But some of what was written was, unfortunately, very, very hard to comprehend. As I indicated in class when talking about the assignment, I was wanting to be told the story that the data tells. There was a LOT of commentary about means and medians and so on without too much explanation of WHY that stuff is useful or interesting. Lots of people got very hung up on how bumpy the densities were, for example. So, there was probably too much focus on the minutae of the data and not enough "big picture" thinking. Writing about this sort of thing IS hard, so I didn't expect to be reading "The Lord of the Rings" or anything. But I did want to be told the story the data told, and that probably wasn't something I got to do all that often in the process of reading all the descriptions. The marks here are subjective, of course.
+
+Also, it is REALLY important to have a conclusion. Sometimes it is the only thing that will be read (not this time, of course, but you'd be surprised how many reports are only ever "skimmed" without ever being actually read). The conclusion has a tough task: summarise the main findings briefly and effectively. But if all the conclusion says is something like "Height is affected by gender and pitch" (and quite a few conclusions said essentially that), then it is really not that useful. The trick is to write a conclusion that says HOW height is affected and, if you can, to fill in some of the WHY as well. Even better if you discover something else that isn't so obvious right from the start of the analysis.
+
+Graphics:
+
+What was expected:
+
+Marks were awarded in 4 categories: choice (which graphs were included or excluded); execution (e.g. appropriate bandwidth on densities); layout (e.g. vertical alignment, same axes on densities, square QQ plots, etc.); and neatness (e.g. axis labels, sensible titles, etc.)
+
+What was received:
+
+On the whole, people did reasonably well. On choice, I was surprised how many QQ-plots were displayed - for this data, given the data rounding and the smallish samples, I thought QQ-plots were not all that useful. Densities and histograms work reasonably well, and, once we feel reasonably convinced that the data groups could be unimodal, then boxplots do a very good job of showing the initial structure in the data. One could have presented the report using only densities and boxplots - probably 3 graphics in total - and been reasonably happy. Too many people threw in the kitchen sink: dotplots; abundant QQ-plots; and sundry other plots. Profligacy was not rewarded. I don't know what the "perfect" number of graphics is for this problem, but in general too many were used. The 4 page limit also seems to have had an impact on some people who chose to make the graphics microscopic so they could fit more text in. Putting a graphic in a report that is too small to read it kind of missing the point of why we put graphics in documents in the first place.
+
+On execution: too many people undersmoothed their densities (very bumpy) and too many people oversmoothed them as well (to the extent that they looked exactly like little normal curves). And then some people got them "just right". This is clearly a judgement thing, but developing that judgement is, of course, part of the reason for doing the assignment.
+
+On layout: densities should be vertically aligned, on the same axes; QQ-plots should be square and side-by-side (if you insist on displaying them); boxplots should be on the same graphics window, not in separate windows. These "rules" were discussed ad nauseum in lectures. But they were violated. Repeatedly. I do believe rules can be broken when the situation merits it. This was not such a situation (most of the time).
+
+On neatness: Generally good. But "lines(density(c(soprano.1,soprano.2)))" has to be one of the more unusual axis labels one might ever see. . .
+
+Analysis:
+
+What was expected:
+
+I really wanted people to think hard about the data. Where did it come from? What is it really telling us? Why might certain patterns happen? Some parts are obvious. Males are (generally) taller than females, for example. The data reveals this fact rather easily. Then BEYOND the gender difference, it appears as if pitch is related to height. The "BEYOND" part is important! How do you tell it's "BEYOND"? One answer is to fit a model (in this case, a 2-way ANOVA would be the sort of thing you'd try), but confounding (inability to properly separate) between the pitch and gender effects complicates this approach. But you don't really need to fit explicit models. You can effectively reach the same conclusion by doing some very simple things, like subtracting a gender mean off each data point and examining what remains. This process can be repeated for pitch. After accounting for these two main effects, what remains SHOULD be just random noise. If it isn't (and it isn't entirely), then you have discovered a secret that the data gives up only grudgingly: that gender and pitch group may not be the only relevant effects! Some people headed down this path. Most didn't.
+
+What was received:
+
+It was hard to get marks for the Analysis part. Very hard. The first productive step was to use the natural groupings in the data: separate the males and females as groups and consider them separately; look at the four pitch groups, and assess them separately. A lot of people did this kind of thing, and this helps tease apart what is going on.
+
+The trick, then, is to use what these groupings tell you, rather than just to observe the groupings, summarise/stylise them, and then just stop. The way you might use them is to do things like mean (or median) correct the groups, and so on. I was hoping to see more of this kind of thing.
+
+I was happy to see some people doing some research out on the web about this sort of data/problem - it is always good to discover whatever you can when you are working on something, even if the information proves to be less useful than you first thought.
+
+Overall: It was a reasonable effort for the first assignment. Naturally, you may not have known what was expected entirely, although some things were discussed in class. Welcome to the real world, where showing judgement about what you research and write about is REALLY, REALLY important.
+
+The writing was OK without being great, on the whole. If you are having trouble with writing in plain English, you should visit the free services of Study Skills on campus and get help. This help is not so much for this course, but more for your life after university. When you take a job, it will be simply expected that you can write a sensible paragraph and a sensible report. You can get help at Uni for free - why not use it?
+
+The graphics were reasonable. A lot of people put too many in - this is judgement that develops over time. And I do mean it when I talk about how to position things on the page and so on.
+
+The analysis was not as well attempted as I had hoped. The analysis is spurred by curiosity and trying to think hard about the data. Without this essential first step, all you can discover is that men are taller than women. For some, that is all that was discovered. But I wanted to see more active engagement with the data, trying to think through the issues as far as possible. A couple of people did that, but a lot of people - whose assignments are fine, by the way - stopped short of actually discovering anything that wasn't reasonably obvious at the outset.
+
+Finally, some words about marks:
+
+1. Whatever your mark, you didn't "pass" or "fail". The marks are not absolute, they are relative, and it is your scaled, final mark that determines where you sit in the course, and therefore how you do. So relax.
+
+2. Marks might look "low", but in the end, everything gets scaled, either up or down. I think it is safe to feel that Assignment 1 marks will scale up in the end. So, relax.
+
+3. You may not like your mark (or you might). If you think you have been unfairly cheated of 5-10 marks, come and have a chat. However, if you think you deserve half a mark extra for layout or one mark extra for analysis or something like that, be aware that I generally won't have the conversation with you. Partly, this is because so much of the mark is subjective, and so we will just have to agree to disagree. But also, be aware that these assignments are all marked in the context where I get to see what others have done and you don't, and so it is much harder for you to assess where you sit relative to others than it is for me to make that assessment. So, there will be no quibbling about a mark here or a mark there - I simply won't enter such a negotiation because it is (literally) a bit pointless (since unless I have done something manifestly dumb or wrong or missed whole bits, there won’t be any extra points).
+
+If you really think you are 5-10 marks short, then you need to articulate why. This means you need to write it down in a cogent way to convince me. This writing can be by e-mail, but it would be better if it were attached to the physical copy of the assignment so I can look at it again. Be aware, however, this will not be a common practice - and the reasons have to be well-argued, concise and convincing.

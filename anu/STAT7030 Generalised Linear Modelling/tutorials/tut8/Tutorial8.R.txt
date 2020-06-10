@@ -1,0 +1,82 @@
+# STAT3015/STAT7030 GLMs
+# R command file for the Tutorial 8
+
+# Question 1
+# (a)
+wave <- read.table("Wave.txt",heade=T)
+attach(wave)
+names(wave)
+# generate indicators
+typb <- ifelse(typ == "B", 1, 0)
+typc <- ifelse(typ == "C", 1, 0)
+cons65 <- ifelse(cons == "1965-69", 1, 0)
+cons75 <- ifelse(cons == "1975-79", 1, 0)
+opr75 <- ifelse(opr == "1975-79", 1, 0)
+# fit the glm model
+rtes <- dmge/mnths
+wave.glm <- glm(rtes ~ typb + typc + cons65 + cons75 + opr75, 
+                family = poisson, weights = mnths)
+summary(wave.glm)$coefficients
+round(summary(wave.glm)$coefficients, 5)
+
+# (b)
+# calculate average rates
+avg <- tapply(rtes, list(typ,opr), mean)
+# make a plot
+matplot(c(1, 2, 3), log(avg), xlab = "Ship Type", 
+        ylab = "ln(Observed Average)", type = "b")
+legend("bottomleft", lty = c(1,2), col = c(1, 2), c("1960-74", "1975-79"))
+
+# (c)
+# generate interaction terms
+int1 <- typb*opr75
+int2 <- typc*opr75
+# fit a model with interaction term
+wave.glm1 <- glm(rtes ~ typb + typc + cons65 + cons75 + opr75 + int1 + int2,
+                   family = poisson, weights = mnths)
+summary(wave.glm1)$coefficients
+round(summary(wave.glm1)$coefficients, 5)
+
+# (d)
+# fit the new model
+wave.glm3 <- glm(dmge ~ log(mnths) + typb + typc + cons65 + 
+                   cons75 + opr75, family = poisson)
+summary(wave.glm3)$coefficients
+round(summary(wave.glm3)$coefficients, 5)
+
+t = (1.0334744 - 1)/0.2199790
+2*(1 - pt(t, 15-7))
+
+# Question 2
+# (a)
+conc <- c(45, 47, 46, 46, 45, 43, 41, 37, 34, 28, 21, 16)
+temp <- c("0", "0", "0", "0", "10", "10", "10", "10", "20", "20", "20", "20")
+wks <- c(2, 4, 6, 8, 2, 4, 6, 8, 2, 4, 6, 8)
+tz1 <- ifelse(temp == "10", wks, 0)
+tz2 <- ifelse(temp == "20", wks, 0)
+bean.glm <- glm(conc ~ wks + tz1 + tz2, family = Gamma(link = log))
+summary(bean.glm)$dispersion
+
+# (b)
+# we want to estimate log(0.5)/Beta_T
+betas <- coef(bean.glm)
+betas
+betaT <- as.vector(c(betas[2], betas[2]+betas[3], betas[2]+betas[4]))
+halflife <- log(0.5)*betaT^-1
+halflife # unit is week
+
+# (c)
+# assume different initial concentrations
+z1 <- ifelse(temp == "10", 1, 0)
+z2 <- ifelse(temp == "20", 1, 0)
+bean.glm1 <- glm(conc ~ z1 + z2 + wks + tz1 + tz2, family = Gamma(link = log))
+summary(bean.glm1)
+
+# we can also refit the model with two indicators as last terms in the model
+bean.glm2 <- glm(conc ~ wks + tz1 + tz2 + cbind(z1, z2), family = Gamma(link = log))
+anova(bean.glm2)
+# drop-in-deviance test
+summary(bean.glm2)$dispersion
+dstar <- anova(bean.glm2)$Deviance[5]/summary(bean.glm2)$dispersion
+dstar
+1-pchisq(dstar,2)

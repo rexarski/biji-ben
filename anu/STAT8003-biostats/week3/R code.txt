@@ -1,0 +1,145 @@
+#sampling distribution of MLE for n= 5 nd n=1000
+#based on a Poisson distribution with lambda=3
+mle5<-rep(0,1000)
+mle10000<-rep(0,1000)
+for(i in 1:1000) {
+mle5[i]<-mean(rpois(5,3))
+mle10000[i]<-mean(rpois(10000,3))
+}
+par(mfrow=c(2,1))
+hist(mle5,main="n=5")
+hist(mle10000,main="n=10,000")
+###################################
+###################################
+#example of estimating F(t) using parametric
+#and non-parametric approach.
+observed<-rexp(20,0.25)
+lammle<-1/mean(observed)
+Fparam<-1-exp(-lammle*seq(0,max(observed),by=0.01))
+Fnonparam<-rep(0,length(seq(0,max(observed),by=0.01)))
+j<-1
+for(i in seq(0,max(observed),by=0.01)) {
+
+Fnonparam[j]<-sum(observed<=i)/length(observed)
+j<-j+1
+
+}
+plot(seq(0,max(observed),by=0.01),Fparam,type="l",main="Estimation of CDF",xlab="Time",ylab="Probability")
+lines(seq(0,max(observed),by=0.01),Fnonparam,col="red")
+###################################
+###################################
+#Finding MLE using optimization function in R
+#poisson example
+poisson.L<-function(mu,x) {
+
+n<-length(x)
+logL<-sum(x)*log(mu)-n*mu
+return(-logL)
+
+}
+
+optim(par=1,fn=poisson.L,method="BFGS",x=c(6,6,0,3,5,4,9,5,3,7,6))
+
+#normal example
+normal.L<-function(theta,x) {
+
+mu<-theta[1]
+sigma2<-theta[2]
+n<-length(x)
+logL<- -.5*n*log(2*pi) -.5*n*log(sigma2) -
+(1/(2*sigma2))*sum((x-mu)**2)
+return(-logL)
+
+}
+
+xdata<-rnorm(20,2,sd=2)
+optim(par=c(1,1),fn=normal.L,method="BFGS",x=xdata)
+mean(xdata)
+var(xdata) #not exactly the mle of sigma2
+###################################
+###################################
+#MLE is biased if do not allow for censored observations
+#investigation last for 4 years
+set.seed(1)
+enter<-runif(50,0,4)
+uncensored<-rexp(50,0.2)
+censored<-ifelse(uncensored+enter>4,4-enter,uncensored)
+iscensored<-ifelse(uncensored+enter>4,1,0)
+round(rbind(uncensored,censored,iscensored)[,1:5],1)
+
+#1. MLE Using complete information
+1/mean(uncensored)
+
+#2. MLE removing censored observations
+1/mean(uncensored[iscensored==0])
+sum(iscensored==0)
+
+#3. MLE treading censorded observations as complete
+1/mean(censored)
+
+#Plotting estimated CDF.
+#using complete data
+plot(ecdf(uncensored),verticals=T,main=NULL)
+#treating censored as actual values
+lines(ecdf(censored),verticals=T,col="red")
+#removing censored values
+lines(ecdf(censored[-which(iscensored==1)]),verticals=T,col="blue")
+#actual exp(0.2) cdf
+lines(ecdf(rexp(1000,0.2)),verticals=T,col="green")
+###################################
+###################################
+#Looking at the likelihood for different values of n
+set.seed(1)
+x<-rexp(n=5,rate=1)
+Lvals<-rep(0,100)
+for(i in 1:100) {
+theta<-seq(0,3,length=100)
+Lvals[i]<-prod(dexp(x,rate=theta[i]))
+}
+plot(theta,Lvals/max(Lvals),type="l")
+x<-rexp(n=10,rate=1)
+Lvals<-rep(0,100)
+for(i in 1:100) {
+theta<-seq(0,3,length=100)
+Lvals[i]<-prod(dexp(x,rate=theta[i]))
+}
+lines(theta,Lvals/max(Lvals),col="red")
+x<-rexp(n=100,rate=1)
+Lvals<-rep(0,100)
+for(i in 1:100) {
+theta<-seq(0,3,length=100)
+Lvals[i]<-prod(dexp(x,rate=theta[i]))
+}
+lines(theta,Lvals/max(Lvals),col="green")
+
+set.seed(2)
+x<-rexp(n=5,rate=1)
+Lvals<-rep(0,100)
+for(i in 1:100) {
+theta<-seq(0,3,length=100)
+Lvals[i]<-prod(dexp(x,rate=theta[i]))
+}
+lines(theta,Lvals/max(Lvals))
+x<-rexp(n=10,rate=1)
+Lvals<-rep(0,100)
+for(i in 1:100) {
+theta<-seq(0,3,length=100)
+Lvals[i]<-prod(dexp(x,rate=theta[i]))
+}
+lines(theta,Lvals/max(Lvals),col="red")
+x<-rexp(n=100,rate=1)
+Lvals<-rep(0,100)
+for(i in 1:100) {
+theta<-seq(0,3,length=100)
+Lvals[i]<-prod(dexp(x,rate=theta[i]))
+}
+lines(theta,Lvals/max(Lvals),col="green")
+
+
+
+
+
+
+
+
+

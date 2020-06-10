@@ -1,0 +1,89 @@
+# The following R code shows an analysis of a simple two-way contingency table of the type described in section 3
+# of the brick, starting on page 69.
+  
+# This example is from an article by Payne, RJ & Pilgrim, JJ (1981) "Changing Evaluations of Flood Plain Hazard, 
+# The Hunter Valley, Australia" in Environment and Behaviour, 13(4) 461-480, which reports on a survey of the attitudes
+# of 110 people living in a flood risk area. 
+ 
+# The data in the example is the results of asking about the cost (low, moderate or high) of flood preparations and how
+# the preparations varied with the expectation of damage (major or minor).
+
+# First, enter the data:
+
+major <- c(43, 10, 4)
+minor <- c(16, 28, 9)
+flood <- cbind(major, minor)
+row.names(flood) <- c("low", "moderate", "high")
+flood
+
+# Then find the expected values under the assumption of independence:
+
+rowtots <- apply(flood, 1, sum)
+rowtots
+coltots <- apply(flood, 2, sum)
+coltots
+grandtot <- sum(flood)
+grandtot
+expected <- rowtots %*% t(coltots) / grandtot
+expected
+row.names(expected) <- c("low", "moderate", "high")
+expected
+
+# Calculate and assess the value of Pearson's chi-square statistic:
+
+pearsonX2 <- sum((flood - expected)^2/expected)
+pearsonX2
+rows <- dim(flood)[1]
+rows
+cols <- dim(flood)[2]
+cols
+deg.f <- (rows - 1)*(cols - 1)
+deg.f
+
+pearsonX2
+qchisq(0.95, deg.f)
+
+1 - pchisq(pearsonX2, deg.f)
+
+# Do the same for the likelihood ratio chi-square statistic:
+
+likelihoodratioG2 <- 2 * sum(flood * log(flood/expected))
+likelihoodratioG2
+1 - pchisq(likelihoodratioG2, deg.f)
+
+# Both these statistics give the same story - they refute the assumption of independence.
+
+# Same analysis formulated as a GLM:
+
+observed <- c(major, minor)
+observed
+cost <- rep(row.names(flood),2)
+cost
+damage <- c(rep("major",3), rep("minor", 3))
+damage
+data.frame(observed, cost, damage)
+
+flood.glm <- glm(observed ~ cost + damage, family=poisson)
+flood.glm
+
+# The fitted values for this model (derived two ways) are the same as the expected values under the assumption of independence:
+
+fitted(flood.glm)
+exp(flood.glm$linear.predictors)
+
+# And the residual deviance is the same as the likelihood ratio statistic:
+
+anova(flood.glm)
+
+# And the Pearson residuals can also be used to find the Pearson chi-square statistic:
+
+sum(residuals(flood.glm, "pearson")^2)
+
+# Finally the likelihood ratio statistic appears again as the change in deviance due to the interaction term between cost
+# and damage if we fit the fully saturated model:
+
+flood.glm1 <- glm(observed ~ cost * damage, family=poisson)
+flood.glm1
+anova(flood.glm1, test="Chisq")
+
+# So, the classical (Pearson) approach to analysing these contingency tables can be seen as being equivalent to a GLM analysis!

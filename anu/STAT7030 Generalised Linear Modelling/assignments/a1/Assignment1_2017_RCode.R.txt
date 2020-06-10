@@ -1,0 +1,213 @@
+# STAT3015/STAT4030/STAT7030 Generalised Linear Models
+
+# Assignment 1 for 2017 - Appendix of R Commands
+
+# Q1 (a)
+
+# First read in and organise the data:
+
+qcolour <- read.csv("qcolour.csv")
+qcolour
+attach(qcolour)
+
+# A little exploratory data analysis: 
+
+summary(qcolour)
+
+mean(rrate)
+tapply(rrate, colour, mean)
+var(rrate)
+tapply(rrate, colour, var)
+
+# Even though the response variable is a percentage, there are no values close to either 0% or 100%, so it is reasonable to
+# assume approximate normality.  A reasonable starting point is therefore an ordinary multiple regression model, rather than
+# a generalised linear model (GLM).  There would also be problems with interpreting response as a binomial proportion and 
+# fitting a logistic regression as we do not know the sample sizes for each car park (using size of car park as a proxy for
+# the number of questionnaires handed out assumes that each car park was full at the time of the survey, which is stretching
+# credibility somewhat).
+
+contrasts(colour)
+
+mean(size)
+tapply(size, colour, mean)
+
+contrasts(week)
+
+plot(size, rrate)
+
+# After a little exploratory data analysis involving plots of the various variables, which suggests that there is definitely
+# a relationship between size of the car parks and the response rate, the following model is a reasonable starting point and
+# turns out to be a reasonable fit to the data:
+
+qcolour.lma <- lm(rrate ~ colour + week + size)
+
+# The required diagnostic plots can all be produced using the generic plot function:
+
+par(mfrow=c(2,2))
+plot(qcolour.lma, which=c(1,2,4,5))
+par(mfrow=c(1,1))
+
+# A few descriptive statistics to aid in the interpretation of these plots:
+
+sort(rstandard(qcolour.lm))
+sort(cooks.distance(qcolour.lm))
+sort(hatvalues(qcolour.lm))
+mean(hatvalues(qcolour.lm))
+
+# Overall these plots suggest that the model is a reasonable fit to the data with no obvious violations of the underlying
+# assumptions.
+
+# Q1 (b) 
+
+anova(qcolour.lma)
+
+# The reduced fitted model is a parallel lines analysis of covariance (ANCOVA) model consisting of three parallel simple
+# linear regressions between reponse and size, one for each of the three colours:
+
+qcolour.lmb <- lm(rrate ~ colour + size)
+coef(qcolour.lmb)
+
+# All three lines have the same slope, but different intercepts:
+
+intercepts <- c("blue"=qcolour.lmb$coef[1],"green"=qcolour.lmb$coef[1] + qcolour.lmb$coef[2],"orange"=qcolour.lmb$coef[1] + qcolour.lmb$coef[3])
+intercepts
+
+plot(c(18,482), c(20,40), type="n", xlab="Size of Car Park (# spaces)", ylab="Response Rate (%)")
+title("Questionnaire Colour Experiment")
+points(size[colour=="blue"&week=="A"], rrate[colour=="blue"&week=="A"], pch="B")
+points(size[colour=="blue"&week=="B"], rrate[colour=="blue"&week=="B"], pch="b")
+points(size[colour=="green"&week=="A"], rrate[colour=="green"&week=="A"], pch="G")
+points(size[colour=="green"&week=="B"], rrate[colour=="green"&week=="B"], pch="g")
+points(size[colour=="orange"&week=="A"], rrate[colour=="orange"&week=="A"], pch="O")
+points(size[colour=="orange"&week=="B"], rrate[colour=="orange"&week=="B"], pch="o")
+abline(intercepts[1], qcolour.lmb$coef[4], lty=1, lwd=2.5)
+abline(intercepts[2], qcolour.lmb$coef[4], lty=2, lwd=2.5)
+abline(intercepts[3], qcolour.lmb$coef[4], lty=3, lwd=2.5)
+legend(330, 40, lty=c(2,2,1,1,3,3), lwd=rep(2.5,6), pch=c("G","g","B","b","O","o"), c("green:","  fitted rrate = 39.9 - 0.035 size ","blue:","  fitted rrate = 38.8 - 0.035 size","orange:","  fitted rrate = 37.6 - 0.035 size"))
+
+# Q1 (c) 
+
+# To present the model object, you need simply to type the name of the object:
+
+qcolour.lmb
+anova(qcolour.lmb)
+summary(qcolour.lmb)
+
+# Giving the algebraic equation for the underlying population model requires mathematical typing (or hand-writing), which is
+# a little difficult in a script file such as this one, but is definitely a required part of the assignment and I have 
+# included it in the model solutions.
+
+# Q1 (d)
+
+# Here's how to produce a version of the required predictions with nice labels:
+
+newcarpark <- data.frame(colour=c("blue","green","orange"), size=c(250,250,250))
+row.names(newcarpark) <- c("blue","green","orange")
+newcarpark
+
+predict(qcolour.lmb, newdata=newcarpark, interval="confidence")
+
+# Q1 (e)
+
+# Adding an interaction term allows us to test if separate slopes are needed for the three colours:
+
+qcolour.lmb_int <- lm(rrate ~ colour * size)
+anova(qcolour.lmb_int)
+
+# The answer is no, there do not appear to be any significant differences between the colours.
+
+# Q1(f) 
+
+# The analysis of variance (ANOVA) table:
+
+qcolour.lmf <- lm(rrate ~ colour + size, data=qcolour[week=="A",])
+anova(qcolour.lmf)
+
+# The table of coefficients (omitting the other summary output, which I am not going to discuss):
+
+summary(qcolour.lmf)$coefficients
+
+# The hypothesis test for the coefficient of size in the ANOVA table has F=961.8 with p-value=0 (less than 0.05), suggests 
+# that we should reject the null hypothesis and conclude that the coefficient of this term is significantly different from 
+# zero (i.e. the term involving size is a significant part of the model.  This suggests there is a significant linear
+# relationship between the response rate and the size of the car park.  As the coefficient is negative and looking at the
+# slope of the regression line on the plot of the model in part (a), it is fairly obvious that the larger the car park,
+# the lower the response rate.  For each increase of 100 parking spaces in the size of the car park, the expected response
+# rate reduces by almost 3% (2.98%).  Using 100 times both the estimated coefficient and standard error, and the appropriate
+# t quantile, qt(0.975,11)=2.200985, we can calculate a 95% confidence interval for the expected decrease per 100 spaces:
+# -2.98% +/- 2.200985 * 0.1% = (-3.2%, -2.7%) (rounding outwards to ensure at least the required confidence!)
+
+100 * c(summary(qcolour.lmf)$coef[4,1] - qt(0.975,11)*summary(qcolour.lmf)$coef[4,2],
+        + summary(qcolour.lmf)$coef[4,1] + qt(0.975,11)*summary(qcolour.lmf)$coef[4,2])
+
+# The same hypothesis test for size could be conducted using the equivalent line from the table of coefficients (note that if
+# we square the relevant t value of -31.0131, we get the above F value of 961.8). 
+
+# The hypothesis test for the coefficient of colour in the ANOVA table has F=31.8 with p-value=0.00003, again suggesting that
+# we reject the null hypothesis and conclude that the there are significant differences between the colours.
+
+# Using treatment coding, the R default is to treat the first colour in alphabetical order (blue) as the reference group 
+# - this is the group that does not get a separate parameter in the model and means that the overall intercept will be the 
+# intercept for this group.
+
+# The other coefficients (colourgreen and colourorange) in the table of coefficients are therefore how much the intercept
+# has to be changed to get to the other two colours (green and orange). The t tests associated with these coefficients provide
+# tests for the difference between green and blue (significant with t=6.1, p-value=0.0001) and for the difference between
+# orange and blue (also significant with t=-8.1, p-value=0).  As you can see from the plot in part(a), blue lies in the middle
+# of the three groups and so obviously orange will also differ significantly from green and therefore all three colours differ
+# significantly, with green giving the best response rate (which is probably what the researchers really want to know).
+
+# In summary, we see that, on average:
+# orange questionnaires produce almost a 1.8% lower response rate than blue questionnaires (95% CI -2.3% to -1.2%), and
+# green questionnaires produce around a 1.3% higher response rate than blue questionnaires (95% CI 0.8% to 1.9%). 
+
+c(summary(qcolour.lmf)$coef[3,1] - qt(0.975,11)*summary(qcolour.lmf)$coef[3,2],
+  + summary(qcolour.lmf)$coef[3,1] + qt(0.975,11)*summary(qcolour.lmf)$coef[3,2])
+
+c(summary(qcolour.lmf)$coef[2,1] - qt(0.975,11)*summary(qcolour.lmf)$coef[2,2],
+  + summary(qcolour.lmf)$coef[2,1] + qt(0.975,11)*summary(qcolour.lmf)$coef[2,2])
+
+# This implies that we need at least need three parallel lines to fit the three different groups, we cannot collapse two of
+# the groups and a simple linear regression model of response on size (a single regression model) would certainly not
+# adequately model the data, as it would not allow us to assess if there are significant differences between colours.
+
+# However (and it is a big however), we repeated the experiment in week B and when add in the new results, we don't get the
+# same significant effects, even though we had twice the observations. In short, we could not successfully replicate the
+# first experiment in week A in week B.
+
+# Q1 (g)
+
+# Firstly attach the nlme library, so we can access the lme() function:
+
+library(nlme)
+
+# We can then add the ID variable as a random effect into our earlier model:
+
+qcolour.lme <- lme(rrate ~ colour + size, random=~1|factor(week))
+
+anova(qcolour.lme)
+
+summary(qcolour.lme)
+
+# Alternatively, we could use the other function for fitting random effects models in the examples covered in the lectures, 
+# which gives slightly different results (essentially because the two functions apply different convergence criteria):
+
+library(lme4)
+
+qcolour.lmer <- lmer(rrate ~ colour + size + (1|factor(week)))
+
+anova(qcolour.lmer)
+
+summary(qcolour.lmer)
+
+# Either set of results have not changed much from the earlier model:
+
+anova(qcolour.lmb)
+
+summary(qcolour.lmb)
+
+# Question 1 (h)
+
+# This question calls for a discussion and synthesis of all the above results. Interpreting the results of an analysis
+# and making recommendations are definitely the responsibility of a good statistical consultant. I refer you to the model
+# solutions for my conclusions and recommendations in this instance.

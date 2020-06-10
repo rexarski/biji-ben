@@ -1,0 +1,21 @@
+set.seed(12) #setting the seed so that results can be replicated exactly.
+age<-0:100  #ages at which will we simulate the force of mortality.
+logmu<-log(2)+age*log(1.1)+rnorm(101,0,0.5) #simulated log(mu) following Gompertz law with B=2 and C=1.1 (plus error)
+plot(age,logmu,main="Estimated Force of Mortality",xlab="Age",ylab="Force of Mortality")
+
+#fitting a sLR model to estimate B and C
+fit<-lm(logmu~age)
+fit$coef
+exp(fit$coef)
+
+#looking at estimates over 1000 simulations
+estimates<-matrix(0,1000,2)
+for(i in 1:1000) {
+logmu<-log(2)+age*log(1.1)+rnorm(101,0,0.5) 
+fit<-lm(logmu~age)
+fit$coef
+estimates[i,]<-exp(fit$coef)
+}
+par(mfrow=c(2,1))
+hist(estimates[,1],main="1000 estimates of B=2")
+hist(estimates[,2],main="1000 estimates of A=1.1")
