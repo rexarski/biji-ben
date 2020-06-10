@@ -1,0 +1,53 @@
+# FUNCTION TO FIND A ZERO OF A UNIVARIATE FUNCTION USING NEWTON'S METHOD.
+#
+# R. M. Neal, September 2014
+#
+# Arguments:
+#    f = function we want to find a zero of
+#    g = function computing derivative of function we want to find a zero of
+#    x = initial guess at location of zero
+#    n = number of iterations
+#
+# Returned value:  
+#    point, x, at which f(x) is approximately zero
+
+newton <- function (f, g, x, n)
+{
+    if (n < 1)
+        stop("invalid number of iterations")
+
+    for (i in 1:n) {
+        x <- x - f(x) / g(x)
+        cat("x =",x,"f(x) =",f(x),"g(x) =",g(x),"\n")
+    }
+  
+    x
+}
+
+
+# Version that tries to avoid instability.
+
+newton2 <- function (f, g, x, n)
+{
+    if (n < 1)
+        stop("invalid number of iterations")
+
+    fx <- f(x)
+    for (i in 1:n) {
+        d <- fx / g(x)
+        r <- 0
+        repeat {
+            new_x <- x - d
+            new_fx <- f(new_x)
+            if (abs(new_fx) <= abs(fx)) 
+                break
+            d <- d / 2
+            r <- r + 1
+        }
+        x <- new_x
+        fx <- new_fx
+        cat("x =",x,"f(x) =",f(x),"g(x) =",g(x),"d =",d,"r =",r,"\n")
+    }
+  
+    x
+}

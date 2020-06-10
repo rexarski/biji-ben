@@ -1,0 +1,109 @@
+# STA 410/2102, Fall 2015, Functions for Assignment #2, Problem 2.
+
+# These functions obtain known information from the global variables
+# n_species, n_genera, species_genus, sd_log_mass, and sd_log_ratio.
+
+
+# Find the probability/density for the three measurements on a beetle,
+# conditional on it being of a given species, and on given model parameters
+# (as a list).  The 'd' argument is a list (or data frame with one row) of
+# measurements.  The 'sp' argument may be a vector of species indicators,
+# in which case a vector of probability/density values is returned.
+
+beetles_prob <- function (d, sp, params)
+{
+    dnorm(log(d$mass), params$mu[sp], sd_log_mass) *
+      dnorm(log(d$ratio), params$nu[sp], sd_log_ratio) *
+        (if (d$swamp) params$rho[sp] else 1-params$rho[sp])
+}
+
+
+# Find the log likelihood for parameter values (a list) with given data.
+
+beetles_log_lik <- function (data, params)
+{
+    ll <- 0
+
+    for (i in 1:nrow(data)) {
+
+        # Set 'sp' to the vector of possible species for this beetle.
+
+        if (!is.na(data$species[i]))
+            sp <- data$species[i]
+        else if (!is.na(data$genus[i]))
+            sp <- (1:n_species)[species_genus==data$genus[i]]
+        else
+            sp <- 1:n_species
+
+        # Add the log of the total probability of getting these measurements,
+        # summing over all possible species for this beetle.
+
+        ll <- ll + log (sum (params$alpha[sp] 
+                              * beetles_prob (data[i,], sp, params)))
+    }
+
+    ll
+}
+
+
+# Find the maximum likelihood parameter estimates using EM, starting from
+# the given initial values, and running for 'iters' iterations of EM.
+# The value returned is a list of the maximum likelihood parameter estimates.
+
+beetles_em <- function (data, initial, iters)
+{
+    params <- initial
+
+    # Set up 'q' as a matrix of probabilities for the species of each
+    # beetle, which are initialized to zero, except that when the species
+    # is known, the probability of that species is set to 1, and doesn't
+    # need to be changed.  For other beetles, the corresponding row in
+    # this matrix will be changed in the E step of EM.
+
+    q <- matrix (0, nrow=nrow(data), ncol=n_species)
+    for (i in 1:nrow(data)) {
+        if (!is.na(data$species[i]))
+            q[i,data$species[i]] <- 1
+    }
+
+    # Do 'iters' iterations of EM.
+
+    for (t in 1:iters) {
+
+        # E step.  Change the 'q' matrix for beetles with species not known
+        # to contain the probabilities of each species found using Bayes' Rule.
+
+        for (i in 1:nrow(data)) {
+            if (is.na(data$species[i])) {
+
+                # Set 'sp' to the vector of possible species for this beetle.
+
+                sp <- if (is.na(data$genus[i])) 1:n_species
+                      else (1:n_species)[species_genus==data$genus[i]]
+
+                # Find unnormalized probabilities for each possible species.
+
+                q[i,sp] <- params$alpha[sp] * beetles_prob (data[i,],sp,params)
+
+                # Normalize the probabilities by dividing by their sum.
+
+                q[i,sp] <- q[i,sp] / sum(q[i,sp])
+            }
+        }
+
+        # M step.
+
+        for (s in 1:n_species) {
+            ecount <- sum(q[,s])
+            params$mu[s] <- sum(log(data$mass)*q[,s]) / ecount
+            params$nu[s] <- sum(log(data$ratio)*q[,s]) / ecount
+            params$rho[s] <- sum(data$swamp*q[,s]) / ecount
+            params$alpha[s] <- mean(q[,s])
+        }
+
+        cat("ITERATION",t," log likelihood",beetles_log_lik(data,params),"\n")
+        if (t%%10==0) { cat("\n"); print(params) }
+    }
+
+    params
+}

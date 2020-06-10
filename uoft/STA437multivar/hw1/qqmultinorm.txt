@@ -1,0 +1,21 @@
+qqmultinorm <- function(x,nproj=50,scale=T,plot.qq=F,plot.edf=F) {
+                  p <- ncol(x)
+                  if(scale) x <- scale(x,center=T,scale=T)
+                  if(plot.qq) devAskNewPage(ask = T)
+                  pvals <- NULL
+                  for (i in 1:nproj) {
+                     a <- rnorm(p)
+                     a <- a/sqrt(sum(a^2))
+                     y <- as.vector(x%*%a)
+                     if (plot.qq) qqnorm(y)
+                     r <- shapiro.test(y)
+                     pvals <- c(pvals,r$p.value)
+                     }
+                  if (plot.edf) {
+                       plot(ecdf(pvals),xlab="p-values",ylab="probability",
+                          main=" ")
+                       abline(0,1,lwd=2)
+                       }
+                  pvals
+                  }
+

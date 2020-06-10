@@ -1,0 +1,163 @@
+###################################### Question 2 ##########################################
+## Param[i,1] refers to mu---mass
+## Param[i,2] refers to v---ratio
+## Param[i,3] refers to rho---probability of a beetle of species collected from swamp
+## Param[i,4] refers to alpha---probability of a beetle of species s collected
+
+beetle_function<-function(x,param,iters){
+  total_matrix<-matrix(0,ncol = 10,nrow = 500)
+  number<-0
+  
+  for(j in 1:iters){
+    loglik<-0
+    for(i in 1:nrow(x)){
+      
+      if(is.na(x[i,1])){
+        
+        if(is.na(x[i,2])){
+          number<-10
+          p_matrix<-beetle_function_E(param,log(x[i,3]),log(x[i,4]),x[i,5],number)
+          total_matrix[i,]<-t(p_matrix)
+          loglik<-loglik+log(loglikelihood(param,log(x[i,3]),log(x[i,4]),x[i,5],number,0))
+        }
+        
+        else{
+          number<-x[i,2]
+          p_matrix<-beetle_function_E(param,log(x[i,3]),log(x[i,4]),x[i,5],number)
+          total_matrix[i,]<-t(p_matrix)
+          loglik<-loglik+log(loglikelihood(param,log(x[i,3]),log(x[i,4]),x[i,5],number,0))
+        } 
+      
+      }
+    
+      else{    
+        number<-x[i,1]
+        total_matrix[i,number]<-1
+        loglik<-loglik+log(loglikelihood(param,log(x[i,3]),log(x[i,4]),x[i,5],number,1))
+        }
+      
+    }
+  
+      cat("The loglikelihood is ",loglik,"\n")
+      param<-beetle_function_M(param,total_matrix,x)
+  }
+  
+  return(param)
+}
+
+beetle_function_E<-function(param,m,r,k,num){
+  
+  total_probability_matrix<-matrix(0,nrow = nrow(param),ncol = 1)
+  total_param_denominator<-0
+
+  if(num==10){
+    
+      for(i in 1:10){
+    
+        total_probability_matrix[i,1]<-(param[i,3]^k)*((1-param[i,3])^(1-k))*dnorm(m,param[i,1],0.08)*dnorm(r,param[i,2],0.1)*(param[i,4])
+        total_param_denominator<-total_param_denominator+(param[i,3]^k)*((1-param[i,3])^(1-k))*dnorm(m,param[i,1],0.08)*dnorm(r,param[i,2],0.1)*(param[i,4])
+      }
+  }
+  
+  if(num==1){
+    
+    for(i in 1:3){
+      
+      total_probability_matrix[i,1]<-(param[i,3]^k)*((1-param[i,3])^(1-k))*dnorm(m,param[i,1],0.08)*dnorm(r,param[i,2],0.1)*(param[i,4])
+      total_param_denominator<-total_param_denominator+(param[i,3]^k)*((1-param[i,3])^(1-k))*dnorm(m,param[i,1],0.08)*dnorm(r,param[i,2],0.1)*(param[i,4])
+      
+    }
+    
+  }
+  
+  if(num==2){
+    
+    for(i in 1:2){
+      
+      total_probability_matrix[i+3,1]<-(param[i+3,3]^k)*((1-param[i+3,3])^(1-k))*dnorm(m,param[i+3,1],0.08)*dnorm(r,param[i+3,2],0.1)*(param[i+3,4])
+      total_param_denominator<-total_param_denominator+(param[i+3,3]^k)*((1-param[i+3,3])^(1-k))*dnorm(m,param[i+3,1],0.08)*dnorm(r,param[i+3,2],0.1)*(param[i+3,4])
+    }
+  }
+  
+  if(num==3){
+    
+    for(i in 1:2){
+      
+      total_probability_matrix[i+5,1]<-(param[i+5,3]^k)*((1-param[i+5,3])^(1-k))*dnorm(m,param[i+5,1],0.08)*dnorm(r,param[i+5,2],0.1)*(param[i+5,4])
+      total_param_denominator<-total_param_denominator+(param[i+5,3]^k)*((1-param[i+5,3])^(1-k))*dnorm(m,param[i+5,1],0.08)*dnorm(r,param[i+5,2],0.1)*(param[i+5,4])
+    }
+  }
+  
+  if(num==4){
+    
+    for(i in 1:3){
+      
+      total_probability_matrix[i+7,1]<-(param[i+7,3]^k)*((1-param[i+7,3])^(1-k))*dnorm(m,param[i+7,1],0.08)*dnorm(r,param[i+7,2],0.1)*(param[i+7,4])
+      total_param_denominator<-total_param_denominator+(param[i+7,3]^k)*((1-param[i+7,3])^(1-k))*dnorm(m,param[i+7,1],0.08)*dnorm(r,param[i+7,2],0.1)*(param[i+7,4])
+    }
+  }
+  total_probability_matrix<-total_probability_matrix/total_param_denominator
+  return(total_probability_matrix)
+}
+
+beetle_function_M<-function(param,p,dat){
+  
+  for(i in 1:10){
+    param[i,1]<-sum(log(dat[,3])*p[,i])/sum(p[,i])
+    param[i,2]<-sum(log(dat[,4])*p[,i])/sum(p[,i])
+    param[i,3]<-sum(dat[,5]*p[,i])/sum(p[,i])
+    param[i,4]<-sum(p[,i])/sum(p)
+
+  }
+  
+  return(param)
+}
+
+loglikelihood<-function(param,m,r,k,num,id){
+  total_param_denominator<-0
+  
+  if(id==0 && num==10){
+    
+    for(i in 1:10){
+      total_param_denominator<-total_param_denominator+(param[i,3]^k)*((1-param[i,3])^(1-k))*dnorm(m,param[i,1],0.08)*dnorm(r,param[i,2],0.1)*(param[i,4])
+      
+    }
+  }
+
+  if(id==0 & num==1){
+    
+    for(i in 1:3){
+      total_param_denominator<-total_param_denominator+(param[i,3]^k)*((1-param[i,3])^(1-k))*dnorm(m,param[i,1],0.08)*dnorm(r,param[i,2],0.1)*(param[i,4])
+    }
+    
+  }
+  
+  if(id==0 & num==2){
+    for(i in 1:2){
+      total_param_denominator<-total_param_denominator+(param[i+3,3]^k)*((1-param[i+3,3])^(1-k))*dnorm(m,param[i+3,1],0.08)*dnorm(r,param[i+3,2],0.1)*(param[i+3,4])
+    }
+  }
+  
+  if(id==0 & num==3){
+    for(i in 1:2){
+      total_param_denominator<-total_param_denominator+(param[i+5,3]^k)*((1-param[i+5,3])^(1-k))*dnorm(m,param[i+5,1],0.08)*dnorm(r,param[i+5,2],0.1)*(param[i+5,4])
+    }
+  }
+  
+  if(id==0 & num==4){
+    for(i in 1:3){
+      total_param_denominator<-total_param_denominator+(param[i+7,3]^k)*((1-param[i+7,3])^(1-k))*dnorm(m,param[i+7,1],0.08)*dnorm(r,param[i+7,2],0.1)*(param[i+7,4])
+    }
+  }
+  
+  if(id==1){
+      total_param_denominator<-total_param_denominator+(param[num,3]^k)*((1-param[num,3])^(1-k))*dnorm(m,param[num,1],0.08)*dnorm(r,param[num,2],0.1)*(param[num,4])
+  }
+  
+  
+  return(total_param_denominator)
+}
+
+
+
+

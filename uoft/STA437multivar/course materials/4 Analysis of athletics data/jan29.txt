@@ -1,0 +1,54 @@
+x <- scan("track.txt",what=list("c",0,0,0,0,0,0,0,0))
+country <- x[[1]]
+m100 <- x[[2]]
+m200 <- x[[3]]
+m400 <- x[[4]]
+m800 <- x[[5]]
+m1500 <- x[[6]]
+m5000 <- x[[7]]
+m10000 <- x[[8]]
+mara <- x[[9]]
+
+# attach the country code to each variable
+attr(m100,"names") <- country
+attr(m200,"names") <- country
+attr(m400,"names") <- country
+attr(m800,"names") <- country
+attr(m1500,"names") <- country
+attr(m5000,"names") <- country
+attr(m10000,"names") <- country
+attr(mara,"names") <- country
+allrecords <- cbind(m100,m200,m400,m800,m1500,m5000,m10000,mara)
+allrecords  # list of records for each country
+
+# pairwise scatterplots
+pairs(allrecords)
+
+# correlation matrix to 3 decimal places
+round(cor(allrecords),3)
+
+# Compute principal components on the correlation matrix (cor=T)
+r <- princomp(~m100+m200+m400+m800+m1500+m5000+m10000+mara,cor=T)
+summary(r, loadings=T)
+# plot first two principal components 
+plot(r$scores[,1],r$scores[,2],type="n",xlab="First principal component",
+ylab="Second principal component",main="First two principal components")
+# type="n" means that no points are plotted; we use this option as
+# we want to plot the 3 letter country code using the "text" function
+
+text(r$scores[,1],r$scores[,2],label=country)
+
+# plot first and third principal components
+
+plot(r$scores[,1],r$scores[,3],type="n",xlab="First principal component",
+ylab="Third principal component",main=
+"First and third principal components") 
+
+text(r$scores[,1],r$scores[,3],label=country)
+
+# Now rank countries according to their first principal component score
+ord <- order(r$scores[,1],decreasing=T)
+attributes(r$scores)$dimnames[[1]] <- country
+cbind(score1=round(r$scores[ord,1],2),score2=round(r$scores[ord,2],2))
+
+

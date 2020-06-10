@@ -1,0 +1,4 @@
+library(lattice)
+source('a2q2.r')
+
+result <- em(data, 0.08, 0.1, 100)

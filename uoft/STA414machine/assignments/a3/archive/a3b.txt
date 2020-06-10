@@ -1,0 +1,191 @@
+# set up
+train1x <- read.table("./train1x", header=F)
+train1y <- read.table("./train1y", header=F)
+testx <- read.table("./testx", header=F)
+testy <- read.table("./testy", header=F)
+
+train1x[,1] <- train1x[,1]/10
+train1x[,7] <- train1x[,7]/10
+testx[,1] <- testx[,1]/10
+testx[,7] <- testx[,7]/10
+
+############################### 1. simple linear model ############################### 
+lm <- function(par, train1x, train1y, testx, testy) {
+  if (par==0) {
+    train1x[,1:7] <- train1x[,1:7]/10
+    test1x[,1:7] <- test1x[,1:7]/10
+  }
+  w_opt <- matrix(1,9,1)
+  intercept <- matrix(1,nrow(train1x),1)
+  # X is the design matrix for training data
+  X <- cbind(intercept, train1x)
+  # optimal weights
+  w_opt <- solve(t(X)%*%as.matrix(X))%*%t(X)%*%as.matrix(train1y)
+  # X_test is the design matrix for testing data
+  X_test <- cbind(matrix(1,nrow(testx),1), testx)
+  # sum of squared errors of prediction (SSE), aka, RSS
+  SSE_test <- 0
+  for (i in 1:nrow(testy)) {
+    se <- (testy[i,1] - X_test[i,]*w_opt)^2
+    SSE_test <- SSE_test + se
+  }
+  SSE_test_mean <- SSE_test/nrow(testy)
+#   cat("The sum of squared error prediction of test is: " + "\n" + SSE_test + "\n")
+#   cat("The mean squared error of test is: " + "\n" + SSE_test_mean)
+  return(list(SSE_test,SSE_test_mean))
+}
+
+############################### 2. Gaussian process with linear covariance ###############################
+gplc <- function(par, train1x, train1y, testx, testy) {
+  if (par==0) {
+    train1x[,1:7] <- train1x[,1:7]/10
+    test1x[,1:7] <- test1x[,1:7]/10
+  }
+  K <- 100^2*(as.matrix(train1x)%*%t(as.matrix(train1x)))
+  beta <- 1
+  C <- K + as.matrix(beta^(-1)*diag(nrow(K)))
+  C <- solve(C)
+  # here C is a 250 by 250 matrix
+  # now we construct a matrix with potential parameters mu_i and sigma_i
+  parameters <- matrix(1, nrow(testx), 2)
+  for (i in 1:nrow(testy)){
+    k <- 100^2*(as.matrix(train1x)%*%t(as.matrix(testx[i,])))
+    c <- 100^2*(as.matrix(testx[i,])%*%t(as.matrix(testx[i,])))
+    mu <- t(k)%*%C%*%as.matrix(train1y)
+    sigma <- c - t(k)%*%C%*%k
+    parameters[i, 1] <- mu
+    parameters[i, 2] <- sigma
+  }
+  # SSE for testing data using the optimal weights 
+  SSE_test <- 0
+  for (i in nrow(testy)) {
+    se <- (testy[i,1]-parameters[i,1])^2
+    SSE_test <- SSE_test + se
+  }
+  SSE_test_mean <- SSE_test/nrow(testy)
+  return(list(SSE_test,SSE_test_mean))
+}
+
+############################### SECTION ###############################
+section <- function(i, train1x, train1y) {
+  right <- 50*i
+  left <- (i-1)*50+1
+  testxx <- train1x[left:right,]
+  testyy <- train1y[left:right,]
+  if (i==1) {
+    trainxx <- train1x[(right+1):nrow(train1x),]
+    trainyy <- train1y[(right+1):nrow(train1y),]
+  } else if (i==5) {
+    trainxx <- train1x[1:(left-1),]
+    trainyy <- train1y[1:(left-1),]
+  } else {
+    trainxx <- rbind(train1x[1:(left-1),], train1x[(right+1):nrow(train1x),])
+    trainyy <- rbind(as.matrix(train1y[1:(left-1),]), as.matrix(train1y[(right+1):nrow(train1y),]))
+  }
+  return(list(testxx,testyy,trainxx,trainyy))
+  # FOR DEBUGGING
+  # return(c(dim(as.matrix(testxx)),dim(as.matrix(testyy)),dim(as.matrix(trainxx)),dim(as.matrix(trainyy))))
+}
+
+############################### C-V ###############################
+crossvalidation <- function(train1x, train1y, gamma, rho, theta) {
+  # function ASSE = crossValidation(train1x, train1y, gamma, roh, theta)
+  beta <- 1
+  SSE_vec <- matrix(1,5,1)
+  # 5-case cross-validation
+  for (index in 1:5) {
+    testxx <- section(index, train1x, train1y)[1][[1]]
+    testyy <- section(index, train1x, train1y)[2][[1]]
+    trainxx <- section(index, train1x, train1y)[3][[1]]
+    trainyy <- section(index, train1x, train1y)[4][[1]]
+    quadratic <- matrix(1,200,200)
+    for (j in 1:200) {
+      for (i in 1:200) {
+        # could be wrong???
+        quadratic[i,j] <- sum((as.matrix(trainxx[j,]) - as.matrix(trainxx[i,]))^2)
+      }
+    }
+    K <- theta*matrix(1,200,200) + gamma^2*exp((-1)*rho^2*quadratic)
+    C <- K + beta^(-1)*diag(nrow(K))
+    C <- solve(C)
+    # for mu_i, sigma_i
+    parameters <- matrix(1,nrow(testxx),2)
+    for (i in 1:nrow(as.matrix(testyy))) {
+      q <- matrix(1,200,1)
+      for (l in 1:200) {
+        q[l] <- sum((as.matrix(trainxx[l,]) - as.matrix(testxx[i,]))^2)
+      }
+      k <- theta*matrix(1,200,1) + gamma^2*exp((-1)*rho^2*q)
+      # somehow the section function here here called is wrong, the second partition is 2by150, not 200 by 1 as desired
+      mu <- t(k)%*%C%*%as.matrix(trainyy)
+      parameters[i,1] <- mu
+      parameters[i,2] <- 1
+    }
+    # SSE for testing data
+    SSE_test <- 0
+    for (i in 1:nrow(as.matrix(testyy))) {
+      se <- (as.matrix(testyy)[i,1] - parameters[i,1])^2
+      SSE_test <- SSE_test + se
+    }
+    SSE_test_mean <- SSE_test/nrow(as.matrix(testyy))
+    SSE_vec[index] <- SSE_test_mean
+  }
+  # average sum of squared error
+  ASSE <- sum(SSE_vec)/5
+  return(ASSE)
+}
+
+############################### HYPERPARAMETERS ###############################
+hyperpar <- function(train1x, train1y) {
+  theta <- 100^2
+  for (gamma in seq(0.1, 10, 0.5)) {
+    for (rho in seq(0.01, 1, 0.05)) {
+      ASSE <- crossvalidation(train1x, train1y, gamma, rho, theta)
+      if (gamma==0.1&&rho==0.01) {
+        mean_opt <- ASSE
+        gamma_opt <- gamma
+        rho_opt <- rho
+      }
+      if (ASSE < mean_opt) {
+        mean_opt <- ASSE
+        gamma_opt <- gamma
+        rho_opt <- rho
+      }
+    }
+  }
+  return(list(mean_opt,gamma_opt,rho_opt))
+}
+
+############################### 3. Gaussian process ###############################
+gp <- function(gamma_opt, rho_opt, train1x, train1y, testx, testy) {
+  # function [SSE_test, SSE_test_mean] = GP(gamma_opt, roh_opt, train1x, train1y,testx, testy)
+  beta <- 1
+  theta <- 100^2
+  quadratic <- matrix(1,nrow(train1x),nrow(train1x))
+  for (j in 1:nrow(train1x)) {
+    for (i in 1:nrow(train1x)) {
+      quadratic[i,j] <- sum((train1x[j,]-train1x[i,])^2)
+    }
+  }
+  K <- theta*matrix(1,nrow(train1x),1) + (gamma_opt^2)*exp((-1)*(rho_opt^2)*quadratic)
+  C <- K + beta^(-1)*diag(nrow(K))
+  C <- solve(C)
+  parameters <- matrix(1,nrow(train1x),2)
+  for (i in 1:nrow(testy)) {
+    q <- matrix(1,nrow(train1y),1)
+    for (l in 1:nrow(train1y)) {
+      q[l] <- sum((train1x[l,] - test[i,])^2)
+    }
+    k <- theta*matrix(1,nrow(train1y),1) + (gamma_opt^2)*exp((-1)*(rho_opt^2)*q)
+    mu <- t(k)%*%C%*%as.matrix(train1y)
+    parameters[i,1] <- mu
+    parameters[i,2] <- 1
+  }
+  SSE_test <- 0
+  for (i in 1:nrow(testy)) {
+    se <- (as.matrix(testy)[i,1] - parameters[i,1])^2
+    SSE_test <- SSE_test + se
+  }
+  SSE_test_mean <- SSE_test/nrow(testy)
+  return(list(SSE_test,SSE_test_mean))
+}

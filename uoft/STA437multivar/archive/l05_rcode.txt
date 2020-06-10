@@ -1,0 +1,86 @@
+# load radiation data (door closed)
+data <- read.table("data/T4-1.DAT"); 
+plot(data$V1,pch=20,cex=3)
+n <- nrow(data);
+# load radiation data (door open)
+data2 <- read.table("data/T4-5.DAT"); 
+data <- cbind(data,data2)
+# set data name
+names(data) <- c("closed","open");
+# sample means
+colMeans(data)
+# load MASS packages to run boxcox
+library(MASS)
+r <- boxcox(data$closed~1);
+lambda1 <- r$x[r$y==max(r$y)];
+lambda1
+# plot Q-Q plot
+qq <- qnorm(((1:n)-.5)/n);
+plot(qq,sort(data$closed),pch=20,cex=2);
+plot(qq,sort(data$closed**lambda1),pch=20,cex=2);
+plot(qq,sort(data$closed**0.25),pch=20,cex=2);
+r <- boxcox(data$open~1);
+lambda2 <- r$x[r$y==max(r$y)]; lambda2;
+# boxcox transformation
+dt2 <- data;
+dt2$closed <- dt2$closed**(.25);
+dt2$open <- dt2$open**(.25);
+# check marginal scatter plot and density
+plot(dt2,pch=20,cex=2);
+plot(density(dt2$closed));
+plot(density(dt2$open));
+# compare to random sample from normal distribution with same sample size
+x <- rnorm(n); plot(density(x));
+x <- rnorm(n); plot(density(x));
+# sample means and variances
+sm <- colMeans(dt2)
+sv <- var(dt2)
+sn <- nrow(dt2);
+sp <- ncol(dt2);
+plot(dt2$closed,dt2$open,pch=20,cex=3);
+# quantile ellipsoid
+sx <- seq(0.3,0.9,length=1001);
+sy <- sx <- seq(0.3,0.9,length=1001);
+svi <- ginv(sv);
+sz <- matrix(NA,1001,1001); for(i in 1:1001) for(j in 1:1001) { a <- sm-c(sx[i],sy[j]); sz[i,j] <- sn*t(a) %*% svi %*% a; }
+contour(sx,sy,sz)
+contour(sx,sy,sz,levels=c((sn-1)*sp/(sn-sp)*qf(.95,sp,sn-sp)))
+contour(sx,sy,sz,levels=c((sn-1)*sp/(sn-sp)*qf(.95,sp,sn-sp)),xlim=c(.5,.65),ylim=c(.5,.65))
+contour(sx,sy,sz,levels=c((sn-1)*sp/(sn-sp)*qf(c(.5,.8,.9,.95,.975),sp,sn-sp)),xlim=c(.5,.65),ylim=c(.54,.65))
+contour(sx,sy,sz,levels=c((sn-1)*sp/(sn-sp)*qf(.95,sp,sn-sp)),xlim=c(.5,.65),ylim=c(.54,.65))
+# confidence intervals of mu1,mu2 using t-distribution
+i <-1; aa1 <- sm[i] + c(-1,1) * qt((1+.95)/2,sn-1)*sqrt(sv[i,i]/sn)
+lines(aa1,rep(.54,2),lwd=2,col=2);
+i <- 2; aa2 <- sm[i] + c(-1,1) * qt((1+.95)/2,sn-1)*sqrt(sv[i,i]/sn)
+lines(rep(.5,2),aa2,lwd=2,col=4);
+abline(v=aa1,h=aa2);
+# Bonferonni correction
+gammastar <- 1-(1-.95)/sp;
+gammastar
+i <-1; aa3 <- sm[i] + c(-1,1) * qt((1+gammastar)/2,sn-1)*sqrt(sv[i,i]/sn)
+i <-2; aa4 <- sm[i] + c(-1,1) * qt((1+gammastar)/2,sn-1)*sqrt(sv[i,i]/sn)
+abline(v=aa3,h=aa4,col=3,lwd=2)
+# MLE when there are missing data
+dtm <- dt2;
+# randomly select 5 missing points
+rix <- sample(42,5);
+cix <- sample(2,5,T);
+cix
+rix
+for(i in 1:5) dtm[rix[i],cix[i]] <- NA; 
+# data comparison
+head(dtm)
+head(dt2)
+dtm[rix,];
+# initial parameter for em
+emm <- colMeans(dtm,na.rm=T); emv <- var(dtm,na.rm=T);
+emm; emm-sm
+emv; emv-sv
+# run EM algorithm
+for(i in 1:15) { dtmt <- dtm; ix <- which(is.na(dtmt[,1])); dtmt[ix,1] <- emm[1] + (dtmt[ix,2]-emm[2])*emv[2,1]/emv[1,1]; ix <- which(is.na(dtmt[,2])); dtmt[ix,2] <- emm[2] + (dtmt[ix,1]-emm[1])*emv[1,2]/emv[2,2]; emm <- colMeans(dtmt); emv <- var(dtmt); cat(i,sum(abs(emm-sm))+sum(abs(emv-sv)),"\n"); }
+# compare bias with/without EM algorithm
+emm-sm
+colMeans(dtm,na.rm=T)-sm
+emv-sv
+var(dtm,na.rm=T)-sv
+

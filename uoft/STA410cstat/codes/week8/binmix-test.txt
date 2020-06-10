@@ -1,0 +1,27 @@
+# Test script for the in-class exercise of maximum likelihood using EM.
+#
+# The binmix_em function estimates the mixing proportion of a distribution
+# for a pair (x,y) of binary observations, when the pairs of observations
+# are modelled as being independently drawn from a mixture distribuiton.
+# The mixture gives probability 1-p to both x and y being independently
+# from the Bernoulli(0.1) distribution, and probability p of x and y
+# being independently from the Bernoulli(0.9) distribution.
+#
+# The arguments are the data vectors x and y (binary, equal length), the
+# initial value for p, and the number of EM iterations to do.
+
+source("binmix.r")
+
+# Generate n synthetic observations with mixing proportion true_p.
+
+n <- 10000
+true_p <- 0.7
+
+set.seed(1)
+m <- runif(n)<true_p
+x <- as.integer (m != (runif(n)<0.1))
+y <- as.integer (m != (runif(n)<0.1))
+
+# Run binmix_em on this data.
+
+binmix_em(x,y,0.5,30)

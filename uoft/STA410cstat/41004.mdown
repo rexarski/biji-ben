@@ -1,0 +1,41 @@
+#41004
+
+2015-09-24
+
+last time: bisection method (basically, it's like iterative squeezing process). but what if there exist some fluctuations between two endpoints, so that the bisection method might miss some zeros.
+
+##introducing newton iteration
+
+	> source('newton.r')
+	> newton (function (x) x^2-2, function (x) 2*x, 1, 10)
+	x = 1.5 f(x) = 0.25 g(x) = 3 
+	x = 1.416667 f(x) = 0.006944444 g(x) = 2.833333 
+	x = 1.414216 f(x) = 6.007305e-06 g(x) = 2.828431 
+	x = 1.414214 f(x) = 4.510614e-12 g(x) = 2.828427 
+	x = 1.414214 f(x) = 4.440892e-16 g(x) = 2.828427 
+	x = 1.414214 f(x) = -4.440892e-16 g(x) = 2.828427 
+	x = 1.414214 f(x) = 4.440892e-16 g(x) = 2.828427 
+	x = 1.414214 f(x) = -4.440892e-16 g(x) = 2.828427 
+	x = 1.414214 f(x) = 4.440892e-16 g(x) = 2.828427 
+	x = 1.414214 f(x) = -4.440892e-16 g(x) = 2.828427 
+	[1] 1.414214
+
+
+
+-------
+
+###practice problem in class:
+
+	binom_log_lik <- function (p, x, n) dbinom (x, n, p, log=TRUE)
+	binom_deriv <- function (p, x, n) x/p - (n-x)/(1-p)
+	binom_deriv2 <- function (p, x, n) x/p^2 - (n-x)/(1-p)^2
+
+	binom_mle_bisect <- function(x, n)
+	  bisect2 (function (p) binom_deriv(p, x, n), 0.01, 0.99)
+
+	binom_mle_newton <- function (x, n, initial_p)
+	  newton (function (p) binom_deriv(p, x, n),
+	          function (p) binom_deriv2(p, x, n),
+	          initial_p, 10)
+
+

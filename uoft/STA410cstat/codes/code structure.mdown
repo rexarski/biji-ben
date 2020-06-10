@@ -1,0 +1,59 @@
+#code structure
+
+2015-10-13
+
+- Week1:
+	- Simulating the distribution of the sample mean:
+		- mean-sim-fun.r
+		- mean-sim-script.r
+	- Illustration of underflow when computing likelihoods:
+		- poilik.r
+	- Using simulation to investigate effect of sample size:
+		- errred.r
+- Week2:
+	- Finding zeros using bisection:
+		- bisect.r
+	- Finding zeros with Newton iteration:
+		- newton.r
+	- Script using these functions:
+		- binom-script.r
+- Week3:
+	- Multivariate Newton iteration:
+		- mvnewton.r
+	- Maximum likelihood estimate for a Poisson regression model:
+		- poireg.r
+		- poireg-script.r (now updated to include "method of scoring"). 
+	- Maximum likelihood estimation of Poisson mean from interval data with nlm:
+		- poisson.r
+- Week5:
+	- Integration using the midpoint rule: 
+		- midpoint.r (with tests)
+		- midpoint-script.r.txt (using knitr)
+			- To use knitr, you must first install it with `install.packages("knitr")`. You can then use it with something like `knitr::spin("midpoint-script.r")`. This creates a file called `midpoint-script.html` which you can view in a browser.
+- Week6:
+	- Demo of transformation for integration:
+		- trans-int.r
+	- Demo of multivariate integration:
+		- chisq-int.r
+
+- Week7:
+	- EM for censored Poisson data:
+		- censored-poisson-em.r
+		- censored-poisson-em-out
+	- EM for censored exponential data:
+		- censored-exp-em.r
+		- censored-exp-em-out
+
+- Week8:
+	- EM for mixture on binary data
+		- binmix-test.r
+
+- Week10:
+	- Gibbs sampling for a simple random-effects model:
+		- gibbs-re.r
+	- Gibbs sampling for a latent Poisson process:
+		- pgibbs.r
+
+- Week11:
+	- Metropolis sampling for a simple Bayesian model:
+		- met-demo.r

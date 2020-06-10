@@ -1,0 +1,13 @@
+mrcrab <- c(18.7,15.0,35.0,40.3,16.6)
+
+p <- function(i){
+  co <- r$loadings[,i]
+  mv <- colMeans(cbind(FL,RW,CL,CW,BD)) # mean vector of 5 variables
+  disp = apply(cbind(FL,RW,CL,CW,BD),2,sd) # dispersion
+  return(sum(co*(mrcrab-mv)/disp))
+}
+
+plot(r$scores[,3],r$scores[,1],col=colour1,xlim=c(-3,3),ylim=c(-7,6),xlab="PC3(0.9%)",ylab="PC1(95.8%)")
+points(p(3),p(1),pch=20,cex=3)
+plot(r$scores[,2],r$scores[,1],col=colour2,xlim=c(-3,3),ylim=c(-7,6),xlab="PC2(3.0%)",ylab="PC1(95.8%)")
+points(p(2),p(1),pch=20,cex=3)

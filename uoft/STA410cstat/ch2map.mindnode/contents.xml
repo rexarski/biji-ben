@@ -1,0 +1,2589 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>author</key>
+	<string></string>
+	<key>comments</key>
+	<string></string>
+	<key>isUsingConstrainedLayout</key>
+	<true/>
+	<key>keywords</key>
+	<string></string>
+	<key>mindMap</key>
+	<dict>
+		<key>associations</key>
+		<array/>
+		<key>color</key>
+		<string>{1.000, 1.000, 1.000, 1.000}</string>
+		<key>mainNodes</key>
+		<array>
+			<dict>
+				<key>contentAlignment</key>
+				<integer>1</integer>
+				<key>fillColor</key>
+				<string>{1.000, 1.000, 1.000, 1.000}</string>
+				<key>isDecreasingBranchThickness</key>
+				<true/>
+				<key>isDrawingFill</key>
+				<true/>
+				<key>isLeftAligned</key>
+				<false/>
+				<key>location</key>
+				<string>{-504.36712201086431, -133.75454891475107}</string>
+				<key>nodeID</key>
+				<string>86581A4A-2272-445C-B789-CA7CFABF0516</string>
+				<key>strokeColor</key>
+				<string>{0.500, 0.500, 0.500, 1.000}</string>
+				<key>strokeStyle</key>
+				<integer>0</integer>
+				<key>strokeWidth</key>
+				<real>2</real>
+				<key>subnodes</key>
+				<array>
+					<dict>
+						<key>contentAlignment</key>
+						<integer>1</integer>
+						<key>fillColor</key>
+						<string>{1.000, 1.000, 1.000, 1.000}</string>
+						<key>isDecreasingBranchThickness</key>
+						<true/>
+						<key>isDrawingFill</key>
+						<false/>
+						<key>isLeftAligned</key>
+						<false/>
+						<key>location</key>
+						<string>{-131.36712201086431, -335.25454891475101}</string>
+						<key>nodeID</key>
+						<string>50EB0755-E4E3-4561-AFDE-D09DC34C99DA</string>
+						<key>strokeColor</key>
+						<string>{0.000, 0.851, 0.671, 1.000}</string>
+						<key>strokeStyle</key>
+						<integer>0</integer>
+						<key>strokeWidth</key>
+						<real>6</real>
+						<key>subnodes</key>
+						<array>
+							<dict>
+								<key>contentAlignment</key>
+								<integer>1</integer>
+								<key>fillColor</key>
+								<string>{1.000, 1.000, 1.000, 1.000}</string>
+								<key>isDecreasingBranchThickness</key>
+								<true/>
+								<key>isDrawingFill</key>
+								<false/>
+								<key>isLeftAligned</key>
+								<false/>
+								<key>location</key>
+								<string>{130.63287798913569, -712.75454891475101}</string>
+								<key>nodeID</key>
+								<string>E67DDDE1-6B18-4184-BF73-DE96537AF032</string>
+								<key>strokeColor</key>
+								<string>{0.000, 0.851, 0.671, 1.000}</string>
+								<key>strokeStyle</key>
+								<integer>0</integer>
+								<key>strokeWidth</key>
+								<real>5</real>
+								<key>subnodes</key>
+								<array>
+									<dict>
+										<key>contentAlignment</key>
+										<integer>1</integer>
+										<key>fillColor</key>
+										<string>{1.000, 1.000, 1.000, 1.000}</string>
+										<key>isDecreasingBranchThickness</key>
+										<true/>
+										<key>isDrawingFill</key>
+										<false/>
+										<key>isLeftAligned</key>
+										<false/>
+										<key>location</key>
+										<string>{311.63287798913569, -720.75454891475101}</string>
+										<key>nodeID</key>
+										<string>8FA02A59-13FE-487C-ACF2-296AFC375AB4</string>
+										<key>strokeColor</key>
+										<string>{0.000, 0.851, 0.671, 1.000}</string>
+										<key>strokeStyle</key>
+										<integer>0</integer>
+										<key>strokeWidth</key>
+										<real>4</real>
+										<key>subnodes</key>
+										<array>
+											<dict>
+												<key>contentAlignment</key>
+												<integer>1</integer>
+												<key>fillColor</key>
+												<string>{1.000, 1.000, 1.000, 1.000}</string>
+												<key>isDecreasingBranchThickness</key>
+												<true/>
+												<key>isDrawingFill</key>
+												<false/>
+												<key>isLeftAligned</key>
+												<false/>
+												<key>location</key>
+												<string>{658.63287798913575, -802.75454891475101}</string>
+												<key>nodeID</key>
+												<string>625CAB71-8717-4287-A5A0-36DF1D02D49B</string>
+												<key>strokeColor</key>
+												<string>{0.000, 0.851, 0.671, 1.000}</string>
+												<key>strokeStyle</key>
+												<integer>0</integer>
+												<key>strokeWidth</key>
+												<real>3</real>
+												<key>subnodes</key>
+												<array/>
+												<key>title</key>
+												<dict>
+													<key>constrainedWidth</key>
+													<integer>300</integer>
+													<key>htmlText</key>
+													<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;large change from &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;x^(t) &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;to &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;x^(t+1)&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt; is possible even &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;g’(x^(t+1))&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt; is small&lt;/span&gt;&lt;/p&gt;</string>
+													<key>shrinkToFitContent</key>
+													<integer>1</integer>
+													<key>text</key>
+													<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;\f1\fnil\fcharset0 HelveticaNeue-Italic;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs28 \cf2 large change from 
+\f1\i x^(t) 
+\f0\i0 to 
+\f1\i x^(t+1)
+\f0\i0  is possible even 
+\f1\i g\'92(x^(t+1))
+\f0\i0  is small}</string>
+												</dict>
+											</dict>
+											<dict>
+												<key>contentAlignment</key>
+												<integer>1</integer>
+												<key>fillColor</key>
+												<string>{1.000, 1.000, 1.000, 1.000}</string>
+												<key>isDecreasingBranchThickness</key>
+												<true/>
+												<key>isDrawingFill</key>
+												<false/>
+												<key>isLeftAligned</key>
+												<false/>
+												<key>location</key>
+												<string>{658.63287798913575, -753.75454891475101}</string>
+												<key>nodeID</key>
+												<string>64C32E78-EC3E-4C29-B394-853217042F83</string>
+												<key>strokeColor</key>
+												<string>{0.000, 0.851, 0.671, 1.000}</string>
+												<key>strokeStyle</key>
+												<integer>0</integer>
+												<key>strokeWidth</key>
+												<real>3</real>
+												<key>subnodes</key>
+												<array/>
+												<key>title</key>
+												<dict>
+													<key>constrainedWidth</key>
+													<integer>300</integer>
+													<key>htmlText</key>
+													<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;absolute convergence criterion&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;: |&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;x^(t+1)-x^(t)| &amp;lt; epsilon&lt;/span&gt;&lt;/p&gt;</string>
+													<key>shrinkToFitContent</key>
+													<integer>1</integer>
+													<key>text</key>
+													<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue-Italic;\f1\fnil\fcharset0 HelveticaNeue;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\i\fs28 \cf2 absolute convergence criterion
+\f1\i0 : |
+\f0\i x^(t+1)-x^(t)| &lt; epsilon}</string>
+												</dict>
+											</dict>
+											<dict>
+												<key>contentAlignment</key>
+												<integer>1</integer>
+												<key>fillColor</key>
+												<string>{1.000, 1.000, 1.000, 1.000}</string>
+												<key>isDecreasingBranchThickness</key>
+												<true/>
+												<key>isDrawingFill</key>
+												<false/>
+												<key>isLeftAligned</key>
+												<false/>
+												<key>location</key>
+												<string>{658.63287798913575, -704.75454891475101}</string>
+												<key>nodeID</key>
+												<string>EA721930-CADB-4DDC-B234-197606245D2D</string>
+												<key>strokeColor</key>
+												<string>{0.000, 0.851, 0.671, 1.000}</string>
+												<key>strokeStyle</key>
+												<integer>0</integer>
+												<key>strokeWidth</key>
+												<real>3</real>
+												<key>subnodes</key>
+												<array/>
+												<key>title</key>
+												<dict>
+													<key>constrainedWidth</key>
+													<integer>300</integer>
+													<key>htmlText</key>
+													<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;relative convergence criterion&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;: |&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;x^(t+1)-x^(t)|/|x^(t)| &amp;lt; epsilon&lt;/span&gt;&lt;/p&gt;</string>
+													<key>shrinkToFitContent</key>
+													<integer>1</integer>
+													<key>text</key>
+													<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue-Italic;\f1\fnil\fcharset0 HelveticaNeue;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\i\fs28 \cf2 relative convergence criterion
+\f1\i0 : |
+\f0\i x^(t+1)-x^(t)|/|x^(t)| &lt; epsilon}</string>
+												</dict>
+											</dict>
+											<dict>
+												<key>contentAlignment</key>
+												<integer>1</integer>
+												<key>fillColor</key>
+												<string>{1.000, 1.000, 1.000, 1.000}</string>
+												<key>isDecreasingBranchThickness</key>
+												<true/>
+												<key>isDrawingFill</key>
+												<false/>
+												<key>isLeftAligned</key>
+												<false/>
+												<key>location</key>
+												<string>{658.63287798913575, -655.75454891475101}</string>
+												<key>nodeID</key>
+												<string>E717FE9C-CE11-49F8-A3CB-EFB151A19619</string>
+												<key>strokeColor</key>
+												<string>{0.000, 0.851, 0.671, 1.000}</string>
+												<key>strokeStyle</key>
+												<integer>0</integer>
+												<key>strokeWidth</key>
+												<real>3</real>
+												<key>subnodes</key>
+												<array/>
+												<key>title</key>
+												<dict>
+													<key>constrainedWidth</key>
+													<integer>300</integer>
+													<key>htmlText</key>
+													<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;use updated endpoint &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;a_{t+1} = a_t + (b_t-a_t)/2&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt; is more numerically stable than &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;a_{t+1} = (b_t-a_t)/2&lt;/span&gt;&lt;/p&gt;</string>
+													<key>shrinkToFitContent</key>
+													<integer>1</integer>
+													<key>text</key>
+													<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;\f1\fnil\fcharset0 HelveticaNeue-Italic;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs28 \cf2 use updated endpoint 
+\f1\i a_\{t+1\} = a_t + (b_t-a_t)/2
+\f0\i0  is more numerically stable than 
+\f1\i a_\{t+1\} = (b_t-a_t)/2}</string>
+												</dict>
+											</dict>
+										</array>
+										<key>title</key>
+										<dict>
+											<key>constrainedWidth</key>
+											<integer>300</integer>
+											<key>htmlText</key>
+											<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;stopping rule, &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;based on some &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;convergence criteria&lt;/span&gt;&lt;/p&gt;</string>
+											<key>shrinkToFitContent</key>
+											<integer>1</integer>
+											<key>text</key>
+											<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue-Italic;\f1\fnil\fcharset0 HelveticaNeue;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\i\fs28 \cf2 stopping rule, 
+\f1\i0 based on some 
+\f0\i convergence criteria}</string>
+										</dict>
+									</dict>
+								</array>
+								<key>title</key>
+								<dict>
+									<key>constrainedWidth</key>
+									<integer>300</integer>
+									<key>htmlText</key>
+									<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;bisection method&lt;/p&gt;</string>
+									<key>shrinkToFitContent</key>
+									<integer>1</integer>
+									<key>text</key>
+									<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue-Italic;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\i\fs28 \cf2 bisection method}</string>
+								</dict>
+							</dict>
+							<dict>
+								<key>contentAlignment</key>
+								<integer>1</integer>
+								<key>fillColor</key>
+								<string>{1.000, 1.000, 1.000, 1.000}</string>
+								<key>isDecreasingBranchThickness</key>
+								<true/>
+								<key>isDrawingFill</key>
+								<false/>
+								<key>isLeftAligned</key>
+								<false/>
+								<key>location</key>
+								<string>{130.63287798913569, -376.75454891475101}</string>
+								<key>nodeID</key>
+								<string>87BAF398-AEB1-49AF-9794-7A26620C5DDC</string>
+								<key>strokeColor</key>
+								<string>{0.000, 0.851, 0.671, 1.000}</string>
+								<key>strokeStyle</key>
+								<integer>0</integer>
+								<key>strokeWidth</key>
+								<real>5</real>
+								<key>subnodes</key>
+								<array>
+									<dict>
+										<key>contentAlignment</key>
+										<integer>1</integer>
+										<key>fillColor</key>
+										<string>{1.000, 1.000, 1.000, 1.000}</string>
+										<key>isDecreasingBranchThickness</key>
+										<true/>
+										<key>isDrawingFill</key>
+										<false/>
+										<key>isLeftAligned</key>
+										<false/>
+										<key>location</key>
+										<string>{354.63287798913569, -565.25454891475101}</string>
+										<key>nodeID</key>
+										<string>21B47B5D-1512-4E11-A58F-17D937AECB89</string>
+										<key>strokeColor</key>
+										<string>{0.000, 0.851, 0.671, 1.000}</string>
+										<key>strokeStyle</key>
+										<integer>0</integer>
+										<key>strokeWidth</key>
+										<real>4</real>
+										<key>subnodes</key>
+										<array>
+											<dict>
+												<key>contentAlignment</key>
+												<integer>1</integer>
+												<key>fillColor</key>
+												<string>{1.000, 1.000, 1.000, 1.000}</string>
+												<key>isDecreasingBranchThickness</key>
+												<true/>
+												<key>isDrawingFill</key>
+												<false/>
+												<key>isLeftAligned</key>
+												<false/>
+												<key>location</key>
+												<string>{608.63287798913575, -581.75454891475101}</string>
+												<key>nodeID</key>
+												<string>85FC4E7D-066A-4431-90D7-C14F6E46D384</string>
+												<key>strokeColor</key>
+												<string>{0.000, 0.851, 0.671, 1.000}</string>
+												<key>strokeStyle</key>
+												<integer>0</integer>
+												<key>strokeWidth</key>
+												<real>3</real>
+												<key>subnodes</key>
+												<array>
+													<dict>
+														<key>contentAlignment</key>
+														<integer>1</integer>
+														<key>fillColor</key>
+														<string>{1.000, 1.000, 1.000, 1.000}</string>
+														<key>isDecreasingBranchThickness</key>
+														<true/>
+														<key>isDrawingFill</key>
+														<false/>
+														<key>isLeftAligned</key>
+														<false/>
+														<key>location</key>
+														<string>{952.63287798913575, -589.75454891475101}</string>
+														<key>nodeID</key>
+														<string>54598FF9-F62E-4D46-B3BE-6DD2E5FBEB23</string>
+														<key>strokeColor</key>
+														<string>{0.000, 0.851, 0.671, 1.000}</string>
+														<key>strokeStyle</key>
+														<integer>0</integer>
+														<key>strokeWidth</key>
+														<real>2</real>
+														<key>subnodes</key>
+														<array/>
+														<key>title</key>
+														<dict>
+															<key>constrainedWidth</key>
+															<integer>300</integer>
+															<key>htmlText</key>
+															<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;so &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;x*=x^(t)-g’(x^(t))/g’’(x^(t)) = x^(t)+h^(t)&lt;/span&gt;&lt;/p&gt;</string>
+															<key>shrinkToFitContent</key>
+															<integer>1</integer>
+															<key>text</key>
+															<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;\f1\fnil\fcharset0 HelveticaNeue-Italic;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs28 \cf2 so 
+\f1\i x*=x^(t)-g\'92(x^(t))/g\'92\'92(x^(t)) = x^(t)+h^(t)}</string>
+														</dict>
+													</dict>
+													<dict>
+														<key>contentAlignment</key>
+														<integer>1</integer>
+														<key>fillColor</key>
+														<string>{1.000, 1.000, 1.000, 1.000}</string>
+														<key>isDecreasingBranchThickness</key>
+														<true/>
+														<key>isDrawingFill</key>
+														<false/>
+														<key>isLeftAligned</key>
+														<false/>
+														<key>location</key>
+														<string>{952.63287798913575, -548.75454891475101}</string>
+														<key>nodeID</key>
+														<string>CA02D608-E91E-44F2-91B2-81805156BE4C</string>
+														<key>strokeColor</key>
+														<string>{0.000, 0.851, 0.671, 1.000}</string>
+														<key>strokeStyle</key>
+														<integer>0</integer>
+														<key>strokeWidth</key>
+														<real>2</real>
+														<key>subnodes</key>
+														<array>
+															<dict>
+																<key>contentAlignment</key>
+																<integer>1</integer>
+																<key>fillColor</key>
+																<string>{1.000, 1.000, 1.000, 1.000}</string>
+																<key>isDecreasingBranchThickness</key>
+																<true/>
+																<key>isDrawingFill</key>
+																<false/>
+																<key>isLeftAligned</key>
+																<false/>
+																<key>location</key>
+																<string>{1154.6328779891357, -556.75454891475101}</string>
+																<key>nodeID</key>
+																<string>DB6026D1-2EAB-430B-A8C9-C29D9626852E</string>
+																<key>strokeColor</key>
+																<string>{0.000, 0.851, 0.671, 1.000}</string>
+																<key>strokeStyle</key>
+																<integer>0</integer>
+																<key>strokeWidth</key>
+																<real>1</real>
+																<key>subnodes</key>
+																<array/>
+																<key>title</key>
+																<dict>
+																	<key>constrainedWidth</key>
+																	<integer>300</integer>
+																	<key>htmlText</key>
+																	<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;where &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;h^(t) &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;is equal to minus first derivative of &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;x^(t)&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt; divided by second derivative of &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;x^(t)&lt;/span&gt;&lt;/p&gt;</string>
+																	<key>shrinkToFitContent</key>
+																	<integer>1</integer>
+																	<key>text</key>
+																	<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;\f1\fnil\fcharset0 HelveticaNeue-Italic;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs28 \cf2 where 
+\f1\i h^(t) 
+\f0\i0 is equal to minus first derivative of 
+\f1\i x^(t)
+\f0\i0  divided by second derivative of 
+\f1\i x^(t)}</string>
+																</dict>
+															</dict>
+														</array>
+														<key>title</key>
+														<dict>
+															<key>constrainedWidth</key>
+															<integer>300</integer>
+															<key>htmlText</key>
+															<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;x^(t+1) = x^(t) + h^(t)&lt;/p&gt;</string>
+															<key>shrinkToFitContent</key>
+															<integer>1</integer>
+															<key>text</key>
+															<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue-Italic;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\i\fs28 \cf2 x^(t+1) = x^(t) + h^(t)}</string>
+														</dict>
+													</dict>
+												</array>
+												<key>title</key>
+												<dict>
+													<key>constrainedWidth</key>
+													<integer>300</integer>
+													<key>htmlText</key>
+													<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;approach approximates &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;g’(x*) &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;by the Taylor series expansion: &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;0=g’(x*) &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;almost equals to &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;g’(x^(t))+(x*-x^(t))g’’(x^(t)).&lt;/span&gt;&lt;/p&gt;</string>
+													<key>shrinkToFitContent</key>
+													<integer>1</integer>
+													<key>text</key>
+													<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;\f1\fnil\fcharset0 HelveticaNeue-Italic;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs28 \cf2 approach approximates 
+\f1\i g\'92(x*) 
+\f0\i0 by the Taylor series expansion: 
+\f1\i 0=g\'92(x*) 
+\f0\i0 almost equals to 
+\f1\i g\'92(x^(t))+(x*-x^(t))g\'92\'92(x^(t)).}</string>
+												</dict>
+											</dict>
+										</array>
+										<key>title</key>
+										<dict>
+											<key>constrainedWidth</key>
+											<integer>300</integer>
+											<key>htmlText</key>
+											<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;fast in univariate applications&lt;/p&gt;</string>
+											<key>shrinkToFitContent</key>
+											<integer>1</integer>
+											<key>text</key>
+											<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs28 \cf2 fast in univariate applications}</string>
+										</dict>
+									</dict>
+									<dict>
+										<key>contentAlignment</key>
+										<integer>1</integer>
+										<key>fillColor</key>
+										<string>{1.000, 1.000, 1.000, 1.000}</string>
+										<key>isDecreasingBranchThickness</key>
+										<true/>
+										<key>isDrawingFill</key>
+										<false/>
+										<key>isLeftAligned</key>
+										<false/>
+										<key>location</key>
+										<string>{354.63287798913569, -507.75454891475101}</string>
+										<key>nodeID</key>
+										<string>10D9D12F-7461-48E9-9F4F-34330C60205A</string>
+										<key>strokeColor</key>
+										<string>{0.000, 0.851, 0.671, 1.000}</string>
+										<key>strokeStyle</key>
+										<integer>0</integer>
+										<key>strokeWidth</key>
+										<real>4</real>
+										<key>subnodes</key>
+										<array/>
+										<key>title</key>
+										<dict>
+											<key>constrainedWidth</key>
+											<integer>300</integer>
+											<key>htmlText</key>
+											<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;whether converges depends on the shape of &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;g&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt; and the starting value&lt;/span&gt;&lt;/p&gt;</string>
+											<key>shrinkToFitContent</key>
+											<integer>1</integer>
+											<key>text</key>
+											<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;\f1\fnil\fcharset0 HelveticaNeue-Italic;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs28 \cf2 whether converges depends on the shape of 
+\f1\i g
+\f0\i0  and the starting value}</string>
+										</dict>
+									</dict>
+									<dict>
+										<key>contentAlignment</key>
+										<integer>1</integer>
+										<key>fillColor</key>
+										<string>{1.000, 1.000, 1.000, 1.000}</string>
+										<key>isDecreasingBranchThickness</key>
+										<true/>
+										<key>isDrawingFill</key>
+										<false/>
+										<key>isLeftAligned</key>
+										<false/>
+										<key>location</key>
+										<string>{354.63287798913569, -450.25454891475101}</string>
+										<key>nodeID</key>
+										<string>C4C96A4F-02E7-49B9-974A-65A502F3FE6B</string>
+										<key>strokeColor</key>
+										<string>{0.000, 0.851, 0.671, 1.000}</string>
+										<key>strokeStyle</key>
+										<integer>0</integer>
+										<key>strokeWidth</key>
+										<real>4</real>
+										<key>subnodes</key>
+										<array>
+											<dict>
+												<key>contentAlignment</key>
+												<integer>1</integer>
+												<key>fillColor</key>
+												<string>{1.000, 1.000, 1.000, 1.000}</string>
+												<key>isDecreasingBranchThickness</key>
+												<true/>
+												<key>isDrawingFill</key>
+												<false/>
+												<key>isLeftAligned</key>
+												<false/>
+												<key>location</key>
+												<string>{716.63287798913575, -458.75454891475101}</string>
+												<key>nodeID</key>
+												<string>64417CD7-B35B-435B-8F15-D361369626E9</string>
+												<key>strokeColor</key>
+												<string>{0.000, 0.851, 0.671, 1.000}</string>
+												<key>strokeStyle</key>
+												<integer>0</integer>
+												<key>strokeWidth</key>
+												<real>3</real>
+												<key>subnodes</key>
+												<array/>
+												<key>title</key>
+												<dict>
+													<key>constrainedWidth</key>
+													<integer>300</integer>
+													<key>htmlText</key>
+													<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;1. &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;g’’(x) != 0 on &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;[&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;a, b&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;]&lt;/span&gt;&lt;/p&gt;</string>
+													<key>shrinkToFitContent</key>
+													<integer>1</integer>
+													<key>text</key>
+													<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;\f1\fnil\fcharset0 HelveticaNeue-Italic;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs28 \cf2 1. 
+\f1\i g\'92\'92(x) != 0 on 
+\f0\i0 [
+\f1\i a, b
+\f0\i0 ]}</string>
+												</dict>
+											</dict>
+											<dict>
+												<key>contentAlignment</key>
+												<integer>1</integer>
+												<key>fillColor</key>
+												<string>{1.000, 1.000, 1.000, 1.000}</string>
+												<key>isDecreasingBranchThickness</key>
+												<true/>
+												<key>isDrawingFill</key>
+												<false/>
+												<key>isLeftAligned</key>
+												<false/>
+												<key>location</key>
+												<string>{716.63287798913575, -425.75454891475101}</string>
+												<key>nodeID</key>
+												<string>521CBE19-E127-4A5A-AB85-73130CF99518</string>
+												<key>strokeColor</key>
+												<string>{0.000, 0.851, 0.671, 1.000}</string>
+												<key>strokeStyle</key>
+												<integer>0</integer>
+												<key>strokeWidth</key>
+												<real>3</real>
+												<key>subnodes</key>
+												<array/>
+												<key>title</key>
+												<dict>
+													<key>constrainedWidth</key>
+													<integer>300</integer>
+													<key>htmlText</key>
+													<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;2. &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;g’’’(x)&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt; does not change sign on [&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;a, b&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;]&lt;/span&gt;&lt;/p&gt;</string>
+													<key>shrinkToFitContent</key>
+													<integer>1</integer>
+													<key>text</key>
+													<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;\f1\fnil\fcharset0 HelveticaNeue-Italic;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs28 \cf2 2. 
+\f1\i g\'92\'92\'92(x)
+\f0\i0  does not change sign on [
+\f1\i a, b
+\f0\i0 ]}</string>
+												</dict>
+											</dict>
+											<dict>
+												<key>contentAlignment</key>
+												<integer>1</integer>
+												<key>fillColor</key>
+												<string>{1.000, 1.000, 1.000, 1.000}</string>
+												<key>isDecreasingBranchThickness</key>
+												<true/>
+												<key>isDrawingFill</key>
+												<false/>
+												<key>isLeftAligned</key>
+												<false/>
+												<key>location</key>
+												<string>{716.63287798913575, -392.75454891475101}</string>
+												<key>nodeID</key>
+												<string>6968082D-64E4-4745-8E02-71378AEF61CE</string>
+												<key>strokeColor</key>
+												<string>{0.000, 0.851, 0.671, 1.000}</string>
+												<key>strokeStyle</key>
+												<integer>0</integer>
+												<key>strokeWidth</key>
+												<real>3</real>
+												<key>subnodes</key>
+												<array/>
+												<key>title</key>
+												<dict>
+													<key>constrainedWidth</key>
+													<integer>300</integer>
+													<key>htmlText</key>
+													<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;3. &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;g’(a)g’(b) &amp;lt; 0&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;, and&lt;/span&gt;&lt;/p&gt;</string>
+													<key>shrinkToFitContent</key>
+													<integer>1</integer>
+													<key>text</key>
+													<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;\f1\fnil\fcharset0 HelveticaNeue-Italic;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs28 \cf2 3. 
+\f1\i g\'92(a)g\'92(b) &lt; 0
+\f0\i0 , and}</string>
+												</dict>
+											</dict>
+											<dict>
+												<key>contentAlignment</key>
+												<integer>1</integer>
+												<key>fillColor</key>
+												<string>{1.000, 1.000, 1.000, 1.000}</string>
+												<key>isDecreasingBranchThickness</key>
+												<true/>
+												<key>isDrawingFill</key>
+												<false/>
+												<key>isLeftAligned</key>
+												<false/>
+												<key>location</key>
+												<string>{716.63287798913575, -359.75454891475101}</string>
+												<key>nodeID</key>
+												<string>EF54344C-D1DA-45FB-BB1F-7ADD66CBA19D</string>
+												<key>strokeColor</key>
+												<string>{0.000, 0.851, 0.671, 1.000}</string>
+												<key>strokeStyle</key>
+												<integer>0</integer>
+												<key>strokeWidth</key>
+												<real>3</real>
+												<key>subnodes</key>
+												<array/>
+												<key>title</key>
+												<dict>
+													<key>constrainedWidth</key>
+													<integer>300</integer>
+													<key>htmlText</key>
+													<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;4. &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;|g’(x)/g’’(a)| &amp;lt; b - a &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;and |&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;g’(b)/g’’(b)| &amp;lt; b - a&lt;/span&gt;&lt;/p&gt;</string>
+													<key>shrinkToFitContent</key>
+													<integer>1</integer>
+													<key>text</key>
+													<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;\f1\fnil\fcharset0 HelveticaNeue-Italic;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs28 \cf2 4. 
+\f1\i |g\'92(x)/g\'92\'92(a)| &lt; b - a 
+\f0\i0 and |
+\f1\i g\'92(b)/g\'92\'92(b)| &lt; b - a}</string>
+												</dict>
+											</dict>
+										</array>
+										<key>title</key>
+										<dict>
+											<key>constrainedWidth</key>
+											<integer>300</integer>
+											<key>htmlText</key>
+											<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;when &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;g’&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt; is twice continuously differentiable, is convex, and has a root, then Newton’s method converges to the root from &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;any&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt; starting point. When starting from somewhere in an interval [&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;a, b&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;], another set of conditions one may check is as follows. If&lt;/span&gt;&lt;/p&gt;</string>
+											<key>shrinkToFitContent</key>
+											<integer>1</integer>
+											<key>text</key>
+											<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;\f1\fnil\fcharset0 HelveticaNeue-Italic;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs28 \cf2 when 
+\f1\i g\'92
+\f0\i0  is twice continuously differentiable, is convex, and has a root, then Newton\'92s method converges to the root from 
+\f1\i any
+\f0\i0  starting point. When starting from somewhere in an interval [
+\f1\i a, b
+\f0\i0 ], another set of conditions one may check is as follows. If}</string>
+										</dict>
+									</dict>
+									<dict>
+										<key>contentAlignment</key>
+										<integer>1</integer>
+										<key>fillColor</key>
+										<string>{1.000, 1.000, 1.000, 1.000}</string>
+										<key>isDecreasingBranchThickness</key>
+										<true/>
+										<key>isDrawingFill</key>
+										<false/>
+										<key>isLeftAligned</key>
+										<false/>
+										<key>location</key>
+										<string>{354.63287798913569, -261.25454891475101}</string>
+										<key>nodeID</key>
+										<string>D9CB56BC-DAA1-4D15-AA84-F5B5A6DA3CD9</string>
+										<key>strokeColor</key>
+										<string>{0.000, 0.851, 0.671, 1.000}</string>
+										<key>strokeStyle</key>
+										<integer>0</integer>
+										<key>strokeWidth</key>
+										<real>4</real>
+										<key>subnodes</key>
+										<array>
+											<dict>
+												<key>contentAlignment</key>
+												<integer>1</integer>
+												<key>fillColor</key>
+												<string>{1.000, 1.000, 1.000, 1.000}</string>
+												<key>isDecreasingBranchThickness</key>
+												<true/>
+												<key>isDrawingFill</key>
+												<false/>
+												<key>isLeftAligned</key>
+												<false/>
+												<key>location</key>
+												<string>{689.63287798913575, -326.75454891475101}</string>
+												<key>nodeID</key>
+												<string>1B951FEA-64A9-49DA-AC47-2D87FEBCF0A8</string>
+												<key>strokeColor</key>
+												<string>{0.000, 0.851, 0.671, 1.000}</string>
+												<key>strokeStyle</key>
+												<integer>0</integer>
+												<key>strokeWidth</key>
+												<real>3</real>
+												<key>subnodes</key>
+												<array/>
+												<key>title</key>
+												<dict>
+													<key>constrainedWidth</key>
+													<integer>300</integer>
+													<key>htmlText</key>
+													<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;a method has convergence of order &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;beta&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt; if &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;lim_{t-&amp;gt;infinity}epsilon^(t)=0&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt; and &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;lim_{t-&amp;gt;infinity}|epsilon^(t+1)}|/|epsilon^(t)|^beta = c&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt; for some non-empty constant &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;c&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt; and &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;beta &amp;gt; 0&lt;/span&gt;&lt;/p&gt;</string>
+													<key>shrinkToFitContent</key>
+													<integer>1</integer>
+													<key>text</key>
+													<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;\f1\fnil\fcharset0 HelveticaNeue-Italic;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs28 \cf2 a method has convergence of order 
+\f1\i beta
+\f0\i0  if 
+\f1\i lim_\{t-&gt;infinity\}epsilon^(t)=0
+\f0\i0  and 
+\f1\i lim_\{t-&gt;infinity\}|epsilon^(t+1)\}|/|epsilon^(t)|^beta = c
+\f0\i0  for some non-empty constant 
+\f1\i c
+\f0\i0  and 
+\f1\i beta &gt; 0}</string>
+												</dict>
+											</dict>
+											<dict>
+												<key>contentAlignment</key>
+												<integer>1</integer>
+												<key>fillColor</key>
+												<string>{1.000, 1.000, 1.000, 1.000}</string>
+												<key>isDecreasingBranchThickness</key>
+												<true/>
+												<key>isDrawingFill</key>
+												<false/>
+												<key>isLeftAligned</key>
+												<false/>
+												<key>location</key>
+												<string>{689.63287798913575, -244.75454891475101}</string>
+												<key>nodeID</key>
+												<string>68FC0E8A-9854-4556-8351-34668C8C5B07</string>
+												<key>strokeColor</key>
+												<string>{0.000, 0.851, 0.671, 1.000}</string>
+												<key>strokeStyle</key>
+												<integer>0</integer>
+												<key>strokeWidth</key>
+												<real>3</real>
+												<key>subnodes</key>
+												<array/>
+												<key>title</key>
+												<dict>
+													<key>constrainedWidth</key>
+													<integer>300</integer>
+													<key>htmlText</key>
+													<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;Newton’s method is quadratic convergence, fast: precision of the solution will double with each iteration&lt;/p&gt;</string>
+													<key>shrinkToFitContent</key>
+													<integer>1</integer>
+													<key>text</key>
+													<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs28 \cf2 Newton\'92s method is quadratic convergence, fast: precision of the solution will double with each iteration}</string>
+												</dict>
+											</dict>
+											<dict>
+												<key>contentAlignment</key>
+												<integer>1</integer>
+												<key>fillColor</key>
+												<string>{1.000, 1.000, 1.000, 1.000}</string>
+												<key>isDecreasingBranchThickness</key>
+												<true/>
+												<key>isDrawingFill</key>
+												<false/>
+												<key>isLeftAligned</key>
+												<false/>
+												<key>location</key>
+												<string>{689.63287798913575, -178.75454891475101}</string>
+												<key>nodeID</key>
+												<string>5E4AB053-3D1C-405F-B68E-2E49FBEB4BE4</string>
+												<key>strokeColor</key>
+												<string>{0.000, 0.851, 0.671, 1.000}</string>
+												<key>strokeStyle</key>
+												<integer>0</integer>
+												<key>strokeWidth</key>
+												<real>3</real>
+												<key>subnodes</key>
+												<array/>
+												<key>title</key>
+												<dict>
+													<key>constrainedWidth</key>
+													<integer>300</integer>
+													<key>htmlText</key>
+													<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;bisection does not formally meet the definition for determine order of convergence&lt;/p&gt;</string>
+													<key>shrinkToFitContent</key>
+													<integer>1</integer>
+													<key>text</key>
+													<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs28 \cf2 bisection does not formally meet the definition for determine order of convergence}</string>
+												</dict>
+											</dict>
+										</array>
+										<key>title</key>
+										<dict>
+											<key>constrainedWidth</key>
+											<integer>300</integer>
+											<key>htmlText</key>
+											<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;convergence order: the speed of a root-finding approach like Newton’s method is measured by its order of convergence&lt;/p&gt;</string>
+											<key>shrinkToFitContent</key>
+											<integer>1</integer>
+											<key>text</key>
+											<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs28 \cf2 convergence order: the speed of a root-finding approach like Newton\'92s method is measured by its order of convergence}</string>
+										</dict>
+									</dict>
+								</array>
+								<key>title</key>
+								<dict>
+									<key>constrainedWidth</key>
+									<integer>300</integer>
+									<key>htmlText</key>
+									<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: bold 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Bold"; '&gt;2.1.1 Newton’s Method&lt;/p&gt;</string>
+									<key>shrinkToFitContent</key>
+									<integer>1</integer>
+									<key>text</key>
+									<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue-Bold;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\b\fs28 \cf2 2.1.1 Newton\'92s Method}</string>
+								</dict>
+							</dict>
+							<dict>
+								<key>contentAlignment</key>
+								<integer>1</integer>
+								<key>fillColor</key>
+								<string>{1.000, 1.000, 1.000, 1.000}</string>
+								<key>isDecreasingBranchThickness</key>
+								<true/>
+								<key>isDrawingFill</key>
+								<false/>
+								<key>isLeftAligned</key>
+								<false/>
+								<key>location</key>
+								<string>{130.63287798913569, -81.254548914751012}</string>
+								<key>nodeID</key>
+								<string>5773E6B0-B63A-426B-8AA3-3423D3D44F02</string>
+								<key>strokeColor</key>
+								<string>{0.000, 0.851, 0.671, 1.000}</string>
+								<key>strokeStyle</key>
+								<integer>0</integer>
+								<key>strokeWidth</key>
+								<real>5</real>
+								<key>subnodes</key>
+								<array>
+									<dict>
+										<key>contentAlignment</key>
+										<integer>1</integer>
+										<key>fillColor</key>
+										<string>{1.000, 1.000, 1.000, 1.000}</string>
+										<key>isDecreasingBranchThickness</key>
+										<true/>
+										<key>isDrawingFill</key>
+										<false/>
+										<key>isLeftAligned</key>
+										<false/>
+										<key>location</key>
+										<string>{333.63287798913569, -129.75454891475101}</string>
+										<key>nodeID</key>
+										<string>C3D561FE-8321-49E0-9F46-B6F0DBD7A2A5</string>
+										<key>strokeColor</key>
+										<string>{0.000, 0.851, 0.671, 1.000}</string>
+										<key>strokeStyle</key>
+										<integer>0</integer>
+										<key>strokeWidth</key>
+										<real>4</real>
+										<key>subnodes</key>
+										<array/>
+										<key>title</key>
+										<dict>
+											<key>constrainedWidth</key>
+											<integer>300</integer>
+											<key>htmlText</key>
+											<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;idea: replace &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;-l’’(theta)&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt; in the Newton update with &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;I(theta)&lt;/span&gt;&lt;/p&gt;</string>
+											<key>shrinkToFitContent</key>
+											<integer>1</integer>
+											<key>text</key>
+											<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;\f1\fnil\fcharset0 HelveticaNeue-Italic;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs28 \cf2 idea: replace 
+\f1\i -l\'92\'92(theta)
+\f0\i0  in the Newton update with 
+\f1\i I(theta)}</string>
+										</dict>
+									</dict>
+									<dict>
+										<key>contentAlignment</key>
+										<integer>1</integer>
+										<key>fillColor</key>
+										<string>{1.000, 1.000, 1.000, 1.000}</string>
+										<key>isDecreasingBranchThickness</key>
+										<true/>
+										<key>isDrawingFill</key>
+										<false/>
+										<key>isLeftAligned</key>
+										<false/>
+										<key>location</key>
+										<string>{333.63287798913569, -80.754548914751012}</string>
+										<key>nodeID</key>
+										<string>03BC48BF-657E-4086-A4F1-A85D88E448D6</string>
+										<key>strokeColor</key>
+										<string>{0.000, 0.851, 0.671, 1.000}</string>
+										<key>strokeStyle</key>
+										<integer>0</integer>
+										<key>strokeWidth</key>
+										<real>4</real>
+										<key>subnodes</key>
+										<array/>
+										<key>title</key>
+										<dict>
+											<key>constrainedWidth</key>
+											<integer>300</integer>
+											<key>htmlText</key>
+											<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;Fisher scoring works better in the beginning to make rapid improvements, while Newton’s method works better for refinement near the end&lt;/p&gt;</string>
+											<key>shrinkToFitContent</key>
+											<integer>1</integer>
+											<key>text</key>
+											<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs28 \cf2 Fisher scoring works better in the beginning to make rapid improvements, while Newton\'92s method works better for refinement near the end}</string>
+										</dict>
+									</dict>
+								</array>
+								<key>title</key>
+								<dict>
+									<key>constrainedWidth</key>
+									<integer>300</integer>
+									<key>htmlText</key>
+									<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: bold 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Bold"; '&gt;2.1.2 Fisher scoring&lt;/p&gt;</string>
+									<key>shrinkToFitContent</key>
+									<integer>1</integer>
+									<key>text</key>
+									<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue-Bold;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\b\fs28 \cf2 2.1.2 Fisher scoring}</string>
+								</dict>
+							</dict>
+							<dict>
+								<key>contentAlignment</key>
+								<integer>1</integer>
+								<key>fillColor</key>
+								<string>{1.000, 1.000, 1.000, 1.000}</string>
+								<key>isDecreasingBranchThickness</key>
+								<true/>
+								<key>isDrawingFill</key>
+								<false/>
+								<key>isLeftAligned</key>
+								<false/>
+								<key>location</key>
+								<string>{130.63287798913569, 49.745451085248988}</string>
+								<key>nodeID</key>
+								<string>CAD2DA2C-C39F-4883-91A9-3712E4EF7912</string>
+								<key>strokeColor</key>
+								<string>{0.000, 0.851, 0.671, 1.000}</string>
+								<key>strokeStyle</key>
+								<integer>0</integer>
+								<key>strokeWidth</key>
+								<real>5</real>
+								<key>subnodes</key>
+								<array>
+									<dict>
+										<key>contentAlignment</key>
+										<integer>1</integer>
+										<key>fillColor</key>
+										<string>{1.000, 1.000, 1.000, 1.000}</string>
+										<key>isDecreasingBranchThickness</key>
+										<true/>
+										<key>isDrawingFill</key>
+										<false/>
+										<key>isLeftAligned</key>
+										<false/>
+										<key>location</key>
+										<string>{339.63287798913569, 17.745451085248988}</string>
+										<key>nodeID</key>
+										<string>206482A6-A4F0-4597-8855-25AE16A92D65</string>
+										<key>strokeColor</key>
+										<string>{0.000, 0.851, 0.671, 1.000}</string>
+										<key>strokeStyle</key>
+										<integer>0</integer>
+										<key>strokeWidth</key>
+										<real>4</real>
+										<key>subnodes</key>
+										<array>
+											<dict>
+												<key>contentAlignment</key>
+												<integer>1</integer>
+												<key>fillColor</key>
+												<string>{1.000, 1.000, 1.000, 1.000}</string>
+												<key>isDecreasingBranchThickness</key>
+												<true/>
+												<key>isDrawingFill</key>
+												<false/>
+												<key>isLeftAligned</key>
+												<false/>
+												<key>location</key>
+												<string>{695.63287798913575, 1.2454510852489875}</string>
+												<key>nodeID</key>
+												<string>540E5DD3-212D-48C2-8BEF-B7ABD6BB8994</string>
+												<key>strokeColor</key>
+												<string>{0.000, 0.851, 0.671, 1.000}</string>
+												<key>strokeStyle</key>
+												<integer>0</integer>
+												<key>strokeWidth</key>
+												<real>3</real>
+												<key>subnodes</key>
+												<array>
+													<dict>
+														<key>contentAlignment</key>
+														<integer>1</integer>
+														<key>fillColor</key>
+														<string>{1.000, 1.000, 1.000, 1.000}</string>
+														<key>isDecreasingBranchThickness</key>
+														<true/>
+														<key>isDrawingFill</key>
+														<false/>
+														<key>isLeftAligned</key>
+														<false/>
+														<key>location</key>
+														<string>{1041.6328779891357, 1.2454510852489875}</string>
+														<key>nodeID</key>
+														<string>35A814F2-37EB-4996-89CF-935B94757B06</string>
+														<key>strokeColor</key>
+														<string>{0.000, 0.851, 0.671, 1.000}</string>
+														<key>strokeStyle</key>
+														<integer>0</integer>
+														<key>strokeWidth</key>
+														<real>2</real>
+														<key>subnodes</key>
+														<array/>
+														<key>title</key>
+														<dict>
+															<key>constrainedWidth</key>
+															<integer>300</integer>
+															<key>htmlText</key>
+															<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;so the updating equation is now &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;x^(t+1) = x^(t) - g’(x^(t))(x^(t) - x^(t-1))/(g’(x^(t)) - g’(x^(t-1)))&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;, for &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;t &amp;gt;= 1&lt;/span&gt;&lt;/p&gt;</string>
+															<key>shrinkToFitContent</key>
+															<integer>1</integer>
+															<key>text</key>
+															<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;\f1\fnil\fcharset0 HelveticaNeue-Italic;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs28 \cf2 so the updating equation is now 
+\f1\i x^(t+1) = x^(t) - g\'92(x^(t))(x^(t) - x^(t-1))/(g\'92(x^(t)) - g\'92(x^(t-1)))
+\f0\i0 , for 
+\f1\i t &gt;= 1}</string>
+														</dict>
+													</dict>
+												</array>
+												<key>title</key>
+												<dict>
+													<key>constrainedWidth</key>
+													<integer>300</integer>
+													<key>htmlText</key>
+													<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;if hard to calculate, replace it with the discrete-difference approximation, [&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;g’(x^(t))-g’(x^(t-1))&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;]/&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;(x^(t)-x^(t-1)), &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;this is called the &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;secant method&lt;/span&gt;&lt;/p&gt;</string>
+													<key>shrinkToFitContent</key>
+													<integer>1</integer>
+													<key>text</key>
+													<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;\f1\fnil\fcharset0 HelveticaNeue-Italic;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs28 \cf2 if hard to calculate, replace it with the discrete-difference approximation, [
+\f1\i g\'92(x^(t))-g\'92(x^(t-1))
+\f0\i0 ]/
+\f1\i (x^(t)-x^(t-1)), 
+\f0\i0 this is called the 
+\f1\i secant method}</string>
+												</dict>
+											</dict>
+										</array>
+										<key>title</key>
+										<dict>
+											<key>constrainedWidth</key>
+											<integer>300</integer>
+											<key>htmlText</key>
+											<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;the updating increment for Newton’s method relies on the second derivative, &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;g’’(x^(t))&lt;/span&gt;&lt;/p&gt;</string>
+											<key>shrinkToFitContent</key>
+											<integer>1</integer>
+											<key>text</key>
+											<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;\f1\fnil\fcharset0 HelveticaNeue-Italic;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs28 \cf2 the updating increment for Newton\'92s method relies on the second derivative, 
+\f1\i g\'92\'92(x^(t))}</string>
+										</dict>
+									</dict>
+									<dict>
+										<key>contentAlignment</key>
+										<integer>1</integer>
+										<key>fillColor</key>
+										<string>{1.000, 1.000, 1.000, 1.000}</string>
+										<key>isDecreasingBranchThickness</key>
+										<true/>
+										<key>isDrawingFill</key>
+										<false/>
+										<key>isLeftAligned</key>
+										<false/>
+										<key>location</key>
+										<string>{339.63287798913569, 83.245451085248988}</string>
+										<key>nodeID</key>
+										<string>6B4DE5C4-C3BE-45D0-876A-5439FE1E8103</string>
+										<key>strokeColor</key>
+										<string>{0.000, 0.851, 0.671, 1.000}</string>
+										<key>strokeStyle</key>
+										<integer>0</integer>
+										<key>strokeWidth</key>
+										<real>4</real>
+										<key>subnodes</key>
+										<array/>
+										<key>title</key>
+										<dict>
+											<key>constrainedWidth</key>
+											<integer>300</integer>
+											<key>htmlText</key>
+											<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;has order close to 1.62, so slower than Newton’s method&lt;/p&gt;</string>
+											<key>shrinkToFitContent</key>
+											<integer>1</integer>
+											<key>text</key>
+											<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs28 \cf2 has order close to 1.62, so slower than Newton\'92s method}</string>
+										</dict>
+									</dict>
+								</array>
+								<key>title</key>
+								<dict>
+									<key>constrainedWidth</key>
+									<integer>300</integer>
+									<key>htmlText</key>
+									<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: bold 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Bold"; '&gt;2.1.3 Secant method&lt;/p&gt;</string>
+									<key>shrinkToFitContent</key>
+									<integer>1</integer>
+									<key>text</key>
+									<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue-Bold;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\b\fs28 \cf2 2.1.3 Secant method}</string>
+								</dict>
+							</dict>
+							<dict>
+								<key>contentAlignment</key>
+								<integer>1</integer>
+								<key>fillColor</key>
+								<string>{1.000, 1.000, 1.000, 1.000}</string>
+								<key>isDecreasingBranchThickness</key>
+								<true/>
+								<key>isDrawingFill</key>
+								<false/>
+								<key>isLeftAligned</key>
+								<false/>
+								<key>location</key>
+								<string>{130.63287798913569, 132.24545108524899}</string>
+								<key>nodeID</key>
+								<string>F7ACF697-357B-4EA3-A4CC-87DC6D3F9C64</string>
+								<key>strokeColor</key>
+								<string>{0.000, 0.851, 0.671, 1.000}</string>
+								<key>strokeStyle</key>
+								<integer>0</integer>
+								<key>strokeWidth</key>
+								<real>5</real>
+								<key>subnodes</key>
+								<array/>
+								<key>title</key>
+								<dict>
+									<key>constrainedWidth</key>
+									<integer>300</integer>
+									<key>htmlText</key>
+									<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: bold 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Bold"; '&gt;2.1.4 Fixed-point iteration*&lt;/p&gt;</string>
+									<key>shrinkToFitContent</key>
+									<integer>1</integer>
+									<key>text</key>
+									<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue-Bold;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\b\fs28 \cf2 2.1.4 Fixed-point iteration*}</string>
+								</dict>
+							</dict>
+						</array>
+						<key>title</key>
+						<dict>
+							<key>constrainedWidth</key>
+							<integer>300</integer>
+							<key>htmlText</key>
+							<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: bold 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Bold"; '&gt;2.1 UNIVARIATE PROBLEMS&lt;/p&gt;</string>
+							<key>shrinkToFitContent</key>
+							<integer>1</integer>
+							<key>text</key>
+							<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue-Bold;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\b\fs28 \cf2 2.1 UNIVARIATE PROBLEMS}</string>
+						</dict>
+					</dict>
+					<dict>
+						<key>contentAlignment</key>
+						<integer>1</integer>
+						<key>fillColor</key>
+						<string>{1.000, 1.000, 1.000, 1.000}</string>
+						<key>isDecreasingBranchThickness</key>
+						<true/>
+						<key>isDrawingFill</key>
+						<false/>
+						<key>isLeftAligned</key>
+						<true/>
+						<key>location</key>
+						<string>{-863.36712201086425, -183.75454891475107}</string>
+						<key>nodeID</key>
+						<string>212E4F86-6301-4B21-B8B0-6CCB739F96D0</string>
+						<key>strokeColor</key>
+						<string>{0.467, 0.000, 0.851, 1.000}</string>
+						<key>strokeStyle</key>
+						<integer>0</integer>
+						<key>strokeWidth</key>
+						<real>6</real>
+						<key>subnodes</key>
+						<array/>
+						<key>title</key>
+						<dict>
+							<key>constrainedWidth</key>
+							<integer>300</integer>
+							<key>htmlText</key>
+							<string>&lt;p style='text-align: left; '&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;to simplify, optimize a real-valued function &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;g&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt; with respect to its argument, a &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;p&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;-dimensional vector &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Bold"; '&gt;x&lt;/span&gt;&lt;/p&gt;</string>
+							<key>shrinkToFitContent</key>
+							<integer>1</integer>
+							<key>text</key>
+							<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;\f1\fnil\fcharset0 HelveticaNeue-Italic;\f2\fnil\fcharset0 HelveticaNeue-Bold;
+}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs28 \cf2 to simplify, optimize a real-valued function 
+\f1\i g
+\f0\i0  with respect to its argument, a 
+\f1\i p
+\f0\i0 -dimensional vector 
+\f2\b x}</string>
+						</dict>
+					</dict>
+					<dict>
+						<key>contentAlignment</key>
+						<integer>1</integer>
+						<key>fillColor</key>
+						<string>{1.000, 1.000, 1.000, 1.000}</string>
+						<key>isDecreasingBranchThickness</key>
+						<true/>
+						<key>isDrawingFill</key>
+						<false/>
+						<key>isLeftAligned</key>
+						<true/>
+						<key>location</key>
+						<string>{-856.36712201086425, -116.75454891475107}</string>
+						<key>nodeID</key>
+						<string>E129E3AE-B5D0-4CDC-9B8C-781B57DD4D26</string>
+						<key>strokeColor</key>
+						<string>{0.000, 0.608, 0.847, 1.000}</string>
+						<key>strokeStyle</key>
+						<integer>0</integer>
+						<key>strokeWidth</key>
+						<real>6</real>
+						<key>subnodes</key>
+						<array/>
+						<key>title</key>
+						<dict>
+							<key>constrainedWidth</key>
+							<integer>300</integer>
+							<key>htmlText</key>
+							<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;maximum likelihood estimation, &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;l &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;as log likelihood function, &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Bold"; '&gt;theta&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt; as, if &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Bold"; '&gt;theta hat&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt; is MLE, maximizes the log likelihood, therefore theta hat is a solution to score equation &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Bold"; '&gt;l’(theta) = 0&lt;/span&gt;&lt;/p&gt;</string>
+							<key>shrinkToFitContent</key>
+							<integer>1</integer>
+							<key>text</key>
+							<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;\f1\fnil\fcharset0 HelveticaNeue-Italic;\f2\fnil\fcharset0 HelveticaNeue-Bold;
+}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs28 \cf2 maximum likelihood estimation, 
+\f1\i l 
+\f0\i0 as log likelihood function, 
+\f2\b theta
+\f0\b0  as, if 
+\f2\b theta hat
+\f0\b0  is MLE, maximizes the log likelihood, therefore theta hat is a solution to score equation 
+\f2\b l\'92(theta) = 0}</string>
+						</dict>
+					</dict>
+					<dict>
+						<key>contentAlignment</key>
+						<integer>1</integer>
+						<key>fillColor</key>
+						<string>{1.000, 1.000, 1.000, 1.000}</string>
+						<key>isDecreasingBranchThickness</key>
+						<true/>
+						<key>isDrawingFill</key>
+						<false/>
+						<key>isLeftAligned</key>
+						<false/>
+						<key>location</key>
+						<string>{-131.36712201086431, 367.24545108524899}</string>
+						<key>nodeID</key>
+						<string>0F8A260A-1CED-4C44-89F2-BD2E65D77822</string>
+						<key>strokeColor</key>
+						<string>{0.000, 0.855, 0.000, 1.000}</string>
+						<key>strokeStyle</key>
+						<integer>0</integer>
+						<key>strokeWidth</key>
+						<real>6</real>
+						<key>subnodes</key>
+						<array>
+							<dict>
+								<key>contentAlignment</key>
+								<integer>1</integer>
+								<key>fillColor</key>
+								<string>{1.000, 1.000, 1.000, 1.000}</string>
+								<key>isDecreasingBranchThickness</key>
+								<true/>
+								<key>isDrawingFill</key>
+								<false/>
+								<key>isLeftAligned</key>
+								<false/>
+								<key>location</key>
+								<string>{148.63287798913569, 166.24545108524899}</string>
+								<key>nodeID</key>
+								<string>F1EF8EDC-F4D1-467A-BBBB-EF67993AE8AC</string>
+								<key>strokeColor</key>
+								<string>{0.000, 0.855, 0.000, 1.000}</string>
+								<key>strokeStyle</key>
+								<integer>0</integer>
+								<key>strokeWidth</key>
+								<real>5</real>
+								<key>subnodes</key>
+								<array>
+									<dict>
+										<key>contentAlignment</key>
+										<integer>1</integer>
+										<key>fillColor</key>
+										<string>{1.000, 1.000, 1.000, 1.000}</string>
+										<key>isDecreasingBranchThickness</key>
+										<true/>
+										<key>isDrawingFill</key>
+										<false/>
+										<key>isLeftAligned</key>
+										<false/>
+										<key>location</key>
+										<string>{510.63287798913569, 183.24545108524899}</string>
+										<key>nodeID</key>
+										<string>58F6E8A3-3300-4219-BFD6-862E691352E4</string>
+										<key>strokeColor</key>
+										<string>{0.000, 0.855, 0.000, 1.000}</string>
+										<key>strokeStyle</key>
+										<integer>0</integer>
+										<key>strokeWidth</key>
+										<real>4</real>
+										<key>subnodes</key>
+										<array>
+											<dict>
+												<key>contentAlignment</key>
+												<integer>1</integer>
+												<key>fillColor</key>
+												<string>{1.000, 1.000, 1.000, 1.000}</string>
+												<key>isDecreasingBranchThickness</key>
+												<true/>
+												<key>isDrawingFill</key>
+												<false/>
+												<key>isLeftAligned</key>
+												<false/>
+												<key>location</key>
+												<string>{820.63287798913575, 175.24545108524899}</string>
+												<key>nodeID</key>
+												<string>59B1D45A-678F-4CFD-B815-C0047B833F0F</string>
+												<key>strokeColor</key>
+												<string>{0.000, 0.855, 0.000, 1.000}</string>
+												<key>strokeStyle</key>
+												<integer>0</integer>
+												<key>strokeWidth</key>
+												<real>3</real>
+												<key>subnodes</key>
+												<array>
+													<dict>
+														<key>contentAlignment</key>
+														<integer>1</integer>
+														<key>fillColor</key>
+														<string>{1.000, 1.000, 1.000, 1.000}</string>
+														<key>isDecreasingBranchThickness</key>
+														<true/>
+														<key>isDrawingFill</key>
+														<false/>
+														<key>isLeftAligned</key>
+														<false/>
+														<key>location</key>
+														<string>{1180.6328779891357, 166.24545108524899}</string>
+														<key>nodeID</key>
+														<string>3E49262B-712C-4F8C-83DF-D5BBF9FB9ABA</string>
+														<key>strokeColor</key>
+														<string>{0.000, 0.855, 0.000, 1.000}</string>
+														<key>strokeStyle</key>
+														<integer>0</integer>
+														<key>strokeWidth</key>
+														<real>2</real>
+														<key>subnodes</key>
+														<array/>
+														<key>title</key>
+														<dict>
+															<key>constrainedWidth</key>
+															<integer>300</integer>
+															<key>htmlText</key>
+															<string>&lt;p style='text-align: left; '&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;D(&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-BoldItalic"; '&gt;x&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;^(t+1), &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-BoldItalic"; '&gt;x&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;^(t)) &amp;lt; epsilon&lt;/span&gt;&lt;/p&gt;</string>
+															<key>shrinkToFitContent</key>
+															<integer>1</integer>
+															<key>text</key>
+															<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue-Italic;\f1\fnil\fcharset0 HelveticaNeue;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\i\fs28 \cf2 D(
+\f1\b x
+\f0\b0 ^(t+1), 
+\f1\b x
+\f0\b0 ^(t)) &lt; epsilon}</string>
+														</dict>
+													</dict>
+													<dict>
+														<key>contentAlignment</key>
+														<integer>1</integer>
+														<key>fillColor</key>
+														<string>{1.000, 1.000, 1.000, 1.000}</string>
+														<key>isDecreasingBranchThickness</key>
+														<true/>
+														<key>isDrawingFill</key>
+														<false/>
+														<key>isLeftAligned</key>
+														<false/>
+														<key>location</key>
+														<string>{1180.6328779891357, 208.24545108524899}</string>
+														<key>nodeID</key>
+														<string>87443F39-7ACC-4A73-8A5D-8C0AA4005F2D</string>
+														<key>strokeColor</key>
+														<string>{0.000, 0.855, 0.000, 1.000}</string>
+														<key>strokeStyle</key>
+														<integer>0</integer>
+														<key>strokeWidth</key>
+														<real>2</real>
+														<key>subnodes</key>
+														<array>
+															<dict>
+																<key>contentAlignment</key>
+																<integer>1</integer>
+																<key>fillColor</key>
+																<string>{1.000, 1.000, 1.000, 1.000}</string>
+																<key>isDecreasingBranchThickness</key>
+																<true/>
+																<key>isDrawingFill</key>
+																<false/>
+																<key>isLeftAligned</key>
+																<false/>
+																<key>location</key>
+																<string>{1471.6328779891357, 200.24545108524899}</string>
+																<key>nodeID</key>
+																<string>C1713614-CD6A-4396-9A8C-B51A173FB25E</string>
+																<key>strokeColor</key>
+																<string>{0.000, 0.855, 0.000, 1.000}</string>
+																<key>strokeStyle</key>
+																<integer>0</integer>
+																<key>strokeWidth</key>
+																<real>1</real>
+																<key>subnodes</key>
+																<array/>
+																<key>title</key>
+																<dict>
+																	<key>constrainedWidth</key>
+																	<integer>300</integer>
+																	<key>htmlText</key>
+																	<string>&lt;p style='text-align: left; '&gt;&lt;span style='font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;or &lt;/span&gt;&lt;span style='font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;D(&lt;/span&gt;&lt;span style='font: bold italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-BoldItalic"; '&gt;x&lt;/span&gt;&lt;span style='font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;^(t+1), &lt;/span&gt;&lt;span style='font: bold italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-BoldItalic"; '&gt;x&lt;/span&gt;&lt;span style='font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;^(t))/(D(&lt;/span&gt;&lt;span style='font: bold italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-BoldItalic"; '&gt;x&lt;/span&gt;&lt;span style='font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;^(t)-&lt;/span&gt;&lt;span style='font: bold italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-BoldItalic"; '&gt;0&lt;/span&gt;&lt;span style='font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;) + epsilon) &amp;lt; epsilon&lt;/span&gt;&lt;/p&gt;</string>
+																	<key>shrinkToFitContent</key>
+																	<integer>1</integer>
+																	<key>text</key>
+																	<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;\f1\fnil\fcharset0 HelveticaNeue-Italic;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs28 \cf0 or 
+\f1\i D(
+\f0\b x
+\f1\b0 ^(t+1), 
+\f0\b x
+\f1\b0 ^(t))/(D(
+\f0\b x
+\f1\b0 ^(t)-
+\f0\b 0
+\f1\b0 ) + epsilon) &lt; epsilon}</string>
+																</dict>
+															</dict>
+														</array>
+														<key>title</key>
+														<dict>
+															<key>constrainedWidth</key>
+															<integer>300</integer>
+															<key>htmlText</key>
+															<string>&lt;p style='text-align: left; '&gt;&lt;span style='font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;D(&lt;/span&gt;&lt;span style='font: bold italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-BoldItalic"; '&gt;x&lt;/span&gt;&lt;span style='font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;^(t+1), &lt;/span&gt;&lt;span style='font: bold italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-BoldItalic"; '&gt;x&lt;/span&gt;&lt;span style='font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;^(t))/D(&lt;/span&gt;&lt;span style='font: bold italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-BoldItalic"; '&gt;x&lt;/span&gt;&lt;span style='font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;^(t)-&lt;/span&gt;&lt;span style='font: bold italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-BoldItalic"; '&gt;0&lt;/span&gt;&lt;span style='font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;) &amp;lt; epsilon&lt;/span&gt;&lt;/p&gt;</string>
+															<key>shrinkToFitContent</key>
+															<integer>1</integer>
+															<key>text</key>
+															<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue-Italic;\f1\fnil\fcharset0 HelveticaNeue;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\i\fs28 \cf0 D(
+\f1\b x
+\f0\b0 ^(t+1), 
+\f1\b x
+\f0\b0 ^(t))/D(
+\f1\b x
+\f0\b0 ^(t)-
+\f1\b 0
+\f0\b0 ) &lt; epsilon}</string>
+														</dict>
+													</dict>
+												</array>
+												<key>title</key>
+												<dict>
+													<key>constrainedWidth</key>
+													<integer>300</integer>
+													<key>htmlText</key>
+													<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; text-align: left; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;the absolute and relative convergence criteria can be formed from the inequalities (like univariate cases)&lt;/p&gt;</string>
+													<key>shrinkToFitContent</key>
+													<integer>1</integer>
+													<key>text</key>
+													<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs28 \cf2 the absolute and relative convergence criteria can be formed from the inequalities (like univariate cases)}</string>
+												</dict>
+											</dict>
+										</array>
+										<key>title</key>
+										<dict>
+											<key>constrainedWidth</key>
+											<integer>300</integer>
+											<key>htmlText</key>
+											<string>&lt;p style='text-align: left; '&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;D(&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-BoldItalic"; '&gt;u, v&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;) &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;is the distance between two &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;p-&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;dimensional vectors&lt;/span&gt;&lt;/p&gt;</string>
+											<key>shrinkToFitContent</key>
+											<integer>1</integer>
+											<key>text</key>
+											<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue-Italic;\f1\fnil\fcharset0 HelveticaNeue;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\i\fs28 \cf2 D(
+\f1\b u, v
+\f0\b0 ) 
+\f1\i0 is the distance between two 
+\f0\i p-
+\f1\i0 dimensional vectors}</string>
+										</dict>
+									</dict>
+								</array>
+								<key>title</key>
+								<dict>
+									<key>constrainedWidth</key>
+									<integer>300</integer>
+									<key>htmlText</key>
+									<string>&lt;p style='text-align: left; '&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;seek the optimum of a real-valued function &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;g &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;of a &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;p&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;-dimensional vector &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-BoldItalic"; '&gt;x&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Bold"; '&gt; &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;= &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;(x_1, …, x_p)^T, &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-BoldItalic"; '&gt;x&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;^(t) = (x_1^(t), …, x_p^(t))^T&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt; is the estimated optimum after &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;t&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt; iterations.&lt;/span&gt;&lt;/p&gt;</string>
+									<key>shrinkToFitContent</key>
+									<integer>1</integer>
+									<key>text</key>
+									<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;\f1\fnil\fcharset0 HelveticaNeue-Italic;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs28 \cf2 seek the optimum of a real-valued function 
+\f1\i g 
+\f0\i0 of a 
+\f1\i p
+\f0\i0 -dimensional vector 
+\i\b x
+\i0  
+\b0 = 
+\f1\i (x_1, \'85, x_p)^T, 
+\f0\b x
+\f1\b0 ^(t) = (x_1^(t), \'85, x_p^(t))^T
+\f0\i0  is the estimated optimum after 
+\f1\i t
+\f0\i0  iterations.}</string>
+								</dict>
+							</dict>
+							<dict>
+								<key>contentAlignment</key>
+								<integer>1</integer>
+								<key>fillColor</key>
+								<string>{1.000, 1.000, 1.000, 1.000}</string>
+								<key>isDecreasingBranchThickness</key>
+								<true/>
+								<key>isDrawingFill</key>
+								<false/>
+								<key>isLeftAligned</key>
+								<false/>
+								<key>location</key>
+								<string>{148.63287798913569, 341.24545108524899}</string>
+								<key>nodeID</key>
+								<string>D226B37C-F750-4A76-9FAD-8EBF7FE8360C</string>
+								<key>strokeColor</key>
+								<string>{0.000, 0.855, 0.000, 1.000}</string>
+								<key>strokeStyle</key>
+								<integer>0</integer>
+								<key>strokeWidth</key>
+								<real>5</real>
+								<key>subnodes</key>
+								<array>
+									<dict>
+										<key>contentAlignment</key>
+										<integer>1</integer>
+										<key>fillColor</key>
+										<string>{1.000, 1.000, 1.000, 1.000}</string>
+										<key>isDecreasingBranchThickness</key>
+										<true/>
+										<key>isDrawingFill</key>
+										<false/>
+										<key>isLeftAligned</key>
+										<false/>
+										<key>location</key>
+										<string>{500.63287798913569, 250.24545108524899}</string>
+										<key>nodeID</key>
+										<string>9888F606-F423-44A0-814D-2768A7B90E7C</string>
+										<key>strokeColor</key>
+										<string>{0.000, 0.855, 0.000, 1.000}</string>
+										<key>strokeStyle</key>
+										<integer>0</integer>
+										<key>strokeWidth</key>
+										<real>4</real>
+										<key>subnodes</key>
+										<array/>
+										<key>title</key>
+										<dict>
+											<key>constrainedWidth</key>
+											<integer>300</integer>
+											<key>htmlText</key>
+											<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;gradient &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;g’(x)&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt; is &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;g’(x) = [dg(x)/dx_1, dg(x)/dx_2, …, dg(x)/dx_p]^T&lt;/span&gt;&lt;/p&gt;</string>
+											<key>shrinkToFitContent</key>
+											<integer>1</integer>
+											<key>text</key>
+											<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;\f1\fnil\fcharset0 HelveticaNeue-Italic;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs28 \cf2 gradient 
+\f1\i g\'92(x)
+\f0\i0  is 
+\f1\i g\'92(x) = [dg(x)/dx_1, dg(x)/dx_2, \'85, dg(x)/dx_p]^T}</string>
+										</dict>
+									</dict>
+									<dict>
+										<key>contentAlignment</key>
+										<integer>1</integer>
+										<key>fillColor</key>
+										<string>{1.000, 1.000, 1.000, 1.000}</string>
+										<key>isDecreasingBranchThickness</key>
+										<true/>
+										<key>isDrawingFill</key>
+										<false/>
+										<key>isLeftAligned</key>
+										<false/>
+										<key>location</key>
+										<string>{500.63287798913569, 299.24545108524899}</string>
+										<key>nodeID</key>
+										<string>64092A10-3441-4AF0-8C1E-49AF33DD2F27</string>
+										<key>strokeColor</key>
+										<string>{0.000, 0.855, 0.000, 1.000}</string>
+										<key>strokeStyle</key>
+										<integer>0</integer>
+										<key>strokeWidth</key>
+										<real>4</real>
+										<key>subnodes</key>
+										<array/>
+										<key>title</key>
+										<dict>
+											<key>constrainedWidth</key>
+											<integer>300</integer>
+											<key>htmlText</key>
+											<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;“Hessian” &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;g’’(x) &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;is a &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;p-by-p symmetric &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;matrix filled with derivatives (2nd-order)&lt;/span&gt;&lt;/p&gt;</string>
+											<key>shrinkToFitContent</key>
+											<integer>1</integer>
+											<key>text</key>
+											<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;\f1\fnil\fcharset0 HelveticaNeue-Italic;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs28 \cf2 \'93Hessian\'94 
+\f1\i g\'92\'92(x) 
+\f0\i0 is a 
+\f1\i p-by-p symmetric 
+\f0\i0 matrix filled with derivatives (2nd-order)}</string>
+										</dict>
+									</dict>
+									<dict>
+										<key>contentAlignment</key>
+										<integer>1</integer>
+										<key>fillColor</key>
+										<string>{1.000, 1.000, 1.000, 1.000}</string>
+										<key>isDecreasingBranchThickness</key>
+										<true/>
+										<key>isDrawingFill</key>
+										<false/>
+										<key>isLeftAligned</key>
+										<false/>
+										<key>location</key>
+										<string>{500.63287798913569, 348.24545108524899}</string>
+										<key>nodeID</key>
+										<string>D77C8CF4-B1A4-47EF-91AD-7ECD2E88124B</string>
+										<key>strokeColor</key>
+										<string>{0.000, 0.855, 0.000, 1.000}</string>
+										<key>strokeStyle</key>
+										<integer>0</integer>
+										<key>strokeWidth</key>
+										<real>4</real>
+										<key>subnodes</key>
+										<array>
+											<dict>
+												<key>contentAlignment</key>
+												<integer>1</integer>
+												<key>fillColor</key>
+												<string>{1.000, 1.000, 1.000, 1.000}</string>
+												<key>isDecreasingBranchThickness</key>
+												<true/>
+												<key>isDrawingFill</key>
+												<false/>
+												<key>isLeftAligned</key>
+												<false/>
+												<key>location</key>
+												<string>{862.63287798913575, 348.24545108524899}</string>
+												<key>nodeID</key>
+												<string>3E9E8C6E-DF73-4772-B2DD-430D2C5DD587</string>
+												<key>strokeColor</key>
+												<string>{0.000, 0.855, 0.000, 1.000}</string>
+												<key>strokeStyle</key>
+												<integer>0</integer>
+												<key>strokeWidth</key>
+												<real>3</real>
+												<key>subnodes</key>
+												<array>
+													<dict>
+														<key>contentAlignment</key>
+														<integer>1</integer>
+														<key>fillColor</key>
+														<string>{1.000, 1.000, 1.000, 1.000}</string>
+														<key>isDecreasingBranchThickness</key>
+														<true/>
+														<key>isDrawingFill</key>
+														<false/>
+														<key>isLeftAligned</key>
+														<false/>
+														<key>location</key>
+														<string>{1207.6328779891357, 348.24545108524899}</string>
+														<key>nodeID</key>
+														<string>08136880-0093-4796-A79A-BC56B1E0F282</string>
+														<key>strokeColor</key>
+														<string>{0.000, 0.855, 0.000, 1.000}</string>
+														<key>strokeStyle</key>
+														<integer>0</integer>
+														<key>strokeWidth</key>
+														<real>2</real>
+														<key>subnodes</key>
+														<array/>
+														<key>title</key>
+														<dict>
+															<key>constrainedWidth</key>
+															<integer>300</integer>
+															<key>htmlText</key>
+															<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;so update &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-BoldItalic"; '&gt;x&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;^(t+1) = &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-BoldItalic"; '&gt;x&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;^(t) - &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-BoldItalic"; '&gt;g’’(x&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;^(t))^(-1)&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-BoldItalic"; '&gt;g’&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;(&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-BoldItalic"; '&gt;x&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;^(t))&lt;/span&gt;&lt;/p&gt;</string>
+															<key>shrinkToFitContent</key>
+															<integer>1</integer>
+															<key>text</key>
+															<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;\f1\fnil\fcharset0 HelveticaNeue-Italic;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs28 \cf2 so update 
+\i\b x
+\f1\b0 ^(t+1) = 
+\f0\b x
+\f1\b0 ^(t) - 
+\f0\b g\'92\'92(x
+\f1\b0 ^(t))^(-1)
+\f0\b g\'92
+\f1\b0 (
+\f0\b x
+\f1\b0 ^(t))}</string>
+														</dict>
+													</dict>
+												</array>
+												<key>title</key>
+												<dict>
+													<key>constrainedWidth</key>
+													<integer>300</integer>
+													<key>htmlText</key>
+													<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;set the gradient equal to zero, so &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-BoldItalic"; '&gt;g’&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;(&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-BoldItalic"; '&gt;x&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;^(t)) = &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-BoldItalic"; '&gt;g’’&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;(&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-BoldItalic"; '&gt;x&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;^(t))(&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-BoldItalic"; '&gt;x* - x&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;^(t)) = 0&lt;/span&gt;&lt;/p&gt;</string>
+													<key>shrinkToFitContent</key>
+													<integer>1</integer>
+													<key>text</key>
+													<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;\f1\fnil\fcharset0 HelveticaNeue-Italic;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs28 \cf2 set the gradient equal to zero, so 
+\i\b g\'92
+\f1\b0 (
+\f0\b x
+\f1\b0 ^(t)) = 
+\f0\b g\'92\'92
+\f1\b0 (
+\f0\b x
+\f1\b0 ^(t))(
+\f0\b x* - x
+\f1\b0 ^(t)) = 0}</string>
+												</dict>
+											</dict>
+										</array>
+										<key>title</key>
+										<dict>
+											<key>constrainedWidth</key>
+											<integer>300</integer>
+											<key>htmlText</key>
+											<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;so we can write any &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;g(&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-BoldItalic"; '&gt;x*&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;) = g(&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-BoldItalic"; '&gt;x&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;^(t)) + (&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-BoldItalic"; '&gt;x* - x&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;^(t))^T&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-BoldItalic"; '&gt;g’&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;(&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-BoldItalic"; '&gt;x&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;^(t)) + 1/2*&lt;/span&gt;&lt;span style='font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;(&lt;/span&gt;&lt;span style='font: bold italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-BoldItalic"; '&gt;x* - x&lt;/span&gt;&lt;span style='font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;^(t))^T&lt;/span&gt;&lt;span style='font: bold italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-BoldItalic"; '&gt;g’’&lt;/span&gt;&lt;span style='font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;(&lt;/span&gt;&lt;span style='font: bold italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-BoldItalic"; '&gt;x&lt;/span&gt;&lt;span style='font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;^(t))(&lt;/span&gt;&lt;span style='font: bold italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-BoldItalic"; '&gt;x* - x&lt;/span&gt;&lt;span style='font: italic 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Italic"; '&gt;^(t))&lt;/span&gt;&lt;/p&gt;</string>
+											<key>shrinkToFitContent</key>
+											<integer>1</integer>
+											<key>text</key>
+											<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;\f1\fnil\fcharset0 HelveticaNeue-Italic;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs28 \cf2 so we can write any 
+\f1\i g(
+\f0\b x*
+\f1\b0 ) = g(
+\f0\b x
+\f1\b0 ^(t)) + (
+\f0\b x* - x
+\f1\b0 ^(t))^T
+\f0\b g\'92
+\f1\b0 (
+\f0\b x
+\f1\b0 ^(t)) + 1/2*\cf0 (
+\f0\b x* - x
+\f1\b0 ^(t))^T
+\f0\b g\'92\'92
+\f1\b0 (
+\f0\b x
+\f1\b0 ^(t))(
+\f0\b x* - x
+\f1\b0 ^(t))}</string>
+										</dict>
+									</dict>
+									<dict>
+										<key>contentAlignment</key>
+										<integer>1</integer>
+										<key>fillColor</key>
+										<string>{1.000, 1.000, 1.000, 1.000}</string>
+										<key>isDecreasingBranchThickness</key>
+										<true/>
+										<key>isDrawingFill</key>
+										<false/>
+										<key>isLeftAligned</key>
+										<false/>
+										<key>location</key>
+										<string>{500.63287798913569, 417.24545108524899}</string>
+										<key>nodeID</key>
+										<string>3943633C-6590-4683-8969-C413C83A47AE</string>
+										<key>strokeColor</key>
+										<string>{0.000, 0.855, 0.000, 1.000}</string>
+										<key>strokeStyle</key>
+										<integer>0</integer>
+										<key>strokeWidth</key>
+										<real>4</real>
+										<key>subnodes</key>
+										<array/>
+										<key>title</key>
+										<dict>
+											<key>constrainedWidth</key>
+											<integer>300</integer>
+											<key>htmlText</key>
+											<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;but this method could lead to different results (could lead to local min)&lt;/p&gt;</string>
+											<key>shrinkToFitContent</key>
+											<integer>1</integer>
+											<key>text</key>
+											<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs28 \cf2 but this method could lead to different results (could lead to local min)}</string>
+										</dict>
+									</dict>
+								</array>
+								<key>title</key>
+								<dict>
+									<key>constrainedWidth</key>
+									<integer>300</integer>
+									<key>htmlText</key>
+									<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: bold 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Bold"; '&gt;2.2.1 Newton’s method and Fisher scoring&lt;/p&gt;</string>
+									<key>shrinkToFitContent</key>
+									<integer>1</integer>
+									<key>text</key>
+									<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\b\fs28 \cf2 2.2.1 Newton\'92s method and Fisher scoring}</string>
+								</dict>
+							</dict>
+							<dict>
+								<key>contentAlignment</key>
+								<integer>1</integer>
+								<key>fillColor</key>
+								<string>{1.000, 1.000, 1.000, 1.000}</string>
+								<key>isDecreasingBranchThickness</key>
+								<true/>
+								<key>isDrawingFill</key>
+								<false/>
+								<key>isLeftAligned</key>
+								<false/>
+								<key>location</key>
+								<string>{148.63287798913569, 466.24545108524899}</string>
+								<key>nodeID</key>
+								<string>A16B9D5E-493D-410D-A10A-0768BE0A3520</string>
+								<key>strokeColor</key>
+								<string>{0.000, 0.855, 0.000, 1.000}</string>
+								<key>strokeStyle</key>
+								<integer>0</integer>
+								<key>strokeWidth</key>
+								<real>5</real>
+								<key>subnodes</key>
+								<array/>
+								<key>title</key>
+								<dict>
+									<key>constrainedWidth</key>
+									<integer>300</integer>
+									<key>htmlText</key>
+									<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: bold 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Bold"; '&gt;2.2.2 Newton-like method&lt;/p&gt;</string>
+									<key>shrinkToFitContent</key>
+									<integer>1</integer>
+									<key>text</key>
+									<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue-Bold;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\b\fs28 \cf2 2.2.2 Newton-like method}</string>
+								</dict>
+							</dict>
+							<dict>
+								<key>contentAlignment</key>
+								<integer>1</integer>
+								<key>fillColor</key>
+								<string>{1.000, 1.000, 1.000, 1.000}</string>
+								<key>isDecreasingBranchThickness</key>
+								<true/>
+								<key>isDrawingFill</key>
+								<false/>
+								<key>isLeftAligned</key>
+								<false/>
+								<key>location</key>
+								<string>{148.63287798913569, 500.24545108524899}</string>
+								<key>nodeID</key>
+								<string>AFB79E56-E5FC-459B-B7E3-E071A008AAFE</string>
+								<key>strokeColor</key>
+								<string>{0.000, 0.855, 0.000, 1.000}</string>
+								<key>strokeStyle</key>
+								<integer>0</integer>
+								<key>strokeWidth</key>
+								<real>5</real>
+								<key>subnodes</key>
+								<array/>
+								<key>title</key>
+								<dict>
+									<key>constrainedWidth</key>
+									<integer>300</integer>
+									<key>htmlText</key>
+									<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: bold 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Bold"; '&gt;2.2.3 Gauss-Newton method&lt;/p&gt;</string>
+									<key>shrinkToFitContent</key>
+									<integer>1</integer>
+									<key>text</key>
+									<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue-Bold;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\b\fs28 \cf2 2.2.3 Gauss-Newton method}</string>
+								</dict>
+							</dict>
+							<dict>
+								<key>contentAlignment</key>
+								<integer>1</integer>
+								<key>fillColor</key>
+								<string>{1.000, 1.000, 1.000, 1.000}</string>
+								<key>isDecreasingBranchThickness</key>
+								<true/>
+								<key>isDrawingFill</key>
+								<false/>
+								<key>isLeftAligned</key>
+								<false/>
+								<key>location</key>
+								<string>{148.63287798913569, 534.24545108524899}</string>
+								<key>nodeID</key>
+								<string>619E2AF1-A48A-42DF-819D-5D01C719407A</string>
+								<key>strokeColor</key>
+								<string>{0.000, 0.855, 0.000, 1.000}</string>
+								<key>strokeStyle</key>
+								<integer>0</integer>
+								<key>strokeWidth</key>
+								<real>5</real>
+								<key>subnodes</key>
+								<array/>
+								<key>title</key>
+								<dict>
+									<key>constrainedWidth</key>
+									<integer>300</integer>
+									<key>htmlText</key>
+									<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: bold 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Bold"; '&gt;2.2.4 Nelder-Mead algorithm&lt;/p&gt;</string>
+									<key>shrinkToFitContent</key>
+									<integer>1</integer>
+									<key>text</key>
+									<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue-Bold;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\b\fs28 \cf2 2.2.4 Nelder-Mead algorithm}</string>
+								</dict>
+							</dict>
+							<dict>
+								<key>contentAlignment</key>
+								<integer>1</integer>
+								<key>fillColor</key>
+								<string>{1.000, 1.000, 1.000, 1.000}</string>
+								<key>isDecreasingBranchThickness</key>
+								<true/>
+								<key>isDrawingFill</key>
+								<false/>
+								<key>isLeftAligned</key>
+								<false/>
+								<key>location</key>
+								<string>{148.63287798913569, 568.24545108524899}</string>
+								<key>nodeID</key>
+								<string>F7E06CE5-F5BB-42E7-A453-53E1935F0690</string>
+								<key>strokeColor</key>
+								<string>{0.000, 0.855, 0.000, 1.000}</string>
+								<key>strokeStyle</key>
+								<integer>0</integer>
+								<key>strokeWidth</key>
+								<real>5</real>
+								<key>subnodes</key>
+								<array/>
+								<key>title</key>
+								<dict>
+									<key>constrainedWidth</key>
+									<integer>300</integer>
+									<key>htmlText</key>
+									<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: bold 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Bold"; '&gt;2.2.5 Nonlinear Gauss-Seidel iteration&lt;/p&gt;</string>
+									<key>shrinkToFitContent</key>
+									<integer>1</integer>
+									<key>text</key>
+									<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue-Bold;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\b\fs28 \cf2 2.2.5 Nonlinear Gauss-Seidel iteration}</string>
+								</dict>
+							</dict>
+						</array>
+						<key>title</key>
+						<dict>
+							<key>constrainedWidth</key>
+							<integer>300</integer>
+							<key>htmlText</key>
+							<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: bold 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Bold"; '&gt;2.2 MULTIVARIATE PROBLEMS&lt;/p&gt;</string>
+							<key>shrinkToFitContent</key>
+							<integer>1</integer>
+							<key>text</key>
+							<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue-Bold;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\b\fs28 \cf2 2.2 MULTIVARIATE PROBLEMS}</string>
+						</dict>
+					</dict>
+				</array>
+				<key>title</key>
+				<dict>
+					<key>constrainedWidth</key>
+					<integer>300</integer>
+					<key>htmlText</key>
+					<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; text-align: left; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;Chapter 2 optimization and solving nonlinear equations&lt;/p&gt;</string>
+					<key>shrinkToFitContent</key>
+					<integer>1</integer>
+					<key>text</key>
+					<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs28 \cf2 Chapter 2 optimization and solving nonlinear equations}</string>
+				</dict>
+			</dict>
+			<dict>
+				<key>contentAlignment</key>
+				<integer>1</integer>
+				<key>fillColor</key>
+				<string>{1.000, 1.000, 1.000, 1.000}</string>
+				<key>isDecreasingBranchThickness</key>
+				<true/>
+				<key>isDrawingFill</key>
+				<true/>
+				<key>isLeftAligned</key>
+				<false/>
+				<key>location</key>
+				<string>{-1295.8374296462634, -800.33831221238324}</string>
+				<key>nodeID</key>
+				<string>AB26F699-DD7D-4C51-9A8B-5265B02C9B33</string>
+				<key>strokeColor</key>
+				<string>{0.500, 0.500, 0.500, 1.000}</string>
+				<key>strokeStyle</key>
+				<integer>0</integer>
+				<key>strokeWidth</key>
+				<real>2</real>
+				<key>subnodes</key>
+				<array>
+					<dict>
+						<key>contentAlignment</key>
+						<integer>1</integer>
+						<key>fillColor</key>
+						<string>{1.000, 1.000, 1.000, 1.000}</string>
+						<key>isDecreasingBranchThickness</key>
+						<true/>
+						<key>isDrawingFill</key>
+						<false/>
+						<key>isLeftAligned</key>
+						<false/>
+						<key>location</key>
+						<string>{-1093.8374296462634, -859.83831221238324}</string>
+						<key>nodeID</key>
+						<string>3A716B29-FE72-4584-B907-44525A74D08D</string>
+						<key>strokeColor</key>
+						<string>{0.467, 0.000, 0.851, 1.000}</string>
+						<key>strokeStyle</key>
+						<integer>0</integer>
+						<key>strokeWidth</key>
+						<real>6</real>
+						<key>subnodes</key>
+						<array/>
+						<key>title</key>
+						<dict>
+							<key>constrainedWidth</key>
+							<integer>300</integer>
+							<key>htmlText</key>
+							<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: bold 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Bold"; '&gt;1.4 Likelihood inference&lt;/p&gt;</string>
+							<key>shrinkToFitContent</key>
+							<integer>1</integer>
+							<key>text</key>
+							<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\b\fs28 \cf2 1.4 Likelihood inference}</string>
+						</dict>
+					</dict>
+					<dict>
+						<key>contentAlignment</key>
+						<integer>1</integer>
+						<key>fillColor</key>
+						<string>{1.000, 1.000, 1.000, 1.000}</string>
+						<key>isDecreasingBranchThickness</key>
+						<true/>
+						<key>isDrawingFill</key>
+						<false/>
+						<key>isLeftAligned</key>
+						<false/>
+						<key>location</key>
+						<string>{-1093.8374296462634, -825.83831221238324}</string>
+						<key>nodeID</key>
+						<string>DE567F22-92B2-40DA-BA0F-F258D2065DF6</string>
+						<key>strokeColor</key>
+						<string>{0.000, 0.608, 0.847, 1.000}</string>
+						<key>strokeStyle</key>
+						<integer>0</integer>
+						<key>strokeWidth</key>
+						<real>6</real>
+						<key>subnodes</key>
+						<array/>
+						<key>title</key>
+						<dict>
+							<key>constrainedWidth</key>
+							<integer>300</integer>
+							<key>htmlText</key>
+							<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: bold 14px "Helvetica Neue"; text-align: left; -cocoa-font-postscriptname: "HelveticaNeue-Bold"; '&gt;1.5 Bayesian inference&lt;/p&gt;</string>
+							<key>shrinkToFitContent</key>
+							<integer>1</integer>
+							<key>text</key>
+							<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\b\fs28 \cf2 1.5 Bayesian inference}</string>
+						</dict>
+					</dict>
+					<dict>
+						<key>contentAlignment</key>
+						<integer>1</integer>
+						<key>fillColor</key>
+						<string>{1.000, 1.000, 1.000, 1.000}</string>
+						<key>isDecreasingBranchThickness</key>
+						<true/>
+						<key>isDrawingFill</key>
+						<false/>
+						<key>isLeftAligned</key>
+						<false/>
+						<key>location</key>
+						<string>{-1093.8374296462634, -791.83831221238324}</string>
+						<key>nodeID</key>
+						<string>1D74478A-5857-49DA-B4BD-896F9D8C2865</string>
+						<key>strokeColor</key>
+						<string>{0.000, 0.851, 0.671, 1.000}</string>
+						<key>strokeStyle</key>
+						<integer>0</integer>
+						<key>strokeWidth</key>
+						<real>6</real>
+						<key>subnodes</key>
+						<array/>
+						<key>title</key>
+						<dict>
+							<key>constrainedWidth</key>
+							<integer>300</integer>
+							<key>htmlText</key>
+							<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: bold 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Bold"; '&gt;1.6 Statistical limit theory&lt;/p&gt;</string>
+							<key>shrinkToFitContent</key>
+							<integer>1</integer>
+							<key>text</key>
+							<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\b\fs28 \cf2 1.6 Statistical limit theory}</string>
+						</dict>
+					</dict>
+					<dict>
+						<key>contentAlignment</key>
+						<integer>1</integer>
+						<key>fillColor</key>
+						<string>{1.000, 1.000, 1.000, 1.000}</string>
+						<key>isDecreasingBranchThickness</key>
+						<true/>
+						<key>isDrawingFill</key>
+						<false/>
+						<key>isLeftAligned</key>
+						<false/>
+						<key>location</key>
+						<string>{-1093.8374296462634, -757.83831221238324}</string>
+						<key>nodeID</key>
+						<string>EF08324C-B82D-48BF-BEB1-43B573B376F5</string>
+						<key>strokeColor</key>
+						<string>{0.000, 0.855, 0.000, 1.000}</string>
+						<key>strokeStyle</key>
+						<integer>0</integer>
+						<key>strokeWidth</key>
+						<real>6</real>
+						<key>subnodes</key>
+						<array/>
+						<key>title</key>
+						<dict>
+							<key>constrainedWidth</key>
+							<integer>300</integer>
+							<key>htmlText</key>
+							<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: bold 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Bold"; '&gt;1.7 Markov chains&lt;/p&gt;</string>
+							<key>shrinkToFitContent</key>
+							<integer>1</integer>
+							<key>text</key>
+							<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\b\fs28 \cf2 1.7 Markov chains}</string>
+						</dict>
+					</dict>
+					<dict>
+						<key>contentAlignment</key>
+						<integer>1</integer>
+						<key>fillColor</key>
+						<string>{1.000, 1.000, 1.000, 1.000}</string>
+						<key>isDecreasingBranchThickness</key>
+						<true/>
+						<key>isDrawingFill</key>
+						<false/>
+						<key>isLeftAligned</key>
+						<false/>
+						<key>location</key>
+						<string>{-1093.8374296462634, -723.83831221238324}</string>
+						<key>nodeID</key>
+						<string>550C4410-FD49-4AC9-9326-FB2CF948CB28</string>
+						<key>strokeColor</key>
+						<string>{0.820, 0.839, 0.000, 1.000}</string>
+						<key>strokeStyle</key>
+						<integer>0</integer>
+						<key>strokeWidth</key>
+						<real>6</real>
+						<key>subnodes</key>
+						<array/>
+						<key>title</key>
+						<dict>
+							<key>constrainedWidth</key>
+							<integer>300</integer>
+							<key>htmlText</key>
+							<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: bold 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue-Bold"; '&gt;1.8 Computing&lt;/p&gt;</string>
+							<key>shrinkToFitContent</key>
+							<integer>1</integer>
+							<key>text</key>
+							<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\b\fs28 \cf2 1.8 Computing}</string>
+						</dict>
+					</dict>
+				</array>
+				<key>title</key>
+				<dict>
+					<key>constrainedWidth</key>
+					<integer>300</integer>
+					<key>htmlText</key>
+					<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 14px "Helvetica Neue"; -cocoa-font-postscriptname: "HelveticaNeue"; '&gt;Chapter 1 Review&lt;/p&gt;</string>
+					<key>shrinkToFitContent</key>
+					<integer>1</integer>
+					<key>text</key>
+					<string>{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs28 \cf2 Chapter 1 Review}</string>
+				</dict>
+			</dict>
+		</array>
+	</dict>
+	<key>printInfo</key>
+	<data>
+	BAtzdHJlYW10eXBlZIHoA4QBQISEhAtOU1ByaW50SW5mbwGEhAhOU09iamVjdACFkoSE
+	hBNOU011dGFibGVEaWN0aW9uYXJ5AISEDE5TRGljdGlvbmFyeQCUhAFpCJKEhIQITlNT
+	dHJpbmcBlIQBKxZOU0hvcml6b250YWxseUNlbnRlcmVkhpKEhIQITlNOdW1iZXIAhIQH
+	TlNWYWx1ZQCUhAEqhIQBY50BhpKEmZkNTlNSaWdodE1hcmdpboaShJuchIQBZp5IhpKE
+	mZkMTlNMZWZ0TWFyZ2luhpKfkoSZmRVOU0hvcml6b25hbFBhZ2luYXRpb26GkoSbnISX
+	lwKGkoSZmRROU1ZlcnRpY2FsUGFnaW5hdGlvboaShJucpJcAhpKEmZkUTlNWZXJ0aWNh
+	bGx5Q2VudGVyZWSGkpqShJmZC05TVG9wTWFyZ2luhpKEm5ygnlqGkoSZmQ5OU0JvdHRv
+	bU1hcmdpboaSqYaG
+	</data>
+	<key>title</key>
+	<string>CSC Lecture 5</string>
+	<key>version</key>
+	<integer>4</integer>
+</dict>
+</plist>

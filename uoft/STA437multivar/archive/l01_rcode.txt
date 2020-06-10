@@ -1,0 +1,98 @@
+ls()
+ls()
+a <- c(1,3,5);
+a
+length(a)
+a[1]
+b <- rnorm(12);
+b
+b
+b.m <- matrix(b,nrow=4,ncol=3);
+b.m
+b.d <- as.data.frame(b.m);
+b.d
+colnames(b.d) <- c("density","machine","cross");
+d.b
+b.d
+rownames(b.d)[1:2] <- c('new tech',"old tech");
+b.d
+b.d$samplename <- rownames(b.d)
+b.d
+dt <- read.table("data/T1-1.DAT");
+dt
+names(dt) <- c("payroll","winloss");
+dt
+colnames(dt) <- c("payroll2","winloss2");
+dt
+mode(dt)
+class(dt)
+dt$teamname <- c("team1","team2","toronto","winsor","waterloo","ottawa");
+dt
+b.m
+b.m[,4] <- 1;
+dt <- dt[,1:2];
+names(dt) <- c("payroll","winloss");
+dt
+plot(dt);
+plot(dt,pch=20,cex=3);
+plot(dt$payroll/1e6,dt$winloss,pch=20,xlim=    c(0,4),ylim=c(0,.7),cex=3);
+colMeans(dt);
+mean(dt$payroll);
+mean(dt[[1]]);
+mean(dt$[,1]);
+mean(dt[,1]);
+sd(a)
+sd(dt)
+var(dt)
+sqrt(var(dt))
+S <- var(dt)
+S
+R <- cor(dt);
+R;
+summary(dt)
+dt <- read.table("data/T1-2.DATA");
+dt <- read.table("data/T1-2.DAT");
+names(dt) <- c("density","machine","cross");
+dt
+dim(dt)
+nrow(dt);
+ncol(dt);
+head(dt);
+tail(dt);
+summary(dt);
+plot(dt,pch=20,cex=3);
+plot(dt,pch=20,cex=3,col=c("black","red")[1+(dt$cross>60)]);
+c("black","red")[1+(dt$cross>60)]
+dt$class <- c("black","red")[1+(dt$cross>60)]
+head(dt)
+tail(dt)
+plot(dt,pch=20,cex=.3);
+plot(dt,pch=20,cex=3);
+head(dt)
+plot(dt[,1:3],pch=20,cex=3);
+plot(dt[,1:3],pch=20,cex=3,col=dt$class);
+which(dt$density > 95);
+which(dt$density > .95);
+dt[25,];
+plot(dt[-25,1:3],pch=20,cex=3,col=dt$class);
+plot(dt[-25,1:3],pch=20,cex=3,col=dt$class[-25]);
+a
+a[1]
+a[2]
+a[5]
+dt$info <- "none"
+head(dt)
+dt[25,]
+dt$info[25] <- "might be outlier";
+dt$info[c(1:4,26:28)] <- "good";
+dt[c(1:5,25:30),];
+plot(dt[,1:3],pch=20);
+plot(dt[,1:3],pch="X");
+plot(dt[,1:3],pch="X",cex=3);
+plot(dt[,1:3],pch=22,cex=3);
+plot(dt[,1:3],pch=21,cex=3);
+plot(dt[,1:3],pch=21,cex=3,col=c(1:8));
+plot(dt[,1:3],pch=20,cex=3,col=c(1:8));
+plot(dt[,1:3],pch=20,cex=3,col=rainrow(41));
+plot(dt[,1:3],pch=20,cex=3,col=rainbow(41));
+savehistory("rcode-lec1.r");

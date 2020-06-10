@@ -1,0 +1,102 @@
+# Script for doing maximum likelihood estimation for a Poisson regression
+# model.
+
+source("poireg.r")
+source("mvnewton.r")
+
+options(digits=17)
+
+
+# Generate some artificial data.
+
+set.seed(1)
+
+n <- 50
+x <- runif (n, 1, 4)
+y <- rpois (n, 1.7 + 2.7*x)
+
+initial <- c(mean(y),0)  # initial guess to use
+
+
+# Plot the contours of the log likelihood.
+
+grid <- seq(1.5,3,by=0.02)
+ll <- matrix(nrow=length(grid),ncol=length(grid))
+for (i in 1:nrow(ll))
+    for (j in 1:ncol(ll))
+        ll[i,j] <- poireg_log_lik (grid[i], grid[j], x, y)
+
+contour(grid,grid,ll,nlevels=80)
+
+
+# Find the maximum likelihood estimate using nlm, giving it only the
+# the log likelihood (no derivatives).
+
+print (r <- nlm (
+        function (theta) - poireg_log_lik(theta[1], theta[2], x, y), 
+        initial, hessian=TRUE))
+
+e_nlm <- r$estimate
+
+points (e_nlm[1], e_nlm[2], pch=20, col="red")  # Plot estimate on contour plot
+
+
+# Find the maximum likelihood estimate using nlm, giving it a function
+# that computes the log likelihood and its gradient and Hessian.
+
+print (r <- nlm (
+        function (theta) - poireg_log_lik_with_derivs(theta[1], theta[2], x, y),
+        initial, hessian=TRUE))
+
+e_nlm2 <- r$estimate
+
+
+# Find the maximum likelihood estimate using the multivariate Newton
+# function from the course web page.
+
+print (e_mvn <- mvnewton (
+        function (theta) poireg_log_lik_gradient (theta[1], theta[2], x, y),
+        function (theta) poireg_log_lik_hessian (theta[1], theta[2], x, y),
+        initial, 10))
+
+points (e_mvn[1], e_mvn[2], pch=20, col="green")
+
+
+# Find the maximum likelihood estimate using the method of scoring.
+
+print (e_mos <- mvnewton (
+  function (theta) poireg_log_lik_gradient (theta[1], theta[2], x, y),
+  function (theta) poireg_fisher_inf (theta[1], theta[2], x),
+  initial, 15))
+
+points (e_mos[1], e_mos[2], pch=20, col="blue")
+
+
+# Find the maximum likelihood estimate using R's glm function.
+
+e_glm <- coef(glm(y~x,family=poisson(link="identity")))
+
+
+# Show all estimates in a table.
+
+cat("\nEstimates, log likelihoods, and gradients from methods:\n")
+
+ests <- rbind(e_nlm,e_nlm2,e_mvn,e_mos,e_glm)
+colnames(ests) <- c("a","b")
+
+llik <- rbind(poireg_log_lik(e_nlm[1],e_nlm[2],x,y),
+             poireg_log_lik(e_nlm2[1],e_nlm2[2],x,y),
+             poireg_log_lik(e_mvn[1],e_mvn[2],x,y),
+             poireg_log_lik(e_mos[1],e_mos[2],x,y),
+             poireg_log_lik(e_glm[1],e_glm[2],x,y))
+colnames(llik) <- "log likelihood"
+
+grad <- rbind(poireg_log_lik_gradient(e_nlm[1],e_nlm[2],x,y),
+             poireg_log_lik_gradient(e_nlm2[1],e_nlm2[2],x,y),
+             poireg_log_lik_gradient(e_mvn[1],e_mvn[2],x,y),
+             poireg_log_lik_gradient(e_mos[1],e_mos[2],x,y),
+             poireg_log_lik_gradient(e_glm[1],e_glm[2],x,y))
+
+colnames(grad) <- c("grad a","grad b")
+
+print(cbind(ests,log_likelihod=llik,gradient=grad))

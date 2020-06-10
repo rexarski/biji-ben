@@ -1,0 +1,344 @@
+$ R --vanilla -q
+> ls()
+character(0)
+> ls()
+character(0)
+> a <- c(1,3,5);
+> a
+[1] 1 3 5
+> length(a)
+[1] 3
+> a[1]
+[1] 1
+> b <- rnorm(12);
+> b
+ [1] -0.7320527  0.9515679  0.3844636  1.1530631 -2.3396261 -0.5802661
+ [7] -0.7085026  2.3364626  0.9204683 -1.2820665  1.5636510  0.8868213
+> b
+ [1] -0.7320527  0.9515679  0.3844636  1.1530631 -2.3396261 -0.5802661
+ [7] -0.7085026  2.3364626  0.9204683 -1.2820665  1.5636510  0.8868213
+> b.m <- matrix(b,nrow=4,ncol=3);
+> b.m
+           [,1]       [,2]       [,3]
+[1,] -0.7320527 -2.3396261  0.9204683
+[2,]  0.9515679 -0.5802661 -1.2820665
+[3,]  0.3844636 -0.7085026  1.5636510
+[4,]  1.1530631  2.3364626  0.8868213
+> b.d <- as.data.frame(b.m);
+> b.d
+          V1         V2         V3
+1 -0.7320527 -2.3396261  0.9204683
+2  0.9515679 -0.5802661 -1.2820665
+3  0.3844636 -0.7085026  1.5636510
+4  1.1530631  2.3364626  0.8868213
+> colnames(b.d) <- c("density","machine","cross");
+> d.b
+Error: object 'd.b' not found
+> b.d
+     density    machine      cross
+1 -0.7320527 -2.3396261  0.9204683
+2  0.9515679 -0.5802661 -1.2820665
+3  0.3844636 -0.7085026  1.5636510
+4  1.1530631  2.3364626  0.8868213
+> rownames(b.d)[1:2] <- c('new tech',"old tech");
+> b.d
+            density    machine      cross
+new tech -0.7320527 -2.3396261  0.9204683
+old tech  0.9515679 -0.5802661 -1.2820665
+3         0.3844636 -0.7085026  1.5636510
+4         1.1530631  2.3364626  0.8868213
+> b.d$samplename <- rownames(b.d)
+> b.d
+            density    machine      cross samplename
+new tech -0.7320527 -2.3396261  0.9204683   new tech
+old tech  0.9515679 -0.5802661 -1.2820665   old tech
+3         0.3844636 -0.7085026  1.5636510          3
+4         1.1530631  2.3364626  0.8868213          4
+> dt <- read.table("data/T1-1.DAT");
+> dt
+       V1    V2
+1 3497900 0.623
+2 2485475 0.593
+3 1782875 0.512
+4 1725450 0.500
+5 1645575 0.463
+6 1469800 0.395
+> names(dt) <- c("payroll","winloss");
+> dt
+  payroll winloss
+1 3497900   0.623
+2 2485475   0.593
+3 1782875   0.512
+4 1725450   0.500
+5 1645575   0.463
+6 1469800   0.395
+> colnames(dt) <- c("payroll2","winloss2");
+> dt
+  payroll2 winloss2
+1  3497900    0.623
+2  2485475    0.593
+3  1782875    0.512
+4  1725450    0.500
+5  1645575    0.463
+6  1469800    0.395
+> mode(dt)
+[1] "list"
+> class(dt)
+[1] "data.frame"
+> dt$teamname <- c("team1","team2","toronto","winsor","waterloo","ottawa");
+> dt
+  payroll2 winloss2 teamname
+1  3497900    0.623    team1
+2  2485475    0.593    team2
+3  1782875    0.512  toronto
+4  1725450    0.500   winsor
+5  1645575    0.463 waterloo
+6  1469800    0.395   ottawa
+> b.m
+           [,1]       [,2]       [,3]
+[1,] -0.7320527 -2.3396261  0.9204683
+[2,]  0.9515679 -0.5802661 -1.2820665
+[3,]  0.3844636 -0.7085026  1.5636510
+[4,]  1.1530631  2.3364626  0.8868213
+> b.m[,4] <- 1;
+Error in `[<-`(`*tmp*`, , 4, value = 1) : subscript out of bounds
+> dt <- dt[,1:2];
+> names(dt) <- c("payroll","winloss");
+> dt
+  payroll winloss
+1 3497900   0.623
+2 2485475   0.593
+3 1782875   0.512
+4 1725450   0.500
+5 1645575   0.463
+6 1469800   0.395
+> plot(dt);
+> plot(dt,pch=20,cex=3);
+> plot(dt$payroll/1e6,dt$winloss,pch=20,xlim=    c(0,4),ylim=c(0,.7),cex=3);
+> colMeans(dt);
+     payroll      winloss 
+2.101179e+06 5.143333e-01 
+> mean(dt$payroll);
+[1] 2101179
+> mean(dt[[1]]);
+[1] 2101179
+> mean(dt$[,1]);
+Error: unexpected '[' in "mean(dt$["
+> mean(dt[,1]);
+[1] 2101179
+> sd(a)
+[1] 2
+> sd(dt)
+Error in is.data.frame(x) : 
+  (list) object cannot be coerced to type 'double'
+> var(dt)
+             payroll      winloss
+payroll 5.894434e+11 5.737374e+04
+winloss 5.737374e+04 7.016667e-03
+> sqrt(var(dt))
+            payroll      winloss
+payroll 767752.1907 239.52815770
+winloss    239.5282   0.08376555
+> S <- var(dt)
+> S
+             payroll      winloss
+payroll 5.894434e+11 5.737374e+04
+winloss 5.737374e+04 7.016667e-03
+> R <- cor(dt);
+> R;
+         payroll  winloss
+payroll 1.000000 0.892127
+winloss 0.892127 1.000000
+> summary(dt)
+    payroll           winloss      
+ Min.   :1469800   Min.   :0.3950  
+ 1st Qu.:1665544   1st Qu.:0.4723  
+ Median :1754162   Median :0.5060  
+ Mean   :2101179   Mean   :0.5143  
+ 3rd Qu.:2309825   3rd Qu.:0.5727  
+ Max.   :3497900   Max.   :0.6230  
+> dt <- read.table("data/T1-2.DATA");
+Error in file(file, "rt") : cannot open the connection
+In addition: Warning message:
+In file(file, "rt") :
+  cannot open file 'data/T1-2.DATA': No such file or directory
+> dt <- read.table("data/T1-2.DAT");
+> names(dt) <- c("density","machine","cross");
+> dt
+   density machine cross
+1    0.801  121.41 70.42
+2    0.824  127.70 72.47
+3    0.841  129.20 78.20
+4    0.816  131.80 74.89
+5    0.840  135.10 71.21
+6    0.842  131.50 78.39
+7    0.820  126.70 69.02
+8    0.802  115.10 73.10
+9    0.828  130.80 79.28
+10   0.819  124.60 76.48
+11   0.826  118.31 70.25
+12   0.802  114.20 72.88
+13   0.810  120.30 68.23
+14   0.802  115.70 68.12
+15   0.832  117.51 71.62
+16   0.796  109.81 53.10
+17   0.759  109.10 50.85
+18   0.770  115.10 51.68
+19   0.759  118.31 50.60
+20   0.772  112.60 53.51
+21   0.806  116.20 56.53
+22   0.803  118.00 70.70
+23   0.845  131.00 74.35
+24   0.822  125.70 68.29
+25   0.971  126.10 72.10
+26   0.816  125.80 70.64
+27   0.836  125.50 76.33
+28   0.815  127.80 76.75
+29   0.822  130.50 80.33
+30   0.822  127.90 75.68
+31   0.843  123.90 78.54
+32   0.824  124.10 71.91
+33   0.788  120.80 68.22
+34   0.782  107.40 54.42
+35   0.795  120.70 70.41
+36   0.805  121.91 73.68
+37   0.836  122.31 74.93
+38   0.788  110.60 53.52
+39   0.772  103.51 48.93
+40   0.776  110.71 53.67
+41   0.758  113.80 52.42
+> dim(dt)
+[1] 41  3
+> nrow(dt);
+[1] 41
+> ncol(dt);
+[1] 3
+> head(dt);
+  density machine cross
+1   0.801  121.41 70.42
+2   0.824  127.70 72.47
+3   0.841  129.20 78.20
+4   0.816  131.80 74.89
+5   0.840  135.10 71.21
+6   0.842  131.50 78.39
+> tail(dt);
+   density machine cross
+36   0.805  121.91 73.68
+37   0.836  122.31 74.93
+38   0.788  110.60 53.52
+39   0.772  103.51 48.93
+40   0.776  110.71 53.67
+41   0.758  113.80 52.42
+> summary(dt);
+    density          machine          cross      
+ Min.   :0.7580   Min.   :103.5   Min.   :48.93  
+ 1st Qu.:0.7950   1st Qu.:115.1   1st Qu.:56.53  
+ Median :0.8150   Median :121.4   Median :70.70  
+ Mean   :0.8119   Mean   :121.0   Mean   :67.72  
+ 3rd Qu.:0.8260   3rd Qu.:126.7   3rd Qu.:74.89  
+ Max.   :0.9710   Max.   :135.1   Max.   :80.33  
+> plot(dt,pch=20,cex=3);
+> plot(dt,pch=20,cex=3,col=c("black","red")[1+(dt$cross>60)]);
+> c("black","red")[1+(dt$cross>60)]
+ [1] "red"   "red"   "red"   "red"   "red"   "red"   "red"   "red"   "red"  
+[10] "red"   "red"   "red"   "red"   "red"   "red"   "black" "black" "black"
+[19] "black" "black" "black" "red"   "red"   "red"   "red"   "red"   "red"  
+[28] "red"   "red"   "red"   "red"   "red"   "red"   "black" "red"   "red"  
+[37] "red"   "black" "black" "black" "black"
+> dt$class <- c("black","red")[1+(dt$cross>60)]
+> head(dt)
+  density machine cross class
+1   0.801  121.41 70.42   red
+2   0.824  127.70 72.47   red
+3   0.841  129.20 78.20   red
+4   0.816  131.80 74.89   red
+5   0.840  135.10 71.21   red
+6   0.842  131.50 78.39   red
+> tail(dt)
+   density machine cross class
+36   0.805  121.91 73.68   red
+37   0.836  122.31 74.93   red
+38   0.788  110.60 53.52 black
+39   0.772  103.51 48.93 black
+40   0.776  110.71 53.67 black
+41   0.758  113.80 52.42 black
+> plot(dt,pch=20,cex=.3);
+Error in plot.window(...) : need finite 'xlim' values
+In addition: Warning messages:
+1: In data.matrix(x) : NAs introduced by coercion
+2: In min(x) : no non-missing arguments to min; returning Inf
+3: In max(x) : no non-missing arguments to max; returning -Inf
+> plot(dt,pch=20,cex=3);
+Error in plot.window(...) : need finite 'xlim' values
+In addition: Warning messages:
+1: In data.matrix(x) : NAs introduced by coercion
+2: In min(x) : no non-missing arguments to min; returning Inf
+3: In max(x) : no non-missing arguments to max; returning -Inf
+> head(dt)
+  density machine cross class
+1   0.801  121.41 70.42   red
+2   0.824  127.70 72.47   red
+3   0.841  129.20 78.20   red
+4   0.816  131.80 74.89   red
+5   0.840  135.10 71.21   red
+6   0.842  131.50 78.39   red
+> plot(dt[,1:3],pch=20,cex=3);
+> plot(dt[,1:3],pch=20,cex=3,col=dt$class);
+> which(dt$density > 95);
+integer(0)
+> which(dt$density > .95);
+[1] 25
+> dt[25,];
+   density machine cross class
+25   0.971   126.1  72.1   red
+> plot(dt[-25,1:3],pch=20,cex=3,col=dt$class);
+> plot(dt[-25,1:3],pch=20,cex=3,col=dt$class[-25]);
+> a
+[1] 1 3 5
+> a[1]
+[1] 1
+> a[2]
+[1] 3
+> a[5]
+[1] NA
+> dt$info <- "none"
+> head(dt)
+  density machine cross class info
+1   0.801  121.41 70.42   red none
+2   0.824  127.70 72.47   red none
+3   0.841  129.20 78.20   red none
+4   0.816  131.80 74.89   red none
+5   0.840  135.10 71.21   red none
+6   0.842  131.50 78.39   red none
+> dt[25,]
+   density machine cross class info
+25   0.971   126.1  72.1   red none
+> dt$info[25] <- "might be outlier";
+> dt$info[c(1:4,26:28)] <- "good";
+> dt[c(1:5,25:30),];
+   density machine cross class             info
+1    0.801  121.41 70.42   red             good
+2    0.824  127.70 72.47   red             good
+3    0.841  129.20 78.20   red             good
+4    0.816  131.80 74.89   red             good
+5    0.840  135.10 71.21   red             none
+25   0.971  126.10 72.10   red might be outlier
+26   0.816  125.80 70.64   red             good
+27   0.836  125.50 76.33   red             good
+28   0.815  127.80 76.75   red             good
+29   0.822  130.50 80.33   red             none
+30   0.822  127.90 75.68   red             none
+> plot(dt[,1:3],pch=20);
+> plot(dt[,1:3],pch="X");
+> plot(dt[,1:3],pch="X",cex=3);
+> plot(dt[,1:3],pch=22,cex=3);
+> plot(dt[,1:3],pch=21,cex=3);
+> plot(dt[,1:3],pch=21,cex=3,col=c(1:8));
+> plot(dt[,1:3],pch=20,cex=3,col=c(1:8));
+> plot(dt[,1:3],pch=20,cex=3,col=rainrow(41));
+Error in pairs.default(data.matrix(x), ...) : 
+  could not find function "rainrow"
+> plot(dt[,1:3],pch=20,cex=3,col=rainbow(41));
+> savehistory("rcode-lec1.r");
+> q()
+$

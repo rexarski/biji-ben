@@ -1,0 +1,23 @@
+
+
+
+low = function(y){
+-1*(1-abs(y))
+}
+
+high = function(y){
+(1-abs(y))
+}
+
+x = 0
+y = 0
+res_x = c()
+res_y = c()
+for (i in 1:100){
+x = runif(1,low(y),high(y))
+res_x = c(res_x,x)
+y = runif(1,low(x),high(x))
+res_y = c(res_y,y)
+}
+
+plot(res_x,res_y)

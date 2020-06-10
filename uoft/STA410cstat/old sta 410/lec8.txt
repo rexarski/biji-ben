@@ -1,0 +1,69 @@
+####lec 8# Maximum likelihood estimation of a mixture of two exponential distributions
+# using EM.
+#
+# Arguments:
+#
+#   x      Vector of observations
+#   iters  Number of iterations of EM to do
+#   debug  TRUE if debug information should be printed
+#
+# Value returned:
+#
+#   List with elements m0, m1, p1, giving the means of the two exponential
+#   distributions and the probability that an observation comes from the 2nd.
+
+mix_exp_em <- function (x, iters, debug=FALSE)
+{
+    # Set m0 to be the smaller of the means initially, so it's likely to
+    # end up that way.
+
+    m0 <- mean(x)*0.9
+    m1 <- mean(x)*1.1
+    p1 <- 0.5
+
+    for (t in 1:iters) {
+
+        # E Step:
+
+        r1 <- (p1*dexp(x,1/m1)) / ((1-p1)*dexp(x,1/m0)+p1*dexp(x,1/m1))
+
+        # M Step:
+
+        m0 <- sum((1-r1)*x) / sum(1-r1)
+        m1 <- sum(r1*x) / sum(r1)
+        p1 <- mean(r1)
+
+        if (debug) {
+            cat(
+             "Iteration",t,"\n")
+            cat(
+             "  r1 =",round(r1,3),"\n")
+            cat(
+             "  m0 =",round(m0,3)," m1 =",round(m1,3)," p1 =",round(p1,3),"\n")
+        }
+    }
+
+    list (m0=m0, m1=m1, p1=p1)
+}
+
+# Try it out on a small dataset.
+
+print (mix_exp_em (c(0.1,0.3,0.4,1.2,3.4,8.8,12.3), 15, TRUE))
+
+#############################
+data  = rexp(10,2)
+
+data[data[which>1]] = rep(1,length(data[which>1]))
+
+exp= function(x,n) {
+m=mean(x)
+for i in 1:n{
+#E
+x[x[which=1]] = rep(m,length(x[which=1]))
+#M
+m = mean(x)
+}
+
+
+
+}

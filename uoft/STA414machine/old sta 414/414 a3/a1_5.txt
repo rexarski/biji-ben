@@ -1,0 +1,5 @@
+\relax 
+\@writefile{toc}{\contentsline {section}{\numberline {1}Fitting a Linear model}{1}}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Fitting a Gaussian process models }{2}}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Summary}{3}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}code}{4}}

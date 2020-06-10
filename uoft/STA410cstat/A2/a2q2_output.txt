@@ -1,0 +1,111 @@
+Log-likelihood of 1 itertaion is -59355.22 
+Log-likelihood of 2 itertaion is -43041.23 
+Log-likelihood of 3 itertaion is -61220.24 
+Log-likelihood of 4 itertaion is -70355.7 
+Log-likelihood of 5 itertaion is -78744.66 
+Log-likelihood of 6 itertaion is -84088.08 
+Log-likelihood of 7 itertaion is -86144.28 
+Log-likelihood of 8 itertaion is -86789.16 
+Log-likelihood of 9 itertaion is -87061.34 
+Log-likelihood of 10 itertaion is -87193.57 
+Log-likelihood of 11 itertaion is -87264.36 
+Log-likelihood of 12 itertaion is -87305.05 
+Log-likelihood of 13 itertaion is -87329.65 
+Log-likelihood of 14 itertaion is -87345.06 
+Log-likelihood of 15 itertaion is -87354.97 
+Log-likelihood of 16 itertaion is -87361.47 
+Log-likelihood of 17 itertaion is -87365.8 
+Log-likelihood of 18 itertaion is -87368.71 
+Log-likelihood of 19 itertaion is -87370.68 
+Log-likelihood of 20 itertaion is -87372.02 
+Log-likelihood of 21 itertaion is -87372.94 
+Log-likelihood of 22 itertaion is -87373.57 
+Log-likelihood of 23 itertaion is -87373.99 
+Log-likelihood of 24 itertaion is -87374.28 
+Log-likelihood of 25 itertaion is -87374.47 
+Log-likelihood of 26 itertaion is -87374.6 
+Log-likelihood of 27 itertaion is -87374.69 
+Log-likelihood of 28 itertaion is -87374.74 
+Log-likelihood of 29 itertaion is -87374.77 
+Log-likelihood of 30 itertaion is -87374.79 
+Log-likelihood of 31 itertaion is -87374.8 
+Log-likelihood of 32 itertaion is -87374.8 
+Log-likelihood of 33 itertaion is -87374.8 
+Log-likelihood of 34 itertaion is -87374.8 
+Log-likelihood of 35 itertaion is -87374.79 
+Log-likelihood of 36 itertaion is -87374.78 
+Log-likelihood of 37 itertaion is -87374.78 
+Log-likelihood of 38 itertaion is -87374.77 
+Log-likelihood of 39 itertaion is -87374.76 
+Log-likelihood of 40 itertaion is -87374.76 
+Log-likelihood of 41 itertaion is -87374.75 
+Log-likelihood of 42 itertaion is -87374.74 
+Log-likelihood of 43 itertaion is -87374.74 
+Log-likelihood of 44 itertaion is -87374.73 
+Log-likelihood of 45 itertaion is -87374.73 
+Log-likelihood of 46 itertaion is -87374.73 
+Log-likelihood of 47 itertaion is -87374.72 
+Log-likelihood of 48 itertaion is -87374.72 
+Log-likelihood of 49 itertaion is -87374.72 
+Log-likelihood of 50 itertaion is -87374.71 
+Log-likelihood of 51 itertaion is -87374.71 
+Log-likelihood of 52 itertaion is -87374.71 
+Log-likelihood of 53 itertaion is -87374.71 
+Log-likelihood of 54 itertaion is -87374.71 
+Log-likelihood of 55 itertaion is -87374.7 
+Log-likelihood of 56 itertaion is -87374.7 
+Log-likelihood of 57 itertaion is -87374.7 
+Log-likelihood of 58 itertaion is -87374.7 
+Log-likelihood of 59 itertaion is -87374.7 
+Log-likelihood of 60 itertaion is -87374.7 
+Log-likelihood of 61 itertaion is -87374.7 
+Log-likelihood of 62 itertaion is -87374.7 
+Log-likelihood of 63 itertaion is -87374.69 
+Log-likelihood of 64 itertaion is -87374.69 
+Log-likelihood of 65 itertaion is -87374.69 
+Log-likelihood of 66 itertaion is -87374.69 
+Log-likelihood of 67 itertaion is -87374.69 
+Log-likelihood of 68 itertaion is -87374.69 
+Log-likelihood of 69 itertaion is -87374.69 
+Log-likelihood of 70 itertaion is -87374.69 
+Log-likelihood of 71 itertaion is -87374.69 
+Log-likelihood of 72 itertaion is -87374.69 
+Log-likelihood of 73 itertaion is -87374.69 
+Log-likelihood of 74 itertaion is -87374.69 
+Log-likelihood of 75 itertaion is -87374.69 
+Log-likelihood of 76 itertaion is -87374.69 
+Log-likelihood of 77 itertaion is -87374.69 
+Log-likelihood of 78 itertaion is -87374.69 
+Log-likelihood of 79 itertaion is -87374.69 
+Log-likelihood of 80 itertaion is -87374.69 
+Log-likelihood of 81 itertaion is -87374.69 
+Log-likelihood of 82 itertaion is -87374.69 
+Log-likelihood of 83 itertaion is -87374.69 
+Log-likelihood of 84 itertaion is -87374.69 
+Log-likelihood of 85 itertaion is -87374.69 
+Log-likelihood of 86 itertaion is -87374.69 
+Log-likelihood of 87 itertaion is -87374.69 
+Log-likelihood of 88 itertaion is -87374.69 
+Log-likelihood of 89 itertaion is -87374.69 
+Log-likelihood of 90 itertaion is -87374.69 
+Log-likelihood of 91 itertaion is -87374.69 
+Log-likelihood of 92 itertaion is -87374.69 
+Log-likelihood of 93 itertaion is -87374.69 
+Log-likelihood of 94 itertaion is -87374.69 
+Log-likelihood of 95 itertaion is -87374.69 
+Log-likelihood of 96 itertaion is -87374.69 
+Log-likelihood of 97 itertaion is -87374.69 
+Log-likelihood of 98 itertaion is -87374.69 
+Log-likelihood of 99 itertaion is -87374.69 
+Log-likelihood of 100 itertaion is -87374.69 
+            mu        vu       rho      alpha
+sp1  0.8942923 1.0342643 0.2657339 0.06729892
+sp2  1.3899676 0.9623014 0.0993474 0.19440148
+sp3  1.7168589 1.0546248 0.1551782 0.07671346
+sp4  0.5312401 1.2620517 0.8176918 0.07347779
+sp5  1.5094600 1.4086777 0.9183584 0.05511000
+sp6  1.7233369 0.9994049 0.1464464 0.10582222
+sp7  1.3208239 0.9380040 0.4295160 0.04366880
+sp8  1.0519352 1.2553052 0.4406961 0.15757814
+sp9  1.0239227 1.2366704 0.4606217 0.19213491
+sp10 0.9046637 1.7304230 0.5328304 0.03379428

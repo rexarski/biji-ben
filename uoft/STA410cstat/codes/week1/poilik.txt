@@ -1,0 +1,51 @@
+# An illustration of floating-point underflow when computing a likelihood.
+#
+# Notes:  dpoi(v,m) computes the vector of probabilities for each element
+# in v with respect to the Poisson distribution with mean m; rpois(n,m)
+# generates n values from the Poisson distribution with mean m.  The
+# 'prod' and 'sum' functions compute the product and the sum of elements
+# in a vector.
+
+
+# This function compute the probability of getting all the data in the
+# vector 'data' by independent generation from a Poisson distribution
+# with mean 'poi_mean' (the "likelihood" for this mean parameter).
+
+poisson_likelihood <- function (data, poi_mean) {
+  prod (dpois (data, poi_mean))
+}
+
+
+# This function computes the log of the probability of getting all the
+# data in the vector 'data' by independent generation from a Poisson
+# distribution with mean 'poi_mean' (the log likelihood for this parameter
+# value).
+
+poisson_log_likelihood <- function (data, poi_mean) {
+  sum (dpois( data, poi_mean, log=TRUE))
+}
+
+
+# Let's try them out..
+
+set.seed(1)       # Set random seed so results are reproducible
+
+m <- 5.8          # True mean is 5.8
+
+n <- 40           # Try with 40 data points
+d <- rpois(n,m)   # Generate the data
+
+print (poisson_likelihood (d, 6.1))  # Find likelihood for a Poisson mean of 6.1
+print (poisson_likelihood (d, 5.5))  #  ... and for 5.5
+
+print (poisson_log_likelihood (d, 6.1))   # Same, but for log likelihoods
+print (poisson_log_likelihood (d, 5.5))
+
+n <- 400          # Now try with 400 data points
+d <- rpois(n,m)   # Generate the data
+
+print (poisson_likelihood (d, 6.1))  # Find likelihood for a Poisson mean of 6.1
+print (poisson_likelihood (d, 5.5))  #  ... and for 5.5 - BOTH UNDERFLOW TO 0!
+
+print (poisson_log_likelihood (d, 6.1))   # Same, but for log likelihoods
+print (poisson_log_likelihood (d, 5.5))   #   - now we get valid results

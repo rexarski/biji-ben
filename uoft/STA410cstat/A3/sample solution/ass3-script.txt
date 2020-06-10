@@ -1,0 +1,127 @@
+# STA 410/2102, Fall 2015, Script for Assignment #3.
+
+source("ass3-funs.r")
+
+# Known information.
+
+n_species <- 10
+n_genera <- 4
+
+species_genus <- c(1,1,1,2,2,3,3,4,4,4)
+alpha <- c(0.05, 0.20, 0.05, 0.06, 0.04, 0.15, 0.05, 0.15, 0.20, 0.05)
+
+sd_log_mass <- 0.08
+sd_log_ratio <- 0.10
+
+mu_prior_mean <- 1
+mu_prior_sd <- 2
+
+nu_prior_mean <- 1
+nu_prior_sd <- 2
+
+# Read data.
+
+data <- read.table("ass2-data",head=TRUE)
+
+
+# Find initial parameters from estimates based on beetles of known species,
+# but avoid swamp probabilties of 0 or 1.
+
+initial <- list (mu = numeric(n_species), 
+                 nu = numeric(n_species), 
+                 rho = numeric(n_species))
+
+for (s in 1:n_species) {
+    w <- !is.na(data$species) & data$species == s
+    initial$mu[s] <- mean(log(data$mass[w]))
+    initial$nu[s] <- mean(log(data$ratio[w]))
+    initial$rho[s] <- 0.05 + 0.9*mean(data$swamp[w])
+}
+
+
+# Run Gibbs sampling with this initial value.
+
+n_iter <- 500
+
+set.seed(1)
+r <- beetles_gibbs (data, initial, n_iter)
+
+
+# Produce trace plots of parameters.
+
+par(mfrow=c(3,1))
+
+plot(c(),xlim=c(1,n_iter),ylim=range(r$mu),xlab="",ylab="mu")
+for (i in 1:n_species) lines(r$mu[,i],col=i)
+
+plot(c(),xlim=c(1,n_iter),ylim=range(r$nu),xlab="",ylab="nu")
+for (i in 1:n_species) lines(r$nu[,i],col=i)
+
+plot(c(),xlim=c(1,n_iter),ylim=range(r$rho),xlab="",ylab="rho")
+for (i in 1:n_species) lines(r$rho[,i],col=i)
+
+
+# Produce trace plots of a few representative species indicators.
+
+par(mfrow=c(4,1))
+
+for (i in c(2,3,8,11)) 
+    plot(r$species[,i],ylab=paste("beetle",i),ylim=c(1,10),pch=20)
+
+
+# Find estimates of posterior means and standard deviations, discarding
+# burn-in iterations.
+
+burn_in <- 20
+
+cat("\nPosterior means and standard deviations for mu parameters:\n\n")
+print (round (beetles_estimates (r$mu, burn_in), 4))
+
+cat("\nPosterior means and standard deviations for nu parameters:\n\n")
+print (round (beetles_estimates (r$nu, burn_in), 4))
+
+cat("\nPosterior means and standard deviations for rho parameters:\n\n")
+print (round (beetles_estimates (r$rho, burn_in), 4))
+
+
+# Run Gibbs sampling from initial parameter estimates that are the
+# same for all species, equal to the averages over all beetles.
+# and produce trace plots of parameters.
+
+initial2 <- list (mu=rep(mean(log(data$mass)),n_species),
+                  nu=rep(mean(log(data$ratio)),n_species),
+                  rho=rep(mean(data$swamp),n_species))
+
+set.seed(1)
+r2 <- beetles_gibbs (data, initial2, n_iter)
+
+par(mfrow=c(3,1))
+
+plot(c(),xlim=c(1,n_iter),ylim=range(r2$mu),xlab="",ylab="mu")
+for (i in 1:n_species) lines(r2$mu[,i],col=i)
+
+plot(c(),xlim=c(1,n_iter),ylim=range(r2$nu),xlab="",ylab="nu")
+for (i in 1:n_species) lines(r2$nu[,i],col=i)
+
+plot(c(),xlim=c(1,n_iter),ylim=range(r2$rho),xlab="",ylab="rho")
+for (i in 1:n_species) lines(r2$rho[,i],col=i)
+
+
+# Run for a lot longer...
+
+n_iter3 <- 5000
+set.seed(1)
+r3 <- beetles_gibbs (data, initial2, n_iter3)
+
+par(mfrow=c(3,1))
+
+sub <- seq(10,n_iter3,by=10)
+
+plot(c(),xlim=c(1,n_iter3),ylim=range(r3$mu),xlab="",ylab="mu")
+for (i in 1:n_species) lines(sub,r3$mu[sub,i],col=i)
+
+plot(c(),xlim=c(1,n_iter3),ylim=range(r3$nu),xlab="",ylab="nu")
+for (i in 1:n_species) lines(sub,r3$nu[sub,i],col=i)
+
+plot(c(),xlim=c(1,n_iter3),ylim=range(r3$rho),xlab="",ylab="rho")
+for (i in 1:n_species) lines(sub,r3$rho[sub,i],col=i)

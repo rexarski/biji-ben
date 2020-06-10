@@ -1,0 +1,11 @@
+x <- cbind(m100,m200,m400,m800,m1500,m5000,m10000,mara)
+d <- dist(scale(x,center=T,scale=T))  # define distance matrix
+r1 <- hclust(d,method="single") # single linkage
+r2 <- hclust(d,method="average") # average linkage
+r3 <- hclust(d,method="complete") # complete linkage
+plclust(r1,labels=country,main="Single linkage")
+plclust(r2,labels=country,main="Average linkage")
+plclust(r3,labels=country,main="Complete linkage")
+
+
+

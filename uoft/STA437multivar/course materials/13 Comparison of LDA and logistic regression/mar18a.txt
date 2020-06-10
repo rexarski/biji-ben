@@ -1,0 +1,84 @@
+> library(MASS)
+> y <- ifelse(runif(200)<1/4,1,0)
+> colour <- ifelse(y==1,"blue","red")
+> for (i in 1:200) {
++    if (y[i]==1) x <- rbind(x,mvrnorm(1,mu=c(1,1),Sigma=covar))
++    if (y[i]==0) x <- rbind(x,mvrnorm(1,mu=c(-1,-1),Sigma=covar))
++    }
+> x1 <- x[,1]
+> x2 <- x[,2]
+> group <- factor(y)
+> r1 <- lda(group~x1+x2)
+> r1
+Call:
+lda(group ~ x1 + x2)
+
+Prior probabilities of groups:
+    0     1 
+0.775 0.225 
+
+Group means:
+          x1        x2
+0 -0.9761785 -1.034661
+1  1.1120022  1.267146
+
+Coefficients of linear discriminants:
+         LD1
+x1 0.5263957
+x2 0.6432745
+
+> r2 <- glm(y~x1+x2,family=binomial) # logistic regression
+> summary(r2)
+
+Call:
+glm(formula = y ~ x1 + x2, family = binomial)
+
+Deviance Residuals: 
+     Min        1Q    Median        3Q       Max  
+-2.29939  -0.19852  -0.08542  -0.01362   2.22879  
+
+Coefficients:
+            Estimate Std. Error z value Pr(>|z|)    
+(Intercept)  -1.7712     0.3742  -4.734 2.21e-06 ***
+x1            1.1140     0.3633   3.066  0.00217 ** 
+x2            1.7925     0.4462   4.017 5.89e-05 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 213.266  on 199  degrees of freedom
+Residual deviance:  76.112  on 197  degrees of freedom
+AIC: 82.112
+
+Number of Fisher Scoring iterations: 7
+
+> r1.cv <- lda(group~x1+x2,CV=T)
+> sum(group!=r1.cv$class)
+[1] 17
+> # Now do cross-validation for logistic regression
+> predict.glm <- NULL
+> for (i in 1:200) {
++    xx1 <- x1[-i]
++    xx2 <- x2[-i]
++    yy <- y[-i]
++    rr <- glm(yy~xx1+xx2,family=binomial)
++    u <- ifelse(predict(rr,data.frame(xx1=x1[i],xx2=x2[i]))>0,1,0)
++    predict.glm <- c(predict.glm,u)
++    }
+> sum(y!=predict.glm)
+[1] 18
+> table(group,r1.cv$class)
+     
+group   0   1
+    0 146   9
+    1   8  37
+> table(y,predict.glm)
+   predict.glm
+y     0   1
+  0 147   8
+  1  10  35
+
+
+
+

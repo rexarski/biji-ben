@@ -1,0 +1,125 @@
+# STA 410/2102, Fall 2015, Functions for Assignment #3.
+
+# These functions obtain known information from the global variables
+# n_species, n_genera, species_genus, sd_log_mass, and sd_log_ratio,
+# mu_prior_mean, mu_prior_sd, nu_prior_mean, nu_prior_sd, and alpha.
+
+
+# Find the probability/density for the three measurements on a beetle,
+# conditional on it being of a given species, and on given model parameters
+# (as a list).  The 'd' argument is a list (or data frame with one row) of
+# measurements.  The 'sp' argument may be a vector of species indicators,
+# in which case a vector of probability/density values is returned.
+#
+# (Same as for Assignment 2.)
+
+beetles_prob <- function (d, sp, params)
+{
+    dnorm(log(d$mass), params$mu[sp], sd_log_mass) *
+      dnorm(log(d$ratio), params$nu[sp], sd_log_ratio) *
+        (if (d$swamp) params$rho[sp] else 1-params$rho[sp])
+}
+
+
+# Do Gibbs sampling for the beetles model, with given data, using
+# the specified initial values for parameters, doing the specified
+# number of Gibbs iterations.  Returns a list with elements mu, nu,
+# rho, and species, which are matrices with number of rows equal
+# to the number of iterations, containing the values of the three
+# sets of parameters and of the species indicators.
+
+beetles_gibbs <- function (data, initial, n_iters)
+{
+    n_beetles <- nrow(data)
+
+    # Create a list of matrices that will hold the results.
+
+    r <- list (mu = matrix(ncol=n_species,nrow=n_iters),
+               nu = matrix(ncol=n_species,nrow=n_iters),
+               rho = matrix(ncol=n_species,nrow=n_iters),
+               species = matrix(ncol=n_beetles,nrow=n_iters))
+
+    # Set initial values for the parameters and species indicators.
+    # The initialization of the species indicators is needed only
+    # to set the indicators for those beetles whose species is known.
+
+    params <- initial
+    species <- data$species
+
+    # Do the Gibbs sampling iterations.
+
+    for (k in 1:n_iters) {
+
+        # Sample for species indicators.  (Very similar to E step in Ass. 2.)
+
+        for (i in 1:n_beetles) {
+            if (is.na(data$species[i])) {
+
+                # Set 'sp' to the vector of possible species for this beetle.
+
+                sp <- if (is.na(data$genus[i])) 1:n_species
+                      else (1:n_species)[species_genus==data$genus[i]]
+
+                # Find unnormalized probabilities for each possible species.
+
+                q <- alpha[sp] * beetles_prob (data[i,],sp,params)
+
+                # Sample this beetle's species according to these probabilities.
+
+                species[i] <- sample (sp, 1, prob=q)
+            }
+        }
+
+        # Sample for the parameters, given the species indicators.  All
+        # parameters for one species are sampled, then for the next species,
+        # etc.
+
+        for (s in 1:n_species) {
+
+            # Find number of beetles currently marked as of this species.
+
+            n <- sum(species==s)
+
+            # Sample the mu parameter for this species.
+
+            w <- 1/mu_prior_sd^2 + n/sd_log_mass^2
+            m <- (mu_prior_mean/mu_prior_sd^2 + 
+                  mean(log(data$mass[species==s]))*n/sd_log_mass^2) / w
+
+            params$mu[s] <- rnorm (1, m, 1/sqrt(w))
+
+            # Sample the nu parameter for this species.
+
+            w <- 1/nu_prior_sd^2 + n/sd_log_ratio^2
+            m <- (nu_prior_mean/nu_prior_sd^2 + 
+                  mean(log(data$ratio[species==s]))*n/sd_log_ratio^2) / w
+
+            params$nu[s] <- rnorm (1, m, 1/sqrt(w))
+
+            # Sample the rho parameter for this species.
+
+            params$rho[s] <- rbeta (1, 1 + sum (species==s & data$swamp==1),
+                                       1 + sum (species==s & data$swamp==0))
+        }
+
+        # Record parameters and species indicators from this iteration.
+
+        r$mu[k,] <- params$mu
+        r$nu[k,] <- params$nu
+        r$rho[k,] <- params$rho
+        r$species[k,] <- species
+    }
+
+    r
+}
+
+
+# Find posterior mean and standard deviation estimates from the Gibbs sampling
+# results for a set of parameters (a matrix), discarding the specified number
+# of burn-in iterations.
+
+beetles_estimates <- function (mat, burn_in)
+{
+    mat <- mat[-(1:burn_in),]
+    rbind (mean=colMeans(mat), sdev=apply(mat,2,sd))
+}

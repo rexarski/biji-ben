@@ -1,0 +1,46 @@
+- (sec 1.1) polynomial curve fitting -- generalization, overfitting
+- (sec 1.5) decision theory:
+	- minimizing misclassification rate
+	- minimizing the expected loss
+	- loss function for regression
+- (sec 2.1) Bernoulli, multinomial random variables (mean, variances)
+- (sec 1.2, 2.3) multivariate Gaussian distribution (form, mean, covariance)
+- (sec 2.1, 2.3) maximum likelihood estimation for these distributions
+- (sec 2.4) exponential family / maximum likelihood estimation / sufficient statistics for exponential family
+- (sec 3.1) linear basis function models / maximum likelihood and least squares
+	- regularized least squares (and ridge regression)
+- (sec 3.2) bias-variance decomposition
+- (sec 3.3) Bayesian inference
+  - likelihood, prior, posterior
+	- marginal likelihood / predictive distribution
+	- Bayesian linear regression / parameter estimation / posterior distribution / predictive distribution
+- (sec 3.4, 3.5) Bayesian model comparison / evidence approximation
+- (classification models:
+  - (sec 4.1) discriminant functions
+  - (sec 4.1) Fisher's linear discriminant
+- (sec 4.2) probabilistic generative models / Gaussian class conditionals / maximum likelihood estimation
+
+
+- Gaussian processes, definition
+- GPs for regression
+- marginal/predictive distributions. making predictions using GPs
+- covariance functions, automatic relevance determination, role of hyperparameters
+- mixture models, k-means, mixture of Gaussian
+- **mixture of Gaussians**: maximum likelihood estimation
+- **EM algorithm**: definition of E-step, definition of M-step, relationship to k-means
+- alternative view of EM: expected complete data log-likelihood
+- E-step: compute posterior over latent variables
+- M-step: find the new estimate of parameters
+- continuous latent variable models: probabilistic PCA, factor analysis
+- PCA, PCA for high-imensional data
+- probabilistic PCA: definition of probabilistic model, joint/marginal density, posterior over latent variables, relationship to standard PCA, EM for PPCA
+- probabilistic PCA: maximum likelihood estimation, zero noise limit
+- factor analysis, definition, marginal/joint/posterior. relationship to PPCA
+- autoencoders: definition
+- sequential data: markov models, maximum likelihood estimation
+- state space models: definition, transition model, observation model
+- hidden markov models: definition, transition model, observation model
+- maximum likelihood estimation for HMMs, basics of EM algorithm
+- basics of EM algorithm for HMMs: interring posterior over latent paths and parameter estimation for the transition and observation model
+- dynamic programming (understanding of alpha-beta recursions)
+- Viterbi decoding

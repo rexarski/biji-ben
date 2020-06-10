@@ -1,0 +1,124 @@
+STA 410/2102, Fall 2015, Discussion for Assignment #1.
+
+
+Read this discussion in conjunction with the knitr::spin output from
+the script file.  There seems to be some glitches in the output, from
+some sort of bug in knitr, but they don't affect reabability of the
+results.  (It might have been better to write up this discussion using
+knitr or Rmarkdown as well, though keeping it separate from the main
+script output has some advantages.)
+
+
+The four methods were tried with several initial values for p1 and p2.
+One was the estimates for p1 and p2 found from just the small surveys
+of only men and onl women, which seems like a reasonable starting
+point.  The others were p1=0.5 and p2=0.5, which seems like another
+neutral staring point, and the extreme starting points of p1=0.1 and
+p2=0.1 and of p1=0.05 and p2=0.95.  Only 7 iterations were done for
+Newton's method and the method of scoring, just to see if they were on
+their way to the right answer.
+
+All the methods converged from all the starting points tried, so
+choice of starting point does not seem to be crucial for these methods
+on this problem.  However, more starting points would need to be
+tried, with various different data sets, to get a really good idea of
+how robust the methods are.
+
+It is interesting to note that although Newton iteration was on the
+way to converging from all starting points, for the extreme starting
+points, it was converging more slowly than the method of scoring
+(whereas the reverse was the case for the good starting points).
+
+
+The methods were run again with the first initial values (estimates
+from the two small surveys), with enough iterations for Newton
+iteration and the method of scoring to reach their stable points.  All
+the methods produced identical estimates, except for nlm, which was
+close, but differed in the seventh decimal place.  The difference for
+nlm is not surprising, since it was called with its default setting
+for the required accuracy; it would probably agree closer if asked to
+do more work.
+
+
+Alternating maximization required 24 iterations to reach a stable
+estimate (ie, one the same as after 23 iterations).  Here are the
+ratios of the differences from the final value for p1 for iterations
+18 and 19, and iterations 19 and 20:
+
+   > final <- 0.83007546584433389
+   > p1.18 <- 0.8300754658443863
+   > p1.19 <- 0.830075465844345
+   > p1.20 <- 0.83007546584433611
+   > (p1.18-final)/(p1.19-final)
+   [1] 4.72
+   > (p1.19-final)/(p1.20-final)
+   [1] 5
+
+This is the behaviour expected with linear convergence - the error
+after t+1 iterations is about 1/5 the error after t iterations.  The
+contour plot of the log likelihood function shows that there is some
+dependence between p1 and p2 - the contour around the maximum is not
+aligned with the axes, so we expect that many iterations of
+alternating maximumization will be needed to gradually reach the
+overall maximum.
+
+Newton iteration required 7 iterations to reach a stable state.  For
+p1, we can verify that Newton iteration converges quadratically (as
+expected) by looking at the ratio of the square of the errors at one
+iteration to the error at the next, for iterations 3 & 4 and 4 & 5:
+
+   > final <- 0.83007546584433389
+   > p1.3  <- 0.83015086405183069
+   > p1.4  <- 0.83007548857122737
+   > p1.5  <- 0.83007546584433589
+   > (p1.3-final)^2/(p1.4-final)
+   [1] 0.2501393
+   > (p1.4-final)^2/(p1.5-final)
+   [1] 0.2584624
+
+The ratios are almost the same, as expected for quadratic convergence.
+
+The method of scoring required 17 iterations to reach a stable state,
+much more than Newton iteration.  Furthermore, the convergence appears
+to be linear, as seen below:
+
+   > final <- 0.83007546584433389
+   > p1.12 <- 0.83007546584450831
+   > p1.13 <- 0.83007546584431768
+   > p1.14 <- 0.83007546584433545
+   > (p1.12-final)/(p1.13-final)
+   [1] -10.76027
+   > (p1.13-final)/(p1.14-final)
+   [1] -10.42857
+
+The error goes down by about a factor of 10 each iteration (and
+switches sign).
+
+
+It was certainly easiest to program the method using nlm - only the
+log likelihood function was required, not its derivatives, and this
+function could be written using R's builtin dbinom function.  (Note,
+however, that there does exist software to automatically differentiate
+many functions, so methods requiring derivatives may not always be
+harder to program.)
+
+
+
+GRAD STUDENT / BONUS QUESTION:
+
+The standard errors obtained using the observed information were 0.062
+for p1 and 0.072 for p2.  Using the Fisher information, the standard
+errors were almost the same - 0.064 for p1 and 0.071 for p2.
+
+However, if the data is changed to x=125, x1=5, and x2=15, the choice
+of observed versus Fisher information makes a much bigger difference.
+For this data, the standard errors are 0.054 and 0.036 using observed
+information but 0.065 and 0.057 using Fisher information.  This
+difference is large enough to have practical consequences.  
+
+The larger difference for this data set is a consequence of x1 and x2
+not having values close to their expectations given the MLE.  This is
+possible, but is less likely than their having values close to their
+expectations.  In the other direction, if we arrange for x1 and x2 to
+be exactly equal to their expectations, the observed and Fisher
+information give identical standard errors.

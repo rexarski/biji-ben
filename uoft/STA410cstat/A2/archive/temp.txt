@@ -1,0 +1,169 @@
+obs <- na.omit(data) # with two observed variable (genus and species)
+x <- nrow(obs)
+genus <- data[is.na(data$species) & !is.na(data$genus),]
+y <- nrow(genus)
+miss <- data[is.na(data$genus),]
+z <- nrow(miss)
+
+# Display everything we know about observed data by species (71 in total)
+om <- matrix(nrow=10, ncol=4)
+colnames(om) <- rbind("Obs.avg mass", "Obs.avg ratio", "Obs.swamp-prob", "Obs.collect-prob")
+rownames(om) <- (1:10)
+for (i in 1:10) {
+  om[i, 1] <- mean(obs[obs$species == i,]$mass)
+  om[i, 2] <- mean(obs[obs$species == i,]$ratio)
+  om[i, 3] <- mean(obs[obs$species == i,]$swamp)
+  om[i, 4] <- nrow(obs[obs$species == i,])/nrow(obs)
+}
+
+# some information by known genus
+omm <- matrix(nrow=4, ncol=4)
+colnames(omm) <- rbind("avg mass", "avg ratio", "swamp-prob", "collect-prob")
+rownames(omm) <- (1:4)
+for (i in 1:4) {
+  omm[i, 1] <- mean(obs[obs$genus == i,]$mass)
+  omm[i, 2] <- mean(obs[obs$genus == i,]$ratio)
+  omm[i, 3] <- mean(obs[obs$genus == i,]$swamp)
+  omm[i, 4] <- nrow(obs[obs$genus == i,])/nrow(obs)
+}
+
+# a conditional probability matrix
+# indicating the probability of a certain species, given the genus it already has.
+# this matrix actually tells us that if a genus is given, the possibility of some
+# species are zero.
+spg <- matrix(nrow=10,ncol=4)
+colnames(spg) <- rbind("genus1", "genus2", "genus3", "genus4")
+rownames(spg) <- cbind("sp1", "sp2", "sp3", "sp4", "sp5", "sp6", "sp7", "sp8", "sp9", "sp10")
+for (i in 1:4) {
+  for (j in 1:10) {
+    spg[j, i] <- nrow(obs[obs$species == j & obs$genus == i,])/nrow(obs[obs$genus == i, ])
+  }
+}
+
+p_0 <- function(i, j, mu, vu, rho) {
+  # ith data with genus given
+  # j is the species (unknown)
+  m <- genus[i,3]
+  r <- genus[i,4]
+  w <- genus[i,5]
+  mu <- om[i,1]
+  vu <- om[i,2]
+  rho <- om[i,3]
+  prob <- exp(-(log(m)-mu)^2/2/0.08^2) * exp(-(log(r)-vu)^2/2/0.1^2) * (
+    rho^w) * (1-rho)^(1-w) * spg[j,genus[i,2]]
+  return(prob)
+}
+
+p <- function(i, j) {
+  sum <- 0
+  t <- 0
+  if (j==1 || 2 || 3) {
+    t <- 1
+  } else if (j == 4 || 5) {
+    t <- 2
+  } else if (j == 6 || 7) {
+    t <- 3
+  } else {
+    t <- 4
+  }
+  for (k in 1:nrow(genus[genus$genus==t,])) {
+    sum <- sum + p_0(i, k)
+  }
+  return(p_0(i,j)/sum)
+} 
+
+q <- function(i, j){
+  
+}
+
+der_mu <- function(s) {
+  sum1 <- 0
+  sum2 <- 0
+  sum3 <- 0
+  sum4 <- 0
+  sum5 <- 0
+  sum6 <- 0
+  for (i in 1:x) {
+    sum1 <- sum1 + log(obs[i,3])
+  }
+  for (i in 1:y) {
+    sum2 <- sum2 + log(obs[i,3])*p(i,s)
+    sum5 <- sum5 + p(i,s)
+  }
+  for (i in 1:z) {
+    sum3 <- sum3 + log(obs[i,3])*q(i,s)
+    sum6 <- sum6 + q(i,s)
+  }  
+  sum4 <- x
+  return((sum1+sum2+sum3)/(sum4+sum5+sum6))
+  return((sum1+sum2+sum3)/(sum4+sum5+sum6))
+}
+
+der_vu <- function(s) {
+  sum1 <- 0
+  sum2 <- 0
+  sum3 <- 0
+  sum4 <- 0
+  sum5 <- 0
+  sum6 <- 0
+  for (i in 1:x) {
+    sum1 <- sum1 + log(obs[i,4])
+  }
+  for (i in 1:y) {
+    sum2 <- sum2 + log(obs[i,4])*p(i,s)
+    sum5 <- sum5 + p(i,s)
+  }
+  for (i in 1:z) {
+    sum3 <- sum3 + log(obs[i,4])*q(i,s)
+    sum6 <- sum6 + q(i,s)
+  }  
+  sum4 <- x
+  return((sum1+sum2+sum3)/(sum4+sum5+sum6))
+}
+
+der_rho <- function(s) {
+  sum1 <- 0
+  sum2 <- 0
+  sum3 <- 0
+  sum4 <- 0
+  sum5 <- 0
+  sum6 <- 0
+  for (i in 1:x) {
+    sum1 <- sum1 + obs[i,5]
+  }
+  for (i in 1:y) {
+    sum2 <- sum2 + obs[i,5]*p(i,s)
+    sum5 <- sum5 + p(i,s)
+  }
+  for (i in 1:z) {
+    sum3 <- sum3 + obs[i,5]*q(i,s)
+    sum6 <- sum6 + q(i,s)
+  }  
+  sum4 <- x
+  return((sum1+sum2+sum3)/(sum4+sum5+sum6))
+}
+
+der_alpha <- function(s) {
+  sum1 <- nrow(obs[obs$species==s,])
+  sum2 <- 0
+  sum3 <- 0
+  t <- 0
+  if (s==1 || 2 || 3) {
+    t <- 1
+  } else if (s == 4 || 5) {
+    t <- 2
+  } else if (s == 6 || 7) {
+    t <- 3
+  } else {
+    t <- 4
+  }
+  for (i in 1:nrow(genus[genus$genus==t,])) {
+    sum2 <- sum2 + p(i,s)
+  }
+  for (i in 1:z) {
+    sum3 <- sum3 + q(i,s)
+  }
+  return((sum1+sum2+sum3)/nrow(data))
+}
+
+

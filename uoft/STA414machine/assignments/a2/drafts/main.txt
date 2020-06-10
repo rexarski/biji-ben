@@ -1,0 +1,97 @@
+  train = read.table(file="./digitstrain.txt", sep=",")
+  test = read.table(file="./digitstest.txt", sep=",")
+  
+  # LOGISTIC REGRESSION
+  t <- train[, 65]
+  sigmoid <- function(t, x) {
+    1 / (1 + exp(-t %*% x))
+  }
+  
+  sum_learn <- function(data, w) {
+    sumlearn <- c(rep(0, 64))
+    for (i in 1:800) {
+      temp <- as.numeric(data[i, 1:64])
+      sumlearn <- sumlearn + (as.numeric(sigmoid(w, temp)) - data[i, 64]) * temp
+    }
+    return(sumlearn)
+  }
+  
+  w0 <- c(rep.int(0, 64))
+  
+  # define a fuction to update w, with data set and number of iterations given.
+  update_w <- function(data, num) {
+    w <- w0
+    for (i in 1:num) {
+      w <- w - 0.01 * sum_learn(data, w) # learning rate alpha is 0.01
+    }
+    return(w)
+  }
+  
+  wfit <- update_w(train, 500) # we set the number of iterations to be 500
+  wfit
+  
+  logp_logistic_reg <- function(t, x) {
+    if (t == 0) {
+      a <- log(sigmoid(wfit, x))
+    } else {
+      a <- log(1 - sigmoid(wfit, x))
+    }
+    a
+  }
+  
+  logp_logistic_train <- matrix(nrow = 800, ncol = 2)
+  colnames(logp_logistic_train) <- c("logp(0)", "logp(1)")
+  for (i in 1:2) {
+    for (j in 1:800) {
+      logp_logistic_train[j, i] <- logp_logistic_reg(i-1, as.numeric(train[j, 1:64]))
+    }
+  }
+  
+  logp_logistic_test <- matrix(nrow = 400, ncol = 2)
+  colnames(logp_logistic_test) <- c("logp(0)", "logp(1)")
+  for (i in 1:2) {
+    for (j in 1:400) {
+      logp_logistic_test[j, i] <- logp_logistic_reg(i-1, as.numeric(test[j, 1:64]))
+    }
+  }
+  
+  # logistic regression average
+  train_0_logistic <- mean(logp_logistic_train[1:400, 1])
+  train_1_logistic <- mean(logp_logistic_train[401:800, 2])
+  train_logistic <- mean(c(train_0_logistic, train_1_logistic))
+  test_0_logistic <- mean(logp_logistic_test[1:200, 1])
+  test_1_logistic <- mean(logp_logistic_test[201:400, 2])
+  test_logistic <- mean(c(test_0_logistic, test_1_logistic))
+  
+  print(c(train_0_logistic, train_1_logistic, train_logistic))
+  print(c(test_0_logistic, test_1_logistic, test_logistic))
+  
+  # error counts and error rate of logistic regression
+  
+  train_logistic_pre <- c(1:800)
+  test_logistic_pre <- c(1:400)
+  for (i in 1:800) {
+    if (logp_logistic_train[i, 1] > logp_logistic_train[i, 2]) {
+      train_logistic_pre[i] <- 0
+    } else {
+      train_logistic_pre[i] <- 1
+    }
+  }
+  
+  for (i in 1:400) {
+    if (logp_logistic_test[i, 1] > logp_logistic_test[i, 2]) {
+      test_logistic_pre[i] <- 0
+    } else {
+      test_logistic_pre[i] <- 1
+    }
+  }
+  
+  train_3_e <- sum(abs(train[1:400, 65] - train_logistic_pre[1:400]))
+  train_5_e <- sum(abs(train[401:800, 65] - train_logistic_pre[401:800]))
+  train_e <- train_3_e + train_5_e
+  test_3_e <- sum(abs(test[1:200, 65] - test_logistic_pre[1:200]))
+  test_5_e <- sum(abs(test[201:400, 65] - test_logistic_pre[201:400]))
+  test_e <- test_3_e + test_5_e
+  
+  print(c(train_3_e, train_3_e/400, train_5_e, train_5_e/400, train_e, train_e/800))
+  print(c(test_3_e, test_3_e/200, test_5_e, test_5_e/200, test_e, test_e/400))

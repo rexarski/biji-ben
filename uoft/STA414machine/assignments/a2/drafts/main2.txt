@@ -1,0 +1,166 @@
+library(grid)
+
+train <- as.matrix(read.csv(file="./digitstrain.txt", header=FALSE, sep=","))
+test <- as.matrix(read.csv(file="./digitstest.txt", header=FALSE, sep=","))
+
+colnames(train) <- NULL
+colnames(test) <- NULL
+
+# set-up for training data
+zero <- train[train[, 65] == 0, ]
+one <- train[train[, 65] == 1, ]
+N <- 800
+N5 <- sum(one[, 65])
+N3 <- N - N5
+pi5 <- N5 / N
+pi3 <- N3 / N
+mu5 <- sum(one[, 1:64])/N5
+mu3 <- sum(zero[, 1:64])/N3
+
+s3 <- matrix(c(rep.int(0, 64 * 64)), nrow = 64, ncol = 64) # sigma
+s5 <- matrix(c(rep.int(0, 64 * 64)), nrow = 64, ncol = 64)
+
+for (i in 1:N3) {
+  s3 <-  s3 + (zero[i, 1:64] - mu3) %*% t(zero[i, 1:64] - mu3)
+}
+s3 <- s3/N3
+
+for (i in 1:N5) {
+  s5 <- s5 + (one[i, 1:64] - mu5) %*% t(one[i, 1:64] - mu5)
+}
+s5 <- s5/N5
+
+s3r <- s3 + 0.01 * diag(64) # regularized
+s5r <- s5 + 0.01 * diag(64)
+
+# set-up for testing data
+zero_t <- test[test[, 65] == 0, ]
+one_t <- test[test[, 65] == 1, ]
+N_t <- 400
+N5_t <- sum(one_t[, 65])
+N3_t <- N_t - N5_t 
+# for sigma matrix and regularized, we should consult the result from 
+# training data
+
+# CONDITIONAL GAUSSIAN AND REGULARIZED CONDITIONAL GAUSSIAN
+
+# define log-posterior function
+
+lnp_x <- function (x, t, sigma0, sigma1, mu0, mu1) {
+  D <- 64
+  if (t==0) {
+    result <- -D/2 * log(2*pi) - log(det(sigma0))/2 
+    - (t(x-mu0) %*% solve(sigma0) %*% (x-mu0))/2
+  } else {
+    result <- -D/2 * log(2*pi) - log(det(sigma1))/2 
+    - (t(x-mu1) %*% solve(sigma1) %*% (x-mu1))/2
+  }
+  result
+}
+
+lnp_t <- function (x, t, sigma0, sigma1, mu0, mu1) {
+  result <- lnp_x(x, t, sigma0, sigma1, mu0, mu1) 
+  - log(exp(lnp_x(x, 0, sigma0, sigma1, mu0, mu1)) 
+        + exp(lnp_x(x, 1, sigma0, sigma1, mu0, mu1)))
+  result
+}
+
+# main set up
+# training data conditional Gaussian
+train_c <- matrix(c(rep.int(0, 1 * 800)), nrow = 1, ncol = 800) 
+# training data regularized conditional Gaussian
+train_r <- matrix(c(rep.int(0, 1 * 800)), nrow = 1, ncol = 800)
+# testing data conditional Gaussian
+test_c <- matrix(c(rep.int(0, 1 * 400)), nrow = 1, ncol = 400)
+# testing data regularized conditional Gaussian
+test_r <- matrix(c(rep.int(0, 1 * 400)), nrow = 1, ncol = 400) 
+
+for (i in 1:N) {
+  train_c[i] <- lnp_t(train[i, 1:64], train[i, 65], s3, s5, mu3, mu5)
+  train_r[i] <- lnp_t(train[i, 1:64], train[i, 65], s3r, s5r, mu3, mu5)
+}
+
+for (i in 1:N_t) {
+  test_c[i] <- lnp_t(test[i, 1:64], test[i, 65], s3, s5, mu3, mu5)
+  test_r[i] <- lnp_t(test[i, 1:64], test[i, 65], s3r, s5r, mu3, mu5)
+}
+
+# average log conditional prob of training data
+train_c_3 <- mean(train_c[train[, 65] == 0])
+train_c_5 <- mean(train_c[train[, 65] == 1])
+train_r_3 <- mean(train_r[train[, 65] == 0])
+train_r_5 <- mean(train_r[train[, 65] == 1])
+
+# average log condtional prob of testing data
+test_c_3 <- mean(test_c[test[, 65] == 0])
+test_c_5 <- mean(test_c[test[, 65] == 1])
+test_r_3 <- mean(test_r[test[, 65] == 0])
+test_r_5 <- mean(test_r[test[, 65] == 1])
+
+# the output we need
+print(c(train_c_3, train_c_5, mean(train_c)))
+print(c(train_r_3, train_r_5, mean(train_r)))
+print(c(test_c_3, test_c_5, mean(test_c)))
+print(c(test_r_3, test_r_5, mean(test_r)))
+
+# error counting and rate
+train_c_pre <- matrix(c(rep.int(0, 1 * 800)), nrow = 1, ncol = 800)
+train_r_pre <- matrix(c(rep.int(0, 1 * 800)), nrow = 1, ncol = 800)
+test_c_pre <- matrix(c(rep.int(0, 1 * 400)), nrow = 1, ncol = 400)
+test_r_pre <- matrix(c(rep.int(0, 1 * 400)), nrow = 1, ncol = 400)
+
+for (i in 1:N) {
+  if (lnp_x(train[i, 1:64], 0, s3, s5, mu3, mu5) 
+      > lnp_x(train[i, 1:64], 1, s3, s5, mu3, mu5)) {
+    train_c_pre[i] <- 0
+  } else {train_c_pre[i] <- 1}
+  if (lnp_x(train[i, 1:64], 0, s3r, s5r, mu3, mu5) 
+      > lnp_x(train[i, 1:64], 1, s3r, s5r, mu3, mu5)) {
+    train_r_pre[i] <- 0
+  } else{train_r_pre[i] <- 1}
+}
+
+for (i in 1:N_t) {
+  if (lnp_x(test[i, 1:64], 0, s3, s5, mu3, mu5) 
+      > lnp_x(test[i, 1:64], 1, s3, s5, mu3, mu5)) {
+    test_c_pre[i] <- 0
+  } else {test_c_pre[i] <- 1}
+  if (lnp_x(test[i, 1:64], 0, s3r, s5r, mu3, mu5) 
+      > lnp_x(test[i, 1:64], 1, s3r, s5r, mu3, mu5)) {
+    test_r_pre[i] <- 0
+  } else{test_r_pre[i] <- 1}
+}
+
+# training error
+error_train_3 <- abs(train_c_pre - t(train[, 65]))
+error_train_3 <- sum(error_train_3[train[, 65] == 0])
+error_train_5 <- abs(train_c_pre - t(train[, 65]))
+error_train_5 <- sum(error_train_5[train[, 65] == 1])
+error_train <- sum(abs(train_c_pre- t(train[, 65])))
+error_train_3_r <- abs(train_r_pre - t(train[, 65]))
+error_train_3_r <- sum(error_train_3_r[train[, 65] == 0])
+error_train_5_r <- abs(train_r_pre - t(train[, 65]))
+error_train_5_r <- sum(error_train_5_r[train[, 65] == 1])
+error_train_r <- sum(abs(train_r_pre- t(train[, 65])))
+
+# testing error
+error_test_3 <- abs(test_c_pre - t(test[, 65]))
+error_test_3 <- sum(error_test_3[test[, 65] == 0])
+error_test_5 <- abs(test_c_pre - t(test[, 65]))
+error_test_5 <- sum(error_test_5[test[, 65] == 1])
+error_test <- sum(abs(test_c_pre- t(test[, 65])))
+error_test_3_r <- abs(test_r_pre - t(test[, 65]))
+error_test_3_r <- sum(error_test_3_r[test[, 65] == 0])
+error_test_5_r <- abs(test_r_pre - t(test[, 65]))
+error_test_5_r <- sum(error_test_5_r[test[, 65] == 1])
+error_test_r <- sum(abs(test_r_pre- t(test[, 65])))
+
+print(c(error_train_3, error_train_3/N3, error_train_5, 
+        error_train_5/N5, error_train, error_train/N))
+print(c(error_train_3_r, error_train_3_r/N3, error_train_5_r, 
+        error_train_5_r/N5, error_train_r, error_train_r/N))
+print(c(error_test_3, error_test_3/N3_t, error_test_5, 
+        error_test_5/N5_t, error_test, error_test/N_t))
+print(c(error_test_3_r, error_test_3_r/N3_t, error_test_5_r, 
+        error_test_5_r/N5_t, error_test_r, error_test_r/N_t))
+

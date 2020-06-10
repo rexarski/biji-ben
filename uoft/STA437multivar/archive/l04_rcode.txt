@@ -1,0 +1,158 @@
+# R code in Lecture 4 with small comment
+# load two packages
+library(MASS);
+library(tseries);
+# load radiation data
+data <- read.table("data/T4-1.DAT",header=F); 
+n <- nrow(data); p <- ncol(data);
+dim(data); summary(data); head(data);
+plot(data$V1,pch=20,cex=.7);
+plot(sort(data$V1),pch=20,cex=.7);
+plot(qnorm(((1:n)-.5)/n),sort(data$V1),pch=20,cex=1);
+# compute q_{(j)} values
+qq <- qnorm(((1:n)-.5)/n); zs <- sort(data$V1);
+# fit linear regression
+summary(lm(zs~qq))
+# plot and add regression lines
+plot(qq,zs,pch=20)
+abline(0.128,0.0933,col=2);
+# remove two anomalous points
+qq2 <- qnorm((1:40-.5)/40);
+head(qq2)
+plot(qq2,zs[1:40],pch=20,cex=1);
+summary(zs[1:40]~qq2))
+summary(lm(zs[1:40]~qq2))
+abline(.114,0.0766,col=2);
+# do Box-Cox transformation
+boxcox(data$V1~1);
+r <- boxcox(data$V1~1);
+plot(r$x,r$y,t="l");
+# r is a list with x (lambda value) y (likelihood)
+# find the maximum likelihood estimator of lambda
+max(r$y)
+which(r$y==max(r$y));
+r$y[57]
+r$x[57]
+lambda <- r$x[57];
+# compare qq plot before/after Box-Cox transformation
+par(mfrow=c(1,2));
+plot(qq,zs,pch=20);
+plot(qq,(zs**lambda-1)/lambda,pch=20);
+lambda
+# lambda is close to 0.25
+plot(qq,zs,pch=20);
+plot(qq,(zs**.25-1)/.25,pch=20);
+par(mfrow=c(1,1));
+
+# load different data set
+data <- read.table("data/T4-3.DAT",header=F);
+n <- nrow(data); p <- ncol(data);
+dim(data); summary(data); head(data);
+# scatter plots
+plot(data[,1:4],pch=20);
+# single variable plots
+plot(hist(data[,1],nclass=15));
+plot(hist(data[,2],nclass=15));
+plot(hist(data[,3],nclass=15));
+plot(hist(data[,4],nclass=15));
+plot(hist(data[,2],nclass=15));
+ix <- which(data[,2] > 2500);
+ix
+data[9,]	# a bit anomalous
+# density plot
+plot(density(data$V1))
+plot(density(data$V2))
+plot(density(data$V3))
+plot(density(data$V4))
+# comparison to simulated data from normal with the same size 
+x <- rnorm(42); plot(density(x)); shapiro.test(x);
+x <- rnorm(42); plot(density(x)); shapiro.test(x);
+x.bar <- colMeans(data[,1:4]);
+x.bar
+x.var <- var(data[,1:4]);
+x.var
+cor(data[,1:4])
+x.vari <- ginv(x.var)	# compute inverse
+x.vari
+x.var%*%x.vari		# varification of inverse
+# compute d-square
+dsq <- apply(as.matrix(data[,1:4]),1,function(x)t(x-x.bar)%*%x.vari%*%(x-x.bar))
+head(dsq)
+head(data$V5)
+pchisq(dsq,4,lower=F)
+1-pchisq(dsq,4,lower=F)
+ix <- which(pchisq(dsq,4,lower=F) <= 0.025)
+dsq[ix]
+ix
+z <- data[,1:4]; for(i in 1:4) z[,i] <- (z[,i]-mean(z[,i]))/sd(z[,i]);
+head(data[,1:4])
+head(z)
+dim(z)
+1-pnorm(3)
+which(abs(z) < 3)
+which(rowSums(abs(z) > 3)>1);
+z[9,]
+plot(data[,1:4],pch=20);
+cs <- rep("black",30); cs[c(9,16)] <- "red";
+plot(data[,1:4],pch=20,col=cs);
+plot(data[,1:4],pch=20,col=cs,cex=2);
+# normality test on full data set
+apply(as.matrix(data[,1:4]),2,function(x)shapiro.test(x)$p.value)
+apply(as.matrix(data[,1:4]),2,function(x)jarque.bera.test(x)$p.value)
+# normality test without 9th, 16th observation
+apply(as.matrix(data[-c(9,16),1:4]),2,function(x)shapiro.test(x)$p.value)
+apply(as.matrix(data[-c(9,16),1:4]),2,function(x)jarque.bera.test(x)$p.value)
+# normality test without 9th observation
+apply(as.matrix(data[-c(9),1:4]),2,function(x)jarque.bera.test(x)$p.value)
+# normality test without 16th, 16th observation
+apply(as.matrix(data[-c(16),1:4]),2,function(x)jarque.bera.test(x)$p.value)
+apply(as.matrix(data[-c(16),1:4]),2,function(x)jarque.bera.test(x)$p.value)
+# 9th observation causes departure from normality, probably it is an outlier
+plot(density(data[,1]));
+# Box-Cox transformation
+r <- boxcox(data[,1]~1);
+r$x[r$y==max(r$y)]
+lambda <- r$x[r$y==max(r$y)]
+n <- nrow(data);
+plot(qnorm((1:n)-.5)/n),data[,1],pch=20,cex=2);
+plot(qnorm((1:n)-.5)/n,data[,1],pch=20,cex=2);
+plot(qnorm(((1:n)-.5)/n),data[,1],pch=20,cex=2);
+plot(qnorm(((1:n)-.5)/n),sort(data[,1]),pch=20,cex=2);
+plot(qnorm(((1:(n-1))-.5)/(n-1)),sort(data[-9,1]),pch=20,cex=2);
+r <- boxcox(data[,2]~1);
+lambda <- r$x[r$y==max(r$y)]; lambda;
+plot(qnorm(((1:n)-.5)/n),sort(data[-9,2]),pch=20,cex=2);
+plot(qnorm(((1:(n-1))-.5)/(n-1)),sort(data[-9,2]),pch=20,cex=2);
+# another data
+data <- read.table("data/T4-6.DAT");
+n <- nrow(data); p <- 5;
+dim(data);
+summary(data);
+plot(data[,1:5],pch=20);
+x.bar <- colMeans(data[,1:5]);
+x.var <- var(data[,1:5]);
+x.vari <- ginv(x.var);
+x.bar
+x.var
+x.vari
+plot(hist(data[,1],nclass=20))
+plot(hist(data[,2],nclass=20))
+# d-square
+dsq <- apply(as.matrix(data[,1:5]),1,function(x)t(x-x.bar)%*%x.vari%*%(x-x.bar));
+summary(dsq);
+summary(1-pchisq(dsq,5));
+# Shapiro-Wilks test
+apply(as.matrix(data[,1:5]),2,function(x)shapiro.test(x)$p.value);
+dim(data)
+1/130
+# Box-Cox transformation?
+r <- boxcox(data$V5~1);
+r$x[r$y==max(r$y)];
+plot(density((data[,5]**.4-1)/.4))
+shapiro.test((data[,5]**.4-1)/.4)
+r <- boxcox(data$V5~1);
+plot(density((data[,5]**.4-1)/.4))
+plot(density((data[,5])))
+plot(density((data[,5]**.4-1)/.4))
+par(mfrow=c(1,2)); plot(qnorm(((1:n)-.5)/n),sort((data[,1])),pch=20,cex=1); plot(qnorm(((1:n)-.5)/n),sort((data[,1]**.5-1)/.5),pch=20,cex=1); par(mfrow=c(1,1));
+

@@ -1,0 +1,48 @@
+# Find the MLE for the Poisson mean parameter given data on iid values 
+# specifying an interval in which each value lies (not necessarily a
+# single value).
+#
+# Arguments:
+#     low      Vector of low ends of intervals (non-negative integers)
+#     high     Vector of high ends of intervals (non-negative integers)
+#
+# Value:  The maximum likelihood estimate for the Poisson mean parameter.
+
+poisson_mle <- function (low, high)
+{
+    if (length(low) != length(high))
+        stop("low and high have different lengths")
+
+    if (any(floor(low)!=low) || any(floor(high)!=high))
+        stop("interval ends are not all integers")
+
+    nlm (function (lambda) -poisson_log_likelihood(lambda,low,high),
+         (mean(low) + mean(high)) / 2) $ estimate
+}
+
+# Compute the log likelihood for a Poisson mean parameter given interval
+# data.
+#
+# Arguments:
+#     lambda   The Poisson mean parameter
+#     low      Vector of low ends of intervals (positive integer)
+#     high     Vector of high ends of intervals (positive integer)
+#
+# Value:  The log probability of Poisson values lying in the given
+#         intervals, based on the mean parameter given.
+#
+# Note:   This version won't work for very large data values, due to 
+#         underflow problems.  It also doesn't use R's built-in
+#         dpois function, which would be preferrable in practice.
+
+poisson_log_likelihood <- function (lambda, low, high)
+{
+    ll <- 0
+    for (i in 1:length(low)) {
+        p <- 0
+        for (x in low[i]:high[i])
+            p <- p + lambda^x * exp(-lambda) / factorial(x)
+        ll <- ll + log(p)
+    }
+    ll
+}
