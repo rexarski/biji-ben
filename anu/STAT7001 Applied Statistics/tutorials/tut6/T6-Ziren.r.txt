@@ -1,0 +1,151 @@
+#Question 1
+
+#Part A
+
+pollution=read.table("pollution.csv",header=T,sep=",")
+city=pollution$CITY
+mort=pollution$MORT
+precip=pollution$PRECIP
+educ=pollution$EDUC
+nonwhite=pollution$NONWHITE
+NOX=pollution$NOX
+SO2=pollution$SO2
+logNox<-log(NOX)
+logSo2<-log(SO2)
+pairs(cbind(mort,precip,educ,nonwhite,NOX,SO2))
+pairs(cbind(mort,precip,educ,nonwhite,logNox,logSo2))
+poll.lm=lm(mort~precip+educ+nonwhite+logNox+logSo2)
+
+par(mfrow=c(3,1))
+
+plot(poll.lm$fitted,rstandard(poll.lm),main="outlier")
+abline(h=1.96,col='red')
+abline(h=-1.96,col='red')
+identify(poll.lm$fitted,rstandard(poll.lm))
+
+plot(hatvalues(poll.lm),type='h',main="high leverage point") 
+abline(h=2*(5+1)/length(mort),col='red')
+
+plot(poll.lm,which=4,main="influential point")
+abline(h=1,col='red') 
+
+poll.lm=lm(mort[-60]~precip[-60]+educ[-60]+nonwhite[-60]+logNox[-60]+logSo2[-60])
+poll.r<-lm(mort[-60]~precip[-60]+educ[-60]+nonwhite[-60])
+summary(poll.lm)
+anova(poll.r,poll.lm,test='F') #the partial F test anova 
+
+
+#Part B
+
+x1<-precip[-60]
+x2<-educ[-60]
+x3<-nonwhite[-60]
+x4<-logNox[-60]
+x5<-logSo2[-60]
+y<-mort[-60]
+fit<-lm(y~x1+x2+x3+x4+x5)
+xnew<-data.frame(x1=30,x2=10,x3=20,x4=0,x5=0)
+predict(fit,xnew,interval="confidence")
+
+#Part C
+
+fitnewr<-lm(y~x1+x4+x5)
+fitnew<-lm(y~x1+x4+x5+x2+x3)
+anova(fitnewr,fitnew,test='F') #the partial F test anova 
+
+summary(fit)
+
+#Question 2
+
+birds<-read.table("birds.csv",header=T,sep=",")
+pairs(birds[,2:3])
+
+logTIME<-log(birds[,2])
+PAIRS<-birds[,3]
+pairs(cbind(logTIME,PAIRS))
+
+fit1<-lm(log(birds$TIME)~birds$PAIRS+as.factor(birds$SIZE)+as.factor(birds$STATUS))
+summary(fit1)
+
+#Alternatives 
+size<-birds$SIZE
+status<-birds$STATUS
+ISize=ifelse(size==size[29],1,0)
+IStatus=ifelse(status==status[53],1,0)
+fita<-lm(log(birds$TIME)~birds$PAIRS+ISize+IStatus)
+
+par(mfrow=c(2,1))
+plot(fit1,which = 1)
+plot(fit1,which=2)
+
+
+#Some bonus diagnostic plots
+par(mfrow=c(3,1))
+plot(fit1$fitted,rstandard(fit1),main="outlier")
+abline(h=1.96,col='red')
+abline(h=-1.96,col='red')
+identify(fit1$fitted,rstandard(fit1))
+
+plot(hatvalues(fit1),type='h',main="high leverage point") 
+abline(h=2*(3+1)/length(birds$TIME),col='red')
+
+plot(fit1,which=4,main="influential point")
+abline(h=1,col='red') 
+
+#Q1  Partial F test
+fitr<-lm(log(birds$TIME)~birds$PAIRS)
+anova(fitr,fit1,test='F') #the partial F test anova 
+summary(fit1)
+
+#Q2
+size<-ifelse(birds$SIZE=="S",1,0)
+fit2<-lm(log(birds$TIME)~birds$PAIRS+size+as.factor(birds$STATUS)+I(birds$PAIRS*size))
+anova(fit1,fit2,test='F') #the partial F test a
+summary(fit2)
+
+#Question 3
+install.packages('Sleuth3')
+library(Sleuth3)
+head(case1102)
+attach(case1102)
+IndSex=ifelse(Sex=='Female',1,0)
+Variable=c("Days","Tumor","Loss", "Weight", "IndSex")
+p=length(Variable)
+X=data.frame(Days,Tumor,Loss, Weight, IndSex)
+Y=log(Brain/Liver)
+detach(case1102)
+
+install.packages('wle')
+library(wle) #need to load this library!
+X=as.matrix(X)
+
+#(a)
+mle.stepwise(Y~X,f.in=4,f.out=4,type="Forward")
+result=mle.stepwise(Y~X,f.in=4,f.out=4,type="Forward")
+result=as.vector(result$step[length(result$step[,1]),2:(p+1)])
+#Selected Variables
+Variable[as.logical(result)]
+#[1] "Days"   "IndSex" 
+
+
+#(b)
+mle.stepwise(Y~X,f.in=4,f.out=4,type="Backward")
+result=mle.stepwise(Y~X,f.in=4,f.out=4,type="Backward")
+result=as.vector(result$step[length(result$step[,1]),2:(p+1)])
+#Selected Variables
+Variable[as.logical(result)]
+#[1] "Days"   "IndSex"
+
+#(c)
+mle.stepwise(Y~X,f.in=4,f.out=4,type="Stepwise")
+result=mle.stepwise(Y~X,f.in=4,f.out=4,type="Stepwise")
+result=as.vector(result$step[length(result$step[,1]),2:(p+1)])
+#Selected Variables
+Variable[as.logical(result)]
+#[1] "IndSex" 
+#It is worth noting that the intercept is eliminated in this case.
+
+
+
+
+

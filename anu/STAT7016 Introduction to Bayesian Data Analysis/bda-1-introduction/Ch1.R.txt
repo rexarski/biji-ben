@@ -1,0 +1,96 @@
+#Hoff_Ch1
+pdf("Fig1.pdf")
+n<-20
+Y<-seq(0,20,1)
+theta<-c(0.05,0.1,0.20)
+d<-rbind(dbinom(Y,n,theta[1]),dbinom(Y,n,theta[2]),dbinom(Y,n,theta[3]))
+barplot(d,beside=TRUE,legend = c("theta=0.05","theta=0.10","theta=0.20"),
+xlab="number infected in sample",ylab="probability")
+dev.off()
+
+
+pdf("Fig2.pdf")
+theta<-seq(0,1,0.001)
+a<-2
+b<-20
+n<-20
+y<-0
+d.prior<-dbeta(theta,a,b)
+plot(theta,d.prior,type="n",ylim=c(0,17),
+xlab="percentage infected in the population",ylab="",lwd=2)
+lines(theta,d.prior,lty=2,lwd=2)
+d.post<-dbeta(theta,a+y,b+n-y)
+lines(theta,d.post,lty=1,lwd=2)
+legend(0.6,10,c("prior","post"),lty=c(2,1),lwd=c(2,2))
+dev.off()
+
+
+pdf("Fig3.pdf",family="Times",height=3.5,width=7)
+par(mar=c(3,3,1,1),mgp=c(1.75,0.75,0))
+par(mfrow=c(1,2))
+theta0<-seq(0.01,0.51,0.1)
+w<-seq(5,25,5)
+y<-0
+
+
+z<-matrix(NA,5,6)
+for (i in 1:5){
+for (j in 1:6){
+z[i,j]<-20/(w[i]+n)*y+w[i]/(w[i]+20)*theta0[j]
+}
+}
+
+contour(w,theta0,z,nlevels=11,xlab=expression(italic(w)),ylab=expression(theta[0]),main=expression(paste("E[",theta,"|Y=0]")))
+
+z<-matrix(NA,5,6)
+for (i in 1:5){
+for (j in 1:6){
+z[i,j]<-pbeta(0.10,w[i]*theta0[j]+y,w[i]*(1-theta0[j])+20-y)
+}
+}
+
+contour(w,theta0,z,levels=c(0.1,0.3,0.5,0.7,0.9,0.975),xlab=expression(italic(w)),ylab=expression(theta[0]),main=expression(paste("Pr(",theta,"<0.10|Y=0]")))
+
+dev.off()
+
+
+
+
+
+#diabetes study - model selection
+####
+bfit<-dget("diabetes.bma")
+ZPM<-apply(bfit$Z,2,mean,na.rm=TRUE)
+beta.bma<-apply(bfit$BETA,2,mean,na.rm=TRUE)
+
+pdf("Fig4.pdf",family="Times",height=3.5, width=7)
+par(mar=c(3,3,1,1),mgp=c(1.75,.75,0))
+plot(ZPM,xlab="regressor index",ylab=expression(
+ paste( "Pr(",italic(beta[j] != 0),"|",italic(y),",X)",sep="")),type="h",lwd=2)
+dev.off()
+####
+
+####
+y.te.bma<-X.te%*%beta.bma
+pdf("fig1_4.pdf",family="Times",height=3.5,width=7)
+par(mar=c(3,3,1,1),mgp=c(1.75,.75,0),mfrow=c(1,2))
+
+y.te.bma<-X.te%*%beta.bma
+beta.ols<-lm(y~-1+X)$coef
+y.te.ols<-X.te%*%beta.ols
+
+plot(y.te,y.te.bma,xlab=expression(italic(y)[test]),
+     ylim=range(c(y.te.bma,y.te.ols,y.te)),
+     xlim=range(c(y.te.bma,y.te.ols,y.te)), 
+     ylab=expression(hat(italic(y))[test])) ; abline(0,1)
+
+plot(y.te,y.te.ols,xlab=expression(italic(y)[test]), 
+     ylim=range(c(y.te.bma,y.te.ols,y.te)),
+     xlim=range(c(y.te.bma,y.te.ols,y.te)), 
+     ylab=expression(hat(italic(y))[test])) ; abline(0,1)
+dev.off()
+mean( (y.te-y.te.ols)^2 )
+mean( (y.te-y.te.bma)^2 )
+
+
+

@@ -1,0 +1,55 @@
+\documentclass[a4paper, 11pt, twoside]{article}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\begin{document}
+\title{STAT6039 week 5 lecture 12}
+\author{Rui Qiu}
+\date{2017-03-20}
+
+\maketitle
+
+\textbf{About mixed random variables (see textbook section 4.11)}
+
+
+\paragraph{Definition:} Suppose a random variable has cdf
+
+\[F(y=cF_1(y)+(1-c)F_2(y)\]
+
+where $0<c<1, F_1$ is the cdf of discrete random variable $X_1$, $F_2$ is the cdf of discrete random variable $X_2$.
+
+Then we say that $Y$ is  a \textbf{mixed random variable and $Y$ has a ...}
+
+...
+
+The cdf of $Y$ is like the cdf of a continuous random variable but it also has "jumps".
+
+\paragraph{Example 1:} 2 coins are tossed. If 2 tails then $Y=0$, if 2 heads then $Y=1$. Otherwise, $Y$ is a number chosen randomly uniformly between $0$ and $1$.
+
+For $y < 0, P(Y\leq y)...$
+
+For 
+
+For $0<y<1$
+
+$P(Y\leq y)=?$ (use LTP)
+
+\[
+\begin{split}
+	P(Y\leq y) &= P(TT)P(Y\leq y|TT) + P(HH)P(Y\leq y|HH) + P(HT\cup TH)P(Y\leq y|HT\cup TH)\\
+	&=\frac{1}{4}P(Y=0|TT)+\frac{1}{4}\cdot 0 +\frac{1}{2}P(Z\leq y)\\
+	&=\frac{1}{4}\times 1 + 0 + \frac{1}{2}y
+\end{split}
+\]
+
+So 
+
+\[F(y) = \begin{cases}
+ 0, &y < 0\\
+ \frac{1}{4} + \frac{1}{2}y, &0\leq y < 1\\
+ 1, &y\geq 1
+ \end{cases}
+\]
+
+...
+
+\end{document}

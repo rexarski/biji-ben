@@ -1,0 +1,190 @@
+#parameter expansion
+
+#tumor location data
+
+tumor<-as.data.frame(dget("http://www.stat.washington.edu/~hoff/Book/Data/data/Y.tumor"))
+xs<-seq(5,100,5)/100
+m<-21
+n<-20
+
+pdeg<-3
+X<-cbind(rep(1,20),poly(xs,degree=pdeg) )
+
+pdf("Fig6.pdf",family="Times",height=3.5,width=7)
+par(mar=c(3,3,1,1),mgp=c(1.75,.75,0))
+par(mfrow=c(1,2))
+plot(c(0,1),range(tumor),type="n",xlab="location",ylab="number of tumors")
+for(j in 1:m) { lines(xs,tumor[j,],col="gray") }
+lines( xs,apply(tumor,2,mean),lwd=3)
+
+
+lya<-log(apply(tumor,2,mean))
+Xs<-cbind( rep(1,n),poly(xs,deg=4,raw=TRUE))
+fit2<- lm(lya~-1+Xs[,1:3] )
+fit3<- lm(lya~-1+Xs[,1:4] )
+fit4<- lm(lya~-1+Xs[,1:5] )
+  
+yh2<-Xs[,1:3]%*%fit2$coef
+yh3<-Xs[,1:4]%*%fit3$coef
+yh4<-Xs[,1:5]%*%fit4$coef
+  
+plot(xs,lya,type="l",lwd=3,xlab="location",ylab="log average number of tumors",
+     ylim=range(c(lya,yh2,yh3,yh4)) )
+  
+points(xs,yh2,pch="2",col="black")
+lines(xs,yh2,col="gray")
+points(xs,yh3,pch="3",col="black")
+lines(xs,yh3,col="gray")
+points(xs,yh4,pch="4",col="black")
+lines(xs,yh4,col="gray")
+dev.off()
+  
+  rwish<-function(n,nu0,S0)
+{
+  sS0 <- chol(S0)
+  S<-array( dim=c( dim(S0),n ) )
+  for(i in 1:n)
+  {
+     Z <- matrix(rnorm(nu0 * dim(S0)[1]), nu0, dim(S0)[1]) %*% sS0
+     S[,,i]<- t(Z)%*%Z
+  }
+  S[,,1:n]
+}
+  
+  library(mvtnorm)
+library(sbgcop)
+ tumor<-as.matrix(tumor)   
+##MCMC
+##priors
+BETA<-NULL
+for (j in 1:m){
+	BETA<-rbind(BETA,lm((log(tumor[j,]+1/20))~Xs[,2]+Xs[,3]+Xs[,4]+Xs[,5])$coef)
+}
+
+
+
+tune<-1
+mu0<-apply(BETA,2,mean)
+p<-ncol(Xs)
+S0<-cov(BETA); eta0<-p+2
+iL0<-iSigma<-solve(S0)
+
+#Parameter expansion
+EPS<-rep(5,5)
+
+THETA.post<-SIGMA.post<-NULL; set.seed<-(1)
+
+
+BETA.post<-lapply(1:m, function(x) matrix(NA, nrow=50000/10, ncol=5))
+
+EPS.post<-NULL
+ac.eps<-0
+
+#separate BETA.post for j-1....21
+for (s in 1:50000){
+	##update theta
+	Lm<-solve(iL0+m*iSigma)
+	mum<-Lm%*%(iL0%*%mu0+iSigma%*%apply(BETA,2,sum))
+	theta<-t(rmvnorm(1,mum,Lm))
+	
+	##update Sigma
+	mtheta<-matrix(theta,m,p,byrow=TRUE)
+	iSigma<-rwish(1, eta0+m,solve(S0+t(BETA-mtheta)%*%(BETA-mtheta)))
+	
+	##update beta
+	Sigma<-solve(iSigma); dSigma<-det(Sigma)
+		for (j in 1:m){
+		beta.p<-t(rmvnorm(1,BETA[j,],0.5*Sigma))
+		lr<-sum(dpois(tumor[j,],exp(Xs%*%(EPS*beta.p)),log=TRUE)-dpois(tumor[j,],exp(Xs%*%(EPS*BETA[j,])),log=TRUE))+
+		dmvnorm(t(beta.p),theta,Sigma,log=TRUE)-
+		dmvnorm(t(BETA[j,]),theta,Sigma,log=TRUE)
+		if(log(runif(1))<lr) {BETA[j,]<-beta.p}
+	}
+	
+	##update eps
+	lr<-0
+		for (j in 1:m){
+		eps.p<-t(rmvnorm(1,EPS,tune*diag(1,5,5)))
+		lr<-lr+sum(dpois(tumor[j,],exp(Xs%*%(eps.p*BETA[j,])),log=TRUE)-dpois(tumor[j,],exp(Xs%*%(EPS*BETA[j,])),log=TRUE))
+		}
+		if(log(runif(1))<lr) {EPS<-eps.p
+			ac.eps<-ac.eps+1}
+	#}
+	##store some output
+	if(s%%10==0){
+		THETA.post<-rbind(THETA.post,t(theta))
+		SIGMA.post<-rbind(SIGMA.post, as.vector(Sigma))
+        EPS.post<-rbind(EPS.post,t(EPS))
+	
+     for (j in 1:m){
+     	BETA.post[[j]][s/10,]<-BETA[j,]
+     	}
+
+  }
+}
+
+apply(THETA.post,2,effectiveSize)
+apply(SIGMA.post,2,effectiveSize)
+tvec<-seq(1,5,1)
+pdf("Fig9_paramexpan.pdf")
+par(mfrow=c(2,3))
+for (i in 1:p){
+	acf(THETA.post[,i],main=substitute(theta[a],list(a=tvec[i])))
+}
+dev.off()
+
+xx<-seq(0.05,1,0.05)
+S<-50000/10
+eXTheta<-NULL
+for (i in 1:S){
+	eXTheta<-cbind(eXTheta,exp(Xs%*%(THETA.post[i,])))
+	
+}
+
+eXTheta.q<-apply(eXTheta,1,function(x) quantile(x,probs=(c(0.025,0.5,0.975))))
+plot(xx,eXTheta.q[1,],col="grey",type="l",xlab="location",ylab="number of tumors",lwd=2,ylim=c(0,15))
+lines(xx,eXTheta.q[2,],col="black",type="l",xlab="location",ylab="number of tumors",lwd=2,ylim=c(0,15))
+lines(xx,eXTheta.q[3,],col="grey",type="l",xlab="location",ylab="number of tumors",lwd=2,ylim=c(0,15))
+legend(0.1,5,c("2.5% quantile","50% quantile","97.5% quantile"),col=c("grey","black","grey"),lwd=c(2,2,2))
+###
+eXB.post<-NULL
+for(s in 1:dim(THETA.post)[1])
+{
+  beta<-rmvnorm(1,EPS.post[s,]*THETA.post[s,],matrix(SIGMA.post[s,],p,p))
+  eXB.post<-rbind(eXB.post,t(exp(Xs%*%t(beta) )) )
+}
+
+qEB<-apply( eXB.post,2,quantile,probs=c(.025,.5,.975))
+
+eXT.post<- exp(t(Xs%*%t(THETA.post )) )
+qET<-apply( eXT.post,2,quantile,probs=c(.025,.5,.975))
+yXT.pp<-matrix( rpois(prod(dim(eXB.post)),eXB.post),
+                dim(eXB.post)[1],dim(eXB.post)[2] )
+
+qYP<-apply( yXT.pp,2,quantile,probs=c(.025,.5,.975))
+
+
+pdf("Fig10_paramexpan.pdf",family="Times",height=1.75,width=5)
+par(mar=c(2.75,2.75,.9,.5),mgp=c(1.7,.7,0))
+par(mfrow=c(1,3))
+
+plot(xx,qET[1,],col="grey",type="l",xlab="location",ylab="number of tumors",lwd=2,ylim=c(0,5),main=expression(paste(exp(theta^{T}*x))))
+lines(xx,qET[2,],col="black",type="l",xlab="location",ylab="number of tumors",lwd=2,ylim=c(0,5))
+lines(xx,qET[3,],col="grey",type="l",xlab="location",ylab="number of tumors",lwd=2,ylim=c(0,5))
+legend(0.1,15,c("2.5% quantile","50% quantile","97.5% quantile"),col=c("grey","black","grey"),lwd=c(2,2,2),cex=0.4)
+
+plot( c(0,1),range(c(0,qET,qEB,qYP)),type="n",xlab="location",
+   ylab="",,main=expression(paste(exp(beta^{T}*x))))
+lines(xs, qEB[1,],col="grey",lwd=2)
+lines(xs, qEB[2,],col="black",lwd=2)
+lines(xs, qEB[3,],col="grey",lwd=2)
+
+plot( c(0,1),range(c(0,qET,qEB,qYP)),type="n",xlab="location",
+   ylab="",main="Y|x")
+lines(xs, qYP[1,],col="grey",lwd=2)
+lines(xs, qYP[2,],col="black",lwd=2)
+lines(xs, qYP[3,],col="grey",lwd=2)
+
+dev.off()
+
+

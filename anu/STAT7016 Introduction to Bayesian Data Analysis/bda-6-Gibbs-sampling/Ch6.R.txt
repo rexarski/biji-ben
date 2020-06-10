@@ -1,0 +1,139 @@
+#Cars speed data
+mu0<-110 ; t20<-2.5^2
+s20<-100 ; nu0<-1
+
+#data
+y<-c(98, 100, 107, 110, 112, 117, 117, 120, 125, 130)
+
+n<-length(y) ; mean.y<-mean(y) ; var.y<-var(y)
+
+#Grid approximation
+####
+G<-100 ; H<-100
+
+mean.grid<-seq(100,125,length=G) 
+prec.grid<-seq(0.001,0.03,length=H) 
+
+post.grid<-matrix(nrow=G,ncol=H)
+
+for(g in 1:G) {
+  for(h in 1:H) { 
+    
+    post.grid[g,h]<- dnorm(mean.grid[g], mu0, sqrt(t20)) *
+      dgamma(prec.grid[h], nu0/2, s20*nu0/2 ) *
+      prod( dnorm(y,mean.grid[g],1/sqrt(prec.grid[h])) )
+  }
+}
+
+post.grid<-post.grid/sum(post.grid)
+
+#Gibbs sampler code
+###
+set.seed(1)
+S<-1000
+PHI<-matrix(nrow=S,ncol=2)
+PHI[1,]<-phi<-c( mean.y, 1/var.y)
+
+### Gibbs sampling
+for(s in 2:S) {
+
+# generate a new theta value from its full conditional
+mun<-  ( mu0/t20 + n*mean.y*phi[2] ) / ( 1/t20 + n*phi[2] )
+t2n<- 1/( 1/t20 + n*phi[2] )
+phi[1]<-rnorm(1, mun, sqrt(t2n) )
+
+# generate a new 1/sigma^2 value from its full conditional
+nun<- nu0+n
+s2n<- (nu0*s20 + (n-1)*var.y + n*(mean.y-phi[1])^2 ) /nun
+phi[2]<- rgamma(1, nun/2, nun*s2n/2)
+
+PHI[s,]<-phi         }
+###
+
+
+
+pdf("Fig3.pdf",height=1.75,width=5,family="Times")
+par(mfrow=c(1,3),mar=c(2.75,2.75,.5,.5),mgp=c(1.70,.70,0))
+m1<-5
+plot( PHI[1:m1,],type="l",xlim=range(PHI[1:100,1]), ylim=range(PHI[1:100,2]),
+       lty=1,col="gray",xlab=expression(theta),ylab=expression(tilde(sigma)^2))
+text(  PHI[1:m1,1], PHI[1:m1,2], c(1:m1) )
+
+m1<-15
+plot( PHI[1:m1,],type="l",xlim=range(PHI[1:100,1]), ylim=range(PHI[1:100,2]),
+       lty=1,col="gray",xlab=expression(theta),ylab=expression(tilde(sigma)^2))
+text(  PHI[1:m1,1], PHI[1:m1,2], c(1:m1) )
+
+m1<-100
+plot( PHI[1:m1,],type="l",xlim=range(PHI[1:100,1]), ylim=range(PHI[1:100,2]),
+       lty=1,col="gray",xlab=expression(theta),ylab=expression(tilde(sigma)^2))
+text(  PHI[1:m1,1], PHI[1:m1,2], c(1:m1) )
+dev.off()
+#####
+
+
+#####
+pdf("Fig4.pdf",family="Times",height=1.75,width=5)
+par(mfrow=c(1,3),mar=c(2.75,2.75,.5,.5),mgp=c(1.70,.70,0))
+sseq<-1:1000
+
+
+image( mean.grid,prec.grid,post.grid,col=gray( (10:0)/10 ),
+     xlab=expression(theta), ylab=expression(tilde(sigma)^2) ,
+     xlim=range(PHI[,1]),ylim=range(PHI[,2]) )
+points(PHI[sseq,1],PHI[sseq,2],pch=".",cex=1.25 )
+
+plot(density(PHI[,1],adj=2),  xlab=expression(theta),main="",
+ ylab=expression( paste(italic("p("),
+     theta,"|",italic(y[1]),"...",italic(y[n]),")",sep="")))
+abline(v=quantile(PHI[,1],prob=c(.025,.975)),lwd=2,col="gray")
+### t-test based confidence interval
+n<-length(y) ; ybar<-mean(y) ; s2<-var(y)
+ybar+qt( c(.025,.975), n-1) *sqrt(s2/n)
+abline( v= ybar+qt( c(.025,.975), n-1) *sqrt(s2/n), col="black",lwd=1)
+
+
+plot(density(PHI[,2],adj=2), xlab=expression(tilde(sigma)^2),main="",
+     ylab=expression( paste(italic("p("),
+     tilde(sigma)^2,"|",italic(y[1]),"...",italic(y[n]),")",sep=""))) 
+
+dev.off()
+#####
+
+
+
+quantile(PHI[,1],c(.025,.5,.975))
+quantile(PHI[,2],c(.025,.5, .975))
+quantile(1/sqrt(PHI[,2]),c(.025,.5, .975))
+
+mean(PHI[,1])
+sum(PHI[,1]<115 & PHI[,1]>107)/S
+######
+
+
+
+
+
+##MCMC diagnostics Cars speed example
+#####
+pdf("Fig8.pdf",family="Times",height=3.5,width=7)
+par(mfrow=c(1,2))
+par(mar=c(3,3,1,1),mgp=c(1.75,.75,0))
+plot(PHI[,1],xlab="iteration",ylab=expression(theta))  
+plot(1/PHI[,2],xlab="iteration",ylab=expression(sigma^2))  
+
+dev.off()
+
+
+pdf("Fig9.pdf",family="Times",height=3.5,width=7)
+par(mfrow=c(1,2))
+
+acf(PHI[,1])
+acf(1/PHI[,2],main=expression(paste("ACF ", sigma^2)))
+dev.off()
+
+effectiveSize( PHI[,1] )
+effectiveSize(1/PHI[,2] )
+
+
+

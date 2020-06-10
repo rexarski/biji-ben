@@ -1,0 +1,994 @@
+---
+title: "STAT7017 Big Data Final Project"
+author: "Rui Qiu"
+date: "`r Sys.Date()`"
+geometry: margin=1.75cm
+output:
+  pdf_document:
+    toc: true
+    toc_depth: 3
+    fig_caption: true
+    number_sections: true
+    highlight: tango
+  html_document:
+    toc: true
+    toc_depth: 3
+    number_sections: true
+    theme: united
+    highlight: tango
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.path='Figs/', dev = 'pdf', 
+                      # out.width='320px', out.height='200px',dpi=200,
+                      fig.align = "center",
+                      small.mar=TRUE,
+                      echo=TRUE, warning=FALSE, message=FALSE, cache=TRUE)
+```
+
+# Setup
+
+First, we load some required libraries for this project. Basically, they are libraries of `tidyverse` which are responsible for data frame pipelines and the rest are mainly focusing on some particular calculations. We will mention those functions later.
+
+```{r env}
+library(mvtnorm)
+library(ggplot2)
+library(ggfortify)
+library(forecast)
+library(readr)
+library(dplyr)
+library(reshape2)
+library(heplots)
+library(ks)
+library(vars)
+library(portes)
+
+set.seed(7017)
+```
+
+# Testing Covariance Matrices
+
+## Q1 Reproduce Box's Test for Equality of Covariance Matrices
+
+The followings are some customized helper functions in order to apply Box's M test and print out some intermediate values. We have also configured some arguments as flags so that the function can be reused in the next few questions, but the output details might vary accordingly.
+
+```{r q1-helpers}
+box.u <- function(n.vec,p,g) {
+    u <- (sum(1/(n.vec-1))-1/sum(n.vec-1))*((2*p**2+3*p-1)/(6*(p+1)*(g-1)))
+    return(u)
+}
+
+log.det <- function(S) {
+    return(unlist(determinant(S,logarithm=T))[[1]])
+}
+
+box.M <- function(p,g,n.vec,S.list,print.log=F) {
+    S.pooled <- matrix(rep(0,p**2),ncol=p,nrow=p)
+    
+    for (i in 1:g) {
+        S.pooled <- S.pooled + (n.vec[i]-1)*S.list[[i]]/sum(n.vec-1)
+    }
+    
+    # for this Q1 only
+    if (print.log) {
+        cat("log determinant of S.pooled:",log.det(S.pooled),"\n")
+    }
+    
+    M <- sum(n.vec-1)*log.det(S.pooled)
+    for (i in 1:g) {
+        M <-  M - (n.vec[i]-1)*log.det(S.list[[i]])
+    }
+    return(M)
+}
+
+box.C <- function(u, M) {
+    return((1-u)*M)
+}
+
+M.test <- function(p,g,n.vec,S.list,test=F,summary=F) {
+    u <- box.u(n.vec,p,g)
+    if (test) {
+        M <- box.M(p,g,n.vec,S.list,print.log=T)
+    } else {
+        M <- box.M(p,g,n.vec,S.list)
+    }
+    C <- box.C(u,M)
+    nu <- 0.5*p*(p+1)*(g-1)
+    if (summary) {
+        cat("u =",u,"\n",
+        "M =",M,"\n",
+        "C =",C,"\n",
+        "chi-sq with", nu, "degrees of freedom is", qchisq(.05,nu), "\n",
+        "reject null hypothesis:", C > qchisq(.05,nu), "\n")
+    }
+    return(c(C,qchisq(.05,nu)))
+}
+```
+
+When all the helper functions are settled, we are safe to reproduce example 6.12 with the following Wisconsin Nursing Homes data. Here, as expected, we printed out an intermediate value in the middle of the calculation, which should be the cause of differences in final values. Further explanation can be found in the following paragraph.
+
+```{r q1-do}
+M.test(4,3,c(271,138,107),
+       list(matrix(c(.291,0,0,0,-.001,.011,0,0,.002,0,.001,0,.010,.003,0,.01),
+                   nrow=4,byrow=T),
+            matrix(c(.561,0,0,0,.011,.025,0,0,.001,.004,.005,0,.037,.007,.002,.019),
+                   nrow=4,byrow=T),
+            matrix(c(.261,0,0,0,.030,.017,0,0,.003,-0.0,.004,0,.018,.006,.001,.013),
+                   nrow=4,byrow=T)),
+       test=T,summary=T)
+```
+
+Hence we reject the null hypothesis that $\Sigma_1=\Sigma_2=\Sigma_3$. We also notice that the reproduced valued of test statistic $C=215.9521$ differs from the original value which is $285.5$. To investigate this, we include an intermediate value, the logarithm of determinant of $\mathbf{S}_{\text{pooled}}$. Our reproduced value is $-15.42671$, while the textbook has $-15.564$. The standalone computational error should be trivial, but $\ln\lvert\mathbf{S}_{\text{pooled}}\rvert$ is iterated and subtracted 3 times when calculating the value of $M$ (correspondingly, $C$). Therefore, the difference of our test statistic is quite "large", but of course, does not affect our conclusion anyways.
+
+\pagebreak
+
+## Q2 Trials on Classic Iris Data
+
+### Explanatory Data Analysis
+
+For the famous Fisher's Iris data, we still would like to have some exploratory data analysis before starting our covariance homogeneity test. For simplicity, we just take a quick look at the two scatterplots.
+
+```{r q2-viz}
+str(iris)
+ggplot(data=iris,aes(x=Sepal.Width, y=Sepal.Length)) + 
+    geom_point(aes(color=Species, shape=Species)) +
+    ggtitle("Sepal Width vs Sepal Length") +
+    theme_minimal()
+
+ggplot(data=iris,aes(x=Petal.Width, y=Petal.Length)) + 
+    geom_point(aes(color=Species, shape=Species)) +
+    ggtitle("Petal Width vs Petal Length") +
+    theme_minimal()
+```
+
+In fact, the variance-covariance matrix between variables are really hard to compare graphically. So no direct conclusion can be drawn at the point. 
+
+### Method 1: Recycle Pre-defined Functions in Q1
+
+The major reason that we implement Box's M Test with functional programming is the ability to recycle and reuse them! Here we only need to separate the data frame and treat them as inputs of the function `M.test()`.
+
+```{r q2-trim}
+versicolor <- iris %>%
+    filter(Species=="versicolor") %>%
+    dplyr::select(-"Species")
+setosa <- iris %>%
+    filter(Species=="setosa") %>%
+    dplyr::select(-"Species")
+virginica <- iris %>%
+    filter(Species=="virginica") %>%
+    dplyr::select(-"Species")
+n1 <- nrow(versicolor)
+n2 <- nrow(setosa)
+n3 <- nrow(virginica)
+n <- nrow(iris)
+
+S1 <- cov(versicolor)
+S2 <- cov(setosa)
+S3 <- cov(virginica)
+```
+
+In this question, we are dealing with two null hypotheses. We do nothing but plug in the values as requested.
+
+Firstly, we test $H_0: \Sigma_1=\Sigma_2$.
+
+```{r q2-hypo-1}
+M.test(4,2,c(n1,n2),list(S1,S2),summary=T)
+```
+
+The result of the comparison between test statistic and critical value is obvious, hence we reject $H_0$ in flavor of $\Sigma_1\not=\Sigma_2$.
+
+Similarly, we test $H_0: \Sigma_1=\Sigma_2=\Sigma_3$ for the second part.
+
+```{r q2-hypo-2}
+M.test(4,3,c(n1,n2,n3),list(S1,S2,S3),summary=T)
+```
+
+Again, we reject the null hypothesis.
+
+### Method 2: Use `heplots` Package
+
+Alternatively, we could directly use `boxM()` function in Michael Friendly's `heplots` package[^1], which is a package mainly focuses on visualizing hypothesis tests in multivariate linear models.
+
+What we need to do here is to firstly eliminte `virginica` species and drop the level along our data pipeline, and do a hypothesis test for $\Sigma_1=\Sigma_2$. After that, we would repeat for testing $\Sigma_1=\Sigma_2=\Sigma_3$.
+
+The results are pretty neat:
+
+```{r q2-mf}
+iris2 <- iris %>%
+    filter(Species!="virginica") %>%
+    droplevels()
+res2 <- boxM(iris2[, 1:4], iris2[, "Species"])
+res2
+summary(res2)
+
+res3 <- boxM(iris[, 1:4], iris[, "Species"])
+res3
+summary(res3)
+```
+
+There is nothing extra we need to emphasize, since the results are identical to our "home-brewed" version.
+
+\pagebreak
+
+## Q3 What Could Go Wrong with Box's $\chi^2$ Approximation?
+
+In this problem, we fix the parameter $g$ to be $2$ and $p$ changes from $5$ to $20$ as requested. Since the problem itself does not mention how $n_l$'s behave, we also fix them to be $n_1=n_2=25>20$. For each value of $p$, we iterate to resample data for $sim=1000$ times.
+
+In addition, my personal preference for monitoring complex for-loops is to add a timer keeping track of how long it takes. This will be repeated several times in the next few questions.
+
+```{r q3-sim}
+sim <- 1000
+fixed.g <- 2
+p.vec <- c(5:15)
+n1 <- 25
+n2 <- 25
+
+table <- data.frame()
+
+timer <- Sys.time()
+for (iter in 1:length(p.vec)) {
+    p <- p.vec[iter]
+    
+    for (s in 1:sim) {
+        X1 <- matrix(rnorm(p*n1),n1,p)
+        X2 <- matrix(rnorm(p*n2,mean=0,sd=1),n2,p)
+        X2.prime <- matrix(rnorm(p*n2,mean=0,sd=1.5),n2,p)
+        S1 <- cov(X1)
+        S2 <- cov(X2)
+        S2.prime <- cov(X2.prime)
+        
+        table <- rbind(table,c(p,M.test(p,fixed.g,c(n1,n2),list(S1,S2)),1))
+        table <- rbind(table,c(p,M.test(p,fixed.g,c(n1,n2),list(S1,S2.prime)),2))
+    }
+}
+
+Sys.time()-timer
+names(table) <- c("p","TS","chisq","type")
+
+large.summary <- data.frame()
+for (pv in p.vec) {
+    nu <- 0.5*pv*(pv+1)*(fixed.g-1)
+    
+    table.size <- table %>%
+        filter(p==pv,type==1)
+    table.power <- table %>%
+        filter(p==pv,type==2)
+    
+    pv.size <- mean(table.size$TS>qchisq(.05,nu,lower.tail=F))
+    pv.power <- mean(table.power$TS>qchisq(.05,nu,lower.tail=F))
+    large.summary <- rbind(large.summary, c(n1, n2, pv, fixed.g, pv.size, pv.power))
+}
+names(large.summary) <- c("n1","n2","p","g","size", "power")
+```
+
+Here we take a look at a summary table of different runs of simulations.
+
+```{r q3-table}
+large.summary
+```
+
+To understand the performance of simulations, it is better to visualize the size and power changes as a line plot.
+
+```{r q3-plot}
+ggplot(large.summary, aes(x=p)) + 
+    geom_line(aes(y=size,color="size")) +
+    geom_line(aes(y=power,color="power")) +
+    scale_colour_manual(values=c("#C83E45", "#5289B1")) +
+    theme_minimal()
+```
+
+One thing noticable is that, since we have set $n_1=n_2=20$ which are definitely not large enough to be called "infinitely large", our number of parameters $p$ soon cataches up with $n_1$ and $n_2$.
+
+But how badly this performs? The power has a weak start with a value around $0.7$ and gradually decreases to a more unpleasant range. On the other hand, the size is generally stable but not always significant ($<.05$). Overall, we would suggest that the Box's $\chi^2$ approximation performs poorly when $p>5$ while holding $g$ fixed below $5$.
+
+\pagebreak
+
+## Q4 Testing Covariance Matrices WITHOUT Adjustments
+
+Besides the required dimension p = 5, 10, 50, 100, 300, we add an additional 375 for comparison.
+
+```{r q4}
+n <- 500
+p.vec <- c(5, 10, 50, 100, 300, 375)
+N <- n - 1
+sim <- 1000
+
+table <- data.frame()
+
+timer <- Sys.time()
+
+for (i in 1:length(p.vec)) {
+    p <- p.vec[i]
+    mu <- rep(0, p)
+    Sigma <- diag(p)
+    Sigma2 <- diag(.05,p)
+    Sigma2[1,1] <- 1
+    
+    for (s in 1:sim) {
+        X <- rmvnorm(n, mu, Sigma)
+        S <- cov(X)
+        
+        rho <- 1-(2*p**2+3*p-1)/(6*(n-1)*(p+1))
+        ts <- -2*rho*(0.5*p*N + (0.5*N) * 
+                          (unlist(determinant(S,logarithm=T))[[1]]-sum(diag(S))))
+        
+        X2 <- rmvnorm(n, mu, Sigma2)
+        S2 <- cov(X2)
+        ts2 <- -2*rho*(0.5*p*N + (0.5*N) * 
+                           (unlist(determinant(S2,logarithm=T))[[1]]-sum(diag(S2))))
+        
+        table <- rbind(table,c(p,ts,1))
+        table <- rbind(table,c(p,ts2,2))
+    }
+}
+
+Sys.time()-timer
+
+names(table) <- c("p","ts","type")
+
+large.summary <- data.frame()
+for (pv in p.vec) {
+    table.size <- table %>%
+        filter(p==pv,type==1)
+    table.power <- table %>%
+        filter(p==pv,type==2)
+    
+    f <- 0.5*pv*(pv+1)
+    gamma2 <- pv*(2*pv**4+6*pv**3+pv**2-12*pv-13)/(288*(pv+1))
+    rho <- 1-(2*pv**2+3*pv-1)/(6*(n-1)*(pv+1))
+    
+    pv.size <- mean(table.size$ts>(
+        qchisq(.95,f)+gamma2/rho**2/N**2*(qchisq(.95,f+4)-qchisq(.95,f))))
+    pv.power <- mean(table.power$ts>(
+        qchisq(.95,f)+gamma2/rho**2/N**2*(qchisq(.95,f+4)-qchisq(.95,f))))
+    large.summary <- rbind(large.summary, c(pv, pv.size, pv.power))
+}
+names(large.summary) <- c("p", "size", "power")
+```
+
+Summary:
+
+```{r q4-summary}
+large.summary
+```
+
+The line plot of summary table above:
+
+```{r q4-plot}
+ggplot(large.summary, aes(x=p)) + 
+    geom_line(aes(y=size,color="size")) +
+    geom_line(aes(y=power,color="power")) +
+    scale_colour_manual(values=c("#C83E45", "#5289B1")) +
+    theme_minimal()
+```
+
+The power is good. And the size is good at the beginning, but when $n$ gets really large, size tends to $1$.
+
+Note that our sample size is $500$ which is not a small number, so when dimension $p$ gets large, modern RMT indicates that the likelihood ratio statistic drifts to infinity almost surely. Therefore, the classicial $\chi^2$ approximation may lead us to many false rejections of $H_0$ in case of high-dimensional data (Bai, Jiang, Yao, Zheng, 2009).
+
+\pagebreak
+
+## Q5 Why Adjustment?
+
+**Proof:**
+
+\[
+\begin{split}
+    T_1&=\text{tr}\mathbb{S}-\log\lvert\mathbb{S}\rvert-p\\
+    &=p\cdot F^{\mathbb{S}}(f)\\
+    &=p\cdot\int(x-\log x-1) dF^{y_N}(x)\\
+    &=p \cdot \int f(x)d(F^\mathbb{S}(x)-F^{y_N}(x)) + p\cdot F^{y_N}(f)
+\end{split}
+\]
+
+Since $N=n-1, y_N=p/N$:
+
+\[
+\begin{split}
+F^{y_N}(f)&=1-\frac{y_N-1}{y_N}\log(1-y_N)\\
+&\overset{\cdot}= 1-\frac{y-1}{y}\log(1-y)\\
+&=1+\frac{1-y}{y}\log(y-1)\\
+&=d_1(y)
+\end{split}
+\]
+
+By Theorem in lecture notes,
+
+\[T_1 - p\cdot F^{y_N}(f) \overset{\cdot}= T_1 - p\cdot d_1(y_N)\]
+
+should weakly converges to a Gaussian vector with the mean
+
+\[\mu_1=-\frac12\log(1-y),\]
+
+and variance
+
+\[\sigma_1^2=-2\log(1-y)-2y.\]
+
+\pagebreak
+
+## Q6 Testing Covariance Matrices WITH adjustments
+
+This question is a refined version of Q4. An improvement has been made based on the theory of Q5.
+
+Note that we include a case with $p=375$ for consistency as well.
+
+```{r q6}
+n <- 500
+p.vec <- c(5, 10, 50, 100, 300, 375)
+N <- n - 1
+sim <- 1000
+
+table <- data.frame()
+
+timer <- Sys.time()
+
+for (i in 1:length(p.vec)) {
+    p <- p.vec[i]
+    mu <- rep(0, p)
+    Sigma <- diag(p)
+    Sigma2 <- diag(.05,p)
+    Sigma2[1,1] <- 1
+    
+    for (s in 1:sim) {
+        y <- p/n
+        YN <- p/N
+        d1 <- 1+(1-YN)/YN*log(1-YN)
+        
+        X <- rmvnorm(n, mu, Sigma)
+        S <- cov(X)
+        T1 <- sum(diag(S))-unlist(determinant(S,logarithm=T))[[1]]-p
+        
+        ts <- T1-p*d1
+        
+        X2 <- rmvnorm(n, mu, Sigma2)
+        S2 <- cov(X2)
+        T1.2 <- sum(diag(S2))-unlist(determinant(S2,logarithm=T))[[1]]-p
+        
+        ts.2 <- T1.2-p*d1
+        
+        table <- rbind(table,c(p,ts,1))
+        table <- rbind(table,c(p,ts.2,2))
+    }
+}
+
+Sys.time()-timer
+
+names(table) <- c("p","ts","type")
+
+large.summary <- data.frame()
+
+for (pv in p.vec) {
+    y <- pv/n
+    mu1 <- -0.5*log(1-y)
+    sigma1 <- sqrt(-2*log(1-y)-2*y)
+    
+    table.size <- table %>%
+        filter(p==pv,type==1)
+    table.power <- table %>%
+        filter(p==pv,type==2)
+    
+    pv.size <- mean(table.size$ts>qnorm(.95,mu1,sigma1))
+    pv.power <- mean(table.power$ts>qnorm(.95,mu1,sigma1))
+    large.summary <- rbind(large.summary, c(pv, pv.size, pv.power))
+}
+names(large.summary) <- c("p", "size", "power")
+```
+
+Check out the table again:
+
+```{r q6-summary}
+large.summary
+```
+
+```{r q6-viz}
+ggplot(large.summary, aes(x=p)) + 
+    geom_line(aes(y=size,color="size")) +
+    geom_line(aes(y=power,color="power")) +
+    scale_colour_manual(values=c("#C83E45", "#5289B1")) +
+    theme_minimal()
+```
+
+This time, the size converges to $0.05$ as expected, which in comparison, is of course an improvement from Q4.
+
+\pagebreak
+
+# Multivariate Time Series
+
+## Q7 MTS Basics
+
+### (a)-(d) MTS Generation and Visulization
+
+For this question, my multivariate first order VAR/VMA model generating function might seem a little bit complex due to the introduction of multiple “flag” arguments. To be specific, 
+
+- `viz` controls if a time series plot is needed in the output.
+- `lag` controls the upper limit of $\tau$.
+- `add.S0` controls if a lag-0 autocovariance matrix is added to the “correlation matrix list”, since it is also required for the portmanteau test.
+- `burnin` is the number of discarded observations. By default, we include the first 100 observations as burn-ins. For example, if the required observation number is 300, we generate 300+100 such observations and discard the first 100 accordingly.
+- `type` is set to be `lag` by default for part (a), (b), (c) and (d). In this case, we are storing observations into the data frame `df`. But if it is set to be `qm`, i.e. when we conduct a portmanteau test, we are operating on residuals of observations, so that the data frame `df` will be assigned with residuals instead.
+
+
+```{r q7func}
+
+mts.gen.1 <- function(matrix.A, matrix.Sig, obs, method, viz=T, lag=0, 
+                      add.S0=F, burnin=100, type="lag") {
+    df <- data.frame()
+    if (method=="var") {
+        epsilons <- rmvnorm((obs+burnin), c(0,0), matrix.Sig)
+        Xt <- c(0,0)
+        for (t in 1:(obs+burnin)) {
+            Xt <- matrix.A%*%Xt + epsilons[t,]
+            df <- rbind(df, c(Xt))
+        }
+        df <- df[(1+burnin):(obs+burnin),]
+    } else if (method=="vma" || method=="ma") {
+        epsilons <- rmvnorm(obs+burnin+1,c(0,0),matrix.Sig)
+        for (t in 1:(obs+burnin)) {
+            Xt <- epsilons[t+1,] + matrix.A%*%epsilons[t,]
+            df <- rbind(df, c(Xt))
+        }
+        df <- df[(1+burnin):(obs+burnin),]
+    }
+    names(df) <- c("x1","x2")
+    df$id <- (1+burnin):(obs+burnin)
+    df2 <- melt(df, id.var = "id", variable.name = "x")
+    if (viz) {
+        print(ggplot(df2,aes(x=id,y=value)) + 
+                  geom_line(aes(color=x)) + 
+                  facet_grid(x ~ .) +
+                  scale_colour_manual(values=c("#C83E45", "#5289B1")) +
+                  theme_minimal())
+    }
+    if (lag>0) {
+        if (type=="qm") {
+            # if we conduct a portmanteau test on residuals, 
+            # reassign the residual df to current variable df
+            mod <- VAR(df,p=1,lag.max=20)
+            df <- as.data.frame(cbind(mod$varresult$x1$residuals,mod$varresult$x2$residuals))
+            names(df) <- c("x1","x2")
+        }
+        
+        rho.tau <- list()
+        X.bar <- c(mean(df$x1), mean(df$x2))
+        S0 <- cov(df[,1:2])
+        D <- diag(1/sqrt(diag(S0)))
+        
+        # also record lag-0 autocovariance matrix, need to be used when doing portmanteau test
+        if (add.S0) {
+            rho.tau[[lag+1]] <- cov2cor(S0)  # the same as D %*% S0 %*% D
+        }
+        
+        for (tau in 1:lag) {
+            Stau <- 0
+            for (t in (tau+1):nrow(df)) {
+                Stau <- Stau + (c(df$x1[t], df$x2[t]) - X.bar) %*% 
+                    t(c(df$x1[t-tau],df$x2[t-tau]) - X.bar)
+            }
+            Stau <- Stau / (nrow(df)-1)
+            rho.tau[[tau]] <- D %*% Stau %*% D
+        }
+        return(rho.tau)
+    }
+}
+
+## (a) & (b) & (c) & (d)
+A <- matrix(c(0.8,0.4,-0.3,0.6),byrow = T,ncol=2)
+Sigma <- matrix(c(2,0.5,0.5,1),byrow = T,ncol=2)
+```
+
+Part (a) and (b) with time series visualization and its lag-5 correlation matrices.
+
+```{r q7ab}
+mts.gen.1(A, Sigma, 300, "var", viz=T, lag=5, add.S0=F, burnin=100, type="lag")
+```
+
+Part (c) and (d) with time series visualization and its lag-2 correlation matrices.
+
+```{r q7cd}
+mts.gen.1(A, Sigma, 300, "vma", viz=T, lag=2, add.S0=F, burnin=100, type="lag")
+```
+
+### (e) A Replication of Li and McLeod's Table
+
+In this question, all parameters are set to be the values used in the paper (Li, McLeod, 1981). Specifically,
+
+\[A=\begin{pmatrix}-0.2 & 0.3\\ -0.6 & 1.1\end{pmatrix},
+B=\begin{pmatrix}0.4 & 0.1\\ -1 & 0.5\end{pmatrix},
+C=\begin{pmatrix}-1.5 & 1.2\\ -0.9 & 0.5\end{pmatrix}.\]
+
+```{r q7e}
+A <- matrix(c(-.2, .3, -.6, 1.1), byrow = T, ncol=2)
+B <- matrix(c(.4, .1, -1, .5), byrow = T, ncol=2)
+C <- matrix(c(-1.5, 1.2, -.9, .5), byrow = T, ncol=2)
+k <- 2 # 2 by 2 matrices
+m <- 20
+n <- 200
+sim <- 1000
+
+alpha.vec <- c(.25, -.25, .5, -.5, .75, -.75)
+
+Delta.matrix <- function(alpha.value) {
+    return(matrix(c(1, alpha.value, alpha.value, 1), byrow = T, ncol=2))
+}
+
+# kronecker(), vec() in `ks` package
+
+inside.Qm <- function(rhol,rho0) {
+    temp <- t(vec(t(rhol))) %*% kronecker(solve(rho0), solve(rho0)) %*% vec(t(rhol))
+    return(unlist(temp)[[1]])
+}
+
+summary.table <- data.frame()
+
+timer <- Sys.time()
+
+for (i in 1:sim) {
+    for (alpha in alpha.vec) {
+        delta.matrix <- Delta.matrix(alpha)
+        rho1 <- mts.gen.1(A, delta.matrix, n, "var", viz=F, lag=m, add.S0=T, type="qm")
+        rho2 <- mts.gen.1(B, delta.matrix, n, "var", viz=F, lag=m, add.S0=T, type="qm")
+        rho3 <- mts.gen.1(C, delta.matrix, n, "var", viz=F, lag=m, add.S0=T, type="qm")
+        QA <- 0
+        QB <- 0
+        QC <- 0
+        for (j in 1:m) {
+            QA <- QA + inside.Qm(rho1[[j]], rho1[[m+1]])
+            QB <- QB + inside.Qm(rho2[[j]], rho2[[m+1]])
+            QC <- QC + inside.Qm(rho3[[j]], rho3[[m+1]])
+        }
+        QA <- n * QA
+        QAs <- QA + k**2*m*(m+1)/(2*n)
+        QB <- n * QB
+        QBs <- QB + k**2*m*(m+1)/(2*n)
+        QC <- n * QC
+        QCs <- QC + k**2*m*(m+1)/(2*n)
+        summary.table <- rbind(summary.table,
+                               c(alpha, QA, QAs, QB, QBs, QC, QCs))
+    }
+}
+Sys.time() - timer
+
+names(summary.table) <- c("alpha", "QA", "QAs", "QB", "QBs", "QC", "QCs")
+
+critical <- qchisq(.05,76,lower.tail = F)  # k^2(m-p-q) = 4 * (20 - 1 - 0) = 76
+
+summary.table %>%
+    mutate(QA = QA>critical,
+           QAs = QAs>critical,
+           QB = QB>critical,
+           QBs = QBs>critical,
+           QC = QC>critical,
+           QCs = QCs>critical) %>%
+    group_by(alpha) %>%
+    summarize(
+        A.Q20 = sum(QA),
+        A.Q20.star = sum(QAs),
+        B.Q20 = sum(QB),
+        B.Q20.star = sum(QBs),
+        C.Q20 = sum(QC),
+        C.Q20.star = sum(QCs)
+    )
+```
+
+**Note 1**: The original table in paper (Li, McLeod, 1981) might have a serious typo, where "per cent" should actually be "count". Consider a test with typo 1 error about 50%. Since the simulation run has a valeu of 1000 instead of 100, I guess this in fact is the "count", which also explains why $Q_m^*$ is better in the perspective of "closer to 0.05".
+
+**Note 2**: The difference between our simulation and the original table might originate from the fact that we discard 100 observations in the implented function as burnin, while the paper didn't specifies their approach or their particular parameter.
+
+**Note 3**: Our algorithm has an approximate 30 minutes' runtime, which is not ideal. There is still some space for improvement.
+
+### (f) An Experiment on Federal Debts Data
+
+Professor McLeod also created a package called `portes`[^2] which is perfectly suitable for conducting various hypothesis testing based on various test statistics.
+
+```{r q7f}
+debt <- read.table("q-fdebt.txt",header = T) %>%
+    dplyr::select(hbfin, hbfrbn, hbpun) %>%
+    mutate(hbfin = log(hbfin), hbfrbn = log(hbfrbn), hbpun = log(hbpun))
+debt <- as.matrix(debt)
+DiffData <- matrix(numeric(ncol(debt) * (nrow(debt)-1)), ncol = ncol(debt))
+for (i in 1:ncol(debt)) DiffData[, i] <- diff(debt[, i], lag = 1)
+Fit <- ar.ols(DiffData, aic=F, order.max = 1)
+```
+
+In `portes` package, we could conduct hypothesis testing theoretically or using Monte Carlo simulation, here we include both versions.
+
+```{r q7f-do}
+# theoretical
+LiMcLeod(Fit, lags=10)
+
+# Monte Carlo version
+portest(Fit, lags=10, test="LiMcLeod", ncores=4)
+```
+
+The results are the same, i.e. reject null hypothesis in favor of believing at least one of $\rho_{\tau}\not= 0$ for $\tau\in\{1,\dots,10\}$.
+
+\pagebreak
+
+## Q8 VAR Model Order Selection on CPI Data
+
+### (a) Plotting CPI Data
+
+Unlike Q7 part (f), this question requires more complex transformation on CPI index.
+
+\[CPI_\text{rate} = 100\times \left(\log(CPI_{i+1})-\log(CPI_i)\right)\]
+
+```{r q8a}
+dat <- read.table("m-cpitb3m.txt",header = T) %>%
+    dplyr::select(tb=tb3m, cpi=cpiaucsl) %>%
+    mutate(cpi=100*log(cpi))
+
+dat <- diff(ts(dat, frequency = 12,start = c(1947,1)))
+
+autoplot(dat) +
+    scale_colour_manual(values=c("#C83E45", "#5289B1")) +
+    theme_minimal()
+```
+
+### (b) The Selection Algorithm of $m$
+
+**Note:** The problem itself might have a small typo/inconsistency in notations where the number of variables is $k$ in some sentences but $p$ in others. In order to maintain the consistency in coding, we use `k` as this parameter.
+
+A shortcut to achieve the goal of this part is to build a function that automatically selects such order $m$ based on some selecting rule(s). In package `MTS`[^3], `VARorder()` function is a good option. However, we simplified it by removing the order selection criteria like AIC and BIC, only keeping the Bartlett's approximation as the test statistic and the calculated p-value.
+
+At the end of the next function `VARorder2()`, we implemented our own version of $m$ selection, which is based on the description in Step 5 of this problem.
+
+```{r q8b}
+VARorder2 <- function (x, P = 10) {
+    x1 <- as.matrix(x)
+    T <- nrow(x1)
+    k <- ncol(x1)
+    if (P < 1) {P = 1}
+    obs = T - P
+    y = x1[(P + 1):T, , drop = FALSE]
+    ist = P + 1
+    xmtx = cbind(rep(1, obs), x1[P:(T - 1), ])
+    if (P > 1) {
+        for (i in 2:P) {
+            xmtx = cbind(xmtx, x1[(ist - i):(T - i), ])
+        }
+    }
+    chidet = rep(0, (P + 1))
+    s = cov(y) * (obs - 1)/obs
+    chidet[1] = log(det(s))
+    y = as.matrix(y)
+    for (l in 1:P) {
+        idm = k * l + 1
+        xm = xmtx[, 1:idm]
+        xm = as.matrix(xm)
+        xpx <- crossprod(xm, xm)
+        xpy <- crossprod(xm, y)
+        beta <- solve(xpx, xpy)
+        yhat <- xm %*% beta
+        resi <- y - yhat
+        sse <- crossprod(resi, resi)/obs
+        d1 = log(det(sse))
+        chidet[l + 1] = d1
+    }
+    Mstat = rep(0, P)
+    pv = rep(0, P)
+    for (j in 1:P) {
+        Mstat[j] = (T - P - k * j - 1.5) * (chidet[j] - chidet[j + 1])
+        pv[j] = 1 - pchisq(Mstat[j], k ** 2)
+    }
+    
+    output = cbind(c(0:P), c(0, Mstat), c(0, pv))
+    colnames(output) <- c("l", "M(l)", "p-value")
+    
+    # which m? i.e. starting from this l=m, the p-value of following models
+    # should all be greater than 0.05
+    
+    m.output <- 1
+    for (m in 1:nrow(output)) {
+        if (all(output[m:nrow(output),3] >= 0.05)) {
+            m.output <- m
+            break()
+        }
+    }
+    
+    print(round(output, 3))
+    if (output[nrow(output),3] < 0.05) {
+        m.output <- nrow(output)
+    }
+    cat("Select VAR (", m.output-1, ")")
+}
+```
+
+Recall the first step of this order selection methodology, $P$ is a selected positive order that we would like to consider as the maximum order. We just set it to be $20$ and $50$. 
+
+```{r q8b-do}
+VARorder2(dat, 20)
+VARorder2(dat, 50)
+```
+
+We didn't run the algorithm with hundreds of different values of $P$. We totally understand that the result of selected $m$ depends on the $P$ we would like to consider. But seriously, for small $P$, say we have $P$ around $10$, the $m$ value is pretty much close to $P$. But if $P$ becomes large enough, $m$ would tend to a stable value.
+
+### (c) The Curse of Dimensionality
+
+The intuition of this part is to increase the dimensionality of multivariate time series object and run the previous $m$-selection algorithm in part (b). The method we choose to increase the dimensionality is "bootstraping" by resampling the given two variates into new variates.
+
+The `increase.dim()` function we defined here will automatically increase the dimension to $p$ then run the order selection algorithm. Out target is to see what is happening when $p$ keeps growing. We will set $p$ to be $10, 25, 50$.
+
+```{r q8c, error=T}
+library(tsDyn)
+increase.dim <- function(data, p) {
+    dat.p <- dat
+    # increase dimension up to 3 or more (upper limit p)
+    for (dim.p in 3:p) {
+        dat.p <- cbind(dat.p, sample(dat[,sample(1:2, 1, prob=c(0.5,0.5))],
+                                     nrow(dat), replace=T))
+    }
+    dim(dat.p)
+    mod <- lineVar(dat.p, lag=1)
+    new.mod <- VAR.boot(mod, "resample")
+    VARorder2(new.mod, P=20)
+}
+
+increase.dim(dat, 10)
+increase.dim(dat, 25)
+increase.dim(dat, 50)  # computationally singular
+```
+
+We soon have an error returned when $p=50$. This is due to the call for the inversion of large covariance matrices, which requires a great amount of computational power (Zang, 2012).
+
+\pagebreak
+
+## Q9 A Tale of Two Densities: ESD and LSD
+
+The six plots in paper (Liu, Aue, Paul, 2015) can be divided into the following distinguished parameter set-ups. Each set-up will be responsible for 2 different curves representing two sets of observations, MA(1) and i.i.d. Additionally, within each plot, two LSD curves of MA(1) and i.i.d. are required as well.
+
+- plot 1
+    - $p = 20, n = 40, \tau = 0$
+    - $p = 50, n = 100, \tau = 0$
+- plot 2
+    - $p = 20, n = 20, \tau = 0$
+    - $p = 50, n = 50, \tau = 0$
+- plot 3
+    - $p = 20, n = 40, \tau = 1$
+    - $p = 50, n = 100, \tau = 1$
+- plot 4
+    - $p = 20, n = 20, \tau = 1$
+    - $p = 50, n = 50, \tau = 1$
+- plot 5
+    - $p = 20, n = 40, \tau = 2$
+    - $p = 50, n = 100, \tau = 2$
+- plot 6
+    - $p = 20, n = 20, \tau = 2$
+    - $p = 50, n = 50, \tau = 2$
+
+In our coding, two essentail parts are the lag-$\tau$ sample cross-covariance matrix and the empirical spectral density function. Then for each possible combination of parameters, we will calculate the cumulative density function for six curves respectively.
+
+```{r q9}
+ps <- c(20,50)
+ratios <- c(.5, 1)
+taus <- c(0,1,2)
+
+lag.sample.acf <- function(n, tau, X) {
+    if (tau==0) {
+        return(cov(X))
+    } else {
+        Ctau <- 0
+        for (t in 1:(n-tau)) {
+            Ctau <- Ctau + X[t,] %*% t(X[t+tau,]) + X[t+tau,] %*% t(X[t,])
+        }
+        Ctau <- Ctau/(2*n)
+        return(Ctau)
+    }
+}
+
+df <- data.frame()
+for (ratio in ratios) {
+    for (tau in taus){
+        for (p in ps) {
+            n <- p / ratio
+            
+            # draw the ESDs for iid
+            Z <- rmvnorm(n,mean=rep(0,p),sigma=diag(p))
+            S <- lag.sample.acf(n, tau, Z)
+            ev <- eigen(S)$values
+
+            F_ <- function(x) {
+                total <- 0.
+                for (i in 1:p) {
+                    if (ev[i] <= x){
+                        total <- total + 1
+                    }
+                }
+                return(total/p)
+            }
+            empirical.cdf <- Vectorize(F_)
+
+            df <- rbind(df, data.frame(p=rep(p,n),
+                                       ratio=rep(ratio,n),
+                                       tau=rep(tau, n),
+                                       x=ev,
+                                       Fvalue=empirical.cdf(ev),
+                                       type=rep(paste("ESD.iid p =",p),n)))
+
+            # draw the ESDs for MA(1)
+            A1 <- diag(ncol(Z))
+            Z.copy <- Z
+            Z.copy <- cbind(rep(1,ncol(Z.copy)), Z.copy[,1:(ncol(Z.copy)-1)])
+            X <- Z+Z.copy
+            ev2 <- eigen(lag.sample.acf(n, tau, X))$values
+            df <- rbind(df, data.frame(p=rep(p,n),
+                                       ratio=rep(ratio,n),
+                                       tau=rep(tau, n),
+                                       x=ev2,
+                                       Fvalue=empirical.cdf(ev2),
+                                       type=rep(paste("ESD.MA(1) p =",p),n)))
+
+
+            # draw the LSD for iid
+            pp <- 500
+            nn <- pp / ratio
+            Zn <- rmvnorm(nn,mean=rep(0,pp),sigma=diag(pp))
+            Sn <- lag.sample.acf(nn,tau,Zn)
+            evn <- eigen(Sn)$values
+
+            df <- rbind(df, data.frame(p=rep(pp,length(evn)),
+                                       ratio=rep(ratio,length(evn)),
+                                       tau=rep(tau,length(evn)),
+                                       x=evn,
+                                       Fvalue=empirical.cdf(evn),
+                                       type=rep("LSD.iid",length(evn))))
+
+            # draw the LSD for MA(1)
+            A1n <- diag(ncol(Zn))
+            Zn.copy <- Zn
+            Zn.copy <- cbind(rep(1,ncol(Zn.copy)), Zn.copy[,1:(ncol(Zn.copy)-1)])
+            Xn <- Zn+Zn.copy
+            ev2n <- eigen(lag.sample.acf(length(evn), tau, Xn))$values
+            df <- rbind(df, data.frame(p=rep(pp,length(ev2n)),
+                                       ratio=rep(ratio,length(ev2n)),
+                                       tau=rep(tau, length(ev2n)),
+                                       x=ev2n,
+                                       Fvalue=empirical.cdf(ev2n),
+                                       type=rep("LSD.MA(1)",length(ev2n))))
+        }
+    }
+}
+```
+
+After running the algorithm, a data frame `df` is initiated to store the complete data and be called for visualization.
+
+```{r q9plot, fig.width=14, fig.height=12}
+# plotting 
+
+df$para <- paste("tau = ", df$tau, "p/n = ", df$ratio)
+ggplot(df, aes(x=x, y=Fvalue, color=type)) +
+    stat_ecdf(geom = "step", size=.5, alpha=.8) +
+    facet_wrap(para ~ ., nrow=3, strip.position = "bottom") +
+    scale_x_continuous(limits = c(-3,6)) +
+    scale_y_continuous(limits = c(0,1)) +
+    scale_color_manual(values=c("LSD.iid" = "red", 
+                                "LSD.MA(1)" = "black", 
+                                "ESD.iid p = 20" = "blue",
+                                "ESD.MA(1) p = 20" = "chartreuse", 
+                                "ESD.iid p = 50" = "cadetblue",
+                                "ESD.MA(1) p = 50" = "orange")) +
+    theme_linedraw()
+```
+
+\pagebreak
+
+# References
+
+- Sugiura, Nagao (1968). _Unbiasedness of some test criteria for the equality of one or two covariance matrices_. Annals of Mathematical Statistics Vol. 39, No. 5, 1686–1692.
+- Anderson (2003). _An introduction to Multivariate Statistical Analysis_. Wiley.
+- Johnson, Wichern (2007). _Applied Multivariate Statistical Analysis_. Pearson Prentice Hall.
+- Bai, Jiang, Yao, Zheng (2009). _Corrections to LRT on large-dimensional covariance matrix by RMT_. Annals of Statistics Vol 37, No. 6B, 3822–3840.
+- Zheng, Bai, Yao (2017). _CLT for eigenvalue statistics of large-dimensional general Fisher matrices with applications_. Bernouilli 23(2), 1130–1178.
+- Li, McLeod (1981). _Distribution of the Residual Autocorrelations in Multivariate ARMA Time Series Models_, J.R. Stat. Soc. B 43, No. 2, 231–239.
+- Tiao and Box (1981). _Modelling multiple time series with applications_. Journal of the American Statistical Association, 76. 802 – 816.
+- Liu, Aue, Paul (2015). _On the Marchenko-Pastur Law for Linear Time Series_. Annals of Statistics Vol. 43, No. 2, 675–712.
+- Liu, Aue, Paul (2017). _Spectral analysis of sample autocovariance matrices of a class of linear time series in moderately high dimensions_. Bernouilli 23(4A), 2181–2209.
+- _Experiment or simulation to undestand type I and type II errors_. Cross Validated. https://stats.stackexchange.com/a/40874 [Accessed on 2018-10-29]
+- Friendly, Siga (2018). _Visualizing Tests for Equality of Covariance Matrices_. https://arxiv.org/pdf/1805.05756.pdf [Accessed on 2018-10-29]
+- Mahdi, McLeod (2016). _Improved Multivariate Portmanteau Test_. https://arxiv.org/abs/1611.00442 [Accessed on 2018-10-29]
+- Mahdi, McLeod (2018). _Portmanteau Test Statistics_. https://cran.r-project.org/web/packages/portes/vignettes/portesFunctions.pdf [Accessed on 2018-10-29]
+- Zang (2012). _Modeling Strategies for Large Dimensional Vector Autoregressions_. https://academiccommons.columbia.edu/doi/10.7916/D8JW8N0V [Accessed on 2018-10-29]
+
+[^1]: *heplots: Visualizing Hypothesis Tests in Multivariate Linear Models*, https://rdrr.io/rforge/heplots/man/boxM.html
+
+[^2]: *portes: Portmanteau Tests for Univariate and Multivariate Time Series Models*, https://rdrr.io/cran/portes/
+
+[^3]: *MTS: All-Purpose Toolkit for Analyzing Multivariate Time Series (MTS) and Estimating Multivariate Volatility Models*, https://rdrr.io/cran/MTS/man/VARorder.html

@@ -1,0 +1,11 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+## Q1
+```{r}
+dat <- read.csv("ex0727.csv", header=T)
+attach(dat)
+md1 <- lm(VELOCITY~DISTANCE)
+```

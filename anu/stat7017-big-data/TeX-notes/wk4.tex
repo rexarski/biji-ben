@@ -1,0 +1,494 @@
+%
+% This is a borrowed LaTeX template file for lecture notes for CS267,
+% Applications of Parallel Computing, UCBerkeley EECS Department.
+% Now being used for CMU's 10725 Fall 2012 Optimization course
+% taught by Geoff Gordon and Ryan Tibshirani.  When preparing 
+% LaTeX notes for this class, please use this template.
+%
+% To familiarize yourself with this template, the body contains
+% some examples of its use.  Look them over.  Then you can
+% run LaTeX on this file.  After you have LaTeXed this file then
+% you can look over the result either by printing it out with
+% dvips or using xdvi. "pdflatex template.tex" should also work.
+%
+
+\documentclass[twoside]{article}
+\setlength{\oddsidemargin}{0.25 in}
+\setlength{\evensidemargin}{-0.25 in}
+\setlength{\topmargin}{-0.6 in}
+\setlength{\textwidth}{6.5 in}
+\setlength{\textheight}{8.5 in}
+\setlength{\headsep}{0.75 in}
+\setlength{\parindent}{0 in}
+\setlength{\parskip}{0.1 in}
+
+%
+% ADD PACKAGES here:
+%
+
+\usepackage{amsmath,amsfonts,graphicx,soul}
+
+%
+% The following commands set up the lecnum (lecture number)
+% counter and make various numbering schemes work relative
+% to the lecture number.
+%
+\newcounter{lecnum}
+\renewcommand{\thepage}{\thelecnum-\arabic{page}}
+\renewcommand{\thesection}{\thelecnum.\arabic{section}}
+\renewcommand{\theequation}{\thelecnum.\arabic{equation}}
+\renewcommand{\thefigure}{\thelecnum.\arabic{figure}}
+\renewcommand{\thetable}{\thelecnum.\arabic{table}}
+
+\newcommand*\conj[1]{\bar{#1}}
+\newcommand*\mean[1]{\bar{#1}}
+\newcommand{\indep}{\rotatebox[origin=c]{90}{$\models$}}
+%
+% The following macro is used to generate the header.
+%
+\newcommand{\lecture}[4]{
+   \pagestyle{myheadings}
+   \thispagestyle{plain}
+   \newpage
+   \setcounter{lecnum}{#1}
+   \setcounter{page}{1}
+   \noindent
+   \begin{center}
+   \framebox{
+      \vbox{\vspace{2mm}
+    \hbox to 6.28in { {\bf STAT7017 Big Data Statistics
+	\hfill Semester 2 2018} }
+       \vspace{4mm}
+       \hbox to 6.28in { {\Large \hfill Lecture #1: #2  \hfill} }
+       \vspace{2mm}
+       \hbox to 6.28in { {\it Lecturer: #3 \hfill Scribes: #4} }
+      \vspace{2mm}}
+   }
+   \end{center}
+   \markboth{Lecture #1: #2}{Lecture #1: #2}
+
+   {\bf Note}: {\it LaTeX template courtesy of UC Berkeley EECS dept.}
+
+   {\bf Disclaimer}: {\it These notes have not been subjected to the
+   usual scrutiny reserved for formal publications.  They may be distributed
+   outside this class only with the permission of the Instructor.}
+   \vspace*{4mm}
+}
+%
+% Convention for citations is authors' initials followed by the year.
+% For example, to cite a paper by Leighton and Maggs you would type
+% \cite{LM89}, and to cite a paper by Strassen you would type \cite{S69}.
+% (To avoid bibliography problems, for now we redefine the \cite command.)
+% Also commands that create a suitable format for the reference list.
+\renewcommand{\cite}[1]{[#1]}
+\def\beginrefs{\begin{list}%
+        {[\arabic{equation}]}{\usecounter{equation}
+         \setlength{\leftmargin}{2.0truecm}\setlength{\labelsep}{0.4truecm}%
+         \setlength{\labelwidth}{1.6truecm}}}
+\def\endrefs{\end{list}}
+\def\bibentry#1{\item[\hbox{[#1]}]}
+
+%Use this command for a figure; it puts a figure in wherever you want it.
+%usage: \fig{NUMBER}{SPACE-IN-INCHES}{CAPTION}
+\newcommand{\fig}[3]{
+			\vspace{#2}
+			\begin{center}
+			Figure \thelecnum.#1:~#3
+			\end{center}
+	}
+% Use these for theorems, lemmas, proofs, etc.
+\newtheorem{theorem}{Theorem}[lecnum]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newenvironment{proof}{{\bf Proof:}}{\hfill\rule{2mm}{2mm}}
+
+% **** IF YOU WANT TO DEFINE ADDITIONAL MACROS FOR YOURSELF, PUT THEM HERE:
+
+\newcommand\E{\mathbb{E}}
+
+\begin{document}
+%FILL IN THE RIGHT INFO.
+%\lecture{**LECTURE-NUMBER**}{**DATE**}{**LECTURER**}{**SCRIBE**}
+\lecture{4}{13 August}{Dr Dale Roberts}{Rui Qiu}
+%\footnotetext{These notes are partially based on those of Nigel Mansell.}
+
+% **** YOUR NOTES GO HERE:
+
+% Some general latex examples and examples making use of the
+% macros follow.  
+%**** IN GENERAL, BE BRIEF. LONG SCRIBE NOTES, NO MATTER HOW WELL WRITTEN,
+%**** ARE NEVER READ BY ANYBODY.
+
+\textbf{\underline{Tools for Integration}}
+
+Working with complex numbers and the sophisticated machinery of \underline{contour integration} will be needed in this course.
+
+This week we are going to look at this beautiful area of Mathematics.
+
+These tools will be very useful for calculations of the form
+
+$$\int f(x)dF_y(x)$$
+
+where $F_y$ is the MP distribution, for example.\\
+
+\underline{\textbf{Complex numbers and elementary functions}}
+
+With $i^2:=-1$, a complex number is an expression of the form $z=x+iy$. We write $Re(z)=x$ and $Im(z)=y$.
+
+We can also write complex numbers in \underline{Polar form} $(r,\theta), x=r\cos\theta, y=r\sin\theta, r\geq 0$.
+
+A complex number $z$ can be written
+
+\begin{equation}
+	z=x+iy=r(cos\theta+i\sin\theta)
+\end{equation}
+
+The \underline{radius} $r=\sqrt{x^2+y^2}=\lvert z\rvert$ (aka. \underline{modolus} of $z$) and the angle $\theta$ is the \underline{argument} of $z$, denoted $\arg z$.
+
+When $z\not=0$, we can find $\theta$ by trigonometry
+
+$$\tan\theta=\frac{y}{x}.$$
+
+$\theta=\arg z$ is \underline{multivalued} as $\tan\theta$ is a periodic function of $\theta$ with period $\pi$.\\
+
+\underline{Example:} $z=-1+i,\lvert z\rvert = r=\sqrt{2}, \theta=\frac{3\pi}{4}+2n\pi,n=0,\pm1,\pm2,\dots$
+
+We can define the (polar) \underline{exponential}.
+
+$$\cos\theta + i\sin\theta =e^{i\theta}\implies \text{by (4.1)} z=r\cdot e^{i\theta}$$
+
+Some beautiful formulas:
+
+\begin{equation}
+	\begin{split}
+		e^{2\pi i}&=1, e^{\pi}=-1, \dots\\
+		e^{i\theta_1}e^{i\theta_2}&=e^{i(\theta_1+\theta_2)}, (e^{i\theta})^m=e^{im\theta}, (e^{i\theta})^{1/n}=e^{i\theta/n}
+	\end{split}
+\end{equation}
+
+The \underline{complex conjugate} of $z$ is $\mean{z}=x-iy=re^{-i\theta}$.
+
+The usual rules apply:
+
+\begin{equation}
+	\begin{split}
+		z_1\pm z_2 &= (x_1\pm x_2)+ i(y_1\pm y_2)\\
+		z_1z_2 &= (x_1+iy_1)(x_2+iy_2)\\
+		&=(x_1x_2-y_1y_2)+i(x_1y_2+x_2y_1)		
+	\end{split}
+\end{equation}
+
+Notice that $z\mean{z}=\mean{z}z=(x+iy)(x-iy)=x^2+y^2=\lvert z\rvert ^2$
+
+so that
+
+\begin{equation}
+	\begin{split}
+		\frac{z_1}{z_2}=\frac{x_1+iy_1}{x_2+iy_2}&=\frac{(x_1+iy_1)(x_2-iy_2)}{(x_2+iy_2)(x_2-iy_2)}\\
+			&=\frac{(x_1x_2+y_1y_2)+i(x_2y_1-x_1y_2)}{x_2^2+y_2^2}\\
+			&=\frac{x_1x_2+y_1y_2}{x_2^2+y_2^2}+i\frac{(x_2y_1-x_1y_2)}{x_2^2+y_2^2}
+	\end{split}
+\end{equation}
+
+We can define same \underline{elementary functions} of complex argument. The simplest is
+
+$$f(z)=z^n, n=0,1,2,\dots,\ \text{``Power function"}$$
+
+A \underline{polynomial} of order $n$:
+
+\begin{equation}
+	\begin{split}
+		P_n(z)&=\sum^n_{j=0}a_jz^j=a_0+a_1z+a_2z^2+\cdots +a_nz^n\\
+		&\text{where $a_j$ are complex numbers.}
+	\end{split}
+\end{equation}
+
+A \underline{rational function}:
+
+\begin{equation}
+	\begin{split}
+		R(z)=\frac{P_n(z)}{Q_m(z)}, P_n(z), Q_m(z)\text{ are polynomials}.
+	\end{split}
+\end{equation}
+
+In general, the function $f(z)$ is complex-valued and can be written
+
+$$f(z)=u(x,y)+iv(x,y)=Ref+ Imf.$$
+
+\underline{Example:} $z^2=(x+iy)^2=x^2-y^2+i2xy$ where $u(x,y)=x^2-y^2, v(x,y)=2xy$.\\
+
+We can define the \underline{exponential function}
+
+$$e^z=e^{x+iy}=e^xe^{iy}$$
+
+and it is easy to show $e^z=e^x(\cos x+i\sin y).$
+
+	$e^{z_1+z_2}=e^{z_1}e^{z_2}, \left(e^z\right)^n=e^{nz},n=1,2,\dots$
+	
+	$\lvert e^z\rvert =\lvert e^z\rvert \lvert \cos y +i\sin y\rvert =e^x\sqrt{\cos^2 y +\sin^2 y}= e^x$
+		
+	$\overline{(e^z)}=e^{\mean{z}}=e^x(\cos y- i\sin y)$\\
+	
+\underline{\textbf{Trig functions:}}
+
+\begin{equation}
+	\begin{split}
+		\begin{split}\sin z&=\frac{e^{iz}-e^{-iz}}{2i}\\
+		\cos z &=\frac{e^{iz}+e^{-iz}}{2i}
+		\end{split}
+	\end{split}
+\end{equation}
+
+
+$$\tan z=\frac{\sin z}{\cos z}, \cot z=\frac{\cos z}{\sin z}, \sec z=\frac{1}{\cos z}, \csc z=\frac{1}{\sin z}.$$
+
+\underline{\textbf{Hyperbolic functions:}}
+
+$$\sinh z =\frac{e^z-e^{-z}}{2}, \cosh z =\frac{e^z+e^{-z}}{2}, \tanh z=\frac{\sinh z}{\cosh z},$$
+
+Note that
+
+\begin{equation}
+	\begin{split}
+		\sinh iz = i\sin z,&\ \sin iz =i\sinh z\\
+		\cosh iz = \cos z,&\ \cos iz =cosh z\\
+	\end{split}
+\end{equation}
+
+Most of the definitions could have been introduced through the concept of \underline{power series}.
+
+The power series of $f(z)$ around the point $z=z_0$ is 
+
+$$f(z)=\lim_{n\to \infty}\sum^n_{j=0}a_j(z-z_0)^j=\sum^\infty_{j=0}a_j(z-z_0)^j$$
+
+where $a_j, z_0$ are constants.\\
+
+Remember convergence only occurs within some radius, i.e., within some circle $\lvert z-z_0\rvert =R$
+
+$$R=\lim_{n\to\infty}\left\lvert\frac{a_n}{a_{n+1}}\right\rvert$$
+
+We have the power series representations:
+
+$$e^z=\sum^\infty_{j=0}\frac{z^j}{j!},$$
+$$\sin z=\sum^\infty_{j=1}\frac{(-1)^jz^{2j+1}}{(2j+1)!},$$
+$$\cos z=\sum^\infty_{j=1}\frac{(-1)^jz^{2j}}{(2j)!},$$
+$$\sinh z=\sum^\infty_{j=0}\frac{z^{2j+1}}{(2j+1)!},$$
+$$\cosh z=\sum^\infty_{j=0}\frac{z^{2j}}{(2j)!}.$$
+
+Let $f(z)$ be defined in some region $R$ containing the neighbourhood of a point $z_0$. The \underline{derivative} of $f(z)$ at $z=z_0$, denoted by $f'(z_0)$ or $\frac{d}{dz}f(z_0)$ is defined by
+
+$$f'(z_0)=\lim_{\Delta z\to 0}\left(\frac{f(z_0+\Delta z)-f(z_0)}{\Delta z}\right).$$
+
+provided the limit exists. Alternatively, writing $\Delta z = z- z_0$.
+
+$$f'(z_0)=\lim_{z\to z_0}\frac{f(z)-f(z_0)}{z-z_0}.$$
+
+\underline{Caution}: A continuous function is not necessarily differentiable as complex functions have a two-dimensional character.
+
+For example, $f(z)=\mean{z}$.
+
+$$\lim_{\Delta z\to 0}\frac{\overline{(z_0+\Delta z)}-\overline{z_0}}{\Delta z}=\lim_{\Delta z\to 0}\frac{\overline{\Delta z}}{\Delta z}=0$$
+
+and a unique value for $c$ cannot be found!
+
+\underline{NOT DIFFERENTIABLE!}\\
+
+Differentiable complex functions are called \underline{analytic}.
+
+If $f$ and $g$ have derivatives:
+
+\begin{equation}
+	\begin{split}
+		&(f+g)'=f'+g',\ (fg)'=f'g+g'f\\
+		&\left(\frac{f}{g}\right)'=(f'g-fg')/g^2 (g\not=0)
+	\end{split}
+\end{equation}
+
+If $f'(g(z))$ and $g'(z)$ exist, then
+
+$$[f(g(z))]'=f'(g(z))g'(z)$$
+
+Since $\frac{(z+\Delta z)^n-z^n}{\Delta z}=nz^{n-1}+a_1z^{n-2}\Delta z + a_2z^{n-3}(\Delta z)^2+\cdots +(\Delta z)^n\to nz^{n-1}$ as $\Delta z\to 0$, where $a_j$ are binomial coefficients of $(a+b)^n$.
+
+We have $\frac{d}{dz}(z^n)=nz^{n-1}.$
+
+If follows(formally) that
+
+$$\frac{d}{dz}\left(\sum^\infty_{n=0}a_nz^n\right)=\sum^\infty_{n=0}na_nz^{n-1}\ \text{inside radius of convergence}$$
+
+Writing $f(z)=u(x,y)+iv(x,y),$
+
+\begin{equation}
+	\begin{split}
+		f'(z)&=\lim_{\Delta x\to 0}\left(\frac{u(x+\Delta x, y)-u(x,y)}{\Delta x}+i\frac{v(x+\Delta x, y)-v(x,y)}{\Delta x}\right)\\
+		&=u_x(x,y)+iv_x(x,y)\\
+		u_x:&=\frac{\partial u}{\partial x}, v_x:=\frac{\partial v}{\partial x.}\\
+		f'(z)&=\lim_{\Delta y\to 0}\left(\frac{u(x,y+\Delta y)-u(x,y)}{i\Delta y}+i\frac{v(x,y+\Delta y)-v(x,y)}{i\Delta y}\right)\\
+		&=-iu_y(x,y)+v_y(x,y)
+	\end{split}
+\end{equation}
+
+Hence, equating these two expressions we have the \underline{Cauchy-Riemann equations}:
+
+$$u_x=v_y, v_x=-u_y$$
+
+that are necessarily satisfied if $f(z)$ is differentiable.
+
+\begin{theorem}
+	The function $f(z)=u(x,y)+iv(x,y)$ is differentiable at a point $z=x+iy$ of a region in the complex plane if and only if $u_x, u_y, v_x, v_y$ are continuous and satisfy the Cauchy Riemann equations.
+\end{theorem}
+
+We shall now look at how to evaluate integrals of complex-valued functions along curves in the complex plane.
+
+First, consider the case of the complex-valued function $f$ of the real variable $t$, on the interval $a\leq t\leq b$.
+
+$$f(t)=u(t)+iv(t)$$
+
+We say that $f$ is \underline{integrable} if $u\& v$ are integrable, then 
+
+$$\int^b_af(t)dt=\int^b_au(t)dt+i\int^b_av(t)dt.$$
+
+Usual rules apply:
+
+$$\frac{d}{dt}\int^t_a f(t)dt=f(t)\ text{``fundamental theorem of calculus"}$$
+
+and if $f'(t)$ is continuous, $\int^b_af'(t)dt=f(b)-f(a)$.
+
+\underline{\textbf{Integration along a curve}}
+
+A curve in $\mathbb{C}$ can be described by the \underline{parametrization}
+
+$$z(t)=x(t)+iy(t), a\leq t\leq b.$$
+
+A curve $c$ is called \underline{simple} if it does not intersect itself. It is called \underline{differentiable} curve if $z'(t)=x'(t)+iy'(t)$ is non-null.
+
+A \underline{piecewise differentiable curve (or path)} is obtained by joining a finite number of differentiable curves.
+
+Let $C$ be a path, we call it \underline{closed} if $z(a)=z(b)$.
+
+A closed path is also called a \underline{contour}.
+
+\underline{Example:} The unit circle in $\mathbb{C}$ is a contour and is parametrized by $z(t)=e^{it}, 0\leq t\leq 2\pi$.
+
+The \underline{contour integral} of a piecewise continuous function on a \underline{smooth contour} (i.e. differentiable) is defined to be
+
+$$\int_C f(z)dz:=\int^b_af(z(t))z'(t)dt.$$
+
+Note that $dz\approx z'(t)dt$.\\
+
+Usual properties apply:
+
+$$\int_C[\alpha f(z)+\beta yg(z)]dz = \alpha\int_C f(z)dz + \beta \int_C g(z)dz.$$
+
+If  we traverse the contour in the opposite direction (i.e. form $t=b$ to $t=a$) then this is denoted $-C$ and
+
+$$\int_{-C} f(z)dz = -\int_C f(z)dz.$$
+
+And if $C=C_1\cup C_2\cup C_3\cup \cdots \cup C_n$ ,then
+
+$$\int_C f=\sum^n_{j=1} \int_{C_j} f.$$
+
+From the fundamental theorem of calculus we get:
+
+\begin{theorem}
+	Suppose $F(z)$ is an analytic function such that $f(z)=F'(z)$ is continuous in a domain $\mathcal{D}$. Then for the contour $C$ lying in $\mathcal{D}$ with endpoints $z_1$ and $z_2$
+	
+	$$\int_C f(z)dz=F(z_2)-F(z_1).$$
+\end{theorem}
+
+\begin{proof}
+	\begin{equation}
+		\begin{split}
+			\int_C f(z)dz&=\int_C F'(z)dz=\int^b_a F'(z(t))z'(t)dt\\
+			&=\int^b_a \frac{d}{dt}[F(z(t))]dt= F(z(b))-F(z(a))=F(z_2)-F(z_1).\\
+			&\text{Note:} z(a)=z_1, z(b)=z_2.
+		\end{split}
+	\end{equation}
+\end{proof}
+
+Q: What happens if $C$ is a \underline{closed contour}?
+
+$$\oint_C f(z)dz = \int_C F'(z)dz=0$$
+
+``$\oint$" denotes integration along a closed contour $C$.
+
+Notice that this holds for \underline{any} closed contour $C$. So this integral is independent of the path.\\
+
+\begin{theorem}
+	Let $f(z)$ be analytic interior to and on a simple closed contour $C$. Then at any interior point $z$
+	
+	$$f(Z)=\frac{1}{2\pi i}\oint_C\frac{f(\xi)}{\xi -z}d\xi.$$
+\end{theorem}
+
+This is the \underline{Cauchy integral formula}.
+
+``The function $f$ is completely determined by the points $z\in C$"
+
+Further, we can also say something about all the derivatives of $f$.\\
+
+\begin{theorem}
+	If $f(z)$ is analytic interior to and on a simple closed contour $C$, then all the derivatives $f^{(k)}(z), k=1,2,\dots$ exist in the domain $\mathcal{D}$ interior to $C$ and
+	
+	$$f^{(k)}(z)=\frac{k!}{2\pi i}\oint_C\frac{f(\xi)}{(\xi-z)^{k+1}}d\xi.$$
+	
+\end{theorem}
+
+If $f(z)$ is an analytic function, we can establish its \underline{Taylor series} on its domain $\mathcal{D}=\{z:\lvert z\rvert\leq R\}$:
+
+$$f(z)=\sum^\infty_{j=0}b_jz^j,\ b_j=\frac{f^{(j)}(0)}{j!}.$$
+
+\underline{Example:} $e^z=\sum^\infty_{j=0}\frac{z^j}{j!},\ \lvert z\rvert < \infty$\\
+
+In many situations we encounter functions that are not analytic everywhere in $\mathbb{C}$. Typically, they are not analytic at a point, or in some region.
+
+This means that Taylor series \underline{cannot} be applied.
+
+Luckily, another series representation can sometimes be found in terms of positive and negative powers of $(z-z_0)$.
+
+\begin{theorem}
+	(Laurent Series) A function $f(z)$ analytic in an annulus $R_1\leq \lvert z-z_0\rvert \leq R_2$ may be represented by the expansion
+	
+	$$f(z)=\sum^\infty_{n=-\infty}c_n(z-z_0)^n$$
+	
+	in the region $R_1<R_a\leq \lvert z- z_0\rvert \leq R_b < R_2$ where 
+	
+	$$c_n:=\frac{1}{2\pi i}\oint_C\frac{f(z)}{(z-z_0)^{n+1}}dz$$
+	
+	and $C$ is any simple closed contour in region of analyticity enclosing $\lvert z-z_0\rvert < R_1$.
+	
+	So $f(z)=\sum^\infty_{n=-\infty}c_n(z-z_0)^n$ and $c_{-1}$ is called the \underline{residue} of $f$. The negative powers are called the \underline{principal part} of $f$.
+	
+	$$c_{-1}:=\frac{1}{2\pi i}\oint_C f(z)dz$$
+\end{theorem}
+
+We call a point $z_0$ an \underline{isolated singularity} of a function $f$ if the function is analytic in the punctured disk
+
+$$D=\{z:0<\lvert z-z_0\rvert\leq R.\}$$
+
+Three types of singular points exist:
+
+\begin{itemize}
+	\item A \underline{removable singularity point} is when the Laurent series at the point has no terms with negative power $n<0$.
+	\item A \underline{pole of order $m$} is an isolated singularity point such that$$f(z)=\sum^\infty_{n=-m}a_n(z-z_0)^n,\ a_{-m}\not=0.$$
+	\item An \underline{essential singularity point} is an isolated singularity point where the Laurent series has infinitely many terms with negative power $n<0$.
+\end{itemize}
+
+\begin{theorem}
+	Let $f(z)$ be analytic inside and on a simple closed contour $C$, except for a finite number of isolated singular points $z_1,z_2,\dots, z_N$ located inside $C$. Then
+	
+	$$\oint f(z)dz=2\pi i\sum^N_{j=1}a_j$$
+	
+	where $a_j$ is the \underline{residue} of $f(z)$ at $z=z_j$, denoted by $a_j:=Res(f(z), z_j).$
+\end{theorem}
+
+% **** THIS ENDS THE EXAMPLES. DON'T DELETE THE FOLLOWING LINE:
+
+\end{document}
+
+
+
+
+

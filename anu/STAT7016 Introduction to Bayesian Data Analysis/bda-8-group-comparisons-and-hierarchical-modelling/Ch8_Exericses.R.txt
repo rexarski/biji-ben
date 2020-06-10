@@ -1,0 +1,85 @@
+#Exercise 1 - Hospital Mortality Rates
+
+library("LearnBayes")
+data(hearttransplants)
+write.csv(hearttransplants,"hearttransplants.csv")
+attach(hearttransplants)
+names(hearttransplants)
+pdf("Fig15.pdf")
+plot(log(e), y/e, xlim=c(6,9.7), xlab="log(e)", ylab="y/e")
+text(log(e),y/e,labels=as.character(y),pos=4)
+dev.off()
+
+#let theta_i be the death rate parameter for hospital i
+
+#equal means model
+#assume Jeffreys non-informative prior theta~Gamma(1/2,0)
+#posterior theta_i | y ~Gamma(1/2 + sum(y),sum(e))
+
+a<-1/2
+b<-0
+#1000 posterior draws of theta
+theta.post<-rgamma(1000,a+sum(y),b+sum(e))
+
+#construct a posterior predictive check - can the equal means model replicate the observed death counts.
+n<-nrow(hearttransplants)
+pval<-NULL
+for (i in 1:n){
+  ypred<-rpois(1000,e[i]*theta.post)
+  pval<-c(pval,mean(y[i]>ypred))
+}
+index<-seq(1,94,1)
+
+plot(pval,pch=19,cex=0.5,type="n",ylab="Posterior predictive p-value",xlab="Hospital")
+text(pval,labels=index,cex=0.5)
+length(which(pval<0.05))
+length(which(pval>0.95))
+#24 out of the 94 hospitals (approx 25%) have posterior predictive p-values close to zero (<0.05) or close to 1 (> 0.95)
+#the equal means model is not appropriate because it is not capturing the observed death counts for a large proportion of hospitals in the data set
+
+#separate means model
+#again assume Jeffreys prior
+#posterior theta_i | y ~Gamma(1/2 + y_i,b+e_i)
+
+pval<-NULL
+vtheta<-NULL
+for (i in 1:n){
+  theta.post<-rgamma(1000,a+y[i],b+e[i])
+  ypred<-rpois(1000,e[i]*theta.post)
+  pval<-c(pval,mean(y[i]>ypred))
+  vtheta<-c(vtheta,var(theta.post)
+  }
+plot(pval,pch=19,cex=0.5,type="n",ylab="Posterior predictive p-value",xlab="Hospital")
+text(pval,labels=index,cex=0.5)
+length(which(pval<0.05))
+length(which(pval>0.95))
+
+plot(e, vtheta)
+#the separate means model does better than the equal means model, 15 out of the 94 hospitals have posterior predictive p-values
+# close to zero.  These correspond to hospitals with zero death rates.  Furthermore, these hospitals tend to have smaller exposures
+# and the variation in the posterior variance of theta is larger for these hospitals.  The variation can be reduced by using information
+#from hospitals with larger exposure in a hierarchical model.  
+
+#Bayesian hierarchical model
+#hyperprior assumptions - we need prior distributions on the shape (a) and rate (b) parameter of the gamma prior for the death rates
+ #We note that `a' and `b' must be positive.
+#some options for the hyperprior distribution are gamma, inversegamma, uniform (on positive real line)
+# we need to make sure the resultant posterior is proper if we use an improper hyperprior.  
+#let's assume reasonably vague priors for `a' and `b', say a ~Gamma(0.001,0.001), b ~Gamma (0.001,0.001))
+
+#prior assumption on theta ~Gamma(a,b)
+#poisson sampling model for death counts y|theta
+
+#Conditional on the hyperparameters `a' and `b', theta_1,...,theta_n have independent posterior distributions 
+#theta_i | y, a,b) ~gamma(a+y_i, b+e_i)
+
+#To sample from the above conditional distribution, we need draws of the hyperparameters `a' and `b' either from their joint 
+#marginal posterior distribution or their conditional posterior distribution. Most likely we will need to use some MCMC sampling algorithm
+
+
+#To estimate the shrinkage effect, write the posterior mean as a linear combination of the prior mean and the estimate of the mortality rate
+#obtained directly from the data (y_i/e_i).  The shrinkage effect is the weight applied to the prior mean (a/b)
+
+#There are numerous ways we could rank the hospitals, for example, by posterior mean.  Or we could simulate many random draws of theta_i
+# from the posterior distribution, and count the proportion of simulations where theta_i is the maximum rate (out of all the hospitals)
+#the hospital with the highest proportion is the worst performing hospital.   

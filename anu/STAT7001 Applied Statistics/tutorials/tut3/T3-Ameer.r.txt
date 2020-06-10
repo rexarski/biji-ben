@@ -1,0 +1,167 @@
+#Question 1
+
+#part a
+
+setwd("C:/Users/u5708538/Desktop")
+hubble<-read.table("ex0727.csv",header=T,sep=",")
+distance=hubble$DISTANCE
+velocity=hubble$VELOCITY
+hub.reg=lm(distance~velocity)   #fitting the SLR with an intercept term
+summary(hub.reg)
+
+#From the summary output it is given that the test statistic for this hypothesis is 1.82 with a p-value of 0.1069. 
+#There is no reason to reject the theory (we cannot reject the null). 
+#Yes, the data is consitent with the thoery.
+
+#part b MAKE SURE TO USE RESULTS FROM lm(DISTANCE ~ VELOCITY -1]
+c1=(0.0017-qt(0.975,9)*0.000048)
+c2=(0.0017+qt(0.975,9)*0.000048)
+CI <- c(c1,c2)
+CI
+#0.001591416 0.001808584 or (1.59 billion, 1.80 billion).
+
+#another command to view std errors is summary(nointhub.reg)$coefficients
+
+#Question 2
+
+#part a
+
+setwd("C:/Users/u5708538/Desktop")
+wheatears<-read.table("ex0729.csv",header=T,sep=",")
+tcell=wheatears$tcell
+mass=wheatears$mass
+wheatears.reg=lm(tcell~mass)
+summary(wheatears.reg)
+
+#to check linear relationship, test test null: ß1 = 0 v’s alt: ß1 ? 0. From the summary output we are given that the p-value for this test is 0.0061. 
+#We reject the null and conclude that there is a linear relationship.
+
+#part b
+
+#T-cell response is 0.0875+0.0328*6.5 = 0.30
+# Prediction Interval: Use the following commands to fill in the formulae for PI
+#mean(mass)
+#var(mass)
+#qt(0.95, length(mass) - 2)
+
+#Question 3
+
+#part a
+
+setwd("C:/Users/u5708538/Desktop")
+winedata<-read.table("ex0823.csv",header=T,sep=",")
+wine=winedata$WINE
+mortality=winedata$MORTALITY
+plot(log(wine),log(mortality),xlab="wine consumption", ylab="heart disease mortality")
+wine.reg=lm(log(mortality)~log(wine))
+summary(wine.reg)
+abline(wine.reg)
+
+#There is strong evidence of an association between wine consumption and mortality – the test of null: ß1 = 0 v’s alt: ß1 ? 0 has a p-value of <0.01. 
+
+
+
+#Question 4
+
+#part a
+setwd("C:/Users/u5708538/Desktop")
+weeddata<-read.table("ex0817.csv",header=T,sep=",")
+Y<-weeddata$MASS
+X<-weeddata$LOAD
+
+Ymat = cbind(Y, log(Y), sqrt(Y), 1/Y)
+Xmat = cbind(X, log(X), sqrt(X), 1/X)
+Ynames=c("Y", "log(Y)","sqrt(Y)","1/Y")
+Xnames=c("X", "log(X)","sqrt(X)","1/X")
+par(mfrow=c(4,4)) 
+for(i in 1:4) {
+  for(j in 1:4) {
+    plot(Xmat[ , i], Ymat[ , j], xlab=Xnames[i], ylab=Ynames[j])
+  }
+}
+
+# The plot that is most easily described by a straight line has log(mass) versus sqrt(load). 
+#We would fit the regression using log(mass) as the response and sqrt(load) as the explanatory variable).
+
+#part b
+
+bugs.reg=lm(log(weeddata$MASS)~sqrt(weeddata$LOAD))
+par(mfrow=c(2,1))
+plot(bugs.reg$fitted.values,bugs.reg$residuals)
+abline(h=0)
+qqnorm(bugs.reg$residuals)
+
+#The residual plot looks satisfactory. 
+# *For good measure a normal probability plot is also shown. The normal probability plot roughly follows a straight line, suggesting the residuals have a normal distribution.
+#These two plots indicate that the transformations are appropriate. .If the two distributions being compared are similar, the points in the Q–Q plot will approximately lie on the line y = x.
+
+#Question 5
+
+#part a
+setwd("C:/Users/u5708538/Desktop")
+violin=read.table("violin.csv",header=T,sep=",")
+
+years=violin$years
+act=violin$activity
+
+#Method 1: Fit a SLR with an indicator variable
+
+#Creating an indicator variable
+#Sets a vector which is TRUE (1) if years = 0 or FALSE (0) otherwise
+
+years==0  #a vector contains logical values.
+Iyears <- years == 0
+Iyears
+diff.reg=lm(act~Iyears)
+summary(diff.reg)
+
+#We can then test whether B1=0  The test statistic is -5.19 with a corresponding p-value of 0.0002.  
+#We reject the null and conclude that neuron activity is different in the stringed musicians.
+
+#b
+
+string.reg=lm(act~years)
+summary(string.reg)
+
+#We can then test whether   The test statistic for this test is 9, implying that we reject the null. 
+#We estimate that the mean neuronal index increases by 1.0 unit for each one-year increase in musical activity.
+
+
+#QUESTION 6
+
+setwd("C:/Users/u5708538/Desktop")
+vote <- read.csv("vote.csv",header=T,sep=',')
+
+#part a
+bush=vote$bush
+buch=vote$buch
+par(mfrow=c(2,1))
+plot(bush,buch,xlab="Bush vote",ylab="Buch vote")
+plot(log(bush),log(buch),xlab="log(Bush vote)",ylab="log(Buch vote)")
+
+#log-log plot is better
+
+#part b
+vote.reg=lm(log(buch[-67])~log(bush[-67]))
+summary(vote.reg)
+
+#Equation fitted is log(buc) = -2.34 + 0.73*log (bush)
+# i.e. buch = exp(-2.34 + 0.73*log (bush))
+
+#part c
+
+par(mfrow=c(2,1))
+qqnorm(vote.reg$residuals)
+plot(vote.reg$fitted.values,vote.reg$residuals)
+
+#the plots are reasonable, suggesting that SLR model is appropriate
+
+#part d
+
+#PI in (252,1390)
+
+#part e
+#The observed number of votes for Buchannan is way outside the upper limit of the 95% PI. 
+#This is would make us suspect that something was different in Palm Beach.
+
+

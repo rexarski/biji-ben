@@ -1,0 +1,225 @@
+# --------------- Q1 ---------------
+# --------------- (1) ---------------
+
+options(digits=10)
+
+df <- data.frame()
+month <- 1
+year <- 1
+property <- 600000
+salary <- 5000
+expense <- 2500
+balance <- 0
+inv.rate <- 0.04/12
+
+while (balance < property * 0.2) {
+    if (month %% 12 == 1 && year != 1) {
+        salary <- salary * 1.04
+        property <- property * 1.05
+    }
+    if (month != 1) {
+        expense <- expense * 1.002
+    }
+    balance <- balance * (1 + inv.rate)
+    balance <- balance + salary - expense
+    df <- rbind(df, c(month, year, property, salary, expense, balance))
+    month <- month + 1
+    if (month %% 12 == 1) {
+        year <- year + 1
+    }
+}
+colnames(df) <- c('month', 'year', 'property', 
+                  'salary', 'expense', 'balance')
+end.month <- month - 1
+cat("Duration:", end.month)
+
+# --------------- (2) ---------------
+tail(df)
+loan <- df[end.month,]$property * 0.8 # BIG L
+n <- 12 * 30 
+i.loan.rate <-  0.045/12
+v.loan.rate <- 1 / (1 + i.loan.rate)
+(K <- loan / ((1 - v.loan.rate ** n) / i.loan.rate)) # K = $2815.45
+
+(total.interest <- K * (n - (1 - v.loan.rate ** n) / i.loan.rate))
+# total interest is $457901.52
+(interest15 <- K * (1 - v.loan.rate ** (n - (15-1))))
+# interest portion of the 15th payment is $2044.36
+
+df2 <- data.frame()
+month.new <- 1
+year.new <- 1
+payment <- K
+salary.new <- df[end.month,]$salary # starting salary in month 48
+expense.new <- df[end.month,]$expense # starting expense month 48
+balance.new <- df[end.month,]$balance - df[end.month,]$property * 0.2
+# starting balance in month 48
+
+while (month.new <= 360) {
+    if (month.new %% 12 == 1) {
+        salary.new <- salary.new * 1.04
+    }
+    expense.new <- expense.new * 1.002
+    balance.new <- balance.new * (1 + inv.rate)
+    balance.new <- balance.new + salary.new - expense.new - payment
+    df2 <- rbind(df2, c(month.new, year.new, salary.new, expense.new, balance.new))
+    month.new <- month.new + 1
+    if (month.new %% 12 == 1) {
+        year.new <- year.new + 1
+    }
+}
+colnames(df2) <- c('month.new', 'year.new', 'salary.new', 'expense.new', 'balance.new')
+tail(df2)
+
+# after paid off the balance is $2204081.25
+
+# --------------- (3) ---------------
+
+# quickest way is to not save any money, i.e. we just use all salary (expense excluded) to pay
+# for the loan. Why is this? Because the nominal interest rate of loan is greater than the nomial
+# interest rate of investment (in bank), i.e. we should pay off as soon as we can.
+
+df3 <- data.frame()
+ob.loan <- loan
+month.quick <- 1
+year.quick <- 1
+salary.quick <- df[end.month,]$salary # salary in month 48
+expense.quick <- df[end.month,]$expense # expense in month 48
+balance.quick <- df[end.month,]$balance - df[end.month,]$property * 0.2 # balance in month 48
+payment.quick <- salary.quick - expense.quick + balance.quick
+
+while(ob.loan > 0) {
+    if (month.quick %% 12 == 1) {
+        salary.quick <- salary.quick * 1.04
+    }
+    expense.quick <- expense.quick * 1.002
+    balance.quick <- balance.quick * (1 + inv.rate)
+    payment.quick <- salary.quick - expense.quick + balance.quick
+    balance.quick <- 0
+    interest.payment <- i.loan.rate * ob.loan
+    principle.payment <- payment.quick - interest.payment
+    ob.loan <- ob.loan - principle.payment
+    df3 <- rbind(df3, c(month.quick, year.quick, salary.quick, expense.quick, 
+                        payment.quick, principle.payment, interest.payment, ob.loan))
+    month.quick <- month.quick + 1
+    if (month.quick %% 12 == 1){
+        year.quick <- year.quick + 1
+    }
+}
+colnames(df3) <- c('month.quick', 'year.quick', 'salary.quick', 'expense.quick',
+                   'payment.quick', 'principle.payment', 'interest.payment', 'ob.loan')
+tail(df3)
+
+cat('The last payment is: ', round(1733.89*(1+i.loan.rate), 2))
+# 137 months = 14 years 10 months
+# ending at 31/10/2036
+# the last payment is $1740.39 (actually the outbalance value of previous month * loan rate)
+# EXPLAINATION: ROUNDING ERRORS CAUSED BY ROUNDING IN EACH LOOP. .........
+
+# --------------- Q2 ---------------
+# --------------- (1) ---------------
+# No tax considered
+P <- df2[24, ]$balance.new
+nominal.A <- P * ((1.06) ** 15)
+r <- 0.04 / 2 # half-yearly coupon rate
+j <- 1.09 ** (1/2) - 1 # half-yearly 'redemption rate'
+v_j <- 1 / (1+j)
+a_30.j <- (1-v_j**30)/j
+nominal.B <- P / (r * a_30.j + v_j ** 30)
+
+# --------------- (2) ---------------
+# Income tax and capital gain tax considered
+# first we need to get the basic information at the time we invest (either) two bonds,
+# which is 2 years after we purchased our home, i.e. 31/12/2023.
+
+df2[24,]
+coupon.tax <- 0.2
+capital.gain.tax <- 0.3
+
+# --------------- Bond A ---------------
+
+# Bond A matures in 15 years, on the date 31/12/2038, i.e. on that day, a large 
+# amount of mony is added to my balance. Ater that, we still have 13 years (30-2-15=13) of
+# loans to pay (K). So now we set year 2024 as year 1, and we end the procedure by the end
+# of year 2051 which is year 28.
+
+df4 <- data.frame()
+month.A <- 1
+year.A <- 1
+# level payment is still K
+salary.A <- df2[24,]$salary.new # starting salary on 31/12/2023
+expense.A <- df2[24,]$expense.new # starting expense on 31/12/2023
+balance.A <- 0 # starting balance on 31/12/2023
+
+while (month.A <= 12 * 28) {
+    if (month.A %% 12 == 1) {
+        salary.A <- salary.A * 1.04
+    }
+    expense.A <- expense.A * 1.002
+    balance.A <- balance.A * (1 + inv.rate)
+    balance.A <- balance.A + salary.A - expense.A - K
+    if (month.A == 12 * 15) {
+        balance.A <- balance.A + nominal.A - (nominal.A - P) * (capital.gain.tax)
+        # NOTE: the an amount of capital gain tax charged
+    }
+    df4 <- rbind(df4, c(month.A, year.A, salary.A, expense.A, balance.A))
+    month.A <- month.A + 1
+    if (month.A %% 12 == 1) {
+        year.A <- year.A + 1
+    }
+}
+colnames(df4) <- c('month.A', 'year.A', 'salary.A', 'expense.A', 'balance.A')
+tail(df4)
+
+cat('If we buy Bond A, at the end of the 30-year loan, we have $',
+    df4[336,]$balance.A, 'in our balance.')
+
+# --------------- Bond B ---------------
+# Bond B matures in 10-15 years, but we have to know that P < C so there is capital gain,
+# the issuer would prefer a longer maturity. Thus, the length of Bond B should also be 15
+# years, but of course (30 periods because it is compounded half-yearly).
+
+# APPLY THE LARGEST EQUATION TRANSFORMATION HERE:
+nominal.B2 <- P*(1-capital.gain.tax*(v_j**30)) / (r*(1-coupon.tax)*a_30.j + v_j**30 - capital.gain.tax * (v_j**30))
+
+# After that, we still have 13 years (30-2-15=13) of
+# loans to pay (K). So now we set year 2024 as year 1, 
+# and we end the procedure by the end of year 2051 which is year 28.
+
+df5 <- data.frame()
+month.B <- 1
+year.B <- 1
+# level payment is still K
+salary.B <- df2[24,]$salary.new # starting salary on 31/12/2023
+expense.B <- df2[24,]$expense.new # starting expense on 31/12/2023
+balance.B <- 0 # starting balance on 31/12/2023
+
+while (month.B <= 12 * 28) {
+    if (month.B %% 12 == 1) {
+        salary.B <- salary.B * 1.04
+    }
+    expense.B <- expense.B * 1.002
+    balance.B <- balance.B * (1 + inv.rate)
+    balance.B <- balance.B + salary.B - expense.B - K
+    if (month.B %% 6 == 0 && year.B <= 15) {
+        # balance.B <- balance.B + nominal.B2 * r * (1-coupon.tax)
+        balance.B <- balance.B + nominal.B * r * (1-coupon.tax)
+        # NOTE: an amount of coupon tax charged
+    }
+    if (month.B == 12 * 15 && year.B == 15) {
+        # balance.B <- balance.B + (nominal.B2 - (nominal.B2 - P) * capital.gain.tax)
+        balance.B <- balance.B + (nominal.B - (nominal.B - P) * capital.gain.tax)
+        # NOTE: an amount of capital gain tax charged
+    }
+    df5 <- rbind(df5, c(month.B, year.B, salary.B, expense.B, balance.B))
+    month.B <- month.B + 1
+    if (month.B %% 12 == 1) {
+        year.B <- year.B + 1
+    }
+}
+colnames(df5) <- c('month.B', 'year.B', 'salary.B', 'expense.B', 'balance.B')
+tail(df5)
+
+cat('If we buy Bond B, at the end of the 30-year loan, we have $',
+    df5[336,]$balance.B, 'in our balance.')
+

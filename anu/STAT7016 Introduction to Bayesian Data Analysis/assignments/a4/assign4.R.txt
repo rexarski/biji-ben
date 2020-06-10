@@ -1,0 +1,488 @@
+#Problem 1
+#a)
+school1<-read.table("school1.dat")
+school2<-read.table("school2.dat")
+school3<-read.table("school3.dat")
+school4<-read.table("school4.dat")
+school5<-read.table("school5.dat")
+school6<-read.table("school6.dat")
+school7<-read.table("school7.dat")
+school8<-read.table("school8.dat")
+
+
+
+
+m<-8
+ybar<-c(mean(school1[,1]),mean(school2[,1]),mean(school3[,1]),mean(school4[,1]),mean(school5[,1]),mean(school6[,1]),mean(school7[,1]),mean(school8[,1]))
+sv<-c(var(school1[,1]),var(school2[,1]),var(school3[,1]),var(school4[,1]),var(school5[,1]),var(school6[,1]),var(school7[,1]),var(school8[,1]))
+n<-c(length(school1[,1]),length(school2[,1]),length(school3[,1]),length(school4[,1]),length(school5[,1]),length(school6[,1]),length(school7[,1]),length(school8[,1]))
+
+school<-rbind(school1,school2,school3,school4,school5,school6,school7,school8)
+school_ind<-NULL
+for (j in 1:m){
+	school_ind<-c(school_ind, rep(j,n[j]))
+	
+}
+
+school<-cbind(school_ind,school)
+
+#Prior parameters
+mu0<-7
+gamma0<-5
+tau0<-10
+eta0<-2
+sigma0<-15
+nu0<-2
+
+#starting values
+theta<-ybar
+sigma2<-mean(sv)
+mu<-mean(theta)
+tau2<-var(theta)
+
+
+#setup MCMC
+set.seed(1)
+S<-5000
+THETA<-matrix(nrow=S,ncol=m)
+SMT<-matrix(nrow=S,ncol=3)
+
+Gibbs sampler:
+for (s in 1:S){
+	#sample new values of the thetas
+	for (j in 1:m) {
+		
+		vtheta<-1/(n[j]/sigma2+1/tau2)
+		etheta<-vtheta*(ybar[j]*n[j]/sigma2+mu/tau2)
+		theta[j]<-rnorm(1,etheta,sqrt(vtheta))
+	}
+	
+	#sample new values of  sigma2
+	nun<-nu0+sum(n)
+	ss<-nu0*sigma0
+	for (j in 1:m){
+		ss<-ss+sum((school[school[,1]==j,2]-theta[j])^2)
+		}
+	sigma2<-1/rgamma(1,nun/2,ss/2)
+	
+	
+	#sample a new value of mu
+	vmu<-1/(m/tau2+1/gamma0)
+	emu<-vmu*(m*mean(theta)/tau2+mu0/gamma0)
+	mu<-rnorm(1,emu,sqrt(vmu))
+	
+	#sample a new value of tau2
+	etam<-eta0+m
+	ss<-eta0*tau0+sum((theta-mu)^2)
+	tau2<-1/rgamma(1,etam/2,ss/2)
+	
+	#store results
+	THETA[s,]<-theta
+	SMT[s,]<-c(sigma2,mu,tau2)
+	
+}
+
+#assess convergence
+library(coda)
+apply(THETA,2, effectiveSize)
+apply(SMT,2, effectiveSize)
+
+tvec<-seq(1,8,1)
+pdf("Fig1.pdf")
+par(mfrow=c(4,2))
+for (j in 1:m){
+	plot(THETA[,j],xlab="iteration",ylab=substitute(paste(theta[a]),list(a=tvec[j])))
+	
+}
+
+dev.off()
+
+pdf("Fig2.pdf")
+par(mfrow=c(2,2))
+
+	plot(SMT[,1],xlab="iteration",ylab=expression(sigma^2))
+	plot(SMT[,2],xlab="iteration",ylab=expression(mu))
+	plot(SMT[,3],xlab="iteration",ylab=expression(tau^2))
+	
+
+dev.off()
+
+
+pdf("Fig3.pdf")
+par(mfrow=c(4,2))
+for (j in 1:m){
+	acf(THETA[,j],main=substitute(paste("ACF ", theta[a],sep=""),list(a=tvec[j])))	
+}
+
+dev.off()
+
+pdf("Fig4.pdf")
+par(mfrow=c(2,2))
+
+	acf(SMT[,1],main=expression(paste("ACF ", sigma^2)))
+	acf(SMT[,2],main=expression(paste("ACF ", mu^2)))
+	acf(SMT[,3],main=expression(paste("ACF ", tau^2)))
+	
+
+dev.off()
+
+#b)
+#posterior means
+apply(SMT,2,mean)
+
+#posterior confidence regions
+apply(SMT,2,function(x) quantile(x,c(0.025,0.975)))
+
+#MC approximation to prior distributions
+gamma_prior<-1/rgamma(5000,nu0/2,nu0*sigma0/2)
+mu_prior<-rnorm(5000,mu0,sqrt(gamma0))
+tau_prior<-1/rgamma(5000,eta0/2,eta0*tau0/2)
+prior<-cbind(gamma_prior,mu_prior,tau_prior)
+
+#prior means
+apply(prior,2,mean)
+
+#prior confidence regions
+apply(prior,2,function(x) quantile(x,c(0.025,0.975)))
+
+
+#c)
+
+R.post<-SMT[,3]/(SMT[,1]+SMT[,3])
+R.prior<-prior[,3]/(prior[,1]+prior[,3])
+
+pdf("Fig5.pdf")
+plot(density(R.post),lwd=2,xlab="R",main="",xlim=c(0,1),lty=1)
+lines(density(R.prior),lwd=2,col="blue",xlim=c(0,1),lty=2)
+legend(0.6,3,c("posterior","prior"),col=c("black","blue"),lty=c(1,2),lwd=c(2,2))
+dev.off()
+
+#d)
+mean(THETA[,7]<THETA[,6])
+
+min.theta<-apply(THETA[,-7],1,min)
+mean(THETA[,7]<min.theta)
+
+#e)
+pdf("Fig6.pdf")
+plot(jitter(ybar,factor=24),apply(THETA,2,mean),xlab=expression(paste(bar(y)," (with jitter)")),ylab=expression(theta),pch=as.character(tvec))
+abline(a=0,b=1)
+dev.off()
+
+
+mean(ybar)
+
+#shrinkage effects
+shrink<-NULL
+for (i in 1:8){
+  shrink<-c(shrink, mean((1/SMT[,3])/(n[i]/SMT[,1]+1/SMT[,3])))
+  
+}
+pdf("Fig20.pdf")
+plot(n,shrink,pch=19,xlab="Sample size",ylim=c(0.1,0.15),ylab="Posterior mean of shrinkage factor")
+dev.off()
+#Problem 2
+#c)
+library(mvtnorm)
+library(coda)
+p3data<-read.table("msparrownest.dat",header=FALSE)
+colnames(p3data)<-c("Y","Wingspan")
+
+y<-p3data$Y
+n<-length(y)
+X<-cbind(rep(1,n), p3data[,2])
+ilogit<-function(eta){
+	out<-exp(eta)/(1+exp(eta))
+	return(out)
+}
+
+beta.0<-rep(0,2)
+Sigma.0<-100*diag(1,2)
+
+mod<-glm(y~-1+X, family=binomial)
+beta<-mod$coef
+eta<-X%*%beta
+theta<-ilogit(beta)
+BETA<-NULL
+delta<-6
+ac<-0
+S<-10000
+for (s in 1:S){
+	beta.p<-t(rmvnorm(1,beta,delta^2*var(y)*solve((t(X)%*%X))))
+	eta.p<-X%*% beta.p
+	theta.p<-ilogit(eta.p)
+	lr<-sum(dbinom(y,1,prob=theta.p,log=TRUE))+dmvnorm(t(beta.p),beta.0,Sigma.0,log=TRUE)-
+	       sum(dbinom(y,1,prob=theta,log=TRUE))-dmvnorm(t(beta),beta.0,Sigma.0,log=TRUE)
+	if(log(runif(1))<lr){
+		beta<-beta.p
+		eta<-eta.p
+		theta<-theta.p
+		ac<-ac+1	
+	}
+	BETA<-rbind(BETA, t(beta))
+}
+
+effectiveSize(BETA)
+ac/S
+
+#d)
+
+pdf("Fig10.pdf")
+par(mfrow=c(2,2))
+plot(BETA[,1],type="l",main=expression(paste("Traceplot ", alpha)),ylab=expression(alpha))
+plot(BETA[,1],type="l",main=expression(paste("Traceplot ", beta)),ylab=expression(beta))
+plot(density(BETA[,1]), xlab=expression(alpha), main="",lwd=2)
+beta.0<-seq(-25,5,0.1)
+lines(beta.0, dnorm(beta.0,0,100),lwd=2,col="blue")
+legend(-25,0.08,c("post","prior"),lwd=c(2,2),col=c("black","blue"),cex=0.8)
+plot(density(BETA[,2]), xlab=expression(beta), main="",lwd=2)
+lines(beta.0, dnorm(beta.0,0,100),lwd=2,col="blue")
+legend(-0.5,0.8,c("post","prior"),lwd=c(2,2),col=c("black","blue"),cex=0.8)
+dev.off()
+
+mean(BETA[,2]>0)
+
+#e)
+
+x<-seq(10,15,0.02)
+n.x<-length(x)
+results<-NULL
+for (i in 1: n.x){
+	results<-rbind(results,quantile(exp(BETA[,1]+x[i]*BETA[,2])/(1+exp(BETA[,1]+x[i]*BETA[,2])),prob=c(0.025,0.5,0.975)))
+	}
+pdf("Fig15.pdf")
+plot(x,results[,3],type="l",lwd=2,lty=2,ylim=c(min(results[,1]),max(results[,3])),ylab="",xlab="wingspan")
+lines(x,results[,1],type="l",lwd=2,lty=2)
+lines(x,results[,2],type="l",lwd=2,lty=1)
+dev.off()
+#Problem 3
+
+p4data<-read.table("tplant.dat")
+colnames(p4data)<-c("height","time","pH")
+attach(p4data)
+
+#a)
+m1<-lm(height~time+pH)
+summary(m1)
+
+#b)
+pdf("Fig11.pdf")
+par(mfrow=c(2,2))
+plot(fitted(m1),residuals(m1),pch=as.character(time),xlab=expression(hat(y)),main="Residuals vs fitted values",ylab=expression(hat(epsilon)[i]))
+abline(h=0)
+qqnorm(residuals(m1))
+qqline(residuals(m1))
+par(cex.main=0.8)
+acf(residuals(m1),main="autocorrelation plot for residuals of linear regression model")
+dev.off()
+
+#c)
+library(mvtnorm)
+#assume a first order auto-regressive structure to capture temporal dependency
+y<-height
+
+n<-dim(p4data)[1]
+X<-cbind(rep(1,n),time, pH)
+
+DY<-bdsBlock((1:n), c(1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10))
+DY<-as.matrix(DY)
+DY[DY==0]<-0.001
+#prior parameters
+nu0<-1 ; s20<-1 ; T0<-diag(1/1000,nrow=3)
+
+#starting values
+s2<-summary(m1)$sigma^2
+phi<-acf(m1$res,plot=FALSE)$acf[2]
+
+#Metropolis algorithm parameters
+
+tr<-function(x) sum(diag(x))
+set.seed(1)
+delta<-0.35
+S<-25000 ; odens<-S/1000
+OUT<-NULL ; ac<-0 ; 
+Y.PRED<-NULL
+for(s in 1:S){
+
+Cor<-phi*DY  ; diag(Cor)<-1;  iCor<-solve(Cor)
+  V.beta<- solve( t(X)%*%iCor%*%X/s2 + T0)
+  E.beta<- V.beta%*%( t(X)%*%iCor%*%y/s2  )
+  beta<-t(rmvnorm(1,E.beta,V.beta)  )
+  
+  s2<-1/rgamma(1,(nu0+n)/2,(nu0*s20+t(y-X%*%beta)%*%iCor%*%(y-X%*%beta)) /2 )
+phi.p<-abs(runif(1,phi-delta,phi+delta))
+  phi.p<- min( phi.p, 2-phi.p)
+  Cor.p<-phi.p*DY
+  diag(Cor.p)<-1
+  lr<- -.5*( determinant(Cor.p,log=TRUE)$mod -
+             determinant(Cor,log=TRUE)$mod  +
+   tr( (y-X%*%beta)%*%t(y-X%*%beta)%*%(solve(Cor.p) -iCor) )/s2 )
+
+  if( log(runif(1)) < lr ) { phi<-phi.p ; ac<-ac+1 }
+
+  if(s%%odens==0)
+    {
+     # cat(s,ac/s,beta,s2,phi,"\n") ;
+       OUT<-rbind(OUT,c(beta,s2,phi))
+       Cor<-phi*DY  ; diag(Cor)<-1
+       Y.PRED<-rbind(Y.PRED,rmvnorm(n,X%*%beta, Cor))
+  }
+}
+#
+  
+OUT.1000<-OUT
+library(coda)
+apply(OUT.1000,2,effectiveSize )
+
+
+
+pdf("Fig12.pdf")
+par(mfrow=c(2,5))
+plot(OUT.1000[,1],xlab="scan",ylab=expression(beta[0]),type="l")
+plot(OUT.1000[,2],xlab="scan",ylab=expression(beta[time]),type="l")
+plot(OUT.1000[,3],xlab="scan",ylab=expression(beta[pH]),type="l")
+plot(OUT.1000[,4],xlab="scan",ylab=expression(sigma^2),type="l")
+plot(OUT.1000[,5],xlab="scan",ylab=expression(rho),type="l")
+acf(OUT.1000[,1],ci.col="gray",xlab="lag",ylab=expression(beta[0]),main="")
+acf(OUT.1000[,2],ci.col="gray",xlab="lag",ylab=expression(beta[time]),main="")
+acf(OUT.1000[,3],ci.col="gray",xlab="lag",ylab=expression(beta[pH]),main="")
+acf(OUT.1000[,4],ci.col="gray",xlab="lag",ylab=expression(sigma^2),main="")
+acf(OUT.1000[,5],ci.col="gray",xlab="lag",ylab=expression(rho),main="")
+dev.off()
+
+pdf("Fig13.pdf")
+par(mfrow=c(2,2))
+plot(density(OUT.1000[,1],adj=2),xlab=expression(beta[0]), ylab="posterior marginal density",main="")
+ abline(v=coef(m1)[1],col="red")
+plot(density(OUT.1000[,2],adj=2),xlab=expression(beta[time]), ylab="posterior marginal density",main="")
+ abline(v=coef(m1)[2],col="red")
+ plot(density(OUT.1000[,3],adj=2),xlab=expression(beta[pH]), ylab="posterior marginal density",main="")
+ abline(v=coef(m1)[3],col="red")
+ plot(density(OUT.1000[,4],adj=2),xlab=expression(sigma^2), ylab="posterior marginal density",main="")
+ abline(v=summary(m1)$sigma^2,col="red")
+ dev.off()
+
+
+apply(OUT.1000,2,function(x) quantile(x,c(0.025,0.975)))
+apply(OUT.1000,2, mean)
+apply(OUT.1000,2,sd)
+
+
+
+pdf("Fig14.pdf")
+plot(y,apply(Y.PRED,2,mean),pch=19,ylab=expression(hat(y)),col="blue")
+points(y,fitted(m1),pch=2,col="red")
+abline(a=0,b=1)
+legend(10,13,c("OLS","Bayesian"),pch=c(2,19),col=c("red","blue"))
+dev.off()
+
+#Problem 4
+heart<-read.csv("hearttransplants.csv",sep=",",header=TRUE)
+names(heart)
+n<-nrow(heart)
+n
+attach(heart)
+
+
+logpost.alpha<-function(alpha, mu, lambda)
+{
+  (n*alpha)*log(alpha)+(alpha-1)*sum(log(lambda))-alpha/mu*sum(lambda)-n*log(gamma(alpha))
+}
+
+
+logpost.mu<-function(alpha, mu, lambda)
+{
+  (-n*alpha)*log(mu)-alpha/mu*sum(lambda)-0.5*mu^2
+}
+
+alpha<-10
+mu<-sum(y)/sum(e)
+lambda<-y/e
+S<-10000
+
+acc.rate.mu<-acc.rate.alpha<-0
+theta.post<-NULL
+
+k<-1
+for (i in 1:S){
+  #Gibbs for lambda
+  lambda<-rgamma(n,y+alpha,rate=(alpha/mu+e))
+  #Metropolis for mu
+  mu.star<-max(0.0001,rnorm(1,mu,sd(y/e)))
+  log.old.mu<-logpost.mu(alpha, mu,lambda)
+  log.star.mu<-logpost.mu(alpha, mu.star,lambda)
+  u<-runif(1)
+  if (log(runif(1))<log.star.mu-log.old.mu) {
+    mu<-mu.star
+    acc.rate.mu<-acc.rate.mu+1
+  }
+  #Metropolis for alpha
+  alpha.star<-max(0.1,runif(1,alpha-k, alpha+k))
+  log.old.alpha<-logpost.alpha(alpha, mu,lambda)
+  log.star.alpha<-logpost.alpha(alpha.star, mu,lambda)
+  u<-runif(1)
+  if (log(runif(1))<log.star.alpha-log.old.alpha) {
+    alpha<-alpha.star
+    acc.rate.alpha<-acc.rate.alpha+1
+  }
+  theta.post<-rbind(theta.post,c(alpha,mu,lambda))
+}
+
+#diagnostics
+acc.rate.mu/S
+
+acc.rate.alpha/S
+thin<-c(1,(1:1000)*(S/1000))
+
+pdf("Fig16.pdf")
+par(mfrow=c(2,2))
+acf(theta.post[thin,1],main=expression(alpha))
+acf(theta.post[thin,2],main=expression(mu))
+acf(theta.post[thin,3],,main=expression(lambda[1]))
+acf(theta.post[thin,3],,main=expression(lambda[2]))
+dev.off()
+pdf("Fig17.pdf")
+par(mfrow=c(2,2))
+plot(theta.post[thin,1],ylab=expression(alpha))
+plot(theta.post[thin,2],ylab=expression(mu))
+plot(theta.post[thin,3],ylab=expression(lambda[1]))
+plot(theta.post[thin,3],ylab=expression(lambda[2]))
+dev.off()
+
+#shrinkage effect
+
+shrink<-NULL
+for (i in 1:n){
+  shrink<-c(shrink,mean(theta.post[,1]/(theta.post[,1]+e[i]*theta.post[,2])))
+}
+pdf("Fig18.pdf")
+par(mfrow=c(1,1))
+plot(log(e),shrink,xlab="log(exposure)",ylab="Shrinkage factor",cex=0.5,pch=19)
+dev.off()
+
+
+#ranking hospitals
+index<-seq(1,94,1)
+lambda.mean<-apply(theta.post[,3:96],2,mean)
+pdf("Fig19.pdf")
+plot(lambda.mean,pch=19,cex=0.5,type="n",xlab="hospital",ylab=expression(paste("E[",lambda[i],"|y,",alpha,",", mu ,"]")))
+text(lambda.mean,labels=index,cex=0.5)
+dev.off()
+
+#posterior predictive checks - replicate observed death counts for each hospital
+pp.count<-array(NA,c(length(thin),n))
+for (i in 1:length(thin)){
+  pp.count[i,]<-rpois(n,e*theta.post[thin[i],3:96])
+}
+pp.pval<-NULL
+for (i in 1:n){
+ pp.pval<-c(pp.pval,mean(y[i]<pp.count[,i]))
+}
+pdf("Fig20.pdf")
+plot(pp.pval,pch=19,xlab="Hospital",ylab="Posterior Predictive p-value",yaxt="n")
+axis(2,at=seq(0,0.5,0.05),cex.axis=0.8,las=2)
+dev.off()
+pp.pval
+index<-which(pp.pval<0.05)
+y[index]
+which(y==0)

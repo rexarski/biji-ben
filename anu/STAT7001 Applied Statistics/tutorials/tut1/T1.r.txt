@@ -1,0 +1,60 @@
+typical <- c(-0.255,-0.213, -0.19, -0.185,-0.045,-0.025,-0.015,0.003,0.015,0.02,0.023,0.04,0.04,0.05,0.055,0.058)
+
+##same method for the odd feathers data with the c() function
+
+odd <- c(-0.324,-0.185,-0.299,-0.144,-0.027,-0.039, -0.264,-0.077,-0.017, -0.169, -0.096, -0.33,-0.346,-0.191, -0.128, -0.182)
+
+## to generate the differences, it is just a simple equation command
+
+difference <- typical - odd
+
+## to generate the statistics, we can use the following functions:
+## mean() for the sample mean
+mean(difference)
+
+##var() for the sample variance
+var(difference)
+
+##sd() for the sample standard deviation
+sd(difference)
+
+##to know how many observations, we use the length() function
+length(difference)
+
+##To generate the t distribution quantile for our confidence interval, we the command
+## qt(p=(1-alpha/2),df=n-1)
+qt(p=(1-0.05/2),df=15)
+
+##Solving for our 95% confidence intervals,
+lower <- mean(difference) - qt(p=(1-0.05/2),df=15) * sd(difference)/sqrt(16)
+upper <- mean(difference) + qt(p=(1-0.05/2),df=15) * sd(difference)/sqrt(16)
+conf.int<-c(lower,upper)
+conf.int
+
+##We can also start using some complicated functions, for example the t.test function in R;
+t.test(typical,odd,paired=TRUE,conf.level=0.95)
+
+##plotting a histogram of the data
+hist(difference)
+
+##Creating other vectors using:
+##rep() function
+ones <- rep(1,times=5)
+##simple sequence
+ten.nums <- 1:10
+##seq() function
+ten.evens <-seq(from=2, to=20, by=2)
+ten.threes<-seq(from=3,by=3, length.out=10)
+
+
+##Creating matrices by: 
+##using the matrix function
+six.vec<-c(1,2,3,4,5,6)
+mat.six1<-matrix(six.vec,nrow=2,ncol=3)
+mat.six1
+mat.six2<-matrix(six.vec,nrow=3,ncol=2)
+mat.six2
+
+##using cbind() on vectors
+mat.tens<-cbind(ten.nums,ten.evens,ten.threes)
+mat.tens

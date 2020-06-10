@@ -1,0 +1,225 @@
+#Exercise 1 - New York marathon
+n<-20
+ybar_m<-278
+ybar_f<-291
+
+s2_m<-49.5^2
+s2_f<-56.2^2
+
+mu0_m<-285  ; k0<-1
+s20_m<-50^2 ; nu0<-1
+
+mu0_f<-285  ; k0<-1
+s20_f<-50^2 ; nu0<-1
+
+# posterior inference
+kn<-k0+n ; nun<-nu0+n
+mun_m<- (k0*mu0_m + n*ybar_m)/kn  
+s2n_m<- (nu0*s20_m +(n-1)*s2_m +k0*n*(ybar_m-mu0_m)^2/(kn))/(nun)
+
+mun_f<- (k0*mu0_f + n*ybar_f)/kn  
+s2n_f<- (nu0*s20_f +(n-1)*s2_f +k0*n*(ybar_f-mu0_f)^2/(kn))/(nun)
+
+
+dinvgamma<-function(x,a,b) {
+  ld<- a*log(b) -lgamma(a) -(a+1)*log(x)  -b/x 
+  exp(ld)
+}
+
+
+
+gs<-100
+theta<-seq(250,330,length=gs)
+s2g<-seq(1000,5500 ,length=gs)
+
+
+ld.th.s2_m<-matrix(0,gs,gs)
+for(i in 1:gs) { for(j in 1:gs) {
+
+  #log posterior density for mu and sigma2
+  ld.th.s2_m[i,j]<- dnorm(theta[i],mun_m,sqrt(s2g[j]/kn) ,log=TRUE) +
+    log( dinvgamma(s2g[j],nun/2,nun*s2n_m/2 ))
+}} 
+
+
+ld.th.s2_f<-matrix(0,gs,gs)
+for(i in 1:gs) { for(j in 1:gs) {
+  
+  #log posterior density for mu and sigma2
+  ld.th.s2_f[i,j]<- dnorm(theta[i],mun_f,sqrt(s2g[j]/kn) ,log=TRUE) +
+    log( dinvgamma(s2g[j],nun/2,nun*s2n_f/2 ))
+}} 
+
+par(mfrow=c(1,2),mar=c(3,3,1,1),mgp=c(1.75,.75,0))
+grays<- gray( (10:0)/10)
+image(theta,s2g,exp(ld.th.s2_m), col=grays,xlab=expression(theta),
+      ylab=expression(sigma^2),main="Male" )
+image(theta,s2g,exp(ld.th.s2_f), col=grays,xlab=expression(theta),
+      ylab=expression(sigma^2),main="Female" )
+
+
+set.seed(1)
+S<-10000
+s2.postsample_m<-1/rgamma(S,  (nu0+n)/2, s2n_m*(nu0+n)/2 )
+theta.postsample_m<-rnorm(S, mun_m, sqrt(s2.postsample_m/(k0+n)))
+quantile(theta.postsample_m, c(.025,.975))
+
+
+#Exercise 2
+
+#MSE comparison - IQ scores
+pdf("Fig4.pdf",family="Times",height=3.5,width=7)
+par(mfrow=c(1,2),mar=c(3,3,1,1),mgp=c(1.75,.75,0))
+
+b<-(100-112)^2
+s2<-13^2
+n<-1:50 
+
+k<-1 ; brk1<- (n/(k+n))^2 + n*(k/(k+n))^2*b/s2
+k<-2 ; brk2<- (n/(k+n))^2 + n*(k/(k+n))^2*b/s2
+k<-3 ; brk3<- (n/(k+n))^2 + n*(k/(k+n))^2*b/s2
+
+plot(range(n),c(0.4,1.1),type="n",xlab="sample size", ylab="relative MSE")
+abline(h=1,lty=2,lwd=2)
+lines(n, brk1,col=gray(.25),lwd=2)
+lines(n, brk2,col=gray(.5),lwd=2)
+lines(n, brk3,col=gray(.75),lwd=2)
+legend(20,.8,legend=c(expression(kappa[0]==0),expression(kappa[0]==1), expression(kappa[0]==2), 
+                      expression(kappa[0]==3) ),lwd=c(2,2,2),lty=c(2,1,1,1),col=c(gray(c(0,.25,.5,.75))),bty="n")
+
+####
+theta0<-112
+mu0<-100
+n<-10 
+s2m<-s2/n
+x<-seq(theta0-4*sqrt(s2m),theta0+4*sqrt(s2m), length=100)
+plot(x,dnorm(x,theta0,sqrt(s2m)),type="l",lwd=2,ylim=c(0,.13),lty=2, xlab="IQ",
+     ylab="")
+abline(v=theta0)
+for(k in 1:3) {
+  w<- n/(n+k) 
+  lines(x,dnorm(x,w*theta0+(1-w)*mu0,sqrt(w^2*s2m)),type="l",col=gray(k/4),lwd=2) 
+} 
+dev.off()
+
+set.seed(1)
+S<-10000
+s2.postsample_f<-1/rgamma(S,  (nu0+n)/2, s2n_f*(nu0+n)/2 )
+theta.postsample_f<-rnorm(S, mun_f, sqrt(s2.postsample_f/(k0+n)))
+quantile(theta.postsample_f, c(.025,.975))
+
+#posterior probability theta_m < theta_f
+mean(theta.postsample_m<theta.postsample_f)
+
+#frequentist interval
+
+sp<-sqrt(((n-1)*s2_m+(n-1)*s2_f)/(n+n-2))
+
+tstat<-(ybar_m-ybar_f)/(sp*sqrt(1/n+1/n))
+pt(tstat,n+n-2)
+
+
+#Exercise 3
+#Normal model for non-normal data - General Social Survey 1998
+#source("../Data/alldata.r")
+# get from http://www.stat.washington.edu/~hoff/Book/Data/data/alldata
+load("alldata")
+
+pdf("Fig5.pdf",family="Times",height=1.75,width=5)
+par(mfrow=c(1,3),mar=c(2.75,2.75,.5,.5),mgp=c(1.70,.70,0))
+
+###
+CHILDS<-Y$CHILDS[Y$FEMALE==1&Y$YEAR==1998 & Y$AGE>=40  ]
+CHILDS<-CHILDS[!is.na(CHILDS) ]
+###
+
+set.seed(1)
+NY<-NULL
+N<-c(5,15,45)
+for(n in N) {
+  for(sim in 1:5000) {
+    y<-sample(CHILDS,n)
+    NY<-rbind(NY, c(n,mean(y),var(y)) )
+  } }
+
+plot(table(CHILDS)/sum(table(CHILDS)),type="h",
+     xlab=expression(paste(italic(y),"=number of children",sep="" )), 
+     ylab=expression(italic(p(y)) ))
+
+x<-seq(0,6,length=200)
+plot( range(NY[,2]),c(0,1.7),type="n",xlab="number of children", 
+      ylab=expression( italic( p(bar(y))) ) )
+for( n in N) {
+  yb<- NY[NY[,1]==n,2]
+  lines(density( yb,adj=2) ,col=gray(1-( n/5)/9 ), lwd=2)
+  cat(n,mean(yb),sd(yb),"\n")
+}
+abline(v=mean(CHILDS))
+legend( 2.35,1.8,legend=c("n=5","n=15","n=45"),lwd=c(2,2,2),col=
+          gray(1-( N/5)/9 ), bty="n")
+
+
+# plot( NY[NY[,1]==45,2:3],xlab=expression(italic(bar(y))),
+#    ylab=expression(italic(s^2)) )
+
+source("hdr_2d.r")
+plot.hdr2d(NY[NY[,1]==45,2:3],xlab=expression(italic(bar(y))), 
+           ylab=expression(italic(s^2)) ,ylim=c(1,6) )
+
+
+dev.off()
+
+
+
+####
+#Posterior predictive checking here  for non-normal data
+library(e1071)
+test1<-mean(CHILDS) #mean
+test2<-quantile(CHILDS,0.5) #median
+#test3<-mean( ( CHILDS-mean(CHILDS))^3) /( mean( ( CHILDS-mean(CHILDS))^2)^(3/2)) 
+test3<-skewness(CHILDS)  #skewness 
+###
+k0<-1; mu0<-2 ; nu0<-1 ; s20<-1
+
+n<-45
+set.seed(1)
+y<-sample(CHILDS,n)
+ybar<-mean(y) ; s2<-var(y)
+
+kn<-k0+n ; nun<-nu0+n
+mun<- (k0*mu0 + n*ybar)/kn    
+s2n<- (nu0*s20 +(n-1)*s2 +k0*n*(ybar-mu0)^2/(kn))/(nun)
+###
+#1000 posterior draws of theta and sigma2
+S<-1000
+s2.postsample <- 1/rgamma(S, (nu0+n)/2, s2n*(nu0+n)/2 )
+theta.postsample <- rnorm(S, mun, sqrt(s2.postsample/(k0+n)))
+
+multi.fun<-function(x){
+  rr<-c(pred.test1<-mean(x),pred.test2<-median(x),pred.test3<-skewness(x))
+  names(rr)<-c("mean","median","skewness")
+  return(rr)
+}
+
+#create 1000 replicated data sets each of size n=45 using the 1000 posterior draws of theta and sigma2 from above
+pred.test<-NULL
+for (s in 1:S){
+  yrep<-rnorm(S,theta.postsample[s],sqrt(s2.postsample[s]))
+  pred.test<-rbind(pred.test,multi.fun(yrep))
+  
+}
+
+mean(pred.test[,1]>test1)
+1-mean(pred.test[,2]>test2)
+mean(pred.test[,3]>test3)
+
+
+pdf("Fig7.pdf",family="Times",height=1.75,width=5)
+par(mfrow=c(1,3),mar=c(2.75,2.75,.5,.5),mgp=c(1.70,.70,0))
+hist(pred.test[,1],xlab=expression(bar(y)),main="",breaks=20)
+abline(v=test1,col="red")
+hist(pred.test[,2],xlab="median(y)",main="",breaks=20)
+abline(v=test2,col="red")
+hist(pred.test[,3],xlab="skewness(y)",main="",breaks=20,xlim=c(-0.3,0.90))
+abline(v=test3,col="red")
+dev.off()

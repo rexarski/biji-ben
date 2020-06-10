@@ -1,0 +1,65 @@
+\documentclass[a4paper, 11pt, twoside]{article}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\begin{document}
+\title{STAT6039 review examples}
+\author{Rui Qiu}
+\date{2017-05-30}
+
+\maketitle
+
+\subsection{multinomial distribution theorems}
+
+\paragraph{Suppose that $Y_1, Y_2$ and $Y_3$ are three rv's with means $2,-7$ and $5$, variances $10,6,9$ and covariance $\sigma_{12}=-1, \sigma_{13}=3, \sigma_{23}=0.$}
+
+\[\begin{split}
+E(3Y_1-2Y_2+Y_3)&=3\mu_1 -2\mu_2 +\mu_3\\
+ &= 3(2)-2(-7)+5=25\\
+ Var(3Y_1-2Y_2+Y_3)&=3^2\sigma_1^2+(-2)^2\sigma_2^2+1^2\sigma_3^2 + 2\{3(-2)\sigma_{12} + 3(1)\sigma_{13} + (-2)(1)\sigma_{23}\}\\
+ &=9(10)+4(6)+1(9)+2\{-6(-1)+3(3)-2(0)\}\\
+ &=153\\
+ Cov(3Y_1-2Y_2, Y_2+8Y_3)&=3(1)\sigma_{12}+3(8)\sigma_{13}+(-2)1\sigma_{22}+(-2)8\sigma_{23}\\
+ &= 3(-1)+24(3)-2(6)-16(0)\\
+ &=57
+\end{split}
+\]
+
+\subsection{law of iterated expectation/variance/covariance}
+
+\paragraph{Twenty bolts just been randomly sampled from the production line. Count the number of defectives amongst them. From experience, the proportion of defectives is constant any given day, but varies from day to day in a uniform manner between $0.1$ and $0.3$.}\ 
+
+(a) Let $X$ be the number of defectives amongst the $20$, $Y$ be the proportion of defectives amongst all bolts produced in the factory today.
+
+Then $(X|Y=y)\sim Bin(20,y)$, and $Y\sim U(0.1, 0.3)$. So $E(X|Y=y)=20y, E(X|Y)=20Y, EY=0.2$.
+
+Therefore $EX=EE(X|Y)= E(20Y)=20EY=4$.\\
+
+(b) $Var(X|Y=y)=20y(1-y).$ Therefore $Var(X|Y)=20Y(1-Y)=20(Y-Y^2)$. So
+
+\[\begin{split}
+Var(x)&=EVar(X|Y)+VarE(X|Y)\\
+&=E\{20(Y-Y^2)\}+Var\{20Y\}\\
+&=20(EY-EY^2)+400VarY	
+\end{split}
+\]
+
+Now $VarY=\frac{(0.3-0.1)^2}{12}=\frac{1}{300}$, $EY^2=VarY+(EY)^2=\frac{13}{300}$. So...\\
+
+\subsection{MLE}
+
+\paragraph{A partly melted die is rolled repeatedly until the first 6 comes up. Then it is rolled again the same number of times. We are interested in $p$, the probability of $6$ coming up on a single roll. Suppose that the first $6$ comes up on the third roll, and the numbers which then come up are $6,2,6$. Find the MLE of $p$.}\ \\
+
+Let $X$=number of rolls until first 6, and $Y$=number of $6$'s on last half of rolls.
+
+Then $X\sim Geo(p)$ (with $x=3$) and $(Y|X=x)\sim Bin(x,p)$ (with $x=2$).
+
+So $p(x,y)=p(x)p(y|x)=(1-p)^{x-1}p{x\choose p}p^y(1-p)^{x-y}; x=1,2,\dots; y=0,\dots,x.$
+
+So $L(p)=(1-p)^{x-1+x-y}p^{1+y}=(1-p)^ap^b$, where $a=2x-y-1$ and $b=1+y$.
+
+Then $l(p)=a\log(1-p)+b\log p, l'(p)=-\frac{a}{1-p}+\frac{b}{p}=0\implies p=\frac{b}{a+b}.$
+
+\[\hat{p}=\frac{b}{a+b}=\frac{1+y}{(2x-y-1)+(y+1)}=\frac{1+y}{2x}=\frac{1+2}{2(3)}=\frac{1}{2}\]
+
+
+\end{document}

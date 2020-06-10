@@ -1,0 +1,164 @@
+#Last Updated 26/07/2017
+#Part I
+y1<-1
+y1
+class(y1)
+
+y2='1'
+y2
+class(y2)
+
+y3='one'
+y3
+class(y3)
+
+y4 <- 3 == 4
+y4
+class(y4)
+
+y5 <- "a"=="a"
+y5
+class(y5)
+
+vector1=c(1,2,3,4)
+vector2<-c('a','b','c','d')
+length(vector1)
+
+vector3=1:4
+vector2[3]
+
+vector2[c(2,3)]
+vector2[c(2,3,1,1,3)]
+
+which(vector2=='d')
+
+
+seq(1,10,by=2)
+
+
+vector4=c(1,'R',TRUE)
+class(vector4)
+
+vector5=c(1,TRUE)
+vector5
+class(vector5)
+
+1*TRUE
+
+
+
+aa=c(3,5,10,4.5,-1,-3)
+bb=c(1,1,1,2,3,3,1,2,4,1,2,4,4,2,3,4,1,2,3,4)
+letters
+
+cc=letters[bb]
+cc
+
+min(aa)
+max(aa)
+median(aa)
+quantile(aa)
+
+sort(aa)
+sort(aa,decreasing=TRUE)
+
+
+
+
+
+cbind(1:3,2:4)
+rbind(1:3,2:4)
+
+M=matrix(1:9,nrow=3,ncol=3)
+M
+
+M=matrix(1:9,ncol=3,nrow=3)
+M
+
+M=matrix(1:9,ncol=3,nrow=3,byrow=TRUE)
+M
+
+M[2,3]
+M[c(1,2),c(2,3)]
+M[,3]
+
+LETTERS
+data=data.frame(x=1:10,y=LETTERS[1:10])
+data[,1]
+data$x
+
+class(LETTERS[1:10])
+data$y
+class(data$y)
+
+LETTERS[1:10]
+data$y
+levels(data$y)
+
+data$z=letters[bb[1:10]]
+
+data$z=factor(data$z)
+data$z
+
+levels(data$z)
+
+
+summary(data)
+
+
+
+
+
+
+
+
+?data.frame
+??data.frame
+
+#Part II
+rm(list=ls())
+setwd('~/Desktop/Research/AppliedStat2017/L0')
+
+a=read.csv(file='assessment.csv',header=T)
+
+head(a)
+summary(a)
+
+#Drop nothing
+a$total1=a$Quiz*0.1+a$Assignment1*0.1+a$Assignment2*0.1+a$Final*0.7
+
+#Drop 1 assessment
+a$total2=a$Assignment1*0.1+a$Assignment2*0.1+a$Final*0.8
+a$total3=a$Quiz*0.1+a$Assignment2*0.1+a$Final*0.8
+a$total4=a$Quiz*0.1+a$Assignment1*0.1+a$Final*0.8
+
+#Drop 2 assessments
+a$total5=a$Quiz*0.1+a$Final*0.9
+a$total6=a$Assignment1*0.1+a$Final*0.9
+a$total7=a$Assignment2*0.1+a$Final*0.9
+
+#Drop 3 assessments
+a$total8=a$Final*1.0
+
+a$total=0
+#The 8 possible total scores of Student 1
+k=1
+a[k,c(9:16)]
+#The actual total score of Student 1
+a$total[k]=max(a[k,c(9:16)])
+a$total[k]
+
+#The number of students
+n=length(a[,1])
+#The total scores of all the students
+for (k in 1:n){
+  a$total[k]=max(a[k,c(9:16)])
+}
+
+
+head(a)
+b=summary(a)
+
+write.csv(a,file='assessment_result.csv')
+write.csv(b,file='summary.csv')
+

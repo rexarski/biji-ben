@@ -1,0 +1,35 @@
+set.seed(7016)
+library(LearnBayes)
+source("hdr_2d.r")
+
+sqsh.max <- 20
+nums <- 100000
+sqsh.min <- sqsh.max/nums
+
+y.range <- seq(sqsh.min,sqsh.max,sqsh.min) # 10000 y's
+y.density <- c()
+for (i in 1:nums) {
+  inv.sig2 <- rgamma(1,10,2.5)
+  sigma <- sqrt(1/inv.sig2)
+  theta <- rnorm(1,4.1,sqrt(1/inv.sig2/20))
+  y.density[i] <- 0.31*dnorm(y.range[i],mean=theta,sd=sigma)+
+    0.46*dnorm(y.range[i],mean=2*theta,sd=2*sigma)+
+    0.23*dnorm(y.range[i],mean=3*theta,sd=3*sigma)
+}
+
+# (a)
+index <- sample(1:nums, 5000, prob=y.density)
+sample.y <- y.range[index]
+sample.yden <- y.density[index]
+
+# (b)
+quantile(sample.y, c(0.125,0.875))
+
+# (c)
+density(sample.y)
+plot(density(sample.y),type='l',main='Density plot of sqush weight')
+md <- sample.y[sample.yden==max(sample.yden)] # mode
+sample.yden <- sample.yden/sum(sample.yden)
+sample.yden <- sort(sample.yden,decreasing=T)
+ct<-min(sample.yden[cumsum(sample.yden)< 0.75])
+list(hpdr=range(sample.y[sample.yden>=ct]),mode=md)

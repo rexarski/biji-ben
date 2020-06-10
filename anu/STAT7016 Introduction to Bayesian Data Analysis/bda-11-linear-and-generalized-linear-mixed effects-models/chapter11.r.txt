@@ -1,0 +1,325 @@
+#tumor location data
+
+tumor<-as.data.frame(dget("http://www.stat.washington.edu/~hoff/Book/Data/data/Y.tumor"))
+xs<-seq(5,100,5)/100
+m<-21
+n<-20
+
+pdeg<-3
+X<-cbind(rep(1,20),poly(xs,degree=pdeg) )
+
+pdf("Fig6.pdf",family="Times",height=3.5,width=7)
+par(mar=c(3,3,1,1),mgp=c(1.75,.75,0))
+par(mfrow=c(1,2))
+plot(c(0,1),range(tumor),type="n",xlab="location",ylab="number of tumors")
+for(j in 1:m) { lines(xs,tumor[j,],col="gray") }
+lines( xs,apply(tumor,2,mean),lwd=3)
+
+
+lya<-log(apply(tumor,2,mean))
+Xs<-cbind( rep(1,n),poly(xs,deg=4,raw=TRUE))
+fit2<- lm(lya~-1+Xs[,1:3] )
+fit3<- lm(lya~-1+Xs[,1:4] )
+fit4<- lm(lya~-1+Xs[,1:5] )
+  
+yh2<-Xs[,1:3]%*%fit2$coef
+yh3<-Xs[,1:4]%*%fit3$coef
+yh4<-Xs[,1:5]%*%fit4$coef
+  
+plot(xs,lya,type="l",lwd=3,xlab="location",ylab="log average number of tumors",
+     ylim=range(c(lya,yh2,yh3,yh4)) )
+  
+points(xs,yh2,pch="2",col="black")
+lines(xs,yh2,col="gray")
+points(xs,yh3,pch="3",col="black")
+lines(xs,yh3,col="gray")
+points(xs,yh4,pch="4",col="black")
+lines(xs,yh4,col="gray")
+dev.off()
+  
+  library(mvtnorm)
+library(sbgcop)
+ tumor<-as.matrix(tumor)   
+##MCMC
+##priors
+BETA<-NULL
+for (j in 1:m){
+	BETA<-rbind(BETA,lm((log(tumor[j,]+1/20))~Xs[,2]+Xs[,3]+Xs[,4]+Xs[,5])$coef)
+}
+
+
+
+tune<-2
+mu0<-apply(BETA,2,mean)
+p<-ncol(Xs)
+S0<-cov(BETA); eta0<-p+2
+iL0<-iSigma<-solve(S0)
+
+
+
+THETA.post<-SIGMA.post<-NULL; set.seed<-(1)
+
+
+BETA.post<-lapply(1:m, function(x) matrix(NA, nrow=50000/10, ncol=5))
+
+
+
+
+#separate BETA.post for j-1....21
+for (s in 1:50000){
+	##update theta
+	Lm<-solve(iL0+m*iSigma)
+	mum<-Lm%*%(iL0%*%mu0+iSigma%*%apply(BETA,2,sum))
+	theta<-t(rmvnorm(1,mum,Lm))
+	
+	##update Sigma
+	mtheta<-matrix(theta,m,p,byrow=TRUE)
+	iSigma<-rwish(1, eta0+m,solve(S0+t(BETA-mtheta)%*%(BETA-mtheta)))
+	
+	##update beta
+	Sigma<-solve(iSigma); dSigma<-det(Sigma)
+		for (j in 1:m){
+		beta.p<-t(rmvnorm(1,BETA[j,],0.5*Sigma))
+		lr<-sum(dpois(tumor[j,],exp(Xs%*%beta.p),log=TRUE)-dpois(tumor[j,],exp(Xs%*%BETA[j,]),log=TRUE))+
+		dmvnorm(t(beta.p),theta,Sigma,log=TRUE)-
+		dmvnorm(t(BETA[j,]),theta,Sigma,log=TRUE)
+		if(log(runif(1))<lr) {BETA[j,]<-beta.p}
+	}
+
+	##store some output
+	if(s%%10==0){
+		THETA.post<-rbind(THETA.post,t(theta))
+		SIGMA.post<-rbind(SIGMA.post, as.vector(Sigma))
+     for (j in 1:m){
+     	BETA.post[[j]][s/10,]<-BETA[j,]
+     	}
+  }
+}
+apply(THETA.post,2,effectiveSize)
+apply(SIGMA.post,2,effectiveSize)
+tvec<-seq(1,5,1)
+pdf("Fig8.pdf")
+par(mfrow=c(2,3))
+for (i in 1:p){
+	acf(THETA.post[,i],main=substitute(theta[a],list(a=tvec[i])))
+}
+dev.off()
+S<-50000/10
+eXTheta<-NULL
+for (i in 1:S){
+	eXTheta<-cbind(eXTheta,exp(Xs%*%THETA.post[i,]))
+	
+}
+xx<-seq(0.05,1,0.05)
+eXTheta.q<-apply(eXTheta,1,function(x) quantile(x,probs=(c(0.025,0.5,0.975))))
+plot(xx,eXTheta.q[1,],col="grey",type="l",xlab="location",ylab="number of tumors",lwd=2,ylim=c(0,15))
+lines(xx,eXTheta.q[2,],col="black",type="l",xlab="location",ylab="number of tumors",lwd=2,ylim=c(0,15))
+lines(xx,eXTheta.q[3,],col="grey",type="l",xlab="location",ylab="number of tumors",lwd=2,ylim=c(0,15))
+legend(0.1,5,c("2.5% quantile","50% quantile","97.5% quantile"),col=c("grey","black","grey"),lwd=c(2,2,2))
+###
+eXB.post<-NULL
+for(s in 1:dim(THETA.post)[1])
+{
+  beta<-rmvnorm(1,THETA.post[s,],matrix(SIGMA.post[s,],p,p))
+  eXB.post<-rbind(eXB.post,t(exp(Xs%*%t(beta) )) )
+}
+
+qEB<-apply( eXB.post,2,quantile,probs=c(.025,.5,.975))
+
+eXT.post<- exp(t(Xs%*%t(THETA.post )) )
+qET<-apply( eXT.post,2,quantile,probs=c(.025,.5,.975))
+yXT.pp<-matrix( rpois(prod(dim(eXB.post)),eXB.post),
+                dim(eXB.post)[1],dim(eXB.post)[2] )
+
+qYP<-apply( yXT.pp,2,quantile,probs=c(.025,.5,.975))
+
+
+pdf("Fig7.pdf",family="Times",height=1.75,width=5)
+par(mar=c(2.75,2.75,.9,.5),mgp=c(1.7,.7,0))
+par(mfrow=c(1,3))
+
+plot(xx,eXTheta.q[1,],col="grey",type="l",xlab="location",ylab="number of tumors",lwd=2,ylim=c(0,15),main=expression(paste(exp(theta^{T}*x))))
+lines(xx,eXTheta.q[2,],col="black",type="l",xlab="location",ylab="number of tumors",lwd=2,ylim=c(0,15))
+lines(xx,eXTheta.q[3,],col="grey",type="l",xlab="location",ylab="number of tumors",lwd=2,ylim=c(0,15))
+legend(0.1,15,c("2.5% quantile","50% quantile","97.5% quantile"),col=c("grey","black","grey"),lwd=c(2,2,2),cex=0.4)
+
+plot( c(0,1),range(c(0,qET,qEB,qYP)),type="n",xlab="location",
+   ylab="",,main=expression(paste(exp(beta^{T}*x))))
+lines(xs, qEB[1,],col="grey",lwd=2)
+lines(xs, qEB[2,],col="black",lwd=2)
+lines(xs, qEB[3,],col="grey",lwd=2)
+
+plot( c(0,1),range(c(0,qET,qEB,qYP)),type="n",xlab="location",
+   ylab="",main="Y|x")
+lines(xs, qYP[1,],col="grey",lwd=2)
+lines(xs, qYP[2,],col="black",lwd=2)
+lines(xs, qYP[3,],col="grey",lwd=2)
+
+dev.off()
+
+
+
+########
+#Hierarchical Linear Regression - Schools Example
+
+odat<-as.data.frame(dget("http://www.stat.washington.edu/~hoff/Book/Data/data/mathdat"))
+names(odat)
+
+ids<-dget("http://www.stat.washington.edu/~hoff/Book/Data/data/ids_selectschools")
+group<-odat$sch_id
+indset<-apply( odat[,1,drop=F],1,is.element,ids)
+dat<-odat[indset,]
+
+mathdat<-dat
+mathdat[,3]<-(mathdat[,3]-mean(mathdat[,3]))/sd(mathdat[,3]) 
+
+########
+#get Y vector and X matrix for each school
+groups<-ids
+m<-length(ids)
+Y<-list() ; X<-list() ; N<-NULL
+for(j in 1:m) 
+{
+  Y[[j]]<-mathdat[mathdat[,1]==ids[j], 4] 
+  N[j]<- sum(dat$sch_id==ids[j])
+  xj<-mathdat[mathdat[,1]==ids[j], 3] 
+  xj<-(xj-mean(xj))
+  X[[j]]<-cbind( rep(1,N[j]), xj  )
+}
+#######
+#Least squares fit for each school separately
+S2.LS<-BETA.LS<-NULL
+for(j in 1:m) {
+  fit<-lm(Y[[j]]~-1+X[[j]] )
+  BETA.LS<-rbind(BETA.LS,c(fit$coef)) 
+  S2.LS<-c(S2.LS, summary(fit)$sigma^2) 
+                } 
+####
+
+#####
+
+#plots of LS fit.  
+pdf("Fig3.pdf",family="Times",height=1.75,width=5)
+par(mar=c(2.75,2.75,.5,.5),mgp=c(1.7,.7,0))
+par(mfrow=c(1,3))
+
+plot( range(mathdat[,3]),range(mathdat[,4]),type="n",xlab="SES", 
+   ylab="math score")
+for(j in 1:m) {    abline(BETA.LS[j,1],BETA.LS[j,2],col="gray")  }
+
+BETA.MLS<-apply(BETA.LS,2,mean)
+abline(BETA.MLS[1],BETA.MLS[2],lwd=2)
+
+plot(N,BETA.LS[,1],xlab="sample size",ylab="intercept")
+abline(h= BETA.MLS[1],col="black",lwd=2)
+plot(N,BETA.LS[,2],xlab="sample size",ylab="slope")
+abline(h= BETA.MLS[2],col="black",lwd=2)
+
+dev.off()
+
+####
+
+
+#####Gibbs sampler - Bayesian  hierarchical regression model
+p<-dim(X[[1]])[2]
+theta<-mu0<-apply(BETA.LS,2,mean)
+nu0<-1 ; s2<-s20<-mean(S2.LS)
+eta0<-p+2 ; Sigma<-S0<-L0<-cov(BETA.LS) ; BETA<-BETA.LS
+THETA.b<-S2.b<-NULL
+iL0<-solve(L0) ; iSigma<-solve(Sigma)
+source("rfunctions.r")
+Sigma.ps<-matrix(0,p,p)
+SIGMA.PS<-NULL
+BETA.ps<-BETA*0
+BETA.pp<-NULL
+set.seed(1)
+mu0[2]+c(-1.96,1.96)*sqrt(L0[2,2])
+S<-10000
+thin<-10
+for(s in 1:S) {
+  ##update beta_j 
+  for(j in 1:m) 
+  {  
+    Vj<-solve( iSigma + t(X[[j]])%*%X[[j]]/s2 )
+    Ej<-Vj%*%( iSigma%*%theta + t(X[[j]])%*%Y[[j]]/s2 )
+    BETA[j,]<-rmvnorm(1,Ej,Vj) 
+  } 
+  ##
+
+  ##update theta
+  Lm<-  solve( iL0 +  m*iSigma )
+  mum<- Lm%*%( iL0%*%mu0 + iSigma%*%apply(BETA,2,sum))
+  theta<-t(rmvnorm(1,mum,Lm))
+  ##
+
+  ##update Sigma
+  mtheta<-matrix(theta,m,p,byrow=TRUE)
+  iSigma<-rwish( 1, eta0+m,solve( S0+t(BETA-mtheta)%*%(BETA-mtheta) ) ) 
+  ##
+
+  ##update s2
+  RSS<-0
+  for(j in 1:m) { RSS<-RSS+sum( (Y[[j]]-X[[j]]%*%BETA[j,] )^2 ) }
+  s2<-1/rgamma(1,(nu0+sum(N))/2, (nu0*s20+RSS)/2 )
+  ##
+  ##store results
+  if(s%%thin==0) 
+  { 
+    cat(s,s2,"\n")
+    S2.b<-c(S2.b,s2);THETA.b<-rbind(THETA.b,t(theta))
+    Sigma.ps<-Sigma.ps+solve(iSigma) ; BETA.ps<-BETA.ps+BETA
+    SIGMA.PS<-rbind(SIGMA.PS,c(solve(iSigma)))
+    BETA.pp<-rbind(BETA.pp,rmvnorm(1,theta,solve(iSigma)) )
+  }
+  ##
+}
+
+
+
+
+#####
+library(coda)
+effectiveSize(S2.b)
+effectiveSize(THETA.b[,1])
+effectiveSize(THETA.b[,2])
+
+apply(SIGMA.PS,2,effectiveSize)
+
+tmp<-NULL;for(j in 1:dim(SIGMA.PS)[2]) { tmp<-c(tmp,acf(SIGMA.PS[,j])$acf[2]) }
+
+pdf("Fig5.pdf")
+par(mfrow=c(2,2))
+acf(S2.b,main=expression(sigma^2))
+acf(THETA.b[,1],main=expression(theta[1]))
+acf(THETA.b[,2],main=expression(theta[2]))
+dev.off()
+
+pdf("Fig4.pdf",family="Times",height=3.5,width=7)
+par(mar=c(3,3,1,1),mgp=c(1.75,.75,0))
+par(mfrow=c(1,2))
+
+plot(density(THETA.b[,2],adj=2),xlim=range(BETA.pp[,2]), 
+      main="",xlab="slope parameter",ylab="posterior density",lwd=2)
+lines(density(BETA.pp[,2],adj=2),col="gray",lwd=2)
+legend( -3 ,1.0 ,legend=c( expression(theta[2]),expression(tilde(beta)[2])), 
+        lwd=c(2,2),col=c("black","gray"),bty="n") 
+
+quantile(THETA.b[,2],prob=c(.025,.5,.975))
+mean(BETA.pp[,2]<0) 
+
+BETA.PM<-BETA.ps/(S/thin)
+plot( range(mathdat[,3]),range(mathdat[,4]),type="n",xlab="SES",
+   ylab="math score")
+for(j in 1:m) {    abline(BETA.PM[j,1],BETA.PM[j,2],col="gray")  }
+abline( mean(THETA.b[,1]),mean(THETA.b[,2]),lwd=2 )
+dev.off()
+
+
+
+
+
+
+
+
+
+

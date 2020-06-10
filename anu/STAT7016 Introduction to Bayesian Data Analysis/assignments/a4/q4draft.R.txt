@@ -1,0 +1,73 @@
+library(LearnBayes)
+library(coda)
+
+heart <- read.csv("hearttransplants.csv")
+
+SIMS <- 10000
+
+pgexchprior=function(lambda,pars) {
+    # lambda = vector of true rates
+    alpha=pars[1]; a=pars[2]; b=pars[3]
+    (alpha-1)*log(prod(lambda))-(2*alpha+a)*log(alpha*sum(lambda)+b)
+}
+
+alpha=c(5,20,80,400)
+par(mfrow=c(2,2))
+for (j in 1:4){
+    mycontour(pgexchprior,c(.001,5,.001,5),c(alpha[j],10,10),
+              main=paste("ALPHA = ",alpha[j]),
+              xlab="LAMBDA1",ylab="LAMBDA 2")
+}
+
+poissgamexch=function (theta, datapar)
+{
+    y = datapar$data[, 2]
+    e = datapar$data[, 1]
+    z0 = datapar$z0
+    alpha = exp(theta[1])
+    mu = exp(theta[2])
+    beta = alpha/mu
+    logf = function(y, e, alpha, beta)
+        lgamma(alpha + y) - (y + alpha) * log(e + beta) + alpha * log(beta) - lgamma(alpha)
+    val = sum(logf(y, e, alpha, beta))
+    val = val + log(alpha) - 2 * log(alpha + z0)
+    return(val)
+}
+
+par(mfrow=c(1,1))
+datapar = list(data = heart, z0 = 0.53)
+start = c(4, -7)
+fitgibbs = gibbs(poissgamexch, start, SIMS, c(1,.15), datapar)
+
+fitgibbs$accept
+plot(fitgibbs$par[1:SIMS,1],type="l",xlab="iteration",ylab="theta")
+plot(fitgibbs$par[1:SIMS,2],type="l",xlab="iteration",ylab="theta")
+effectiveSize(fitgibbs$par[,1])
+effectiveSize(fitgibbs$par[,2])
+
+mycontour(poissgamexch, c(0, 8, -7.3, -6.6), datapar,
+          xlab="log alpha",ylab="log mu",main = "Simulated thetas")
+points(fitgibbs$par[, 1], fitgibbs$par[, 2])
+
+alpha = exp(fitgibbs$par[, 1])
+mu = exp(fitgibbs$par[, 2])
+lam1 = rgamma(1000, y[1] + alpha, e[1] + alpha/mu)
+quantile(lam1,c(0.05,0.95))
+
+alpha = exp(fitgibbs$par[, 1])
+mu = exp(fitgibbs$par[, 2])
+plot(log(e), y/e, pch = as.character(y),main = "Observed death rates against log exposures & intervals")
+for (i in 1:94) {
+    lami = rgamma(1000, y[i] + alpha, e[i] + alpha/mu)
+    probint = quantile(lami, c(0.05, 0.95))
+    lines(log(e[i]) * c(1, 1), probint)
+}
+
+shrink=function(i) mean(alpha/(alpha + e[i] * mu))
+shrinkage=sapply(1:94, shrink)
+plot(log(e), shrinkage,main = "B_i")
+
+mrate=function(i) mean(rgamma(1000, y[i] + alpha, e[i] + alpha/mu))
+hospital=1:94
+meanrate=sapply(hospital,mrate)
+c("best:",hospital[meanrate==min(meanrate)],"worst:",hospital[meanrate==max(meanrate)])

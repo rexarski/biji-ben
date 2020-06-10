@@ -1,0 +1,287 @@
+#Histograms of Monte Carlo approximations to the gamma(68,45) distribution
+pdf("Fig1.pdf")
+par(mar=c(3,3,.25,1),mgp=c(1.75,.75,0))
+par(mfrow=c(2,3))
+set.seed(1)
+a<-68 ; b<-45
+set.seed(1)
+theta.support<-seq(0,3,length=100)
+theta.sim10<-rgamma(10,a,b)
+theta.sim100<-rgamma(100,a,b)
+theta.sim1000<-rgamma(1000,a,b)
+
+xlim<-c(.75,2.25)
+ylim=c(0,2.5)
+lty=1
+
+hist( theta.sim10, prob=T,xlim=xlim,ylim=ylim,xlab="",main="",ylab="")
+lines(theta.support,dgamma(theta.support,a,b),col="gray",lwd=2,lty=lty)
+text(2.1,2.25,expression(paste(italic(S),"=10",sep="")))
+
+hist( theta.sim100, prob=T,xlim=xlim,ylim=ylim,xlab="",main="" ,ylab="")
+lines(theta.support,dgamma(theta.support,a,b),col="gray",lwd=2,lty=lty)
+text(2.1,2.25,expression(paste(italic(S),"=100",sep="")))
+
+
+
+hist( theta.sim1000, prob=T,xlim=xlim,ylim=ylim,xlab="",main="" ,ylab="")
+lines(theta.support,dgamma(theta.support,a,b),col="gray",lwd=2,lty=lty)
+text(2.1,2.25,expression(paste(italic(S),"=1000",sep="")))
+
+
+plot(density(theta.sim10),xlim=xlim,ylim=ylim,xlab=expression(theta),main="",ylab="")
+lines(theta.support,dgamma(theta.support,a,b),col="gray",lwd=2,lty=lty)
+
+plot(density(theta.sim100),xlim=xlim,ylim=ylim,xlab=expression(theta),main="",ylab="")
+lines(theta.support,dgamma(theta.support,a,b),col="gray",lwd=2,lty=lty)
+
+plot(density(theta.sim1000),xlim=xlim,ylim=ylim,xlab=expression(theta),main="",ylab="")
+lines(theta.support,dgamma(theta.support,a,b),col="gray",lwd=2,lty=lty)
+dev.off()
+
+
+#Example - MC (birth rates)
+a<-2
+b<-1
+sy<-66
+n<-44
+
+#Posterior mean
+theta.mc10<-rgamma(10,a+sy,b+n)
+theta.mc100<-rgamma(100,a+sy,b+n)
+theta.mc1000<-rgamma(1000,a+sy,b+n)
+
+mean(theta.mc10)
+mean(theta.mc100)
+mean(theta.mc1000)
+#exact mean
+68/45
+
+#Posterior probabilities
+
+#Pr(theta<1.75)
+pgamma(1.75,a+sy,b+n) #exact probability
+
+mean(theta.mc10<1.75)
+sum(theta.mc10<1.75)/10
+
+mean(theta.mc100<1.75)
+sum(theta.mc100<1.75)/100
+
+mean(theta.mc1000<1.75)
+sum(theta.mc1000<1.75)/1000
+
+#Quantiles
+#exact
+qgamma(c(0.025,0.975),a+sy,b+n)
+
+#approximation
+quantile(theta.mc10,c(0.025,0.975))
+quantile(theta.mc100,c(0.025,0.975))
+quantile(theta.mc1000,c(0.025,0.975))
+
+#Convergence plots
+
+
+pdf("Fig2.pdf")
+par(mfrow=c(1,3),mar=c(2.75,2.75,.5,.5),mgp=c(1.70,.70,0))
+
+set.seed(1)
+a<-2   ; b<-1
+sy<-66 ; n<-44
+
+nsim<-1000
+theta.sim<-rgamma(nsim,a+sy,b+n)
+
+#cumulative mean
+
+cmean<-cumsum(theta.sim)/(1:nsim)
+cvar<- cumsum(theta.sim^2)/(1:nsim) - cmean^2
+ccdf<- cumsum(theta.sim<1.75)/ (1:nsim)
+cq<-NULL
+for(j in 1:nsim){ cq<-c(cq,quantile(theta.sim[1:j],probs=0.975)) }
+
+sseq<- c(1,(1:100)*(nsim/100))
+cmean<-cmean[sseq] 
+cq<-cq[sseq] 
+ccdf<-ccdf[sseq] 
+
+plot(sseq,cmean,type="l",xlab="# of Monte Carlo samples",ylab="cumulative mean",
+     col="black")
+abline(h= (a+sy)/(b+n),col="gray",lwd=2)
+
+plot(sseq,ccdf,type="l",xlab="# of Monte Carlo samples",ylab="cumulative cdf at 1.75",col="black")
+abline(h= pgamma(1.75,a+sy,b+n),col="gray",lwd=2)
+
+plot(sseq,cq,type="l",xlab="# of Monte Carlo samples",ylab="cumulative 97.5% quantile",col="black")
+abline(h= qgamma(.975,a+sy,b+n),col="gray",lwd=2)
+
+dev.off()
+
+#Posterior inference for arbitrary functions
+#Example: log-odds
+a<-1
+b<-1
+theta.prior.mc<-rbeta(10000,a,b)
+gamma.prior.mc<-log(theta.prior.mc/(1-theta.prior.mc))
+
+n<-860
+y<-441
+theta.post.mc<-rbeta(10000,a+y,b+n-y)
+gamma.post.mc<-log(theta.post.mc/(1-theta.post.mc))
+
+pdf("Fig3.pdf")
+plot(density(gamma.post.mc),xlim=c(-5,5),xlab="",lwd=3, main="MC approx. to prior and post. log odds")
+lines(density(gamma.prior.mc),xlim=c(-5,5),xlab="",col="grey",lwd=3)
+dev.off()
+
+
+#Posterior predictive checking
+
+load("alldata")
+
+table(Y$DEG[Y$YEAR==1998])
+y1<-Y$PRAYER[Y$YEAR==1998 & Y$RELIG==1 ]
+y1<-1*(y1==1)
+y1<-y1[!is.na(y1) ]
+sy1<-sum(y1)
+n1<-length(y1)
+sy1/n1
+
+y2<-Y$PRAYER[Y$YEAR==1998 & Y$RELIG!=1 ]
+y2<-1*(y2==1)
+y2<-y2[!is.na(y2) ]
+sy2<-sum(y2)
+n2<-length(y2)
+sy2/n2
+
+
+table(Y$FEMALE[Y$YEAR==1998])
+y<-Y$FEMALE[Y$YEAR==1998]
+y<-1*(y==1)
+y<-y[!is.na(y) ]
+sy<-sum(y)
+n<-length(y)
+sy/n
+
+
+sy<-sy2
+n<-n2
+
+
+y1<-Y$CHILDS[Y$FEMALE==1 &  Y$YEAR>=1990  & Y$AGE==40 & Y$DEG<3 ]
+y1<-y1[!is.na(y1)]
+
+ecdf<-(table(c(y1,0:9))-1 )/sum(table(y1))
+#ecdf.mc<-(table(c(y1.mc,0:9))-1 )/sum(table(y1.mc))
+ecdf.mc<- dnbinom(0:9,size=a+sum(y1),mu=(a+sum(y1))/(b+length(y1)))
+pdf("Fig5.pdf")
+plot(0:9+.1,ecdf.mc,type="h",lwd=5,xlab="number of children",
+     ylab=expression(paste("Pr(",italic(Y[i]==y[i]),")",sep="")),col="gray",
+      ylim=c(0,.35))
+points(0:9-.1, ecdf,lwd=5,col="black",type="h")
+
+legend(1.8,.35,
+     legend=c("empirical distribution","predictive distribution"),
+     lwd=c(2,2),col=
+       c("black","gray"),bty="n",cex=.8)
+dev.off()
+
+a<-2
+b<-1
+sy1<-217
+n1<-111
+sy2<-66
+n2<-44
+
+t.mc<-NULL
+for (s in 1:10000){
+theta1<-rgamma(1,a+sy1,b+n1)
+y1.mc<-rpois(n1,theta1)
+t.mc<-c(t.mc,sum(y1.mc==2)/sum(y1.mc==1))	
+}
+pdf("Fig6.pdf")
+hist(t.mc)
+abline(v=sum(y1==2)/sum(y1==1))
+dev.off()
+
+sum(t.mc>sum(y1==2)/sum(y1==1) )/10000
+
+mean(y1)
+var(y1)
+
+
+mean.mc<-NULL
+var.mc<-NULL
+for (s in 1:10000){
+theta1<-rgamma(1,a+sy1,b+n1)
+y1.mc<-rpois(n1,theta1)
+mean.mc<-c(mean.mc,mean(y1.mc))	
+var.mc<-c(var.mc,var(y1.mc))	
+}
+hist(mean.mc)
+abline(v=mean(y1))
+hist(var.mc)
+abline(v=var(y1))
+
+#################
+
+
+
+
+#######################################
+#Rejection sampling
+library(mvtnorm)
+#triangle density target - Example 1
+g.x<-function(x){
+	if(x>=0&&x<=1)
+     1
+     else 0
+      
+     }
+
+M<-3
+
+pdf("Fig10.pdf")
+plot(x.c,unlist(lapply(x.c,t.x)),col="blue",type="l",ylab="Density",xlab="x",main="",ylim=c(0,5))
+abline(h=3)
+legend(0.6,4,c("f(x)","Mg(x)"),col=c("blue","black"),lty=c(1,1))
+dev.off()
+
+m<-10000
+n.draws<-0
+draws<-c()
+x.grid<-seq(0,1,by=0.01)
+while(n.draws<m){
+	  x.c<-runif(1,0,1)
+	  accept.prob<-t.x(x.c)/(M*g.x(x.c))
+	  u<-runif(1,0,1)
+	  if(accept.prob>=u){
+	  	draws<-c(draws,x.c)
+	  	n.draws<-n.draws+1
+	  }
+}
+
+
+pdf("Fig11.pdf")
+plot(density(draws),col="black",type="l",ylab="Density",xlab="x",main="",ylim=c(0,2))
+x.c<-seq(0,1,0.01)
+lines(x.c,unlist(lapply(x.c,t.x)),col="blue")
+legend(0.6,1.5,c("target","rejection sampling draws"),col=c("blue","black"),lty=c(1,1))
+dev.off()
+
+
+
+pdf("Fig12.pdf")
+plot(x.c,unlist(lapply(x.c,t.x)),col="blue",type="l",ylab="Density",xlab="x",main="",ylim=c(0,5),lwd=2)
+abline(h=3,lwd=2)
+segments(0.25,2,0.25,3,col="red",lty=2,lwd=2)
+segments(0.8,0.5,0.8,3,col="light blue",lty=2,lwd=2)
+legend(0.6,4,c("f(x)","Mg(x)"),col=c("blue","black"),lty=c(1,1),lwd=c(2,2))
+dev.off()
+
+
+
+
+
+     

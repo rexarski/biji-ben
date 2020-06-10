@@ -1,0 +1,143 @@
+#Problem 2
+library(MCMCpack)
+library(mvtnorm)
+diab.data<-read.table("azdiabetes.dat",header=TRUE)
+attach(diab.data)
+names(diab.data)
+
+#a)
+n<-nrow(diab.data)
+y<-rep(0,n)
+y[diabetes=="Yes"]<-1
+
+X<-cbind(rep(1,n),npreg,bp,bmi,ped,age) 
+
+X<-t( (t(X)-apply(X,2,mean))/apply(X,2,sd))
+X[,1]<-1
+mle.model<-glm(y~-1+X,family="binomial")
+summary(mle.model)
+p<-6
+#proposal variance for beta
+beta.var.prop<-summary(mle.model)$cov.unscaled
+
+#prior distribution parameters
+pmn.beta<-rep(0,6)
+psd.beta<-c(4,rep(2,5))
+
+#starting values for beta and gamma
+beta<-coef(mle.model)
+acs_beta<-0
+gamma<-c(1,rbinom(5,1,0.5))
+
+S<-10000
+BETA<-NULL
+GAMMA<-NULL
+set.seed(1)
+
+#inverse logit function
+ilogit<-function(x) exp(x)/(1+exp(x))
+
+
+for(s in 1:S){
+	#lpy.c<-current log likelihood
+   lpy.c<-sum(dbinom(y,1,ilogit(X[,gamma==1,drop=FALSE]%*%beta[gamma==1]),log=T))	
+	#UPDATE GAMMAs
+      for(j in sample(2:p))
+    {
+      gamma_p<-gamma ; gamma_p[j]<-1-gamma_p[j]
+      #lpy.p==proposal log likelihood
+      lpy.p<-sum(dbinom(y,1,ilogit(X[,gamma_p==1,drop=FALSE]%*%beta[gamma_p==1,drop=FALSE]),log=T))
+      #print(c(j,lpy.p))
+      lhr<-(lpy.p-lpy.c)*(-1)^(gamma_p[j]==0)
+      gamma[j]<-rbinom(1,1,1/(1+exp(-lhr)))
+      if(gamma[j]==gamma_p[j]) {lpy.c<-lpy.p}
+     # if (log(runif(1))<lhr) {gamma[j]<-gamma_p[j] ;    lpy.c<-lpy.p}
+         
+         }
+
+      GAMMA<-rbind(GAMMA,gamma)
+
+
+      #UPDATE BETA
+      beta.p<-rmvnorm(1,beta,beta.var.prop)
+      lpy_beta.p<-sum(dbinom(y,1,ilogit(X[,gamma==1,drop=FALSE]%*%beta.p[gamma==1]),log=T))
+      #acceptance ratio for beta
+      lhr.beta<-lpy_beta.p-lpy.c+sum(dnorm(beta.p,pmn.beta,psd.beta,log=T))-sum(dnorm(beta,pmn.beta,psd.beta,log=T))
+     
+     if(log(runif(1))<lhr.beta) {beta<-beta.p; acs_beta<-acs_beta+1}
+
+  BETA<-rbind(BETA,beta)
+  
+  }
+	
+	acs_beta/S
+	pdf("HW_Fig1.pdf")
+	par(mfrow=c(3,2))
+	
+tvec<-seq(0,5,1)
+	for (i in 1:6){
+			plot(BETA[,i],main="",xlab="Iteration",ylab=substitute(paste(beta[a]),list(a=tvec[i])))
+		}
+		dev.off()
+		
+		
+			pdf("HW_Fig2.pdf")
+	par(mfrow=c(3,2))
+
+	for (i in 1:6){
+			plot(BETA[,i]*GAMMA[,i],main="",xlab="Iteration",ylab=substitute(paste(beta[a],gamma[a]),list(a=tvec[i])))
+		}
+		dev.off()
+		
+			pdf("HW_Fig4.pdf")
+		par(mfrow=c(3,2))
+
+	for (i in 1:6){
+			plot(GAMMA[,i],main="",xlab="Iteration",ylab=substitute((gamma[a]),list(a=tvec[i])))
+		}
+			dev.off()
+		
+		#b)
+		a<-apply(GAMMA,2,function(x) mean(x==1))
+		names(a)<-c("Intercept","npreg","bp","bmi","ped","age")
+		a
+
+
+   pdf("HW_Fig5.pdf")		
+			par(mfrow=c(3,2))
+
+	for (i in 1:6){
+			acf(BETA[,i],main="",ylab=substitute(paste(beta[a]),list(a=tvec[i])))
+		}
+			dev.off()
+			
+			   pdf("HW_Fig6.pdf")		
+			par(mfrow=c(3,2))
+
+	for (i in 1:6){
+			acf(BETA[,i]*GAMMA[,i],main="",ylab=substitute(paste((beta[a]),paste(gamma[a]),list(a=tvec[i]))))
+		}
+			dev.off()
+		
+		
+		#c)
+		pdf("HW_Fig3.pdf")
+	par(mfrow=c(3,2))
+	
+tvec<-seq(0,5,1)
+	for (i in 1:6){
+	plot(density(BETA[,i]*GAMMA[,i]),main="",ylab="",xlab=substitute(paste(beta[a],gamma[a]),list(a=tvec[i])),lwd=2)
+		}
+		dev.off()
+		
+		options(digits=2)
+		b<-apply(GAMMA*BETA,2,mean)
+		names(b)<-c("Intercept","npreg","bp","bmi","ped","age")
+		b
+		
+		b<-apply(GAMMA*BETA,2, function(x) mean(exp(x)))
+		names(b)<-c("Intercept","npreg","bp","bmi","ped","age")
+		b
+		
+		
+		

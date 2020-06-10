@@ -1,0 +1,610 @@
+%
+% This is a borrowed LaTeX template file for lecture notes for CS267,
+% Applications of Parallel Computing, UCBerkeley EECS Department.
+% Now being used for CMU's 10725 Fall 2012 Optimization course
+% taught by Geoff Gordon and Ryan Tibshirani.  When preparing 
+% LaTeX notes for this class, please use this template.
+%
+% To familiarize yourself with this template, the body contains
+% some examples of its use.  Look them over.  Then you can
+% run LaTeX on this file.  After you have LaTeXed this file then
+% you can look over the result either by printing it out with
+% dvips or using xdvi. "pdflatex template.tex" should also work.
+%
+
+\documentclass[twoside]{article}
+\setlength{\oddsidemargin}{0.25 in}
+\setlength{\evensidemargin}{-0.25 in}
+\setlength{\topmargin}{-0.6 in}
+\setlength{\textwidth}{6.5 in}
+\setlength{\textheight}{8.5 in}
+\setlength{\headsep}{0.75 in}
+\setlength{\parindent}{0 in}
+\setlength{\parskip}{0.1 in}
+
+%
+% ADD PACKAGES here:
+%
+
+\usepackage{amsmath,amsfonts,graphicx,soul}
+
+%
+% The following commands set up the lecnum (lecture number)
+% counter and make various numbering schemes work relative
+% to the lecture number.
+%
+\newcounter{lecnum}
+\renewcommand{\thepage}{\thelecnum-\arabic{page}}
+\renewcommand{\thesection}{\thelecnum.\arabic{section}}
+\renewcommand{\theequation}{\thelecnum.\arabic{equation}}
+\renewcommand{\thefigure}{\thelecnum.\arabic{figure}}
+\renewcommand{\thetable}{\thelecnum.\arabic{table}}
+
+\newcommand*\conj[1]{\bar{#1}}
+\newcommand*\mean[1]{\bar{#1}}
+\newcommand{\indep}{\rotatebox[origin=c]{90}{$\models$}}
+%
+% The following macro is used to generate the header.
+%
+\newcommand{\lecture}[4]{
+   \pagestyle{myheadings}
+   \thispagestyle{plain}
+   \newpage
+   \setcounter{lecnum}{#1}
+   \setcounter{page}{1}
+   \noindent
+   \begin{center}
+   \framebox{
+      \vbox{\vspace{2mm}
+    \hbox to 6.28in { {\bf STAT7017 Big Data Statistics
+	\hfill Semester 2 2018} }
+       \vspace{4mm}
+       \hbox to 6.28in { {\Large \hfill Lecture #1: #2  \hfill} }
+       \vspace{2mm}
+       \hbox to 6.28in { {\it Lecturer: #3 \hfill Scribes: #4} }
+      \vspace{2mm}}
+   }
+   \end{center}
+   \markboth{Lecture #1: #2}{Lecture #1: #2}
+
+   {\bf Note}: {\it LaTeX template courtesy of UC Berkeley EECS dept.}
+
+   {\bf Disclaimer}: {\it These notes have not been subjected to the
+   usual scrutiny reserved for formal publications.  They may be distributed
+   outside this class only with the permission of the Instructor.}
+   \vspace*{4mm}
+}
+%
+% Convention for citations is authors' initials followed by the year.
+% For example, to cite a paper by Leighton and Maggs you would type
+% \cite{LM89}, and to cite a paper by Strassen you would type \cite{S69}.
+% (To avoid bibliography problems, for now we redefine the \cite command.)
+% Also commands that create a suitable format for the reference list.
+\renewcommand{\cite}[1]{[#1]}
+\def\beginrefs{\begin{list}%
+        {[\arabic{equation}]}{\usecounter{equation}
+         \setlength{\leftmargin}{2.0truecm}\setlength{\labelsep}{0.4truecm}%
+         \setlength{\labelwidth}{1.6truecm}}}
+\def\endrefs{\end{list}}
+\def\bibentry#1{\item[\hbox{[#1]}]}
+
+%Use this command for a figure; it puts a figure in wherever you want it.
+%usage: \fig{NUMBER}{SPACE-IN-INCHES}{CAPTION}
+\newcommand{\fig}[3]{
+			\vspace{#2}
+			\begin{center}
+			Figure \thelecnum.#1:~#3
+			\end{center}
+	}
+% Use these for theorems, lemmas, proofs, etc.
+\newtheorem{theorem}{Theorem}[lecnum]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newenvironment{proof}{{\bf Proof:}}{\hfill\rule{2mm}{2mm}}
+
+% **** IF YOU WANT TO DEFINE ADDITIONAL MACROS FOR YOURSELF, PUT THEM HERE:
+
+\newcommand\E{\mathbb{E}}
+
+\begin{document}
+%FILL IN THE RIGHT INFO.
+%\lecture{**LECTURE-NUMBER**}{**DATE**}{**LECTURER**}{**SCRIBE**}
+\lecture{2}{30 July}{Dr Dale Roberts}{Rui Qiu}
+%\footnotetext{These notes are partially based on those of Nigel Mansell.}
+
+% **** YOUR NOTES GO HERE:
+
+% Some general latex examples and examples making use of the
+% macros follow.  
+%**** IN GENERAL, BE BRIEF. LONG SCRIBE NOTES, NO MATTER HOW WELL WRITTEN,
+%**** ARE NEVER READ BY ANYBODY.
+
+\textbf{Matrix analysis, Eigenvalues \& eigenvectors, and Multivariate Normal distribution.}\\
+
+We denote a set of $p$ random variables $X_i:\Omega\rightarrow\mathbb{R},\ i=1,\cdots,p$ by the (vector-valued) random variable $\mathbb{X}:\Omega\rightarrow\mathbb{R}^p.$
+
+$$\mathbb{X}_i=
+\begin{bmatrix}
+	X_1\\
+	\vdots\\
+	X_p
+\end{bmatrix}$$
+
+call it a ``random vector".
+
+The \underline{mean} or \underline{expectation} of $\mathbb{X}$ is given by
+
+$$\mathbb{E[X]}=
+\begin{bmatrix}
+	\mathbb{E}[X_1]\\
+	\mathbb{E}[X_2]\\
+	\vdots\\
+	\mathbb{E}[X_p]\\
+\end{bmatrix}=\mu=
+\begin{bmatrix}
+	\mu_1\\
+	\mu_2\\
+	\vdots\\
+	\mu_p\\
+\end{bmatrix}$$
+
+We always make the assumption that $\mu<\infty$.
+
+A typical measurement involves taking $n$ random samples $\{\mathbb{X}_1,\mathbb{X}_2,\cdots,\mathbb{X}_n\}$.
+
+We can express this in matrix form:
+
+$$\mathbb{X}=(\mathbb{X}_1,\mathbb{X}_2,\cdots,\mathbb{X}_n)'=\begin{pmatrix}
+	\mathbb{X}_1\\
+	\mathbb{X}_2\\
+	\vdots\\
+	\mathbb{X}_n
+\end{pmatrix}=
+\begin{pmatrix}
+	X_{11} & X_{12} & \cdots & X_{1p}\\
+	X_{21} & X_{22} & \cdots & X_{2p}\\
+	\vdots & \vdots & \ddots & \vdots\\
+	X_{n1} & X_{n2} & \cdots & X_{np}\\
+\end{pmatrix}$$
+
+\underline{\textbf{Notation:}} transpose of vector $\mathbf{x}$ and matrix $A$ are denoted $\mathbf{x}'$ and $A'$, respectively.\\
+
+A matrix of random variables is called a \underline{random matrix}.
+
+Expectation of a random matrix $\mathbb{X}=(X_{ij})$ is given by
+
+$$\mathbb{E[X]}=(\mathbb{E}(X_{ij}))$$
+
+\begin{lemma}
+	Let $\mathbb{X}=(X_{ij})$ and $\mathbb{Y}=(Y_{ij})$ be $n\times p$ random matrices. If $A,B$ and $C$ are constant matrices, then:
+	
+	
+
+\begin{equation} \label{eq1}
+\mathbb{E[X+Y]=E[X]+E[Y]}.
+\end{equation}
+
+\begin{equation} \label{eq2}
+\mathbb{E}[A\mathbb{X}B+C]=A\mathbb{E[X]}B+C.
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+Choosing an arbitrary $(i,j)$'th element, LHS of (2.1) is 
+
+$$\mathbb{E}[X_{ij}+Y_{ij}]=\mathbb{E}[X_{ij}]+\mathbb{E}[Y_{ij}]$$
+
+which is just the RHS of (2.1). Since $(i,j)$ was arbitrary, it holds for all $i,j$.
+
+In the same way, $(i,j)$'th	element of LHS of (2.2) is 
+
+$$\mathbb{E}\left[\sum^n_{k=1}\sum^p_{l=1}a_{ik}x_{kl}b_{lj}+c_{ij}\right]=\sum^n_{k=1}\sum^p_{l=1}a_{ik}\mathbb{E}[\mathbb{X}_{kl}]b_{lj}+c_{ij}$$
+
+which is the RHS of (2.2).
+\end{proof}
+
+\underline{\textbf{Note:}} $A=(a_{ij})\in \mathbb{R}^{l\times m}$ \& $B=(b_{jk})\in\mathbb{R}^{m\times n}$; then
+
+$$(AB)_{ik}=\sum^m_{j=1}a_{ij}b_{jk},\ i=1,\dots,l;\ k=1,\dots,n.$$\\
+
+If a $p\times 1$ random vector $\mathbb{X}=(X_1,X_2,\dots, X_p)'$ has mean $\mu=(\mu_1,\dots, \mu_p)'$, the \underline{covariance matrix of $\mathbb{X}$} is defined by
+
+$$\Sigma=Var(\mathbb{X})=\mathbb{E}\left[(\mathbb{X}-\mu)(\mathbb{X}-\mu)'\right].$$
+
+If a $q\times 1$ random vector $\mathbb{Y}=(Y_1,Y_2,\dots,Y_q)'$ has mean $\eta=(\eta_1,\eta_2,\dots,\eta_q)'$, the \underline{covariance matrix of $\mathbb{X}$ and $\mathbb{Y}$} is defined by
+
+$$Cov(\mathbb{X},\mathbb{Y})=\mathbb{E}\left[(\mathbb{X}-\mu)(\mathbb{Y}-\eta)'\right].$$
+
+In particular, $Cov(\mathbb{X},\mathbb{X})=Var(\mathbb{X}).$
+
+Elementwise we have $\Sigma=(\sigma_{ij})$ with
+
+$$\sigma_{ij}=\mathbb{E}\left[(X_i-\mu_i)(X_j-\mu_j)\right]=Cov(X_i,X_j).$$
+
+The covariance between $X_i$ and $X_j$.
+
+$$\sigma_{ii}=\mathbb{E}[(X_i-\mu_i)^2]=Var(X_i).$$
+
+We write $\sigma_i^2=\sigma_{ii}.$
+
+\begin{theorem}
+	Let $\Sigma$ be the covariance matrix of a $p\times 1$ random vector $\mathbb{X}$.
+	
+	\begin{enumerate}
+		\item $\Sigma$ is \underline{positive semidefinite} (non-negative definite), that is, for any $p\times 1$ fixed vector $x=(x_1,\dots,x_p)'$, $$x'\Sigma x=\sum^p_{i=1}\sum^p_{j=1}\sigma_{ij}x_ix_j\geq 0.$$
+		\item Let $B$ be a $q\times p$ constant matrix and $b$ be a $q\times 1$ constant vector. Then the covariance matrix $\mathbb{Y}=B\mathbb{X}+b$ is $$Var(\mathbb{Y})=B\Sigma B'.$$
+	\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+	\begin{enumerate}
+		\item For any $x\in\mathbb{R}^p$, we have
+			\begin{equation}
+				\begin{split}
+					Var(x'\mathbb{X})&=\mathbb{E}[(x'\mathbb{X}-x'\mu)(x'\mathbb{X}-x'\mu)']\\
+					&=\mathbb{E}[(x'(\mathbb{X}-\mu))(x'(\mathbb{X}-\mu))']\\
+					&=\mathbb{E}[x'(\mathbb{X}-\mu)(\mathbb{X}-\mu)'x]\\
+					&=x'\mathbb{E}[(\mathbb{X}-\mu)(\mathbb{X}-\mu)']x\\
+					&=x'\Sigma x.
+				\end{split}
+			\end{equation} and we also know that $Var(x'\mathbb{X})\geq 0,$ so the result follows.
+		\item As $\mathbb{Y}-\mathbb{E[Y]}=(B\mathbb{X}+b)-(B\mu+b)=B(\mathbb{X}-\mu).$\\
+			We have
+			\begin{equation}
+				\begin{split}
+					Var(\mathbb{Y})&=\mathbb{E}[B(\mathbb{Y}-\mu)(B(\mathbb{Y}-\mu))']\\
+					&=\mathbb{E}[B(\mathbb{X}-\mu)(\mathbb{X}-\mu)'B']\\
+					&=B\mathbb{E}[(\mathbb{X}-\mu)(\mathbb{X}-\mu)']B'\\
+					&=B\Sigma B'
+				\end{split}
+			\end{equation}
+	\end{enumerate}
+\end{proof}
+
+In general, \underline{the covariance matrix is positive semidefinite.}\\
+
+We call a matrix $A$ \underline{positive definite} if for all $x\not=0$,
+
+$$x'Ax > 0.$$
+
+\underline{Recall:} a complex number is a number of the form $a+bi$ where $i$ satisfies $i^2=-1$. We write $Re(a+bi)=a,\ Im(a+bi)=b$.
+
+The \underline{complex conjugate} of a complex number $z=a+bi$ is given by $\mean{z}=a-bi$. $z\in\mathbb{C}$: ``space of complex numbers."
+
+If $A$ is a $m\times n$ matrix with complex entires, then the $n\times m$ matrix $A^*$ is obtained by taking the transpose followed by the complex conjugate of each entry.
+
+$$(A^*)_{ij}=\overline{A_{ij}}\text{ or } A^*=\left(\overline{A}\right)'=\overline{A'}.$$\\
+
+\underline{Example:}
+
+$$A=\begin{bmatrix}
+	1 & -3-i\\
+	1+2i & 6i
+\end{bmatrix},\ A^*=\begin{bmatrix}
+	1 & 1-2i\\
+	-3+i & -6i
+\end{bmatrix}$$
+
+The matrix $A^*$ is called the \underline{\textbf{conjugate transpose}} of $A$.\\
+
+\textbf{Properties:}
+
+\begin{enumerate}
+	\item $(A+B)^*=A^*+B^*$, if $A, B$ have the same dimensions.
+	\item $(rA)^*=\mean{r}A^*$, for $r\in\mathbb{C}$ and matrix $A$.
+	\item $(AB)^*=B^*A^*,\ A\in\mathbb{R}^{m\times n},\ B\in\mathbb{R}^{n\times p}$.
+	\item $(A^*)^*=A,\ A\in\mathbb{R}^{n\times n}$.
+	\item If $A\in\mathbb{R}^{n\times n}$, then $\det(A^*)=\overline{\det A}\ \&\ tr(A^*)=\overline{(trA)}$
+\end{enumerate}
+
+\underline{Classes of matrices}
+
+A \underline{Hermitian matrix} $A$ is a square matrix that satisfies $A=A^*$. That means if if $A=(a_{ij})$ then $a_{ij}=\overline{a_{ji}}$.
+
+The nice thing about Hermitian matrices is that they behave a bit like real numbers. Arbitrary square matrices behave like complex numbers (i.e., they can have some quirky behaviour).
+
+Sometimes I will write $A\in \mathbb{M}_p$ to denote that $A$ is a square matrix of size $p\times p$ and if $A$ is Hermitian, I will write $A\in \mathbb{H}_p$.
+
+\underline{Notice:} $\mathbb{H}_p\subseteq\mathbb{M}_p.$
+
+We can define the (Frobenius) \underline{norm} of a matrix $A\in\mathbb{M}_p$ as
+
+$$\lVert A\rVert_F=\sqrt{\sum^p_{j=1}\sum^p_{k=1}\lvert a_{jk}\rvert^2},\ A\in\mathbb{M}_p$$
+
+\textbf{\underline{Eigenvalues and Eigenvectors}}
+
+If $A\in\mathbb{M}_p$ and if $Ae=\lambda e$ and $e\not=0$ where $e\in\mathbb{R}^p$, then $\lambda$ and $e$ are called an \underline{eigenvalue} and an \underline{eigenvector} of $A$.
+
+\underline{Example:}
+
+$$A=\begin{bmatrix}
+	2 & 1\\
+	1 & 2
+\end{bmatrix},\ e=\begin{bmatrix}
+	1\\
+	1
+\end{bmatrix},\ f=\begin{bmatrix}
+	1\\
+	0
+\end{bmatrix}$$
+
+$Ae=3e$, so $e$ is eigenvector, $\lambda=3$. $f$ is \underline{not} an eigenvector.
+
+If $A\in\mathbb{M}_p$ and $\lambda=(\lambda_1,\dots, \lambda_p)$, ``eigenvalues"; $E=(e_1,e_2,\dots,e_p)\in\mathbb{M}_p$, ``eigenvectors".
+
+Then $AE=\lambda E\iff \lvert A-\lambda I\rvert = 0$ where $|A|=\det(A)$ and $E$ satisfies $(A-\lambda I)E=0$.
+
+The expression $p(\lambda)=\lvert A-\lambda I\rvert$ is called the \underline{characteristic polynomial} for $A$. The equation $p(\lambda)=0$ is the \underline{characteristic equation} for $A$.
+
+If $B\in\mathbb{M}_p$ then the \underline{trace} is the sum of the diagonal entries, i.e.
+
+$$tr{B}:=\sum^p_{k=1}b_{kk},\ B\in\mathbb{M}_p.$$
+
+\textbf{\underline{Proposition:}} If $A\in\mathbb{M}_p$ then $P(\lambda)=\lvert A-\lambda I\rvert$ is a polynomial in $\lambda$ of degree $p$ and 
+
+$$P(\lambda)=\lambda^p-a_1\lambda^{p-1}+\cdots +(-1)^p a_p$$
+
+where
+
+\begin{equation}
+	\begin{split}
+		a_1&=tr(A)\\
+		a_p&=\det(A)\\
+		a_i&=\text{``sum of i-rowed diagonal mirrors of } A" 
+	\end{split}
+\end{equation}
+
+E.g. $p=2, P_2(\lambda)=\lambda^2-tr(A)+\det(A).$
+
+Further: $P(\lambda)=(\lambda_1-\lambda)(\lambda_2-\lambda)\cdots(\lambda_p-\lambda)$ and $|A|=\prod^{p}_{i=1}\lambda_i.$
+
+
+\underline{Example:}
+
+$$B=\begin{pmatrix}
+	5 & 2\\
+	2 & 5
+\end{pmatrix}
+$$
+
+\begin{equation}
+	\begin{split}
+		\lvert B-\lambda I\rvert &= \begin{vmatrix}
+			5-\lambda & 2 \\
+			2 & 5-\lambda 
+		\end{vmatrix}\\
+		&=25-4-10\lambda +\lambda^2\\
+		&=\lambda^2 -10\lambda +21
+	\end{split}
+\end{equation}
+
+A \underline{symmetric matrix} is a square matrix that is equal to its transpose, i.e,
+
+$$A=A'.$$
+
+We denote $A\in\mathbb{S}_p$ and $\mathbb{S}_p \subseteq \mathbb{H}_p.$
+
+\underline{\textbf{Proposition:}} Let $A\in \mathbb{S}_p$, then
+
+\begin{enumerate}
+	\item The \underline{characteristic roots} $\lambda_1,\dots, \lambda_p$ are all real. ($\lambda_1,\dots,\lambda_p$ satisfy $P(\lambda_i)=0$.
+	\item If $\lambda_i$ and $\lambda_j$ are two distinct characteristic roots of $A$, the corresponding \underline{characteristic vectors} $e_i$ and $e_j$ are orthogonal.
+\end{enumerate}
+
+\underline{\textbf{Proposition:}} Let $\lambda_1\geq \lambda_2\geq\cdots\lambda_p$ be the characteristic roots of a matrix $A\in\mathbb{S}_p$. Then \begin{enumerate}
+	\item $A>0$ (``positive definite") $\iff \lambda_i>0,\ i=1\dots, p.$
+	\item $A\geq 0$ (``positive semidefinite") $\iff\lambda_i\geq 0,\ i=1,\dots,p.$
+\end{enumerate}
+
+Given a covariance matrix $\Sigma$ (positive semidefinite), it follows that the characteristic roots (eigenvalues) are non-negative and these are denoted by
+
+$$\lambda_1\geq\lambda_2\geq\cdots\lambda_p\geq 0.$$
+
+Let $\gamma_i$ be the characteristic vector (eigenvector) corresponding to $\lambda_i$ for $i=1,\dots, p$. WLOG, we assume they are \underline{orthonormal}, i.e.,
+
+$$\gamma_i'\gamma_j=\begin{cases}
+	1\ \text{if}\ i=j,\\
+	0\ \text{if}\ i\not=j.
+\end{cases}$$
+
+The characteristic roots and vectors satisfy
+
+$$\sum\gamma_i=\lambda_i\gamma_i,\ i=1,\dots,p.$$
+
+The relationship $\sum\lambda_i=\lambda_i\gamma_i$ can be expressed as
+
+\begin{equation}\Sigma\Lambda=\Gamma\Lambda.	
+\end{equation}
+
+where $\Lambda=diag(\lambda_1,\lambda_2,\dots,\lambda_p)$ and $\Gamma=(\gamma_1,\gamma_2,\dots,\gamma_p)$.
+
+We assume that the matrix $\Gamma$ is normalized as $\Gamma'\Gamma=I_p,$ then the equation (2.7) implies that
+
+\begin{equation}
+	\begin{split}
+		\Sigma &=\Gamma\Lambda\Gamma'\\
+		&=\Gamma\Lambda^{1/2}\Lambda^{1/2}\Gamma'\\
+		&=\Gamma\Lambda^{1/2}\Gamma'\Gamma\Lambda^{1/2}\Gamma'
+	\end{split}
+\end{equation}
+
+where $\Lambda^{1/2}=diag(\sqrt{\lambda_1},\dots,\sqrt{\lambda_p}).$
+
+Define $\Sigma^{1/2}=\Gamma\Lambda^{1/2}\Gamma'$ and $C=\Gamma\Lambda^{1/2}$, then
+
+$$\Sigma=(\Sigma^{1/2})^2=CC'.$$
+
+\underline{Note:} Here you should be drawing an analogy to variance vs. standard deviation in univariate case as $\sigma^2=\sigma\sigma.$
+
+The covariance matrix $\Sigma$ contains the variance of the $p$ variables and the covariances between them. It is desirable to have a measure of ``scatter".
+
+Two possibilities are:
+
+\underline{Generalized variance} given in terms of the determinant.
+
+\begin{equation}
+	|\Sigma|=|\Gamma\Lambda\Gamma'|=|\Lambda|=\lambda_1\cdot\lambda_2\cdots\lambda_p.
+\end{equation}
+
+\underline{Total variance} given in terms of trace.
+
+\begin{equation}
+	\begin{split}
+		tr\Sigma&=\sigma_{11}+\sigma_{22}+\cdots+\sigma_{pp}\\
+		&=tr(\Gamma\Lambda\Gamma')\\
+		&=tr(\Lambda\Gamma'\Gamma)\\
+		&=tr\Lambda=\lambda_1+\lambda_2+\cdots +\lambda_p.
+	\end{split}
+\end{equation}
+
+\underline{Note:} Later we will actually consider the term in (2.9) as
+
+$$GV(?)=\frac{1}{p}\log|\Sigma|=\frac{1}{p}\sum^p_{k=1}\log(\lambda_k).$$
+
+\underline{\textbf{Characteristic functions}}
+
+Let $\mathbb{X}$ be a $p$-dimensional random vector, then
+
+$$P(\mathbb{X}\in E)=\int_{E}f(\mathbf{x})d\mathbf{x}$$
+
+where $d\mathbf{x}=dx_1dx_2\cdots dx_p.\ E\subset \mathbb{R}^p.$
+
+The function $f(\mathbf{x})=f(x_1,x_2,\dots,x_p)$ is called the density of $\mathbb{X}$.
+
+The \underline{characteristic function} of $\mathbb{X}$ is
+
+$$C(\theta)=\mathbb{E}\left[e^{i\Theta'\mathbb{X}}\right]$$
+
+where $i:=\sqrt{-1}, \Theta:=(\theta_1,\theta_2,\dots,\theta_p)', \theta_i\in\mathbb{R}, i=1,\dots, p.$
+
+\begin{theorem}
+	There exists a one-to-one correspondence between the distribution of $\mathbb{X}$ and its characteristic function.
+	
+	$$f(\mathbf{x})=\frac{1}{(2\pi)^p}\int^\infty_{-\infty}\cdots \int^\infty_{-\infty} e^{-i\Theta'\mathbf{x}}C(\Theta)d\theta_1\cdots d\theta_p.$$
+\end{theorem}
+
+You can use the characteristic function to obtain various moments of $\mathbb{X}$.
+
+$$\frac{\partial^m}{\partial^{m_1}_{\theta_1}\partial^{m_2}_{\theta_2}\cdots\partial^{m_p}_{\theta_p}}C(\Theta)=\mathbb{E}\left[(iX_1)^{m_1}(iX_2)^{m_2}\cdots(iX_p)^{m_p}e^{i\Theta'\mathbb{X}}\right]$$
+
+where $m=m_1+m_2+\cdots+m_p$.
+
+Taking $\Theta=\mathbf{0},$ we can get the moment $\mathbb{E}[X_1^{m_1}X_2^{m_2}\cdots X_p^{m_p}]$.
+
+\underline{\textbf{Multivariate Normal Distribution}}
+
+The simplest case is the \underline{bivariate normal distribution}.
+
+$$\mathbb{X}=(X_1,X_2)$$
+
+$$P(\mathbb{X}\in E)=P(a<X_1\leq b, c<X_2\leq d)=\int^b_a\int^d_c f(x_1,x_2)dx_1dx_2.$$
+
+density given by $$f(x_1,x_2)=\frac{1}{2\pi\sigma_1\sigma_2\sqrt{1-p^2}}\exp\left(\frac{-1}{2(1-p^2)}\Theta\right)$$
+
+and
+
+$$\Theta(x_1,x_2)=\left(\frac{x_1-\mu_1}{\sigma_1}\right)^2-2p\frac{(x_1-\mu_1)(x_2-\mu_2)}{\sigma_1\sigma_2}+\left(\frac{x_2-\mu_2}{\sigma_2}\right)^2.$$
+
+$\mathbb{X}\sim $ Bivariate Normal.
+
+$$\mathbb{E}[X_i]=\mu_i,\ Var[X_i]=\sigma_i^2,\ i=1, 2.$$
+
+covariance and correlation between $X_1$ and $X_2$ are
+
+$$Cov(X_1,X_2)=\rho\sigma_1\sigma_2,\ Cor(X_1,X_2)=\rho.$$
+
+Covariance matrix
+
+$$\Sigma=\begin{pmatrix}
+	\sigma^2_1 & \rho\sigma_1\sigma_2\\
+	\rho\sigma_1\sigma_2 & \sigma_2^2
+\end{pmatrix}$$
+
+$X_1\sim N(\mu_1, \sigma_1^2)$ and $X_2\sim N(\mu_2, \sigma_2^2)$.
+
+Let's construct the \underline{higher-dimensional case}. $(p>2)$.
+
+\underline{Recall}: $Z\sim N(0,1), p(z)=\frac{1}{\sqrt{2\pi}}e^{-z^2/2}, -\infty<z<\infty.$
+
+If $X\sim N(\mu,\sigma^2)$ then $X=\mu+\sigma Z$ and 
+
+$$f(x)=\frac{1}{\sqrt{2\pi}}e^{-(x-\mu)^2/2\sigma^2}.$$
+
+Take $\mathbb{Z}=(Z_1,Z_2,\dots,Z_p)', Z_i\sim(N,0,1)$ iid then $\mathbb{Z}$ has density
+
+$$\prod^p_{i=1}\frac{1}{\sqrt{2\pi}}e^{-z_i^2/2}=\left(\frac{1}{\sqrt{2\pi}}\right)^p e^{-\mathbf{z}'\mathbf{z}/2},\ \mathbf{z}=(z_1,z_2,\dots,z_p)'.$$
+
+Now consider $\mathbb{E}[\mathbb{X}]=\mu, Cov[\mathbb{X}]=\Sigma.$
+
+\begin{lemma}
+	Let $\mathbf{f}=\mathbf{f}(\mathbf{x})=(f_1(\mathbf{x}),f_2(\mathbf{x}),\dots,f_p(\mathbf{x}))'$ be a transformation such that partial derivatives $\partial f_i/\partial x_j$ exist. Then the determinant of the matrix
+	
+	$$\begin{pmatrix}
+		\frac{\partial f_1}{\partial x_1} & \cdots & 		\frac{\partial f_1}{\partial x_p}\\
+		\vdots & \ddots & \vdots\\
+				\frac{\partial f_p}{\partial x_1} & \cdots & 		\frac{\partial f_p}{\partial x_p}
+	\end{pmatrix}$$
+	
+is called the \underline{Jacobian determinant} and denoted $J$.
+\end{lemma}
+
+and some useful cases are:
+
+\begin{enumerate}
+	\item $\mathbf{y}=A\mathbf{x}\implies J=|A|, y\in\mathbb{R}^p, x\in\mathbb{R}^p.$
+	\item $Y=AX\implies J=|A|^q, \mathbf{X}\in\mathbb{R}^{p\times q}, \mathbf{Y}\in\mathbb{R}^{p\times q}.$
+	\item $\mathbf{Y}=\mathbf{X}B\implies J=|B|^p, A\in\mathbb{M}_p, B\in\mathbb{M}_q.$
+	\item $\mathbf{Y}=A\mathbf{X}B\implies J=|A|^q|B|^p.$
+\end{enumerate}
+
+\noindent\rule{\textwidth}{1pt}
+
+Now, returning to multivariate normals, the Jacobian for the transformation from $\mathbb{X}$ to $\mathbb{Z}$ is
+
+$$\Sigma^{-1/2}\mathbb{X}-\Sigma^{-1/2}\mu.$$
+
+and $J=|\Sigma^{-1/2}|=|\Sigma|^{-1/2}.$
+
+\begin{theorem}
+	If $\mathbb{X}$ is random vector with density $\phi(\mathbf{x})$ then  the density of $\mathbb{Y}=g(\mathbb{X})$ is given by
+	
+	$$f(y)=\phi(g^{-1}(y))|J|.$$
+\end{theorem}
+
+Therefore, the density of $\mathbb{X}$ is
+
+\begin{equation}
+	f(\mathbf{x})=(2\pi)^{-p/2}|\Sigma|^{-1/2}\exp\left(-\frac12(\mathbf{x}-\mu)'\Sigma^{-1}(\mathbf{x}-\mu)\right)
+\end{equation}
+
+We say that $\mathbb{X}$ has $p$-variate Normal distribution if it has density (2.11).
+
+\begin{theorem}
+	The following are equivalent:
+	\begin{enumerate}
+		\item $\mathbb{X}\sim N_p(\mu,\Sigma)$, $\Sigma\in\mathbb{M}_p$ positive definite.
+		\item $\mathbb{Z}\sim\Sigma^{-1/2}(\mathbb{X}-\mu)\sim N_p(\mathbf{0},\mathbf{I}_p).$
+	\end{enumerate}
+\end{theorem}
+
+\begin{theorem}
+	$\mathbb{X}\sim N_p(\mu,\Sigma)$
+	\begin{enumerate}
+		\item $\mathbb{E}[\mathbb{X}]=\mu,\  Var(\mathbb{X})=\Sigma.$
+		\item $C_\mathbb{X}(\Theta)=\exp\left(i\mu'\Theta-\frac12\Theta'\Sigma\Theta\right).$
+		\item $B\in\mathbb{R}^{q\times p}\ ,Rank(B)=q,\ b\in\mathbb{R}^q,$
+		$$\mathbb{Y}=B\mathbb{X}+b\sim N_q(B\mu+b, B\Sigma B').$$
+	\end{enumerate}
+\end{theorem}
+
+% **** THIS ENDS THE EXAMPLES. DON'T DELETE THE FOLLOWING LINE:
+
+\end{document}
+
+
+
+
+

@@ -1,0 +1,252 @@
+---
+title: "STAT7017 Homework 3"
+author: "Rui Qiu"
+date: '2018-09-20'
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE, cache=T}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question 1
+
+$S_1$ and $S_2$ are two sample covariance matrices for $p$ dimensional observations of size $n_1$ and $n_2$.
+
+With $V_n=S_1S_2^{-1}$, $y_{n_1}=p/n_1, y_{n_2}=p/n_2$, the parameter here I choose here is
+
+\[
+p =50, n_1=200, n_2=500.
+\]
+
+```{r}
+set.seed(7017)
+library(ggplot2)
+
+p <- 50
+n1 <- 200
+n2 <- 500
+X1 <- matrix(rnorm(p*n1),p,n1)
+X2 <- matrix(rnorm(p*n2),p,n2)
+S1 <- X1 %*% t(X1) / n1
+S2 <- X2 %*% t(X2) / n2
+V <- S1 %*% solve(S2)
+e <- eigen(V)
+eigenvalue <- e$values
+dat <- as.data.frame(eigenvalue)
+
+# LSD
+y1 <- p/n1
+y2 <- p/n2
+h <- sqrt(y1+y2-y1*y2)
+a <- ((1-h)/(1-y2))**2
+b <- ((1+h)/(1-y2))**2
+
+l <- function(x) {
+    if (x < a || x > b) {
+        return(0)
+    } else {
+        return((1-y2)*sqrt((b-x)*(x-a))/(2*pi*x*(y1+y2*x)))
+    }
+}
+dat$lx <- sapply(dat$eigenvalue,l)
+```
+
+The histogram of simulation is plotted below. I also include a red curve indicating the density. (Guess it works better than histogram in our case.)
+
+```{r}
+ggplot(dat, aes(x=eigenvalue,y=..density..)) + 
+    geom_histogram(fill='#377EB8',color='white',binwidth = 0.05) +
+    geom_line(aes(x=eigenvalue, y=lx, color='#C83E45'), lwd=1.1) + 
+    guides(fill=FALSE, color=FALSE) + 
+    theme_minimal()
+```
+
+## Question 2
+
+One of the precondition of the conclusion in paper is that,
+
+\[p, q_1, n-q,\longrightarrow\infty.\]
+
+Spent a ton of time trialing the parameters since due to the limitation of computing power, we know they are "infinitely large" but we could only use some relatively small numbers to imitate.
+
+```{r}
+# n >= p+q
+p <- 100
+q <- 1000
+q1 <- 500
+n.diff.q <- 500
+
+yn1 <- p/q1
+yn2 <- p/n.diff.q
+
+hn <- sqrt(yn1+yn2-yn1*yn2)
+
+an <- ((1-hn)/(1-yn2))**2
+bn <- ((1+hn)/(1-yn2))**2
+cn <- 0.5*(sqrt(1+yn2/yn1*bn)+sqrt(1+yn2/yn1*an))
+dn <- 0.5*(sqrt(1+yn2/yn1*bn)-sqrt(1+yn2/yn1*an))
+
+mf <- 0.5*log((cn**2-dn**2)*hn**2/(cn*hn-yn2*dn)**2)
+nuf <- 2*log(cn**2/(cn**2-dn**2))
+Ff <- (yn2-1)/yn2*log(cn) + (yn1-1)/yn1*log(cn-dn*hn) +
+    (yn1+yn2)/(yn1*yn2)*log((cn*hn-dn*yn2)/hn)
+
+Sigma <- diag(p)
+
+dat <- c()
+rep <- 1000
+S1 <- rWishart(rep,n.diff.q,Sigma)
+S2 <- rWishart(rep,q1,Sigma)
+for (i in 1:rep) {
+   FF <- n.diff.q/q1 * solve(S1[,,i]) %*% S2[,,i]
+   Lambda <- solve(det(diag(p)+q1/n.diff.q*FF))
+   Tn <- nuf**(-0.5)*(-log(Lambda[1,1])-p*Ff-mf)
+   dat <- c(dat, Tn)
+}
+dat <- as.data.frame(dat)
+```
+
+Again, instead of letting the histogram stand there alone, I add a red curve indicating the density. While another black, familiar-shaped curve is our old friend stand normal density curve. Generally speaking, these two are matched. Hence we are confident enough to reconfirm that $T_n\sim N(0,1)$.
+
+```{r}
+ggplot(dat,aes(x=dat)) + 
+    geom_histogram(aes(y=..density..),fill='#377EB8',color='white',binwidth = 0.1) +
+    stat_density(geom="line",color='#C83E45',lwd=1.1) +
+    stat_function(
+        fun = dnorm,
+        args = list(mean=0, sd=1),
+        color = '#181818',
+        lwd=1.1
+    ) +
+    theme_minimal()
+```
+
+## Question 3
+
+In the question, I basically want to replicate the table on page 3834 in reference [C] (Bai, Jiang, Yao and Zheng, 2009). That is to say, with two setups: one group with $y_1=y_2=0.05$ and one group with $y_1=0.05, y_2=0.1$.
+
+I also printed out the calculated $\mu_2,\sigma_2,\mu1, \sigma_1$ from each set of $(p,n_1,n_2)$. The number of simulations for each set of parameter is $5000$. Moreover, for each calculation of $\alpha$ (size) and $1-\beta$ (power), I implement the simulation study with the corrected likelihood reatio test and traditional likelihood ratio test (Box's M) with $1000$ simulations each.
+
+The detailed results are stored in a table in the end.
+
+```{r}
+sim <- 5000
+sim2 <- 1000
+plist <- c(5,10,20,40,5,10,20,40)
+n1list <- c(100,200,400,800,100,200,400,800)
+n2list <- c(100,200,400,800,50,100,200,400)
+
+table <- data.frame()
+for (iter in 1:length(plist)) {
+    p <- plist[iter]
+    n1 <- n1list[iter]
+    n2 <- n2list[iter]
+    N1 <- n1-1
+    N2 <- n2-1
+    N <- n1+n2
+    c1 <- N1/N
+    c2 <- N2/N
+    y1 <- p/N1
+    y2 <- p/N2
+    
+    cat("p =", p, "n1 =", n1, "n2 =", n2, "\n")
+    
+    dat <- c()
+    logs <- c()
+    
+    # type1 <- vector(length=sim)
+    # type2 <- vector(length=sim)
+    
+    for (i in 1:sim) {
+        
+        X1 <- matrix(rnorm(p*N1),p,N1)
+        X2 <- matrix(rnorm(p*N2),p,N2)
+        A1 <- X1 %*% t(X1) / n1
+        A2 <- X2 %*% t(X2) / n2
+        N <- N1 + N2
+        S1 <- A1 / N1 # TODO: still not sure if denominator is Ng or (N1+N2)
+        S2 <- A2 / N2 # TODO: same here
+        
+        logV1star <- (N1/2) * 
+            unlist(determinant(S1%*%solve(S2), logarithm = T))[[1]] -
+            (N/2) * 
+            unlist(determinant(c1*S1%*%solve(S2)+c2*diag(p), logarithm = T))[[1]]
+        Fab <- (y1+y2-y1*y2)/(y1*y2)*log((y1+y2)/(y1+y2-y1*y2))+
+            y1*(1-y2)/(y2*(y1+y2))*log(1-y2)+y2*(1-y1)/(y1*(y1+y2))*log(1-y1)
+        value <- -2/N*logV1star-p*Fab
+        dat <- c(dat,value)
+        
+        logV1 <- (n1/2) * unlist(determinant(A1, logarithm = T))[[1]] +
+            (n2/2) * unlist(determinant(A2, logarithm = T))[[1]] -
+            (N/2) * unlist(determinant(n1/N*A1+n2/N*A2, logarithm = T))[[1]]
+        # logV1 <- (N1/2) * unlist(determinant(A1, logarithm = T))[[1]] +
+        #     (N2/2) * unlist(determinant(A2, logarithm = T))[[1]] -
+        #     ((N1+N2)/2) * unlist(determinant(A1+A2, logarithm = T))[[1]]
+        logs <- c(logs,logV1)
+    }
+    
+    mu2 <- mean(dat)
+    sigma2 <- sd(dat)
+    cat("mu2 =", mu2, "sigma2 =", sigma2, "\n")
+    
+    ########################
+    #         CLRT         #
+    ########################
+    
+    TN <- sigma2^(-1)*(dat-mu2)
+
+    # type1 <- vector(length=sim2)
+    power <- vector(length=sim2)
+    for (j in 1:sim2) {
+        # type1[j] <- t.test(TN,rnorm(sim,0,1))$p.value
+        power[j] <- t.test(TN,rnorm(sim,0.5,1))$p.value
+    }
+    
+    CLRT.size <- mean(TN>qnorm(0.95))
+    # CLRT.t1e <- mean(type1<.05)
+    CLRT.power <- mean(power<.05)
+
+    cat("Type I error is", CLRT.size, "\n")
+    cat("Power is", CLRT.power, "\n")
+    
+    ########################
+    #         LRT          #
+    ########################
+    
+    TN <- -2*logs
+    
+    # type1 <- vector(length=sim2)
+    power <- vector(length=sim2)
+    for (j in 1:sim2) {
+        # type1[j] <- t.test(TN,rchisq(sim,0.5*p*(p+1)))$p.value
+        power[j] <- t.test(TN,rchisq(sim,0.5*p*(p+1)+10))$p.value
+    }
+    
+    LRT.size <- mean(TN>qchisq(0.95,0.5*p*(p+1)))
+    # LRT.t1e <- mean(type1<.05)
+    LRT.power <- mean(power<.05)
+    
+    cat("Type I error is", LRT.size, "\n")
+    cat("Power is", LRT.power, "\n")
+
+    # meanwhile by (4.8) and (4.9)
+    
+    mu1 <- 0.5*(log((y1+y2-y1*y2)/(y1+y2))-y1/(y1+y2)*log(1-y2)-
+                    y2/(y1+y2)*log(1-y1)+6*y1**2*y2/(y1+y2)**2+6*y1*y2**2/(y1+y2)**2)
+    sigma1 <- sqrt(-2*y2**2/(y1+y2)**2*log(1-y1)-2*y1**2/(y1+y2)**2*log(1-y2)-
+        2*log((y1+y2)/(y1+y2-y1*y2)))
+    cat("mu1 =", mu1, "sigma1 =", sigma1, "\n")
+    
+    print("-------------------------------")
+    table <- rbind(table, c(p,n1,n2,CLRT.size,CLRT.power,LRT.size,LRT.power))
+}
+
+names(table) <- c("p","n1","n2","CLRT.size", "CLRT.power", "LRT.size", "LRT.power")
+table
+```
+
+As we can see, the power of two tests are generally the same, but the size of CLRT is stable around $\alpha=0.05$ which is the significant level. On the contrary, the size of LRT is relatively large in our case.
+

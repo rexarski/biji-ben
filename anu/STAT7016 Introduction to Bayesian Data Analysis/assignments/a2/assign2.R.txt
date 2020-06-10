@@ -1,0 +1,257 @@
+#Problem 1
+#b)
+
+tau02<-0.25^2
+sigma2<-tau02
+mu0<-0
+ybar<-log(19)
+n<-5
+
+tau2n<-1/(1/tau02+n/sigma2)
+mun<-(1/tau02*mu0+n/sigma2*ybar)*tau2n
+S<-10000
+
+theta.post<-rnorm(S,mun,sqrt(tau2n))
+pdf("Fig1.pdf")
+hist(theta.post,xlab=expression(theta),main=expression(paste("Posterior draws of ", theta, " (normal approximation)")))
+dev.off()
+mean(theta.post>0)
+
+#(c) Rejection sampling algorithm 
+
+y<-5
+n<-5
+theta.prop<-rnorm(S,mu0,sqrt(tau02))
+
+target<-function(theta) exp(y*theta)/(1+exp(theta))^n*exp(-(theta-mu0)^2/(2*tau02))
+
+M<-0.01
+prop<-function(theta) dnorm(theta,mu0,sqrt(tau02))
+alpha<-target(theta.prop)/(M*prop(theta.prop))
+U<-runif(S)
+mean(alpha>=U)
+
+theta.post<-theta.prop[alpha>=U]
+mean(theta.post>=0)
+
+pdf("Fig1c.pdf")
+hist(theta.post,xlab=expression(theta),main=expression(paste("Posterior draws of ", theta," (rejection sampling)")))
+dev.off()
+
+
+
+
+#Problem 2 a)
+
+sigma2.post<-1/rgamma(5000,10,2.5)
+theta.post<-rnorm(5000,4.1,sqrt(sigma2.post/20))
+
+s<-sample(c(1,2,3),5000,prob=c(0.31,0.46,0.23),replace=TRUE)
+y.post<-rnorm(5000,s*theta.post,sqrt(s*sigma2.post))
+pdf("Fig4.pdf")
+hist(y.post,breaks=20,main="Histogram of posterior predictive values for total vegetable weight",xlab=expression(y[post]))
+dev.off()
+
+#Problem 2b)
+quantile(y.post,probs=c(0.5-0.375,0.5+0.375))
+
+#Problem 2c)
+x<-density(y.post)$x
+d<-density(y.post)$y
+d<-d/sum(d)
+dd<-cbind(x,d)
+
+dd<-dd[order(dd[,2],decreasing=TRUE),]
+i<-1
+while(sum(dd[1:i,2])<0.75) {
+  i<-i+1
+}
+
+
+
+
+HPD<-dd[1:i,1]
+sort(HPD)
+
+library("hdrcde")
+pdf("Fig5.pdf")
+hdr.den(y.post,prob=75, xlab=expression(y[post]),ylab="density",main="75% HPD region")
+dev.off()
+
+hdr(y.post,prob=75)
+
+
+
+
+#Problem 3c)
+library(MCMCpack)
+mu.grid<-seq(0,20,20/200)
+sigma2.grid<-exp(seq(-4,1,10/200))
+data<-c(10,10,11,10,9)
+ybar<-mean(data)
+n<-5
+s2<-var(data)
+
+post.incorrect<-matrix(nrow=length(mu.grid),ncol=length(sigma2.grid))
+post.correct<-matrix(nrow=length(mu.grid),ncol=length(sigma2.grid))
+
+#log joint posterior density
+log.post.incorr<- function (mu,sigma2) 
+sum(-(data-mu)^2/(2*sigma2))-n/2*log(sigma2)-log(sigma2)
+
+log.post.corr<- function (mu,sigma2) 
+-log(sigma2)+sum(log(pnorm((data+0.5-mu)/sqrt(sigma2))-pnorm((data-0.5-mu)/sqrt(sigma2))))
+
+
+
+#posterior densities
+
+for(j in 1:length(sigma2.grid)){
+for (i in 1:length(mu.grid)){
+post.incorrect[i,j]<-log.post.incorr(mu.grid[i],(sigma2.grid[j]))
+post.correct[i,j]<-log.post.corr(mu.grid[i],(sigma2.grid[j]))
+}
+}
+
+
+post.incorrect <- exp(post.incorrect-max(post.incorrect))
+post.correct <- exp(post.correct-max(post.correct))
+
+#marginal posterior distributions
+post.mu.incorr<-rowSums(post.incorrect)
+post.sigma2.incorr<-colSums(post.incorrect)
+
+post.mu.corr<-rowSums(post.correct)
+post.sigma2.corr<-colSums(post.correct)
+
+#posterior simulations
+n.sims<-1000
+sims.incorr<-matrix(nrow=n.sims,ncol=2)
+sims.corr<-matrix(nrow=n.sims,ncol=2)
+for (s in 1:n.sims){
+	j<-sample(1:length(sigma2.grid),1,prob=post.sigma2.incorr)
+	i<-sample(1:length(mu.grid),1,prob=post.incorrect[,j])
+	sims.incorr[s,]<-c(mu.grid[i],(sigma2.grid[j]))
+	
+	b<-sample(1:length(sigma2.grid),1,prob=post.sigma2.corr)
+	a<-sample(1:length(mu.grid),1,prob=post.correct[,b])
+	sims.corr[s,]<-c(mu.grid[a],(sigma2.grid[b]))
+
+	
+}
+apply(sims.incorr,2,mean)
+apply(sims.corr,2,mean)
+apply(sims.incorr,2,var)
+apply(sims.corr,2,var)
+
+pdf("Fig2.pdf")
+par(mfrow=c(1,2),mar=c(3,3,1,1),mgp=c(1.75,.75,0))
+contour ( mu.grid, (sigma2.grid),post.incorrect, levels=seq(.05,.95,.1), 
+xlab=expression(mu), ylab=expression(sigma^2),xlim=c(8,12),ylim=c(0,2),main="incorrect posterior",cex.main=0.6)
+
+contour ( mu.grid,(sigma2.grid),post.correct, levels=seq(.05,.95,.1), 
+xlab=expression(mu), ylab=expression(sigma^2),xlim=c(8,12),ylim=c(0,2), main="correct posterior",cex.main=0.6)
+dev.off()
+
+
+#Problem 3d)
+
+z10<-NA
+
+j<-1
+for (i in 1:n.sims){
+	z<-rnorm(1,sims.corr[i,1],sqrt(sims.corr[i,2]))
+	if(round(z)==10){
+   z10[j]<-z
+   j<-j+1
+   }
+}
+
+z11<-NA
+
+j<-1
+for (i in 1:n.sims){
+  z<-rnorm(1,sims.corr[i,1],sqrt(sims.corr[i,2]))
+  if(round(z)==11){
+    z11[j]<-z
+    j<-j+1
+  }
+}
+
+z1<-sample(z10,1000,replace=TRUE)
+z3<-sample(z11,1000,replace=TRUE)
+
+mean((z1-z3)^2)
+
+#Problem 4
+library("squash")
+library("mvtnorm")
+x<-c(-0.86,-0.30,-0.05,0.73)
+n<-c(10,10,10,10)
+y<-c(0,3,7,8)
+
+#normal approximation
+model<-glm(cbind(y,n-y)~x,family=binomial)
+summary(model)
+summary(model)$cov.unscaled
+S<-10000
+
+g.draw<-rmvnorm(S,mean=model$coef,sigma=summary(model)$cov.unscaled)
+
+invlogit<-function(x) exp(x)/(1+exp(x))
+
+lik<-function(a) prod(choose(n,y)*invlogit(a[1]+a[2]*x)^y*(1-invlogit(a[1]+a[2]*x))^(n-y))
+
+k<-1000
+
+imp.draw.id<-sample(seq(1,S,1),size=k,prob=apply(g.draw,1,lik)/apply(g.draw,1,function(d) dmvnorm(d,mean=model$coef,sigma=summary(model)$cov.unscaled)))
+
+imp.draw<-g.draw[imp.draw.id,]
+
+imp.draw.id2<-sample(seq(1,S,1),size=k,replace=TRUE, prob=apply(g.draw,1,lik)/apply(g.draw,1,function(d) dmvnorm(d,mean=model$coef,sigma=summary(model)$cov.unscaled)))
+
+imp.draw2<-g.draw[imp.draw.id2,]
+par(mfrow=c(1,1))
+pdf("Fig6.pdf")
+hist2(imp.draw[,1],imp.draw [,2],xlab=expression(alpha),ylab=expression(beta),main="bivariate histogram of posterior draws (without replacement)",xlim=c(-2,2))
+dev.off()
+pdf("Fig7.pdf")
+hist2(imp.draw2[,1],imp.draw2 [,2],xlab=expression(alpha),ylab=expression(beta), main="bivariate histogram of posterior draws (with replacement)",xlim=c(-2,2))
+dev.off()
+pdf("Fig8.pdf")
+hist(apply(g.draw,1,lik)/apply(g.draw,1,function(d) dmvnorm(d,mean=model$coef,sigma=summary(model)$cov.unscaled)),main="",xlab="importance ratio",breaks=50)
+dev.off()
+
+#Problem 5
+#a)
+lambda<-seq(0,0.02,0.02/1000)
+a1<-1.5
+a2<-7
+b1<-b2<-1000
+x<-1767
+y<-4
+p.dens<-0.5*dgamma(lambda,a1,rate=b1)+0.5*dgamma(lambda,a2,rate=b2)
+pdf("Fig9.pdf")
+plot(lambda,p.dens,type="l",ylab=expression(paste("p(",lambda,")")),yaxt="n",xlab="lambda",main=expression(paste("Prior of ", lambda)))
+dev.off()
+
+
+
+w1<-gamma(a1+y)/(b1+x)^(a1+y)
+w2<-gamma(a2+y)/(b2+x)^(a2+y)
+w<-w1/(w1+w2)
+w
+
+#c)
+p.post<-w*dgamma(lambda,a1+y,rate=b1+x)+(1-w)*dgamma(lambda,a2+y,rate=b2+x)
+pdf("Fig10.pdf")
+plot(lambda,p.post,type="l",yaxt="n",xlab=expression(lambda),ylab="")
+lines(lambda,p.dens,lty=2)
+legend(0.010,200,c("Posterior","Prior"),lty=c(1,2),bty="n")
+dev.off()
+
+#d)
+lambda<-seq(0,0.01,0.01/10000)
+p.post<-w*dgamma(lambda,a1+y,rate=b1+x)+(1-w)*dgamma(lambda,a2+y,rate=b2+x)
+lambda.sample<-sample(lambda,1000,prob=p.post,replace=TRUE)
+mean(lambda.sample>0.005)

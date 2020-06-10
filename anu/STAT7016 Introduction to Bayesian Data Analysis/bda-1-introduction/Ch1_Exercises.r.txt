@@ -1,0 +1,81 @@
+#uniform prior
+theta<-seq(0,1,0.001)
+d.prior<-dunif(theta[51:201],0.05,0.20)
+d.prior<-d.prior/sum(d.prior)
+plot(theta[51:201],d.prior,type="n",ylim=c(0,0.025),xlab="percentage infected in the population",ylab="",lwd=2)
+lines(theta[51:201],d.prior,lty=2,lwd=2)
+d.post<-dbinom(y,n,theta[51:201])*d.prior
+d.post<-d.post/sum(d.post)
+lines(theta[51:201],d.post,lty=1,lwd=2)
+legend(0.6,10,c("prior","post"),lty=c(2,1),lwd=c(2,2))
+dev.off()
+
+theta.post<-theta[51:201]
+#posterior mean
+sum(d.post*theta[51:201])
+#Posterior probability theta< 0.10
+sum(d.post[1:50])
+#Posterior mode
+which.max(d.post)
+
+#comparison of prior predictive distributions
+#using analytic derivations
+p.y2.f<-function(y) choose(20,y)*gamma(2+y)*gamma(20+20-y)/gamma(2+20+20)*gamma(2+20)/gamma(2)/gamma(20)
+p.y1.f<-function(y) choose(20,y)*gamma(y)*gamma(20-y)/gamma(20)*(pbeta(0.20,y,20-y)-pbeta(0.05,y,20-y))
+par(mfrow=c(2,2))
+plot(p.y1.f(seq(0,20,1)),type="l",xaxt="n",cex.axis=0.8,ylab="p(y)",xlab="y",lty=3,ylim=c(0,0.4))
+axis(1,at=seq(0,20,1))
+#lines(p.y2.f(seq(0,20,1)),lty=1)
+plot(p.y2.f(seq(0,20,1)),type="l",xaxt="n",cex.axis=0.8,ylab="p(y)",xlab="y",lty=1,ylim=c(0,0.4))
+axis(1,at=seq(0,20,1))
+
+#legend(11,0.3,c("p(theta)=beta(2,20)","p(theta)=unif(0.05,0.20)"),cex=0.7,lty=c(1,3),bty="n")
+
+
+#By Monte-Carlo simulation
+n.draw<-1000
+p.theta1<-runif(n.draw,0.05,0.20)
+p.y1<-rbinom(n.draw,20,p.theta1)
+
+p.theta2<-rbeta(n.draw,2,20)
+p.y2<-rbinom(n.draw,20,p.theta2)
+
+hist(p.y1,xlab="y",col="red",main="",xlim=c(0,20),ylim=c(0,500))
+hist(p.y2,xlab="y",col="blue",xlim=c(0,20),ylim=c(0,500))
+
+l<-list(p.y1,p.y2)
+multhist(l,col=c(rgb(0,0,1,0.5),rgb(1,0,0,0.5)))
+legend(8,400,c("p(theta)=beta(2,20)","p(theta)=unif(0.05,0.20)"),col=c(rgb(1,0,0,0.5),rgb(0,0,1,0.5)),lty=c(1,1),cex=0.6,bty="n")
+
+
+
+#comparison of posterior predictive distributions
+#by monte carlo simulation
+#beta prior
+a<-2
+b<-20
+n<-20
+y<-0
+r.post2<-rbeta(n.draw,a+y,b+n-y)
+y.post2<-rbinom(n.draw,n,r.post2)
+
+#uniform prior
+theta<-seq(0.05,0.20,0.001)
+d.prior<-dunif(theta,0.05,0.20)
+d.prior<-d.prior/sum(d.prior)
+d.post1<-dbinom(y,n,theta)*d.prior
+d.post1<-d.post1/sum(d.post1)
+r.post1<-sample(theta,size=n.draw,prob=d.post1,replace=TRUE)
+y.post1<-rbinom(n.draw,n,r.post1)
+
+
+hist(y.post1,col=rgb(0,0,1,0.5),breaks=20,ylim=c(0,500),main="Posterior predictive distribution",cex.main=0.8,xlab=expression(paste("p(y|",tilde(y),")")))
+hist(y.post2,col=rgb(1,0,0,0.5),ylim=c(0,600),add=T,breaks=20)
+legend(1,400,c("p(theta)=beta(2,20)","p(theta)=unif(0.05,0.20)"),col=c(rgb(1,0,0,0.5),rgb(0,0,1,0.5)),lty=c(1,1),cex=0.6,bty="n")
+
+
+library(plotrix)
+l<-list(y.post1,y.post2)
+multhist(l,col=c(rgb(0,0,1,0.5),rgb(1,0,0,0.5)))
+legend(8,400,c("p(theta)=beta(2,20)","p(theta)=unif(0.05,0.20)"),col=c(rgb(1,0,0,0.5),rgb(0,0,1,0.5)),lty=c(1,1),cex=0.6,bty="n")
+

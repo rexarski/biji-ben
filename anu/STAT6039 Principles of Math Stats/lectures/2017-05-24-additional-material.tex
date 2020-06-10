@@ -1,0 +1,56 @@
+\documentclass[a4paper, 11pt, twoside]{article}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\begin{document}
+\title{STAT6039 week 12 lecture 1 additional material}
+\author{Rui Qiu}
+\date{2017-05-24}
+
+\maketitle
+
+\paragraph{Appendix 1: Continuity Correction}
+
+\paragraph{Example:} A die is rolled $n=120$ times. Find the probability that at least $27$ sixes come up.
+
+\paragraph{Analysis:}
+
+\begin{enumerate}
+	\item $Y\sim Bin(120, \frac{1}{6}).$
+	\item $Bin(n, p)\overset{\cdot}{\sim} N(np, np(1-p)).$
+	\item $P(Y\geq 27)\approx P(U\geq 27).$
+	\item $P(Y\geq 27)=\sum^{120}_{y=27}{120 \choose y}\left(\frac{1}{6}\right)^y\left(\frac{5}{6}\right)^{120-y}=0.0597.$\\
+	This is the exact probability.
+	\item $P(U\geq 27)=P\left(Z\geq \frac{27-20}{\sqrt{16.667}}\right)=0.0436.$\\
+	$U$ is normal, $Y$ is binomial.\\
+	This approximation is not very precise/accurate.
+	\item $P(U\geq 27-0.5) = P\left(Z \geq \frac{27-0.5-20}{\sqrt{16.667}}\right) = P(Z\geq 1.59) = 0.0559.$\\
+	Do ``continuity correction'' by shifting the distribution.\\
+	(actually shifting the normal distribution vertically by $0.5$?)
+\end{enumerate}
+
+\paragraph{Appendix 2: Buffon's needle problem}
+
+\paragraph{Problem:} A kitchen floor has a pattern of parallel lines that are $10$ cm apart. You have a needle in your hand that is also $10$ cm long. If you randomly throw the needle onto the floor, what is the probability $p$ that it will cross a line?
+
+\paragraph{Analysis:} Monte Carlo method
+
+\begin{enumerate}
+	\item Throw the needle on the floor $n=1000$ times and find that the needle crosses a line $651$ times.
+	\item An estimator for $p$ is $\hat{p}=\frac{651}{1000}=0.651$.
+	\item A $95\%$ CI for $p$ is
+	\[\left(0.651\pm 1.96\sqrt{0.651(1-0.651)/1000}\right) = (0.621, 0.681).\]
+\end{enumerate}
+
+\paragraph{Analytical Method of finding $p$ (rather tedious)}
+
+\paragraph{Analysis:}
+
+\begin{enumerate}
+	\item $X$: perpendicular distance from centre of needle to nearest line in units of $5$ cm. $Y$: acute angle between lines and needle in radians. $A$: needle crosses a line.
+	\item $X\sim U(0,1), Y\sim U(0, \pi /2), X\perp Y$.
+	\item $f(x)=1, 0< x< 1, f(y)=2/\pi, 0 < y <\pi/2, f(x,y)=f(x)f(y)=2/\pi, 0 < x<1, 0<y<\pi/2$.
+	\item $p=P(A)=\int ...$
+\end{enumerate}
+
+
+\end{document}

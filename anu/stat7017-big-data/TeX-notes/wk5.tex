@@ -1,0 +1,519 @@
+%
+% This is a borrowed LaTeX template file for lecture notes for CS267,
+% Applications of Parallel Computing, UCBerkeley EECS Department.
+% Now being used for CMU's 10725 Fall 2012 Optimization course
+% taught by Geoff Gordon and Ryan Tibshirani.  When preparing 
+% LaTeX notes for this class, please use this template.
+%
+% To familiarize yourself with this template, the body contains
+% some examples of its use.  Look them over.  Then you can
+% run LaTeX on this file.  After you have LaTeXed this file then
+% you can look over the result either by printing it out with
+% dvips or using xdvi. "pdflatex template.tex" should also work.
+%
+
+\documentclass[twoside]{article}
+\setlength{\oddsidemargin}{0.25 in}
+\setlength{\evensidemargin}{-0.25 in}
+\setlength{\topmargin}{-0.6 in}
+\setlength{\textwidth}{6.5 in}
+\setlength{\textheight}{8.5 in}
+\setlength{\headsep}{0.75 in}
+\setlength{\parindent}{0 in}
+\setlength{\parskip}{0.1 in}
+
+%
+% ADD PACKAGES here:
+%
+
+\usepackage{amsmath,amsfonts,graphicx,soul}
+
+%
+% The following commands set up the lecnum (lecture number)
+% counter and make various numbering schemes work relative
+% to the lecture number.
+%
+\newcounter{lecnum}
+\renewcommand{\thepage}{\thelecnum-\arabic{page}}
+\renewcommand{\thesection}{\thelecnum.\arabic{section}}
+\renewcommand{\theequation}{\thelecnum.\arabic{equation}}
+\renewcommand{\thefigure}{\thelecnum.\arabic{figure}}
+\renewcommand{\thetable}{\thelecnum.\arabic{table}}
+
+\newcommand*\conj[1]{\bar{#1}}
+\newcommand*\mean[1]{\bar{#1}}
+\newcommand{\indep}{\rotatebox[origin=c]{90}{$\models$}}
+%
+% The following macro is used to generate the header.
+%
+\newcommand{\lecture}[4]{
+   \pagestyle{myheadings}
+   \thispagestyle{plain}
+   \newpage
+   \setcounter{lecnum}{#1}
+   \setcounter{page}{1}
+   \noindent
+   \begin{center}
+   \framebox{
+      \vbox{\vspace{2mm}
+    \hbox to 6.28in { {\bf STAT7017 Big Data Statistics
+	\hfill Semester 2 2018} }
+       \vspace{4mm}
+       \hbox to 6.28in { {\Large \hfill Lecture #1: #2  \hfill} }
+       \vspace{2mm}
+       \hbox to 6.28in { {\it Lecturer: #3 \hfill Scribes: #4} }
+      \vspace{2mm}}
+   }
+   \end{center}
+   \markboth{Lecture #1: #2}{Lecture #1: #2}
+
+   {\bf Note}: {\it LaTeX template courtesy of UC Berkeley EECS dept.}
+
+   {\bf Disclaimer}: {\it These notes have not been subjected to the
+   usual scrutiny reserved for formal publications.  They may be distributed
+   outside this class only with the permission of the Instructor.}
+   \vspace*{4mm}
+}
+%
+% Convention for citations is authors' initials followed by the year.
+% For example, to cite a paper by Leighton and Maggs you would type
+% \cite{LM89}, and to cite a paper by Strassen you would type \cite{S69}.
+% (To avoid bibliography problems, for now we redefine the \cite command.)
+% Also commands that create a suitable format for the reference list.
+\renewcommand{\cite}[1]{[#1]}
+\def\beginrefs{\begin{list}%
+        {[\arabic{equation}]}{\usecounter{equation}
+         \setlength{\leftmargin}{2.0truecm}\setlength{\labelsep}{0.4truecm}%
+         \setlength{\labelwidth}{1.6truecm}}}
+\def\endrefs{\end{list}}
+\def\bibentry#1{\item[\hbox{[#1]}]}
+
+%Use this command for a figure; it puts a figure in wherever you want it.
+%usage: \fig{NUMBER}{SPACE-IN-INCHES}{CAPTION}
+\newcommand{\fig}[3]{
+			\vspace{#2}
+			\begin{center}
+			Figure \thelecnum.#1:~#3
+			\end{center}
+	}
+% Use these for theorems, lemmas, proofs, etc.
+\newtheorem{theorem}{Theorem}[lecnum]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newenvironment{proof}{{\bf Proof:}}{\hfill\rule{2mm}{2mm}}
+
+% **** IF YOU WANT TO DEFINE ADDITIONAL MACROS FOR YOURSELF, PUT THEM HERE:
+
+\newcommand\E{\mathbb{E}}
+
+\begin{document}
+%FILL IN THE RIGHT INFO.
+%\lecture{**LECTURE-NUMBER**}{**DATE**}{**LECTURER**}{**SCRIBE**}
+\lecture{5}{20 August}{Dr Dale Roberts}{Rui Qiu}
+%\footnotetext{These notes are partially based on those of Nigel Mansell.}
+
+% **** YOUR NOTES GO HERE:
+
+% Some general latex examples and examples making use of the
+% macros follow.  
+%**** IN GENERAL, BE BRIEF. LONG SCRIBE NOTES, NO MATTER HOW WELL WRITTEN,
+%**** ARE NEVER READ BY ANYBODY.
+
+Now that we have some integration tools at our disposal, we can consider some integrals fro moments and statistics of the MP distribution.
+
+\textbf{\underline{Moments of the MP distribution}}
+
+\begin{proposition}
+	For the standard MP distribution $F_y$ with index $y>0$ and $\sigma^2=1$, if holds for any analytic function $f$ on a domain containing interval $[a,b]=[(1\pm \sqrt{y})^2]$,
+	$$\int f(x)dF_y(x)=-\frac{1}{4\pi i}\oint_{\lvert z\rvert =1}\frac{f(\lvert 1+\sqrt{y}z\rvert ^2)(1-z^2)^2}{z^2(1+\sqrt{y}z)(z+\sqrt{y})}dz.$$
+\end{proposition}
+
+\begin{proof}
+	(We will prove a stronger case later.)
+\end{proof}
+
+Let's look at some applications.\\
+
+\underline{Example 1:} Logarithms of eigenvalues are often used in multivariate analysis. Set
+
+$$f(x)=\log(x).$$
+
+Assume $0<y<1$ so that we don't get zero eigenvalues.
+
+\begin{equation}
+	\begin{split}
+		\int\log(x)dF_y(x)&=-\frac{1}{4\pi i}\oint_{\lvert z\rvert =1}\frac{\log(\lvert 1+\sqrt{y}z\rvert^2)(1-z^2)^2}{z^2(1+\sqrt{y}z)(z+\sqrt{y})}dz\\
+		&=-\frac{1}{4\pi i}\oint_{\lvert z\rvert =1}\frac{\log(1+\sqrt{y}z)(1-z^2)^2}{z^2(1+\sqrt{y}z)(z+\sqrt{y}z)}dz-\frac{1}{4\pi i}\oint_{\lvert z\rvert=1}\frac{\log(1+\sqrt{y}\mean{z})(1-z^2)^2}{z^2(1+\sqrt{y}z)(z+\sqrt{z})}dz\\
+		&= I_1+I_2
+	\end{split}
+\end{equation}
+
+Note $z\in\mathbb{C}$:
+
+\begin{equation}
+	\begin{split}
+		\lvert 1+\sqrt{y}z\rvert^2&=(1+\sqrt{y}z)\overline{(1+\sqrt{y}z)}\\
+		&=(1+\sqrt{y}z)(1+\sqrt{y}\mean{z})
+	\end{split}
+\end{equation}
+
+Q: When do these integrals have singularities?
+
+There is one at the point $z=0$, due to the $\frac{1}{z^2}$ term (``order 2 pole").
+
+Another at $z=-\sqrt{y}$.
+
+Both within contour $\lvert z\rvert=1$.\\
+
+By Cauchy residue theorem,
+
+$$\int_C f(z)dz=2\pi i\sum_{a\in C}Res(f;a)$$
+
+where $a$ are points of singularity.
+
+We need to find the residues at the points $z=0$ and $z=-\sqrt{y}$. We could expand and find the Laurent series but there is an easier way.
+
+\begin{proposition}
+	If $f$ has a pole of order $n\geq 1$ at $a$. Define $g(z)=(z-a)^nf(z)$ then
+	
+	$$Res(f; a)=\frac{1}{(n-1)!}\lim_{z\to a}g^{(n-1)}(z).$$
+\end{proposition}
+
+\begin{proof}
+	Remember that the residue is the term $c_{-1}$ in the Laurent series expansion of $f(z)$:
+	
+	$$f(z)=\frac{c_{-n}}{(z-a)^n}+\cdots +\frac{c_{-1}}{z-a}+a_0+\cdots$$
+	
+	so $g(z)=c_{-n}+\cdots +c_{-1}(z-a)^{n-1}+c_0(z-a)^n+\cdots$ and $g^{(n-1)}(z)=(n-1)!c_{-1}+n(n-1)\cdots2\cdot c_0(z-a)+\cdots$
+	
+	Hence, $\lim_{z\to a}g^{(n-1)}(z)=g^{(n-1)}(a)=(n-1)!c_{-1}.$
+\end{proof}
+
+Applying this proposition at $a=-\sqrt{y}$:
+
+$$\lim_{z\to-\sqrt{y}}\frac{\log(1+\sqrt{y}z)(1-z^2)^2}{z^2(1+\sqrt{y}z)(z+\sqrt{y})}(z-(-\sqrt{y}))=\frac{\log(1-y)(1-y)^2}{y(1-y)}=\log(1-y)\frac{(1-y)}{y}.$$
+
+The singularity at $a=0$ is of order 2, so
+
+$$g(z)=z^2\frac{\log(1+\sqrt{y}z)(1-z^2)^2}{z^2(1+\sqrt{y}z)(z+\sqrt{y})}=\frac{\log(1+\sqrt{y}z)(1-z^2)^2}{(1+\sqrt{y}z)(z+\sqrt{y})}$$
+
+$$g'(z)=\frac{\sqrt{y}(1-z^2)^2}{(\sqrt{y}+z)(1+\sqrt{y}z)^2}-\frac{4z(1-z^2)\log(1+\sqrt{y}z)}{(\sqrt{y}+z)(1+\sqrt{y}z)}-\frac{\sqrt{y}(1-z^2)^2\log(1+\sqrt{y}z)}{(\sqrt{y}+z)(1+\sqrt{y}z)^2}-\frac{(1-z^2)^2\log(1+\sqrt{y}z)}{(\sqrt{y}+z)^2(1+\sqrt{y}z)}$$
+
+$$g'(0)=\frac{\sqrt{y}}{\sqrt{y}}-0-0-0=1.$$
+
+So by the residue theorem
+
+\begin{equation}
+	\begin{split}
+		I_1&=-\frac{1}{4\pi i}\left[2\pi\cdot\left(\log(1-y)\frac{(1-y)}{y}+1\right)\right]\\
+		&=-\frac{1}{2}\left(\log(1-y)\frac{(1-y)}{y}+1\right)
+	\end{split}
+\end{equation}
+
+Now for $I_2$ we have
+
+$$I_2=-\frac{1}{4\pi i}\oint_{\lvert z\rvert =1}\frac{\log(1+\sqrt{y}\mean{z})(1-z^2)^2}{z^2(1+\sqrt{y}z)(z+\sqrt{y})}dz.$$
+
+We shall make the change of variable $s=\mean{z}$ and notice that since $\lvert z\rvert =1$, we have
+
+$$\frac{1}{z}=\frac{1}{e^{i\theta}}=e^{-i\theta}=\mean{z}$$
+
+So 
+
+$$I_2=-\frac{1}{4\pi i} \oint_{\lvert s\rvert=1}\frac{\log(1+\sqrt{y}s)\left(1-\left(\frac1s\right)^2\right)^2}{\left(\frac1s\right)^2(1+\sqrt{y}\left(\frac1s\right))(\frac1s+\sqrt{y})}(-\frac{1}{s^2})ds.$$
+
+and this can be shown to be
+
+$$I_2=I_1.$$
+
+hence, $I=-\log(1-y)\frac{(1-y)}{y}-1.$
+
+\underline{Example 2:} We can calculate the \underline{mean} of the MP distribution. For all $y>0$,
+
+$$\int xdF_y(x)=1.$$
+
+\begin{proof}
+	This can be shown in the same way as Example 1.
+\end{proof}
+
+For any monomial function $f(x)=x^k$ for $k\in\mathbb{N}$, the residue approach becomes tedious. There is a direct proof as well. (Bai \& Silverstein 2010; Lemma 3.1).\\
+
+\begin{proposition}
+	The moments of the standard MP distribution
+	
+	$$\beta_k:=\int x^kdF_y(x)=\sum^{k-1}_{r=0}\frac{1}{r+1}{k\choose r}{k-1 \choose r}y^r$$
+\end{proposition}
+
+\begin{proof}
+	$$P_y(x)=\begin{cases}
+		\frac{1}{2\pi xy}\sqrt{(b-x)(x-a)}, a\leq x\leq b\\
+		0,\ \text{otherwise.}
+	\end{cases}$$
+	
+	$a=(1-\sqrt{y})^2, b=(1+\sqrt{y})^2$.
+	
+	$$\beta_k=\frac{1}{2\pi y}\int^b_a x^{k-1}\sqrt{(b-x)(x-a)}dx.$$
+	
+	Set $x= 1+y+z, dx=dz, x=a\implies (1-\sqrt{y})^2=1+y+z, z=(1-\sqrt{y})^2-1-y=-2\sqrt{y}$.
+	
+	$(b-x)(x-a)=(2\sqrt{y}-z)(2\sqrt{y}+z)=(4y-z^2), x=b\implies z=2\sqrt{y}.$
+	
+	So 
+	$$\beta_k=\frac{1}{2\pi y}\int^{2\sqrt{y}}_{-2\sqrt{y}}(1+y+z)^{k-1}\sqrt{4y-z^2}dz.$$
+	
+	Recall $(a+b)^\alpha=\sum^\alpha_{k=0}{\alpha\choose k}a^kb^{\alpha-k}, {\alpha\choose k}:=\frac{\alpha!}{k!(\alpha-k)!}$
+	
+	So here $a=1+y, b=z, \alpha=k-1.$
+	
+	\begin{equation}
+		\begin{split}
+			\beta_k&=\frac{1}{2\pi y}\int^{2\sqrt{y}}_{-2\sqrt{y}}\sum{k-1}_{l=0}{k-1\choose l}(1+y)^{k-1-l}z^{l}\sqrt{4y-z^2}dz\\
+			&=\frac{1}{2\pi y}\sum^{k-1}_{l=0}{k-1\choose l}(1+y)^{k-1-l}\int^{2\sqrt{y}}_{-2\sqrt{y}}z^l\sqrt{4y-z^2}dz.
+		\end{split}
+	\end{equation}
+	
+	We continue to set $z=2\sqrt{y}u, dz=2\sqrt{y}du\implies 4y-z^2=1-u^2.$
+	
+	$z=-2\sqrt{y}\implies u=-1; z=2\sqrt{y}\implies u=1.$
+	
+	\begin{equation}
+		\begin{split}
+			\beta_k&=\frac{1}{2\pi y}\sum^{k-1}_{l=0}{k-1\choose l}(1+y)^{k-1-l}2\sqrt{y}(2\sqrt{y})^l\int^1_{-1}u^l\sqrt{1-u^2}du\\
+			&=\frac{1}{2\pi y}\sum^{k-1}_{l=0}{k-1\choose l}(1+y)^{k-1-l}(4y)^{\frac{l+1}{2}}\int^1_{-1}u^l\sqrt{1-u^2}du\\
+			&=\frac{1}{2\pi y}\sum^{\frac{k-1}{2}}_{l=0}{k-1\choose 2l}(1+y)^{k-1-2l}(4y)^{l+1}\int^1_{-1}u^{2l}\sqrt{1-u^2}du
+		\end{split}
+	\end{equation}
+	
+	Set $u=\sqrt{w}, du=\frac{1}{2}\frac{1}{\sqrt{w}}dw, u=-1, w=1.$
+	
+	\begin{equation}
+		\begin{split}
+			\beta_k&=\frac{1}{2\pi u}\sum^{\frac{k-1}{2}}_{l=0}{k-1\choose 2l}(1+y)^{k-1-2l}(4y)^{l+4}\int^1_0w^{l-\frac{1}{2}}\sqrt{1-w}dw.
+		\end{split}
+	\end{equation}
+	
+	As $\Gamma(t):=\int^\infty_{0}x^{t-1}e^{-x}dx, \Gamma(n):=(n-1)!, \Gamma(l+\frac{1}{2})=\frac{(2l)!}{4^l l!}\sqrt{\pi}.$
+	
+	As $\int^1_0w^{l-\frac{1}{2}}\sqrt{1-w}dw=\frac{\sqrt{\pi}\Gamma(l+\frac12)}{2\Gamma(2+l)}$ if $l>\frac{1}{2}$. We continue:
+	
+	\begin{equation}
+		\begin{split}
+			\beta_k &=\sum^{[(k-1)/2]}_{l=0}\frac{1}{2\pi y}\frac{(k-1)!}{(2l)!((k-1)-2l)!}\frac{\sqrt{\pi}}{2}\frac{(2l)!\sqrt{\pi}}{4^l l!(l+1)!}4^{l+1}y^{l+1}(1+y)^{k-1-2l}\\
+			&=\sum^{[(k-1)/2]}_{l=0}\frac{(k-1)!}{l!(l+1)!(k-1-2l)!}y^l(1+y)^{k-1-2l}
+		\end{split}
+	\end{equation}
+	
+	As $(1+y)^{k-1-2l}=\sum^{k-1-2l}_{s=0}{k-1-2l\choose s}y^s=\sum^{k-1-2l}_{s=0}\frac{(k-1-2l)!}{s!(k-1-2l-s)!}y^s$, continue:
+	
+	\begin{equation}
+		\begin{split}
+			\beta_k&=\sum^{[(k-1)/2]}_{l=0}\frac{(k-1)!}{l!(l+1)!(k-1-2l)!}y^l\sum^{k-1-2l}_{s=0}\frac{(k-1-2l)!}{s!(k-1-2l-s)!}y^s\\
+			&=\sum^{[(k-1)/2]}_{l=0}\sum^{k-1-2l}_{s=0}\frac{(k-1)!}{l!(l+1)!s!(k-1-2l-s)!}y^{l+s}
+		\end{split}
+	\end{equation}
+	
+	Substitute $r=l+s, s=0\implies r=l, s=k-1-2l\implies r=k-1-l$. Continue:
+	
+	\begin{equation}
+		\begin{split}
+			\beta_k&=\sum^{[(k-1)/2]}_{l=0}\sum^{k-1-l}_{r=l}\frac{(k-1)!}{l!(l+1)!s!(k-1-r-l)!}y^r\\
+			&=\frac{1}{k}\sum^{k-1}_{r=0}{k\choose r}y^r\sum^{\min(r,k-1-r)}_{l=0}{r\choose l}{k-r \choose k-r-l-1}\\
+			&=\frac{1}{k}\sum^{k-1}_{r=0}{k\choose r}{k\choose r+1}y^r=\sum^{k-1}_{r=0}\frac{1}{r+1}{k\choose r}{k-1\choose r}y^r.
+		\end{split}
+	\end{equation}
+	
+\end{proof}
+
+\underline{\textbf{Fubini theorem for sequences:}} If $\sum^\infty_{n=0}\sum^\infty_{m=0}\lvert a_{nm}\rvert < \infty$ then
+
+$$\sum^{\infty}_{m=0}\sum^{\infty}_{n=0}a_{mn}=\sum^{\infty}_{n=0}\sum^{\infty}_{m=0}a_{mn}.$$
+
+\underline{How did I use that?}
+
+\begin{equation}
+	\begin{split}
+		\sum^{[(k-1)/2]}_{l=0}\sum^{k-1-l}_{r=l}\frac{(k-1)!}{l!(l+1)!(r-l)!(k-1-r-l)!}y^r&=\sum^\infty_{l=0}\mathbf{1}_{(l\leq [(k-1)/2])}\sum^\infty_{r=0}\mathbf{1}_{(r\geq l)}\mathbf{1}_{(r\leq k-1-l)}\\
+		&=\sum^\infty_{l=0}\sum^{\infty}_{r=0}\mathbf{1}_{(l\leq [(k-1)/2])}\mathbf{1}_{(l\leq r)}\mathbf{1}_{(l\leq k-1-r)}\mathbf{1}_{(r\leq k-1)}\\
+		&=\sum^{k-1}_{r=0}\sum^{\min(r,k-1-r)}_{l=0}\square\\
+		\square&=\frac{k!}{r!(k-r)!}y^r\frac{(k-1)!r!(k-r)!}{k!l!(l+1)!(r-l)!(k-1-r-l)!}\\
+		&={k\choose r}y^r\frac{1}{k}\cdot \frac{r!}{l!(r-l)!}\cdot \frac{(k-r)!}{(l+1)!(k-1-r-l)!}\\
+		&\text{note:}\ k-r-(k-1-r-l)=l+1\\
+		&=\frac{1}{k}{k\choose r}y^r{r\choose l}{k-r \choose k-1-r-l}
+	\end{split}
+\end{equation}
+
+So we plug $\square$ back in to have
+
+$$=\sum^{k-1}_{r=0}\frac{1}{k}{k\choose r}y^r\sum^{\min(r,k-1-r)}_{l=0}{r\choose l}{k-r\choose k-1-r-l}.$$\\
+
+\underline{\textbf{Generalized MP distribution}}
+
+Previously, we've seen the case where the population covariance matrix has the simple form $\sum=\sigma^2\mathbf{I}_p$.
+
+We can consider a slightly more general case if we make the assumption that the observation vectors $\{y_k\}_{1\leq k\leq n}$ can be represented as
+
+$$y_k:=\sum^{1/2}x_k, x_k\text{ iid}, \sum\text{ nonnegative square root of }\sum.$$
+
+This gives the associated covariance matrix
+
+\begin{equation}
+	\begin{split}
+		\tilde{\mathbf{B}}_n&=\frac{1}{n}\sum^n_{k=1}\mathbf{y}_k\mathbf{y}_k^*=\sum^{1/2}\left(\frac1n\sum^n_{k=1}\mathbf{x}_k\mathbf{x}_k^*\right)\sum^{1/2}\\
+		&=\sum^{1/2}\mathbf{S}_n\sum^{1/2}
+	\end{split}
+\end{equation}
+
+$S_n$ is the sample covariance matrix with iid components.
+
+The eigenvalues of $\tilde{B}_n$ are the same as $\mathbf{S}_n\sum$.
+
+The following result holds for $\mathbf{B}_n=\mathbf{S}_n\mathbf{T}_n$ for general nonnegative definite matrix $\mathbf{T}_n$. ($\mathbf{T}_n=\sum$ is a special case.)
+
+\begin{theorem}
+	Let $\mathbf{S}_n$ be the sample covariance matrix $\mathbf{S}_n=\frac1n\sum^n_{i=1}\mathbf{x}_i\mathbf{x}^*$ with iid components and let $(\mathbf{T}_n)$ be a sequence of nonnegative definite Hermitian matrices of size $p\times p$.
+	
+	Define $\mathbf{B}_n=\mathbf{S}_n\mathbf{T}_n$ and assume:
+	
+	\begin{enumerate}
+		\item The entries $(x_{jk})$ of the data matrix $\mathbf{X}=(\mathbf{x}_1,\dots, \mathbf{x}_n)$ are iid with mean zero and variance $\mathbf{1}$.
+		\item The data dimension to sample size ratio $p/n\to y>0$ as $n\to \infty$.
+		\item The sequence $(\mathbf{T}_n)$ is either deterministic or independent of $(\mathbf{S}_n)$.
+		\item Almost surely, the sequence $(H_n=F^{\mathbf{T}_n})$ of the ESD of $(\mathbf{T}_n)$ weakly converges to a non-random probability measure $H$.
+	\end{enumerate}
+	
+	Then, almost surely, $F$ (???) weakly converges to a non-random probability measure $F_{y,H}$. Its Stieltjes transform is given by
+	
+	\begin{equation}S(z)=\int\frac{1}{t(1-y-yzs(z))-z}dH(t), z\in\mathbb{C}^+\end{equation}
+	
+	Notice that the ST of $F_{y,H}$ is \underline{implicitly} defined. It can be shown that a unique solution exists, but, unfortunately, no closed-form solution exists. (see Silverstein \& Combettes 1992)
+\end{theorem}
+
+There is a better way to represent the ST of $F_{y,H}$. Consider for $\mathbf{B}_n$ a \underline{companion matrix}.
+
+$$\underline{\mathbf{B}_n}=\frac{1}{n}\mathbf{X}^*\mathbf{TX}\ \ \ \ \ \ \ \ \ \ \text{ size }n\times n$$
+
+Both matrices share the same nonzero eigenvalues so their ESD satisfy
+
+$$nF(???)-pF^{\mathbf{B}_n}=(n-p)\mathbf{S}_0(???).$$
+
+\underline{Note:} Given two matrices $\mathbf{A}_{p\times q}$ and $\mathbf{B}_{q\times p}$ where $p\geq q$, eigenvalues of $\mathbf{AB}$ is that of $\mathbf{BA}$ augmented by $p-q$ zeros.
+
+$$\mathbf{B}_n=\mathbf{S}_n\mathbf{T}_n=\frac{1}{n}\mathbf{XX}^*\mathbf{T}_n, \underline{\mathbf{B}_n}=\frac{1}{n}\mathbf{X^*TX},\text{ where $\mathbf{X}$ is a $p\times n$ matrix.}$$
+
+When $p/n\to y>0, F^{\mathbf{B}_n}$ has limit $F_{c,H}$ if and only if $F^{\underline{\mathbf{B}_n}}$ has limit $\underline{F}_{c,H}$. In this case, the limit satisfies
+
+$$\underline{F}_{c,H}-yF_{c,H}=(1-y)S_0(???).$$
+
+and their ST are related by
+
+$$\underline{s}(z)=-\frac{1-y}z+ys(z).$$
+
+Now substituting $\underline{s}$ for s in (5.12) yields
+
+$$\underline{s}(z)=\left(z-y\int\frac{t}{1+ts(z)}dH(t)\right)^{-1}$$
+
+Solving in $z$ gives:
+
+\begin{equation}z=-\frac{1}{\underline{s}(z)}+y\int\frac{t}{1+t\underline{s}(z)}dH(t)\end{equation}
+
+which defines the inverse function of $\underline{s}$.
+
+\begin{itemize}
+	\item (5.12) is called the \underline{Marchenko-Pastur equation} and\\
+	\item (5.13) is the \underline{Silverstein equation}.
+\end{itemize}
+
+\underline{\textbf{Limiting spectral distribution for Random Fisher matricecs}}
+
+In the univariate case, when we need to test equality between the variances of 2 Gaussian populations, a Fisher statistic of the form $S_1^2/S_2^2$ is used where $S_i^2$ are estimators of the unknown variances in the two populations.
+
+The equivalent for the multivariate setting is:
+
+Take two independent samples $\{\mathbf{x}_1,\mathbf{x}_2,\dots,\mathbf{x}_n\}$ and $\{\mathbf{y}_1,\mathbf{y}_2,\dots,\mathbf{y}_n\}$ both from $p$-dimensional population with iid components and finite second moment.
+
+$$\mathbf{S}_1=\frac{1}{n_1}\sum^{n_1}_{k=1}\mathbf{x}_k\mathbf{x}_k^*$$
+
+$$\mathbf{S}_2=\frac{1}{n_2}\sum^{n_2}_{k=1}\mathbf{y}_k\mathbf{y}_k^*$$
+
+Then $\mathbf{F}_n:=\mathbf{S}_1\mathbf{S}_2^{-1}$ is called a Fisher matrix, $\mathbf{n}=(n_1,n_2).$
+
+(Note: need $p\leq n_2$ so that $\mathbf{S}_2$ invertible.)
+
+Let $s>0$ and $0<t<1$. The \underline{Fisher LSD} $F_{s,t}$ is the distribution with density function
+
+$$P_{s.t}(x)=\frac{1-t}{2\pi x(s+tx)}\sqrt{(b-x)(x-a)}, a\leq x\leq b$$
+
+with $a=a(s,t)=\frac{(1-h)^2}{(1-t)^2}, b= b(s,t)=\frac{(1+h)^2}{(1-t)^2}, h=h(s,t)=(s+t-st)^{1/2}$.
+
+When $s>1, F_{s,t}$ has a mass at $x=0$ of value $1-\frac{1}{s}$ with the total mass of the rest of the distribution for $x>0$ is equal to $1/s$.
+
+The Fisher LSD has many similarities to the standard MP distribution. This is not a coincidence as the MP LSD $F_y$ is the Fisher LSD $F_{y,0}$ (i.e. $s,y=y,0$)
+
+Also note $t\to 1, a(s,t)\to \frac{1}{2}(1-s)^2, b(s,t)\to \infty$ ($Supp(F_{s,t})$ becomes unbounded).
+
+\begin{theorem}
+	For an analytic function $f$ on a domain containing $[a,b]$ (as above). We have
+	
+	$$\int^b_af(x)dF_{s,t}(x)=-\frac{h^2(1-t)}{4\pi i}\oint_{\lvert z\rvert = 1}\frac{f\left(\frac{|1+hz|^2}{(1-t)^2}\right)(1-z^2)^2dz}{z(1+hz)(z+h)(tz+h)(t+hz)}$$
+\end{theorem}
+
+\begin{proof}
+	Using the density $P_{s,t}(x)$.
+	
+	$$I=\int^b_af(x)dF_{s,t}(x)=\int^b_a f(x)\frac{1-t}{2\pi x(s+xt)}\sqrt{(x-a)(b-x)}dx$$
+	
+	Make change of variable $x=\frac{1+h^2+2h\cos\theta}{(1-t)^2},\theta\in(0,\pi)$.
+	
+	\begin{equation}
+		\begin{split}
+			x-a &=\frac{1+h^2+2h\cos\theta}{(1-t)^2}-\frac{(1-h)^2}{(1-t)^2}=\frac{2h+2h\cos\theta}{(1-t)^2}\\
+			b-x&=\frac{(1+h)^2}{(1-t)^2}-\frac{1+h^2+2h\cos\theta}{(1-t)^2}=\frac{2h-2h\cos\theta}{(1-t)^2}\\
+			\sqrt{(x-a)(b-x)}&=\sqrt{\frac{(2h)^2}{(1-t)^4}(1-\cos\theta)(1+\cos\theta)}\\
+			&=\frac{2h}{(1-t)^2}\sin\theta\\
+			x&=a \implies \cos\theta = \frac{a(1-t)^2-(1+h^2)}{2h}=0\implies \theta =0\\
+			x&=b\implies \theta =\pi \\
+			dx&=\frac{-2h\sin\theta}{(1-t)^2}d\theta
+		\end{split}
+	\end{equation}
+	
+	Hence
+	\begin{equation}
+		\begin{split}
+			I&=\frac{2h^2(1-t)}{\pi}\int^{\pi}_{0}\frac{f\left(\frac{1+h^2+2h\cos\theta}{(1-t)^2}\right)\sin^2\theta d\theta}{(1+h^2+2h\cos\theta)(s(1-t)^2+t(1+h^2+2h\cos\theta))}\\
+			&=\frac{h^2(1-t)}{\pi}\int^{2\pi}_0\frac{f\left(\frac{1+h^2+2h\cos\theta}{(1-t)^2}\right)\sin^2\theta d\theta}{(1+h^2+2h\cos\theta )(s(1-t)^2+t(1+h^2+2h\cos\theta))}
+		\end{split}
+	\end{equation}
+	
+	Now let $z=e^{i\theta}$,
+	
+	\begin{equation}
+		\begin{split}
+			1+h^2+2h\cos\theta &= \lvert 1+hz\rvert^2\\
+			\sin\theta &=\frac{z-z^{-1}}{2i}\\
+			\log(z)=i\theta &\implies \theta =\frac{1}{i}\log(z)\implies d\theta =\frac{1}{iz}dz.\\
+			I&=-\frac{h^2(1-t)}{4\pi i}\oint_{|z|=1}\frac{f\left(\frac{|1+hz|^2}{(1-t)^2}\right)(1-z^2)^2dz}{z^3|1+hz|^2(s(1-t)^2+t|1+hz|^2)}
+		\end{split}
+	\end{equation}
+	
+	On $|z|=1$, we have $|1+hz|^2=(1+hz)(1+hz^{-1})$.
+	
+	So expanding denominator and simplifying we have the result.
+\end{proof}
+
+\underline{Example:} Take $(s,t)=(y,0)$ and we get the result for MP distribution.
+
+\underline{Example 2:} The first two moments are
+
+$$\int xdF_{s,t}(x)=\frac{1}{1-t}, \int x^2dF_{s,t}(x)=\frac{h^2+1-t}{(1-t)^3}.$$
+
+Hence the variance equals $\frac{h^2}{(1-t)^3}$.
+
+\end{document}
+
+
+
+
+

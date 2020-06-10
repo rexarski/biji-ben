@@ -1,0 +1,59 @@
+#Last Updated: 17/09/2017
+
+
+
+
+rm(list=ls())
+library(rpart) #install.packages("rpart")
+names(kyphosis)
+pairs(kyphosis[,-1])      #pairwise scatterplots for the covariates
+attach(kyphosis)
+#Part I
+names(kyphosis)
+indKyp=ifelse(Kyphosis=="present",1,0)
+kyph.logit=glm(indKyp~Age+Number+Start,family=binomial(link=logit))
+summary(kyph.logit)
+
+#drop in deviance test
+#reduced model
+kyph.logitr=glm(indKyp~Number,family=binomial(link=logit)) 
+anova(kyph.logitr,kyph.logit,test='Chisq')
+
+#drop in deviance test
+#reduced model
+kyph.logitr=glm(indKyp~1,family=binomial(link=logit)) 
+anova(kyph.logitr,kyph.logit,test='Chisq')
+
+#drop in deviance test  
+#reduced model
+kyph.logitr=glm(indKyp~Age+Number,family=binomial(link=logit)) 
+anova(kyph.logitr,kyph.logit,test='Chisq')
+
+summaryresult=summary(kyph.logit)
+summaryresult$coefficients[4,1]
+summaryresult$coefficients[4,2]
+summaryresult$coefficients[4,1]-qnorm(0.975)*summaryresult$coefficients[4,2]
+summaryresult$coefficients[4,1]+qnorm(0.975)*summaryresult$coefficients[4,2]
+
+#drop in deviance test
+#reduced model
+kyph.logitr=glm(indKyp~Start,family=binomial(link=logit))
+anova(kyph.logitr,kyph.logit,test='Chisq')
+
+#install.packages('MASS')
+library(MASS)
+#Backward AIC
+a=stepAIC(kyph.logit,direction="backward")
+summary(a)
+
+#Backward BIC
+n=length(indKyp)
+a=stepAIC(kyph.logit,direction="backward", k=log(n))
+summary(a)
+
+#Stepwise AIC
+a=stepAIC(kyph.logit,direction="both")
+summary(a)
+
+
+detach(kyphosis)

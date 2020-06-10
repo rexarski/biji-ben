@@ -1,0 +1,211 @@
+library(MCMCpack)
+library(mvtnorm)
+
+#Q1 Hoff 7.3
+#a)
+#read in data
+blue_crab<-read.table("bluecrab.dat",header=F)
+orange_crab<-read.table("orangecrab.dat",header=F)
+
+#extract y1 and y2 variables for each crab species
+y1_blue<-blue_crab[,1]
+y2_blue<-blue_crab[,2]
+y1_orange<-orange_crab[,1]
+y2_orange<-orange_crab[,2]
+
+#set prior mean equal to the sample mean
+mu0_blue<-apply(blue_crab,2,mean)
+mu0_orange<-apply(orange_crab,2,mean)
+
+
+#set prior variance of mean equal to sample covariance matrix
+L0_blue<-cov(blue_crab)
+L0_orange<-cov(orange_crab)
+
+#set scale parameter of prior covariance matrix equal to sample covariance matrix
+S0_blue<-L0_blue
+S0_orange<-L0_orange
+
+#prior sample size for estimation of Sigma
+nu0_blue<-nu0_orange<-4
+
+#sample size for data
+n_blue<-dim(blue_crab)[1]
+n_orange<-dim(orange_crab)[1]
+
+#sample means
+ybar_blue<-mu0_blue
+ybar_orange<-mu0_orange
+
+#sample covariance matrices
+Sigma_blue<-S0_blue
+Sigma_orange<-S0_orange
+
+#set up objects to store posterior draws
+THETA_blue<-THETA_orange<-SIGMA_blue<-SIGMA_orange<-NULL
+YS_blue<-YS_orange<-NULL
+set.seed(1)
+
+#Gibbs sampling algortihm
+for (s in 1:10000)
+{
+	
+ ###update theta
+  Ln_blue<-solve( solve(L0_blue) + n_blue*solve(Sigma_blue) )
+  mun_blue<-Ln_blue%*%( solve(L0_blue)%*%mu0_blue + n_blue*solve(Sigma_blue)%*%ybar_blue )
+  theta_blue<-rmvnorm(1,mun_blue,Ln_blue)  
+  
+  Ln_orange<-solve( solve(L0_orange) + n_orange*solve(Sigma_orange) )
+  mun_orange<-Ln_orange%*%( solve(L0_orange)%*%mu0_orange + n_orange*solve(Sigma_orange)%*%ybar_orange )
+  theta_orange<-rmvnorm(1,mun_orange,Ln_orange)  
+  ### 
+   
+  ###update Sigma
+  Sn_blue<- S0_blue + ( t(blue_crab)-c(theta_blue) )%*%t( t(blue_crab)-c(theta_blue) ) 
+  Sigma_blue<-solve( rwish( nu0_blue+n_blue, solve(Sn_blue)) )
+  
+   Sn_orange<- S0_orange + ( t(orange_crab)-c(theta_orange) )%*%t( t(orange_crab)-c(theta_orange) ) 
+  Sigma_orange<-solve( rwish( nu0_orange+n_orange, solve(Sn_orange)) )
+  ###
+
+  ###
+  YS_blue<-rbind(YS_blue,rmvnorm(1,theta_blue,Sigma_blue)) 
+   YS_orange<-rbind(YS_orange,rmvnorm(1,theta_orange,Sigma_orange)) 
+  ###
+
+  ### save results 
+  THETA_blue<-rbind(THETA_blue,theta_blue) ; SIGMA_blue<-rbind(SIGMA_blue,c(Sigma_blue))
+    THETA_orange<-rbind(THETA_orange,theta_orange) ; SIGMA_orange<-rbind(SIGMA_orange,c(Sigma_orange))
+  
+
+}
+
+#b)
+#pdf("HW_Fig1.pdf",family="Times",height=3.5,width=7)
+
+par(mfrow=c(1,2),mgp=c(1.75,.75,0),mar=c(3,3,1,1))
+
+plot(THETA_blue[,1],THETA_blue[,2], main="BLUE", ylab=expression(~theta[2]),xlab=expression(~theta[1]),xlim=c(10,14),ylim=c(10,17),col="blue")
+plot(THETA_orange[,1],THETA_orange[,2],main="ORANGE",ylab=expression(~theta[2]),xlab=expression(~theta[1]),xlim=c(10,14),ylim=c(10,17),col="orange")
+dev.off()
+
+
+#c)
+rho_blue<-SIGMA_blue[,2]/(sqrt(SIGMA_blue[,1])*sqrt(SIGMA_blue[,4]))
+rho_orange<-SIGMA_orange[,2]/(sqrt(SIGMA_orange[,1])*sqrt(SIGMA_orange[,4]))
+rho<-c(rho_blue,rho_orange)
+colour<-c(rep(1,10000),rep(2,10000))
+
+install.packages("sm")
+library(sm)
+
+#pdf("HW_Fig2.pdf")
+sm.density.compare(rho,colour,col=c("blue","orange"),lwd=2,xlab=expression(rho))
+#dev.off()
+
+mean(rho_blue<rho_orange)
+
+
+
+#Q2 Hoff 7.4
+
+#a)
+mu_h<-50
+mu_w<-48
+mu0<-c(mu_h,mu_w)
+nu0<-4
+S0<-matrix(c(100,90,90,100),nrow=2,ncol=2)
+L0<-matrix(c(9,8.1,8.1,9),nrow=2,ncol=2)
+n<-100
+
+#b)
+Y_h<-Y_w<-THETA<-SIGMA<-NULL
+pdf("HW_Fig3.pdf")
+par(mfrow=c(4,4))
+for (s in 1:16){
+	  Sigma<-solve( rwish( nu0, solve(S0))) 
+	  L<-L0
+	  theta<-rmvnorm(1,mu0,L)
+	  THETA<-rbind(THETA,theta)
+	  SIGMA<-rbind(SIGMA,c(Sigma))
+	  Y<-rmvnorm(100,theta,Sigma)
+       plot(Y[,1],Y[,2],xlab="husband age",ylab="wife age",cex.axis=0.5,xlim=c(0,90),ylim=c(0,90))
+       Y_h<-rbind(Y_h,Y[,1])
+        Y_w<-rbind(Y_w,Y[,2])
+
+	
+}
+dev.off()
+
+
+#c)
+
+age<-read.table("agehw.dat",header=T)
+
+
+yh<-age[,1]
+yw<-age[,2]
+
+ybar<-c(mean(yh),mean(yw))
+Sigma<-cov(age)
+
+THETA<-SIGMA<-NULL
+YS<-NULL
+
+set.seed(1)
+
+for (s in 1:10000)
+{
+	
+ ###update theta
+  Ln<-solve( solve(L0) + n*solve(Sigma) )
+  mun<-Ln%*%( solve(L0)%*%mu0+ n*solve(Sigma)%*%ybar )
+  theta<-rmvnorm(1,mun,Ln)  
+  
+  ### 
+   
+  ###update Sigma
+  Sn<- S0 + ( t(age)-c(theta) )%*%t( t(age)-c(theta) ) 
+  Sigma<-solve( rwish( nu0+n, solve(Sn)) )
+
+  ###
+
+  ###
+  YS<-rbind(YS,rmvnorm(1,theta,Sigma)) 
+
+
+  ### save results 
+  THETA<-rbind(THETA,theta) ; SIGMA<-rbind(SIGMA,c(Sigma))
+
+
+}
+
+ source("hdr_2d.r")
+ 
+ library(ash)
+ 
+ pdf("HW_Fig4.pdf")
+ par(mfrow=c(1,1))
+ plot.hdr2d(THETA,xlab=expression(theta[1]),ylab=expression(theta[2]) )
+dev.off()
+
+rho<-SIGMA[,2]/(sqrt(SIGMA[,1])*sqrt(SIGMA[,4]))
+ pdf("HW_Fig5.pdf")
+plot(density(rho),xlab=expression(rho),main="")
+dev.off()
+
+
+
+quantile(THETA[,1],c(0.025,0.975))
+quantile(THETA[,2],c(0.025,0.975))
+quantile(THETA[,1]-THETA[,2],c(0.025,0.975))
+quantile(apply(YS,1,function(x) x[1]-x[2]),c(0.025,0.975))
+quantile(rho,c(0.025,0.975))
+
+library(hdrcde)
+hdr(THETA[,1],prob=95)$hdr
+hdr(THETA[,2],prob=95)$hdr
+hdr(rho,prob=95)$hdr
+
+
+

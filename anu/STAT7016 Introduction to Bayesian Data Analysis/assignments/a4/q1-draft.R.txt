@@ -1,0 +1,80 @@
+set.seed(7016)
+
+hw <- NULL
+for (i in 1:8) {
+    aschool <- read.table(paste0('school', i, '.dat'),header=F)
+    aschool <- cbind(rep(i,length(aschool)),aschool)
+    hw <- rbind(hw, aschool)
+}
+colnames(hw) <- c('school','hours')
+
+# priors
+mu0 <- 7; gamma20 <- 5; tau20 <- 10; eta0 <- 2; sigma20 <- 15; nu0 <- 2
+
+# initial values (use sample means and sample variances)
+n <- rep(NA,8)
+ybar <- rep(NA,8)
+svar <- rep(NA,8)
+for (i in 1:8) {
+    Yi <- hw[hw[,1]==i,2]
+    n[i] <- length(Yi)
+    ybar[i] <- mean(Yi)
+    svar[i] <- var(Yi)
+}
+
+# initial theta estimates
+theta <- ybar
+sigma2 <- mean(svar)
+mu <- mean(theta)
+tau2 <- var(theta)
+
+# Gibbs
+K <- 5000
+paras <- matrix(nrow=K,ncol=8+3)
+colnames(paras) <- c("theta1","theta2","theta3","theta4","theta5",
+                     "theta6","theta7","theta8","sigma2","mu","tau2")
+for (i in 1:K) {
+    # sample thetas
+    for (j in 1:8) {
+        v <- 1/(n[j]/sigma2+1/tau2)
+        e <- v*(ybar[j]*n[j]/sigma2+mu/tau2)
+        theta[j] <- rnorm(1,e,sqrt(v))
+    }
+    
+    # sample sigma2
+    nun <- nu0 + sum(n)
+    ss <- nu0*sigma20
+    for (j in 1:8) {
+        ss <- ss+sum((hw[hw[,1]==j,2]-theta[j])^2)
+    }
+    sigma2 <- 1/rgamma(1,nun/2,ss/2)
+    
+    # sample mu
+    v <- 1/(8/tau2+1/gamma20)
+    e <- v*(8*mean(theta)/tau2+mu0/gamma20)
+    mu <- rnorm(1,e,sqrt(v))
+    
+    # sample tau2
+    eta8 <- eta0+8
+    ss <- eta0*tau20+sum((theta-mu)^2)
+    tau2 <- 1/rgamma(1,eta8/2,ss/2)
+    
+    paras[i,1:8] <- theta
+    paras[i,9:11] <- c(sigma2,mu,tau2)
+}
+
+library(coda)
+par(mfrow=c(1,2))
+acf(paras[,3])
+acf(paras[,6])
+par(mfrow=c(1,1))
+ef <- cbind(effectiveSize(paras[,9]),effectiveSize(paras[,10]),
+            effectiveSize(paras[,11]))
+colnames(ef) <- c("sigma2","mu","tau2")
+rownames(ef) <- "effective size"
+ef
+
+(post.paras <- rbind(quantile(paras[,9],prob=c(0.025,0.5,0.975)),
+                    quantile(paras[,10],prob=c(0.025,0.5,0.975)),
+                    quantile(paras[,11],prob=c(0.025,0.5,0.975))))
+

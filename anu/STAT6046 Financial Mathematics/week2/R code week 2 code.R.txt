@@ -1,0 +1,37 @@
+# Comparing Simple and Compound interest rates. Reproducing plots in Lecture Notes Week 1
+
+#interest rate
+i=0.05
+
+#function to compute accumulated values using simple interest rate
+y=function(i,t){
+  v=100*(1+i*t)
+  return(v)
+}
+
+#function to compute accumulated values using compound interest rate
+z=function(i,t){
+  v=100*(1+i)^t
+  return(v)
+}
+
+
+#Create a sequence of integers from 1 to 10 representing years
+T=seq(from=1, to=10, length.out=10)
+#OR
+T=1:10
+
+#Create a vector Y to store accumulated values using simple interest rate from year 1 to year 10
+Y=y(i,T)
+Y
+
+#Create a vector Z to store accumulated values using compound interest rate from year 1 to year 10
+Z=z(i,T)
+Z
+
+#Plot the simple and compound interest rate in the same graph
+
+plot(T,Y,type="l", ylim=c(100,200), xlab="year",ylab="amount", main= c("Effective annual interest rate of" ))
+lines(T,Z,type="l",col="red")
+
+legend("topleft",legend=c("simple interest rate", "compound interest rate"), lwd=2, col=c("black","red"))

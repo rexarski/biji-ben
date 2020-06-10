@@ -1,0 +1,28 @@
+n <- 100
+y <- rnorm(n,0,1)
+ybar <- mean(y)
+
+mu0 <- 0.3 # set
+sig0 <- 1.2 # set
+nu0 <- 1 # set 
+k0 <- 1 # set
+
+kn <- k0+n
+nun <- nu0+n
+mun <- k0/(k0+n)*mu0 + n/(k0+n)*ybar
+sign <- sqrt((nu0*sig0^2 + (n-1)*var(y) + k0*n/(kn+n)*(ybar-mu0)^2)/nun)
+
+sims <- 100000
+inv.sigma2 <- rgamma(1,nu0/2,sig0^2*nu0/2)
+sigma2 <- 1/inv.sigma2
+theta <- rnorm(sims,mu0,sqrt(sigma2/k0))
+theta <- theta/sum(theta)
+
+par(mfrow=c(2,2))
+hist(theta,main='Histogram of theta (analytic)')
+plot(density(theta),col='red')
+
+tt <- (rt(sims,df=nun)-mun)*sign/sqrt(kn)
+tt <- tt/sum(tt)
+hist(tt,main='Histogram of theta (simulation)')
+plot(density(tt),col='blue')

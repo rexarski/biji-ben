@@ -1,0 +1,74 @@
+#Question 1
+
+#Part a
+
+corn<-read.table("corn.csv",header=T,sep=",")
+names(corn)
+year=corn$YEAR
+yield=corn$YIELD
+rain=corn$RAIN
+plot(rain,yield,main="Corn yield v's Rainfall",ylab="yield",xlab="rainfall") 
+
+#Part b
+
+corn.reg=lm(yield~rain+I(rain^2))
+summary(corn.reg,correlation=TRUE)
+
+#Part c
+
+plot(year,corn.reg$residuals,ylab="residuals",xlab="year")
+
+#Part d
+
+cornyear.reg = lm(yield ~ rain + I(rain^2) + year)
+summary(cornyear.reg,correlation=TRUE) 
+coef(corn.reg)
+coef(cornyear.reg)
+summary(corn.reg)$sigma
+summary(cornyear.reg)$sigma
+coef(summary(corn.reg))[,2]
+coef(summary(cornyear.reg))[,2]
+
+#Part e
+
+cornint.reg=lm(yield~rain+I(rain^2)+year+I(rain*year))
+summary(cornint.reg,correlation=TRUE)
+
+
+#Question 2
+
+derby<-read.table("derby.csv",header=T,sep=",")
+names(derby)
+year=derby$year
+speed=derby$speed
+condition=derby$condition
+plot(year,speed,xlab="year",ylab="winning speed") 
+
+
+Igood=ifelse(condition==condition[1],1,0)
+Islow=ifelse(condition==condition[2],1,0)
+derby.reg=lm(speed~year+I(year^2)+Igood+Islow)
+summary(derby.reg,correlation=TRUE) 
+
+#Question 3
+
+#Part a
+
+crab<-read.table("crab.csv",header=T,sep=",")
+names(crab)
+force=crab$FORCE
+height=crab$HEIGHT
+species=crab$SPECIES
+unique(species)
+ILB=ifelse(species==species[16],1,0)
+ICP=ifelse(species==species[28],1,0)
+IHN=ifelse(species==species[2],1,0)
+crab.reg=lm(log(force)~log(height)+ILB+ICP+ILB*log(height)+ICP*log(height))
+
+summary(crab.reg,correlation=TRUE)
+
+#plotting points from LB
+plot(log(height[ILB==1]),log(force[ILB==1]),pch="*",ylab="log(force)", xlab="log(height)",xlim=c(1,3),ylim=c(0,5)) #adding the points from EU (Baseline Level)
+points(log(height[IHN==1]),log(force[IHN==1]),col='red')
+abline(crab.reg$coef[1]+crab.reg$coef[3],crab.reg$coef[2]+crab.reg$coef[5])
+abline(crab.reg$coef[1],crab.reg$coef[2],col='red')

@@ -1,0 +1,188 @@
+---
+title: "STAT7017 Homework 1"
+author: "Rui Qiu (u6139152)"
+date: '2018-08-01'
+output:
+  pdf_document: default
+  html_document: default
+geometry: margin=1.75cm
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.path='Figs/', dev = 'pdf', out.width='320px', 
+                      out.height='200px',dpi=200,fig.align = "center",
+                      small.mar=TRUE,
+                      echo=TRUE, warning=FALSE, message=FALSE, cache = TRUE)
+```
+
+## Q1
+
+**Proof:** This is proved by mathematical induction. 
+
+### Basis
+
+By definition, we know that 
+
+1. $\lvert\mathbf{A}\rvert=a_{11}$ when $p=1$.
+
+2. $\lvert\mathbf{A}\rvert=\sum^p_{j=1}a_{1j}\lvert\mathbf{A}_{1j}\rvert(-1)^{1+j}$ if $p>1$ where $\mathbf{A}_{1j}$ is the $(p-1)\times(p-1)$ matrix with the first row and $j$-th column deleted.
+
+## Induction hypothesis
+
+Suppose we have $p=1$, then our claim that the determinant is equation to the product of diagonal entry is automatically true.
+
+## Induction Step
+
+Suppose again it is true that when $p=n$, i.e. $\lvert\mathbf{A}_{n\times n}\rvert = \prod^n_{j=1}a_{jj}.$
+
+We want to show it is also true when $p=n+1$, i.e. $\lvert\mathbf{A}_{(n+1)\times (n+1)}\rvert = \prod^{n+1}_{j=1}a_{jj}.$
+
+$$\begin{split}
+    \lvert\mathbf{A}_{(n+1)\times(n+1)}\rvert &= \sum^{n+1}_{j=1}a_{1j}\lvert\mathbf{A}_{1j}\rvert(-1)^{1+j}\\
+    &=a_{11}\lvert\mathbf{A}_{-11}\rvert(-1)^{1+1}+a_{12}\lvert\mathbf{A}_{-12}\rvert(-1)^{1+2}+\cdots+a_{1(n+1)}\lvert\mathbf{A}_{-1(n+1)}\rvert(-1)^{1+n+1}\\
+    &=a_{11}\prod^{n+1}_{j=2}a_{jj}+ 0 +\cdots + 0\\
+    &=\prod^{n+1}_{j=1}a_{jj}
+\end{split}$$
+
+
+$\therefore$ The determinant of diagonal matrix $\det(\mathbf{A})$ is the product of diagonal elements.
+
+## Q2
+
+**Proof:** Suppose $\lambda_1,\dots,\lambda_p$ are eigenvalues of a $p\times p$ matrix $\mathbf{A}$. The characteristic polynomial of $\mathbf{A}$ is
+
+$$p(\lambda)=\lvert \mathbf{A} - \lambda \mathbf{I}\rvert=\lambda^p+(-1)\cdot a_{1}\lambda^{p-1}+\cdots + (-1)^{p-1}\cdot a_{p-1}\lambda + (-1)^p\cdot a_p$$
+where $a_1$ is the trace of $\mathbf{A}$, $a_p$ is $\det(\mathbf{A})$, $a_i$ is the sum of $i$-rowed diagonal mirros of $\mathbf{A}$.
+
+Since $\lambda_1,\dots,\lambda_p$ are zeros of $p(\lambda)$, 
+
+$$p(\lambda)=(\lambda-\lambda_1)\cdot(\lambda-\lambda_2)\cdots(\lambda-\lambda_p)$$
+
+Now we focous on the constant term $(-1)^p\cdot a_p$. We can calcuate it by inserting $\lambda=0$ in both expressions:
+
+- $\lvert\mathbf{A}- 0\cdot \mathbf{I}\rvert=\lvert\mathbf{A}\rvert=a_p$
+- $(-\lambda_1)\cdot(-\lambda_2)\cdots(-\lambda_p)=(-1)^p\prod^p_{i=1}\lambda_i=(-1)^p\cdot a_p$
+
+Hence
+
+$$\begin{split}(-1)^p\prod^p_{i=1}\lambda_i &= (-1)^p\cdot \lvert\mathbf{A}\rvert\\
+\lvert\mathbf{A}\rvert &= \lambda_1\cdot\lambda_2\cdots \lambda_p\end{split}$$
+
+## Q3
+
+**Solution:**
+
+Under the default setup, where $p=100$, we generate $n=500$ random normally distributed symmetric $p\times p$ matrices. The eigenvalues are plotted with grey histogram below, and the blue shaded curve indicates its density.
+
+The density function of Wigner semicircle distribution can be written as:
+
+$$f(x)=\frac2{\pi R^2}\sqrt{R^2-x^2}$$
+where the parameter $R$ is the interval of possible $x$ value with $x\in [-R, R]$. In our case, we take an upper bound of the maximal absolute values of eigenvalues as $R$. Specifically, $R=\lceil\max(\lambda_i)\rceil+0.1$.
+
+The fitted Wigner semicircle distribution is plotted with a black curve.
+
+```{r q3-gen}
+library(ggplot2)
+library(VGAM)
+
+set.seed(7017)
+
+wignerplot <- function(p, flag="N") {
+    n <- p * 5
+    
+    matrices <- list()
+    for (i in 1:n) {
+        
+        if (flag=="N") {
+            A <- matrix(rnorm(p^2, 0, 1), p, p)    
+        } else if (flag=="T") {
+            A <- matrix(rt(p^2, 10), p, p)
+        } else if (flag=="inf") {
+            # Pareto distribution with shape parameter < 2 has infinite variance
+            A <- matrix(rpareto(p^2,shape=1.5), p, p)
+        }
+        
+        A[lower.tri(A)] <- t(A)[lower.tri(A)]
+        matrices[[i]] <- A
+    }
+    
+    evs <- c()
+    for (j in matrices) {
+        evs <- c(evs, eigen(j)$values)
+    }
+    
+    df <- data.frame(seq_along(evs), evs)
+    
+    max(evs)
+    min(evs)
+    bound <- round(max(evs))+0.1
+    
+    g1 <- ggplot(df, aes(evs)) + 
+        geom_histogram(aes(y=..density..), binwidth=1, colour="grey", fill="white") +
+        stat_density(geom="area", alpha=0.5, fill='#5289B1', color="#5289B1") +
+        stat_function(fun = function(x) 2/(pi*(bound)^2)*sqrt((bound)^2-x^2)) +
+        xlim(-bound,bound) + 
+        theme_minimal()
+    return(g1)
+}
+
+wignerplot(100,flag="N")
+```
+
+If we keep the $n/p$ ratio constant ($5$ in this case), then the corresponding plots with $p=125, 150, 200$ are plotted below:
+
+$p=125$
+
+```{r replicate1}
+wignerplot(125)
+```
+
+$p=150$
+
+```{r replicate2}
+wignerplot(150)
+```
+
+$p=200$
+
+```{r replicate3}
+wignerplot(200)
+```
+
+If we let the random matrices follow a Student's T distribution (let `df =10` though not specified) instead of a standard normal, with $p=100, n=500$, we have:
+
+```{r student}
+wignerplot(100,flag="T")
+wignerplot(150,flag="T")
+```
+
+Some observations from Q3:
+
+- Generally, we haved shown the universality conjecture that the spectral density of large random symmetric matrices following a zero mean, finite variance converges to the density of the Wigner Semicircle distribution.
+- There are some gaps between the observed density and the theoretical one. However, when $n$ and $p$ get larger (while holding the $p/n$ ratio constant), the gaps seem to be more and more trivial.
+- Also, since the scale of y-axes vary in the plots above, one fact could be masked that the "semicircle" are in fact flatter when $n$ and $p$ get larger.
+- The last part shows that when sample size is large enough, the Student's T distribution and standard normal distribution have similar effect in this scenario.
+
+## Q4
+
+**Solution:** We need to find a distribution with finite mean but infinite variance. A Pareto distribution with shape parameter $\alpha \leq 2$ has infinite variance. When the distribution is settled, we repeat for $n=500, p=100$ setup. But this time, the semicircle law fails. 
+
+```{r test}
+wignerplot(100,flag="inf")
+```
+
+## References
+
+1. "Wigner semicircle distribution", _Wikipedia_, 2018. [Online]. Available: https://en.wikipedia.org/wiki/Wigner_semicircle_distribution. [Accessed: 04-Aug-2018].
+
+2. "Pareto distribution", _Wikipedia_, 2018. [Online]. Available: https://en.wikipedia.org/wiki/Pareto_distribution. [Accessed: 04-Aug-2018].
+
+3. "How can a distribution have infinite mean and variance?," _Cross Validated_. [Online]. Available: https://stats.stackexchange.com/questions/91512/how-can-a-distribution-have-infinite-mean-and-variance/91515. [Accessed: 04-Aug-2018]. 
+
+4. "How can a distribution have infinite mean and variance?," _Cross Validated_. [Online]. Available: https://stats.stackexchange.com/questions/91512/how-can-a-distribution-have-infinite-mean-and-variance/91515. [Accessed: 04-Aug-2018].
+
+5. A. Charpentier, "On Wigner's law (and the semi-circle)," _Freakonometrics_, 16-Dec-2013. [Online]. Available: https://freakonometrics.hypotheses.org/10964. [Accessed: 04-Aug-2018].
+
+6. F. Benaych-Georges and A. Knowles, "Lectures on the local semicircle law for Wigner matrices", arXiv:1601.04055v3 [math.PR], 18 Oct. 2016.
+
+7. L. Lin, Y. Saad and C. Yang, "Approximating spectral densities of large matrices", arXiv:1308.5467v2 [math.NA], 5 Oct. 2014.

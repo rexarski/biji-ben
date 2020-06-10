@@ -1,0 +1,254 @@
+#Hoff 11.2
+pdata<-read.table("pdensity.dat",header=TRUE)
+attach(pdata)
+m<-10
+#a)
+pdf("HW_Fig1.pdf")
+plot(seq(4,8,1),seq(-3,3,6/4),xlim=c(4,10),type="n",xlab="",ylab="",main="OLS for each group: residual plot")
+d2<-density^2
+BETA.LS<-S2.LS<-NULL
+for (i in 1:9){
+	model<-lm(yield[plot==i]~density[plot==i]+d2[plot==i])
+	BETA.LS<-rbind(BETA.LS,coef(model))
+	S2.LS<-c(S2.LS, summary(model)$sigma^2) 
+   points(fitted(model),residuals(model),pch=as.character(i),col=i)
+	}
+	
+	model<-lm(yield[plot==10]~density[plot==i]+d2[plot==10])
+	BETA.LS<-rbind(BETA.LS,coef(model))
+	S2.LS<-c(S2.LS, summary(model)$sigma^2) 
+    points(fitted(model),residuals(model),pch=1,col="red")
+
+abline(h=0)
+dev.off()
+
+#estimate of sigma2
+mean(S2.LS)
+
+#####Gibbs sampler - Bayesian  hierarchical regression model
+
+X<-cbind(rep(1,nrow(pdata)),density, d2)
+p<-ncol(X)
+theta<-mu0<-apply(BETA.LS,2,mean)
+nu0<-1 ; s2<-s20<-mean(S2.LS)
+eta0<-4 ; Sigma<-S0<-L0<-cov(BETA.LS) ; BETA<-BETA.LS
+THETA.b<-S2.b<-NULL
+iL0<-solve(L0) ; iSigma<-solve(Sigma)
+source("rfunctions.r")
+Sigma.ps<-matrix(0,p,p)
+SIGMA.PS<-NULL
+BETA.ps<-BETA*0
+BETA.pp<-NULL
+set.seed(1)
+mu0[2]+c(-1.96,1.96)*sqrt(L0[2,2])
+S<-10000
+thin<-10
+N<-nrow(pdata)
+for(s in 1:S) {
+  ##update beta_j 
+  for(j in 1:m) 
+  {  
+    Vj<-solve( iSigma + t(X[plot==j,])%*%X[plot==j,]/s2 )
+    Ej<-Vj%*%( iSigma%*%theta + t(X[plot==j,])%*%yield[plot==j]/s2 )
+    BETA[j,]<-rmvnorm(1,Ej,Vj) 
+  } 
+  ##
+
+  ##update theta
+  Lm<-  solve( iL0 +  m*iSigma )
+  mum<- Lm%*%( iL0%*%mu0 + iSigma%*%apply(BETA,2,sum))
+  theta<-t(rmvnorm(1,mum,Lm))
+  ##
+
+  ##update Sigma
+  mtheta<-matrix(theta,m,p,byrow=TRUE)
+  iSigma<-rwish( 1, eta0+m,solve( S0+t(BETA-mtheta)%*%(BETA-mtheta) ) ) 
+  ##
+
+  ##update s2
+  RSS<-0
+  for(j in 1:m) { RSS<-RSS+sum( (yield[plot==j]-X[plot==j,]%*%BETA[j,] )^2 ) }
+  s2<-1/rgamma(1,(nu0+sum(N))/2, (nu0*s20+RSS)/2 )
+  ##
+  ##store results
+  if(s%%thin==0) 
+  { 
+    cat(s,s2,"\n")
+    S2.b<-c(S2.b,s2);THETA.b<-rbind(THETA.b,t(theta))
+    Sigma.ps<-Sigma.ps+solve(iSigma) ; BETA.ps<-BETA.ps+BETA
+    SIGMA.PS<-rbind(SIGMA.PS,c(solve(iSigma)))
+    BETA.pp<-rbind(BETA.pp,rmvnorm(1,theta,solve(iSigma)) )
+  }
+  ##
+}
+#c)
+BETA.PM<-BETA.ps/(S/thin)
+pdf("HW_Fig2.pdf")
+plot( range(X%*%t(BETA.PM)),range(yield-X%*%t(BETA.PM)),xlim=c(4,10),type="n",xlab="fitted value",ylab="residuals",main="Gibbs sampler: residual plot")
+for(j in 1:m) {    
+	fitted<-X[plot==j,]%*%BETA.PM[j,]
+	points(fitted ,yield[plot==j]-fitted,pch=as.character(j),col=j)
+	}
+	abline(h=0)
+dev.off()
+
+#d)
+THETA.prior<-rmvnorm(S/thin, mu0,L0)
+
+pdf("HW_Fig3.pdf")
+par(mfrow=c(2,2))
+plot(density(THETA.prior[,1]),ylim=c(0,0.8),type="l",xlab="",lwd=2,col="grey",main=expression(theta[1]))
+lines(density(THETA.b[,1]),lwd=2)
+plot(density(THETA.prior[,2]),ylim=c(0,2),type="l",xlab="",lwd=2,col="grey",main=expression(theta[2]))
+lines(density(THETA.b[,2]),lwd=2)
+plot(density(THETA.prior[,3]),ylim=c(0,20),type="l",xlab="",lwd=2,col="grey",main=expression(theta[3]))
+lines(density(THETA.b[,3]),lwd=2)
+dev.off()
+
+pdf("HW_Fig3b.pdf")
+par(mfrow=c(2,2))
+plot(density(THETA.prior[,1]),ylim=c(0,0.8),type="l",xlab="",lwd=2,col="grey",main=expression([1]))
+lines(density(THETA.b[,1]),lwd=2)
+plot(density(THETA.prior[,2]),ylim=c(0,2),type="l",xlab="",lwd=2,col="grey",main=expression(theta[2]))
+lines(density(THETA.b[,2]),lwd=2)
+plot(density(THETA.prior[,3]),ylim=c(0,20),type="l",xlab="",lwd=2,col="grey",main=expression(theta[3]))
+lines(density(THETA.b[,3]),lwd=2)
+dev.off()
+
+
+y(THETA.b[,3]),lwd=2)
+dev.off()
+
+
+
+SIGMA.prior<-NULL
+for (i in 1:S/thin){
+	iSigma<-rwish(1,eta0, solve(S0))
+	SIGMA.prior<-rbind(SIGMA.prior,c(solve(iSigma)))
+}
+
+pdf("HW_Fig4.pdf")
+par(mfrow=c(2,3))
+plot(density(SIGMA.prior[,1]),type="l",xlab="",xlim=c(0,10),lwd=2,col="grey",main=expression(Sigma[11]))
+lines(density(SIGMA.PS[,1]),lwd=2)
+plot(density(SIGMA.prior[,2]),type="l",xlab="",xlim=c(-10,2),lwd=2,col="grey",main=expression(Sigma[12]))
+lines(density(SIGMA.PS[,2]),lwd=2)
+plot(density(SIGMA.prior[,3]),type="l",xlab="",xlim=c(-1,2),lwd=2,col="grey",main=expression(Sigma[13]))
+lines(density(SIGMA.PS[,3]),lwd=2)
+plot(density(SIGMA.prior[,5]),type="l",xlab="",xlim=c(0,2),lwd=2,col="grey",main=expression(Sigma[22]))
+lines(density(SIGMA.PS[,5]),lwd=2)
+plot(density(SIGMA.prior[,6]),type="l",xlab="",xlim=c(-0.2,0.2),lwd=2,col="grey",main=expression(Sigma[23]))
+lines(density(SIGMA.PS[,6]),lwd=2)
+plot(density(SIGMA.prior[,9]),type="l",xlab="",xlim=c(0,0.05),lwd=2,col="grey",main=expression(Sigma[33]))
+lines(density(SIGMA.PS[,9]),lwd=2)
+dev.off()
+
+#e)
+fitted<-NULL
+for(j in 1:m) {    
+	fitted<-rbind(fitted,c(X[plot==j,]%*%BETA.PM[j,]))
+
+	}
+	
+c(mean(fitted[,1:2]),mean(fitted[,3:4]),mean(fitted[,5:6]),mean(fitted[,7:8]))
+#max at x=6
+	
+xmax<-c(1,6,36)
+
+xmax.pred<-xmax%*%t(BETA.pp)
+quantile(xmax.pred,probs=c(0.026,0.975))
+
+
+#11.3
+e)
+
+#####Metropolis Hastings- Bayesian  hierarchical regression model - unequal variances
+
+
+theta<-mu0<-apply(BETA.LS,2,mean)
+nu0<-50 ; s20<-mean(S2.LS)
+s2<-rep(s20,m)
+eta0<-p+2 ; Sigma<-S0<-L0<-cov(BETA.LS) ; BETA<-BETA.LS
+THETA.b<-S2.b<-S20.b<-nu0.b<-NULL
+iL0<-solve(L0) ; iSigma<-solve(Sigma)
+#prior on sigma20
+g1<-g2<-2
+
+Sigma.ps<-matrix(0,p,p)
+SIGMA.PS<-NULL
+BETA.ps<-BETA*0
+BETA.pp<-NULL
+set.seed(1)
+mu0[2]+c(-1.96,1.96)*sqrt(L0[2,2])
+S<-50000
+thin<-10
+N<-nrow(pdata)
+nj<-NULL
+NUMAX<-100
+
+for (i in 1:m){
+	nj<-c(nj,length(yield[plot==i]))
+}
+for(s in 1:S) {
+  ##update beta_j 
+  for(j in 1:m) 
+  {  
+    Vj<-solve( iSigma + t(X[plot==j,])%*%X[plot==j,]/s2[j] )
+    Ej<-Vj%*%( iSigma%*%theta + t(X[plot==j,])%*%yield[plot==j]/s2[j] )
+    BETA[j,]<-rmvnorm(1,Ej,Vj) 
+  } 
+  ##
+
+  ##update theta
+  Lm<-  solve( iL0 +  m*iSigma )
+  mum<- Lm%*%( iL0%*%mu0 + iSigma%*%apply(BETA,2,sum))
+  theta<-t(rmvnorm(1,mum,Lm))
+  ##
+
+  ##update Sigma
+  mtheta<-matrix(theta,m,p,byrow=TRUE)
+  iSigma<-rwish( 1, eta0+m,solve( S0+t(BETA-mtheta)%*%(BETA-mtheta) ) ) 
+  ##
+
+  ##update s2
+   for(j in 1:m) {
+  	RSS<-sum( (yield[plot==j]-X[plot==j,]%*%BETA[j,] )^2 )
+  	s2[j]<-1/rgamma(1,(nu0+nj[j])/2 ,(nu0*s20+RSS)/2 )
+  	}  
+  ##update s20
+  s20<-rgamma(1,g1+nu0*m/2,2+nu0/2*sum(1/s2))
+  
+  #update nu0
+  nu0.p<-min(NUMAX,max(1,nu0+5*sample(c(-1,1),size=1))) #propose a new value for nu0, equally likely to be within [-5,5] units of current value
+  #rr<-(nu0.p*s20/2)^(nu0.p*m/2)/(nu0*s20/2)^(nu0*m/2)*gamma(nu0/2)^m/gamma(nu0.p/2)^m*prod(s2)^((nu0-nu0.p)/2)*exp(-s20/2*sum(1/s2)*(nu0.p-nu0))
+ lr<-(nu0.p*m/2)*log(nu0.p*s20/2)-(nu0*m/2)*log(nu0*s20/2)+m*log(gamma(nu0/2))-m*log(gamma(nu0.p/2))+((nu0-nu0.p)/2)*sum(log(s2))+(-s20/2*sum(1/s2)*(nu0.p-nu0))
+
+  if(log(runif(1))<lr){nu0<-nu0.p}
+  
+  
+   ##
+  ##store results
+  if(s%%thin==0) 
+  { 
+    #cat(s,s2,"\n")
+    S2.b<-rbind(S2.b,s2);THETA.b<-rbind(THETA.b,t(theta))
+    S20.b<-c(S20.b,s20)
+    nu0.b<-c(nu0.b,nu0)
+    Sigma.ps<-Sigma.ps+solve(iSigma) ; BETA.ps<-BETA.ps+BETA
+    SIGMA.PS<-rbind(SIGMA.PS,c(solve(iSigma)))
+    BETA.pp<-rbind(BETA.pp,rmvnorm(1,theta,solve(iSigma)) )
+  }
+  ##
+}
+pdf("HW_Fig6.pdf")
+par(mar=c(3,3,1,1),mgp=c(1.75,.75,0))
+par(mfrow=c(1,2))
+plot(S20.b,xlab="iteration number",ylab=expression(sigma[0]^2),type="l")
+plot(nu0.b,xlab="iteration number",ylab=expression(nu[0]),type="l")
+dev.off()
+
+nu0.prior<-seq(0,100,1)
+pdf("HW_Fig5.pdf")
+plot(nu0.prior,rep(0.01,101),xlab=expression(nu[0]),type="l",yaxt="n",ylim=c(0,0.015),col="grey",lwd=2,ylab="",main=expression(paste("Prior and posterior of ",nu[0]))) 
+lines(density(nu0.b),lwd=2,main=expression(paste("Prior and posterior of",nu[0])))
+dev.off()

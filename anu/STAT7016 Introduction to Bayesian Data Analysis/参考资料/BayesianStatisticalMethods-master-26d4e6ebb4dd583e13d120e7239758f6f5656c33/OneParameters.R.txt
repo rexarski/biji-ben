@@ -1,0 +1,122 @@
+#Question 2
+theta.support<-seq(0,1,length=5000)
+pth<-(1/203)*(13*dbeta(theta.support, 4, 14) + 40*dbeta(theta.support, 5, 13) + 150*dbeta(theta.support, 6, 12))
+plot(theta.support, pth, type="l") 
+ ord<-order(-pth)
+xpx<-cbind(theta.support[ord], pth[ord])
+
+#Highest posterior density region function(code obtained from lectures)
+hpd<-function(x,dx,p){
+  md<-x[dx==max(dx)] #mode
+  px<-dx/sum(dx) #normalise density
+  pxs<--sort(-px)  ##or sort(px,decreasing=TRUE, so highest value is first)
+  ct<-min(pxs[cumsum(pxs)< p]) # find threshold density at which cumulative density exceeds p
+  list(hpdr=range(x[px>=ct]),mode=md) } #obtain HPD - range of theta values whose density exceed cutoff
+
+hpd(xpx[,1],xpx[,2],.5)$hpdr
+posterior<-function(theta){
+  (1/203)*(13*dbeta(theta, 4, 14) + 40*dbeta(theta, 5, 13) + 150*dbeta(theta, 6, 12))
+}
+
+tmp<-hpd(xpx[,1],xpx[,2],.95)$hpdr
+lines( x=c(tmp[1],tmp[1],tmp[2],tmp[2]),
+       y=c(0,posterior(c(tmp[1],tmp[2])),0),col="darkorange",lwd=2   )
+
+#Question 3
+#a
+y.support<-seq(0,300,length=5000)
+y.density<-function(y){
+  0.25*dnorm(y,mean = 250/3, sd = sqrt(1375/18))+0.5*dnorm(y,mean = 500/3,sd=sqrt(1250/9))+0.25*dnorm(y,mean=250,sd=sqrt(187.5))
+}
+p.y<-y.density(y.support)
+plot(y.support, p.y, type="l",
+     xlab=expression(y),ylab=expression(paste(italic("p"),"(y)")))
+#b
+ord<-order(-p.y)
+ypy<-cbind(y.support[ord], p.y[ord])
+#Highest posterior density region function
+hpd2<-function(x,dx,p){
+  md<-x[dx==max(dx)] 
+  px<-dx/sum(dx)
+  pxs<--sort(-px) 
+  ct<-min(pxs[cumsum(pxs)< p]) 
+  hpdr.x<-sort(x[px>=ct])
+  hpdr<-c(hpdr.x[1])
+  for(i in 2:length(hpdr.x)){
+    if(hpdr.x[i]>hpdr.x[i-1]+1){
+      hpdr<-c(hpdr,hpdr.x[i-1],hpdr.x[i])
+    }
+  }
+  hpdr<-c(hpdr,hpdr.x[length(hpdr.x)])
+  hpdr<-matrix(data = hpdr,nrow = length(hpdr)/2, ncol = 2, byrow = T)
+  list(hpdr=hpdr,mode=md) 
+  } 
+
+hpd2(ypy[,1],ypy[,2],0.05)$hpdr
+hpd2(ypy[,1],ypy[,2],0.25)$hpdr
+hpd2(ypy[,1],ypy[,2],0.5)$hpdr
+hpd2(ypy[,1],ypy[,2],0.75)$hpdr
+hpd2(ypy[,1],ypy[,2],0.95)$hpdr
+
+#Problem 4
+#a
+sum<-0
+for(n in 203:100000){
+  sum<-sum+(1/n)*0.99^(n-1)
+}
+p.y<-sum/100
+p.y
+#b
+sum<-0
+for(n in 203:100000){
+  sum<-sum+n*0.99^(n-1)
+}
+en.squared<-sum/(100*p.y)
+en.squared
+#c
+sum<-0
+for(n in 203:10000){
+  sum<-sum+1/n
+}
+sum
+
+#Problem 5
+#a
+theta.support<-seq(0,100,length=100)
+plot(theta.support, dgamma(theta.support,shape = 262,rate = 11), type="l",
+     xlab=expression(theta),ylab=expression(paste(italic("p("),theta,"|y)")))
+y.support<-0:100
+py.density<-function(y){((11/12)^262)*choose(261+y,y)/(12^y)}
+py<-py.density(y.support)
+sum(py)#equals one
+ord<-order(-py)
+ypy<-cbind(y.support[ord],py[ord])
+plot(y.support, py, type="l")
+hpd2(ypy[,1],ypy[,2],0.95)$hpdr
+#b
+y.support<-0:100
+py.density<-function(y){((8000/65359)^y)*((57359/65359)^239)*choose(238+y,y)}
+py<-py.density(y.support)
+sum(py)
+ord<-order(-py)
+ypy<-cbind(y.support[ord],py[ord])
+plot(y.support, py, type="l")
+hpd2(ypy[,1],ypy[,2],0.95)$hpdr#22,45
+sum(py[22:45])
+#c
+theta.mc1<-rgamma(10000,6979,10.1)
+y.mc1<-c()
+for(theta in theta.mc1){
+  y.mc1<-c(y.mc1,rpois(1,theta))
+}
+y.mc1<-sort(y.mc1)
+y.mc1[c(250,9750)]
+#d
+theta.mc2<-rgamma(10000,6929,57229)
+y.mc2<-c()
+for(theta in theta.mc2){
+  y.mc2<-c(y.mc2,rpois(1,theta*8000))
+}
+y.mc2<-sort(y.mc2)
+y.mc2[c(250,9750)]
+

@@ -1,0 +1,47 @@
+library(ggplot2)
+library(VGAM)
+
+set.seed(7017)
+
+wignerplot <- function(p, flag="N") {
+    n <- p * 5
+    
+    matrices <- list()
+    for (i in 1:n) {
+        
+        if (flag=="N") {
+            A <- matrix(rnorm(p^2, 0, 1), p, p)    
+        } else if (flag=="T") {
+            A <- matrix(rt(p^2, 10), p, p)
+        } else if (flag=="inf") {
+            # Pareto distribution with shape parameter < 2 has infinite variance
+            A <- matrix(rpareto(p^2,shape=1.5), p, p)
+        }
+        
+        A[lower.tri(A)] <- t(A)[lower.tri(A)]
+        matrices[[i]] <- A
+    }
+    
+    evs <- c()
+    for (j in matrices) {
+        evs <- c(evs, eigen(j)$values)
+    }
+    
+    df <- data.frame(seq_along(evs), evs)
+    
+    max(evs)
+    min(evs)
+    bound <- round(max(evs))+0.1
+    
+    g1 <- ggplot(df, aes(evs)) + 
+        geom_histogram(aes(y=..density..), binwidth=1, colour="grey", fill="white") +
+        stat_density(geom="area", alpha=0.5, fill='#5289B1', color="#5289B1") +
+        stat_function(fun = function(x) 2/(pi*(bound)^2)*sqrt((bound)^2-x^2)) +
+        xlim(-bound,bound) + 
+        theme_minimal()
+    return(g1)
+}
+
+wignerplot(100,flag="N")
+wignerplot(100,flag="T")
+wignerplot(100,flag="inf")

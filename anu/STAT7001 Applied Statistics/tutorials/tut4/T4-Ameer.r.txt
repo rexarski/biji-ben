@@ -1,0 +1,78 @@
+#Question 1
+
+#part a
+setwd("C:/Users/u5708538/Desktop")
+corn<-read.table("corn.csv",header=T,sep=",")
+names(corn)
+year=corn$YEAR
+yield=corn$YIELD
+rain=corn$RAIN
+plot(rain,yield,main="Corn yield v's Rainfall",ylab="yield",xlab="rainfall")
+
+#part b
+corn.reg=lm(yield~rain+I(rain^2))
+summary(corn.reg)
+
+#part c
+plot(year,corn.reg$residuals,ylab="residuals",xlab="year")
+#notice that residuals have an upward trend as year increases.
+#inluding year as an explanatoryvariable may help.
+
+#part d
+cornyear.reg = lm(yield ~ rain + I(rain^2) + year)
+summary(cornyear.reg)
+#The estimates are similar but the standard errors are a slightly smaller. The estimates between the two models do not change much. 
+#The reason for this is that year and rainfall are not very highly correlated. 
+#The standard errors are smaller because the additional variable (year) is an important variable.
+
+#part d
+cornint.reg=lm(yield~rain+I(rain^2)+year+I(rain*year))
+summary(cornint.reg)
+# p-value = 0.0016 soreject null. 
+# interaction coefficient -0.0806 indicates that the effect of rainfall on yield is smaller for years closer to 1927.
+
+
+#Question 2
+
+setwd("C:/Users/u5708538/Desktop")
+derby<-read.table("derby.csv",header=T,sep=",")
+names(derby)
+year=derby$year
+speed=derby$speed
+condition=derby$condition
+plot(year,speed,xlab="year",ylab="winning speed")
+
+#The curved nature of this plot suggests we should include year^2. 
+#Use “fast” track condition as the baseline condition, fit the following redression:
+
+Igood=ifelse(condition=="good",1,0)
+Islow=ifelse(condition=="slow",1,0)
+derby.reg=lm(speed~year+I(year^2)+Igood+Islow)
+summary(derby.reg)
+
+#The fitted model is: u(speed|year,condition)=1597+1.67year-0.0004(year^2)-1.61I(slow)-0.53I(good)
+
+#Question 3
+
+#part a
+
+setwd("C:/Users/u5708538/Desktop")
+crab<-read.table("crab.csv",header=T,sep=",")
+names(crab)
+force=crab$FORCE
+height=crab$HEIGHT
+species=crab$SPECIES
+ILP=ifelse(species==species[16],1,0)
+ICP=ifelse(species==species[28],1,0)
+crab.reg=lm(log(force)~log(height)+ILP+ICP+ILP*log(height)+ICP*log(height))
+summary(crab.reg)
+
+#We need to test whether ß4=0. ß4 gives the difference in slope for the species Lophopanopeus bellus and Hemigrapsus nududus. 
+#From the output in (a) we can see that the two-sided p-value is 0.0014 (reject null that ß4=0). 
+#The data suggests that the slopes are different.
+
+
+
+
+
+

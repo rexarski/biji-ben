@@ -1,0 +1,199 @@
+#Question 1 (Tutorial 2)
+
+#part a
+
+hubble = read.table("ex0727.csv",header=T,sep=",")
+distance = hubble$DISTANCE
+velocity = hubble$VELOCITY
+
+hub.reg = lm(distance~velocity)
+summary(hub.reg) 
+
+
+#part b
+
+nointhub.reg=lm(distance~velocity-1) #fitting SLR with no intercept.
+summary(nointhub.reg)
+
+
+#part c
+
+#Method 1
+b1<-summary(nointhub.reg)$coef[1,1]
+seb1<-summary(nointhub.reg)$coef[1,2]
+upp <- b1 + seb1 * qt(0.975, nointhub.reg$df)
+low <- b1 - seb1 * qt(0.975, nointhub.reg$df)
+c(low,upp)
+
+#Method 2
+confint(nointhub.reg,'velocity',level=0.95)
+
+
+
+
+#Question 2 (Tutorial 2)
+
+#part a
+
+wheatears<-read.table("ex0729.csv",header=T,sep=",")
+tcell=wheatears$tcell
+mass=wheatears$mass
+wheatears.reg=lm(tcell~mass)
+summary(wheatears.reg) 
+
+#part b
+
+#Method 1
+
+n = length(mass)
+sigma = summary(wheatears.reg)$sigma
+xbar = mean(mass)
+s_x = sqrt(var(mass)) 
+tstat = qt(0.95,length(mass)-2) 
+pred <- summary(wheatears.reg)$coef[1,1] + 6.5 * summary(wheatears.reg)$coef[2,1]
+
+upp <- pred + tstat * sigma * sqrt(1 + (1/n) + (6.5 - xbar)^2/((n-1)*s_x**2))
+low <- pred - tstat * sigma * sqrt(1 + (1/n) + (6.5 - xbar)^2/((n-1)*s_x**2))
+
+c(low,upp)
+
+#Method 2
+predict(wheatears.reg,newdata=data.frame(mass=6.5),level=0.90,interval="prediction")  # Prediction interval
+
+predict(wheatears.reg,newdata=data.frame(mass=6.5),level=0.90,interval="confidence")  # Confidence interval
+
+
+
+#Question 3
+
+
+winedata<-read.table("ex0823.csv",header=T,sep=",")
+wine=winedata$WINE
+mortality=winedata$MORTALITY
+plot(wine,mortality)
+plot(log(wine),log(mortality),xlab="wine consumption", ylab="heart disease mortality")
+wine.reg=lm(log(mortality)~log(wine))
+summary(wine.reg)
+abline(wine.reg) 
+
+
+
+#Question 4
+
+#part a
+
+weeddata<-read.table("ex0817.csv",header=T,sep=",")
+Y<-weeddata$MASS
+X<-weeddata$LOAD
+Ymat = cbind(Y, log(Y), sqrt(Y), 1/Y)
+Xmat = cbind(X, log(X), sqrt(X), 1/X)
+Ynames=c("Y", "log(Y)","sqrt(Y)","1/Y")
+Xnames=c("X", "log(X)","sqrt(X)","1/X")
+
+par(mfrow=c(4,4))
+for(i in 1:4) {
+  for(j in 1:4) {
+    plot(Xmat[ , i], Ymat[ , j], xlab=Xnames[i], ylab=Ynames[j])
+  }
+} 
+
+cor(Xmat,Ymat) #correlation for all combinations of transformation
+
+
+#part b
+
+bugs.reg=lm(log(weeddata$MASS)~sqrt(weeddata$LOAD))
+par(mfrow=c(2,1))
+
+#Method 1
+plot(bugs.reg,which=1)
+abline(h=0)
+plot(bugs.reg,which=2)
+
+#Method 2
+plot(bugs.reg$fitted.values,bugs.reg$residuals)
+abline(h=0)
+qqnorm(bugs.reg$residuals) 
+
+
+
+
+#Question 5
+
+#Part a
+
+#SLR with indicator variable
+
+violin=read.table("violin.csv",header=T,sep=",")
+names(violin)
+years=violin$years
+act=violin$activity
+Iyears=ifelse(years==0,1,0)
+diff.reg=lm(act~Iyears)
+summary(diff.reg)
+
+
+
+#Part b
+
+
+string.reg = lm(act~years)
+summary(string.reg)
+#Residual vs fitted values plot
+plot(string.reg,which=1)
+#QQnorm plot
+plot(string.reg,which=2)
+
+
+#Question 6
+
+#Part a
+
+vote=read.table("vote.csv",header=T,sep=",")
+bush=vote$bush
+buch=vote$buch
+par(mfrow=c(2,1))
+plot(bush,buch,xlab="Bush vote",ylab="Buch vote")
+plot(log(bush),log(buch),xlab="log(Bush vote)",ylab="log(Buch vote)") 
+
+
+#Part b
+
+vote.reg=lm(log(buch[-67])~log(bush[-67]))
+summary(vote.reg) 
+
+#Part c
+
+par(mfrow=c(2,1))
+plot(vote.reg,which=1)
+plot(vote.reg,which=2)
+
+#Part d 
+
+
+#Using formula with some approximations
+
+upper = -2.34+0.73*11.94 +2*0.42*sqrt(1+1/66 + (11.94-9.75)**2/(65*2.09))
+lower = -2.34+0.73*11.94 -2*0.42*sqrt(1+1/66 + (11.94-9.75)**2/(65*2.09))
+
+CI_transform_approx = c(lower,upper)
+CI_approx = exp(CI_transform_approx)
+
+
+# Using predict
+
+vote.pred = predict(vote.reg,data.frame(bush=bush[67]),interval="prediction")
+
+exp(vote.pred)
+
+
+
+
+
+
+
+
+
+
+
+

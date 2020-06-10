@@ -1,0 +1,150 @@
+x<-c(rep(c(118,484,664,1004,1231,1372,1582),5))
+x<-matrix(x,7,5)
+y<-c(30,58,87,115,120,142,145,33,69,111,156,172,203,203,30,51,75,108,115,138,140,32,62,112,167,179,209,214,30,49,81,125,142,174,177)
+y<-matrix(y,7,5)
+
+length(x)
+length(y)
+
+library(MCMCpack)
+library(mvtnorm)
+#hyperprior parameters
+invR<-solve(diag(0.1,3,3))
+M<-solve(diag(1*10^(-6),3,3))
+mu0<-c(0,0,0)
+k<-3
+
+
+
+#functions
+log.ly<-function(x,y,theta,sigma2,mu,omega){
+  phi1<-exp(theta[1])
+  phi2<-exp(theta[2])-1
+  phi3<--exp(theta[3])
+  eta<-phi1/(1+phi2*exp(phi3*x))
+  loglik<-sum(log(dnorm(y,eta,sqrt(sigma2))))+log(dmvnorm(theta,mu,omega))  
+  return(loglik)
+}
+
+lik.sigma<-function(x,y,theta,sigma2){
+  loglik.sigma<-0
+  for (j in 1:5){
+    phi1<-exp(theta[1,j])
+    phi2<-exp(theta[2,j])-1
+    phi3<--exp(theta[3,j])
+    eta<-phi1/(1+phi2*exp(phi3*x[,j]))
+    loglik<-sum(log(dnorm(y[,j],eta,sqrt(sigma2))))
+    loglik.sigma<-loglik.sigma+loglik
+  }
+  return(loglik.sigma)
+}
+
+lik.mu<-function(mu, theta,omega){
+  loglik.mu<-0
+  for (j in 1:5){
+    loglik.mu<-loglik.mu+log(dmvnorm(theta.temp[,j],mu,omega))
+  }
+  loglik.mu<-loglik.mu + log(dmvnorm(mu, mu0, M))
+  return(loglik.mu)
+}
+
+lik.omega<-function(mu, theta,omega){
+  loglik.omega<-0
+  for (j in 1:5){
+    loglike.omega<-loglik.omega+log(dmvnorm(theta.temp[,j],mu,omega))
+  }
+  loglik.omega<-loglik.omega + log(diwish(omega, k, invR))
+  return(loglik.omega)
+}
+
+
+
+#no. of interations
+S<-10000
+
+
+#starting values
+mu<-mu0
+sigma2<-var(y[1:5])
+omega<-matrix(25,3,3)
+diag(omega)<-70
+theta1<-theta2<-theta3<-theta4<-theta5<-rmvnorm(1,c(0,0,0),omega)
+
+#proposal variances
+propvar.theta<-diag(0.075,3,3)
+b.sigma2<-3.5
+a.sigma2<-b.sigma2*sigma2
+v.wish<-3.5
+propvar.mu<-diag(0.8,3,3)
+
+
+
+#results matrices
+THETA <- vector("list", 5) 
+THETA[[1]]<-rbind(THETA[[1]],theta1)
+THETA[[2]]<-rbind(THETA[[2]],theta2)
+THETA[[3]]<-rbind(THETA[[3]],theta3)
+THETA[[4]]<-rbind(THETA[[4]],theta4)
+THETA[[5]]<-rbind(THETA[[5]],theta5)
+SIGMA2<-NULL
+MU<-OMEGA<-NULL
+
+acc.rate.THETA<-vector("list",5)
+acc.rate.THETA[[1]]<-acc.rate.THETA[[2]]<-acc.rate.THETA[[3]]<-acc.rate.THETA[[4]]<-acc.rate.THETA[[5]]<-0
+acc.rate.OMEGA<-acc.rate.MU<-acc.rate.SIGMA2<-0
+
+
+for (i in 1:S){
+  theta.temp<-NULL
+  #MH for theta
+  for (j in 1:5){
+    theta<-THETA[[j]][i,]
+    theta.star<-rmvnorm(1,theta,propvar.theta)
+    lik.old<-log.ly(x[,j],y[,j],theta,sigma2,mu,omega)
+    lik.new<-log.ly(x[,j],y[,j],theta.star,sigma2,mu,omega)
+    log.r<-lik.new-lik.old
+    if(log(runif(1))<log.r) { theta<-theta.star
+    acc.rate.THETA[[j]]<-acc.rate.THETA[[j]]+1 }
+    THETA[[j]]<-rbind(THETA[[j]],c(theta))
+    theta.temp<-cbind(theta.temp, c(theta))
+  }
+
+    #update sigma2
+    a.sigma2<-b.sigma2*sigma2
+  sigma2.star<-rgamma(1,a.sigma2,b.sigma2)
+  a.sigma2.star<-b.sigma2*sigma2.star
+  lik.old.sigma<--log(sigma2)+lik.sigma(x,y,theta.temp,sigma2)+log(dgamma(sigma2.star, a.sigma2,b.sigma2))
+  lik.new.sigma<--log(sigma2.star)+lik.sigma(x,y,theta.temp,sigma2.star)+log(dgamma(sigma2, a.sigma2.star,b.sigma2))
+  log.r<-lik.new.sigma-lik.old.sigma
+  if(log(runif(1))<log.r) { sigma2<-sigma2.star
+  acc.rate.SIGMA2<-acc.rate.SIGMA2+1}
+  SIGMA2<-c(SIGMA2,sigma2)
+  
+  #update mu
+  mu.star<-rmvnorm(1,mu,propvar.mu)
+  lik.old.mu<-lik.mu(mu,theta.temp,omega)
+  lik.new.mu<-lik.mu(mu.star,theta.temp,omega)
+  log.r<-lik.new.mu-lik.old.mu
+  if(log(runif(1))<log.r) { mu<-mu.star
+  acc.rate.MU<-acc.rate.MU+1}
+  MU<-rbind(MU,mu)
+  
+  #update OMEGA
+  omega.star<-riwish(v.wish,omega)
+  lik.old.omega<-lik.omega(mu,theta.temp,omega)+log(diwish(omega.star,v.wish, omega))
+  lik.new.omega<-lik.omega(mu,theta.temp,omega.star)+log(diwish(omega,v.wish, omega.star))
+  log.r<-lik.new.omega-lik.old.omega
+  if(log(runif(1))<log.r) { omega<-omega.star 
+  acc.rate.OMEGA<-acc.rate.OMEGA+1}
+  OMEGA<-rbind(OMEGA,c(omega))
+  
+}
+
+acc.rate.OMEGA/S
+acc.rate.MU/S
+acc.rate.SIGMA2/S
+acc.rate.THETA[[1]]/S
+acc.rate.THETA[[2]]/S
+acc.rate.THETA[[3]]/S
+acc.rate.THETA[[4]]/S
+acc.rate.THETA[[5]]/S

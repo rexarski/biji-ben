@@ -1,0 +1,48 @@
+pollution <- read.csv("pollution.csv")
+attach(pollution)
+pollution
+
+lm1 <- lm(MORT~PRECIP+EDUC+NONWHITE+NOX)
+lm2 <- lm(MORT~PRECIP+EDUC+NONWHITE+SO2)
+
+summary(lm1)
+summary(lm2)
+anova(lm1)
+anova(lm2)
+
+# b
+newdata <- data.frame(PRECIP=30,EDUC=10,NONWHITE=20,SO2=1)
+predict(lm2, newdata, level=0.95, interval="confidence")
+
+# c
+lm3 <- lm(MORT~PRECIP+NOX+SO2)
+lm4 <- lm(MORT~PRECIP+NOX+SO2+EDUC+NONWHITE)
+anova(lm3,lm4)
+summary(lm3)
+summary(lm4)
+
+birds <- read.csv("birds.csv")
+attach(birds)
+bird1 <- lm(TIME ~ PAIRS)
+bird2 <- lm(TIME ~ PAIRS  + factor(SIZE))
+bird3 <- lm(TIME ~ PAIRS + factor(STATUS))
+anova(bird1,bird2)
+anova(bird1,bird3)
+
+mylogit <- glm(factor(SIZE) ~ PAIRS, family = "binomial")
+summary(mylogit)
+
+
+# Q3
+library(Sleuth3)
+library(wle)
+dat <- case1102
+dat
+attach(dat)
+
+Y <- log(Brain/Liver)
+X <- cbind(Days,Tumor,Loss,Weight,Sex)
+mle.stepwise(Y~X,f.in=4,f.out=4,type="Forward")
+mle.stepwise(Y~X,f.in=4,f.out=4,type="Backward")
+mle.stepwise(Y~X,f.in=4,f.out=4,type="Stepwise")
+

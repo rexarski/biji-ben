@@ -1,0 +1,96 @@
+#Question 1
+
+
+#a
+
+penalty=read.table("penalty.csv",header=T,sep=",")
+head(penalty)
+aggravation=penalty$AGGRAVATION
+victim=penalty$VICTIM
+death=penalty$DEATH
+nodeath=penalty$NODEATH
+indblack=ifelse(victim==victim[2],1,0)
+logitprop=log((death+0.5)/(nodeath+0.5)) #empirical logit. +0.5 fixes up problems of undefined logit
+plot(aggravation[indblack==1],logitprop[indblack==1],ylab="logit observed proportion",xlab="aggravation",ylim=c(-5,4))
+points(aggravation[indblack==0],logitprop[indblack==0],pch="*") 
+
+#b
+
+Y=cbind(death,nodeath)
+death.logit=glm(Y~aggravation+indblack,family=binomial(link=logit))
+summary(death.logit)
+
+#c
+
+1 - pchisq(3.88, 9) 
+
+#e
+
+interval = c(summary$coefficients[3,1]-qnorm(0.975)*summary$coefficients[3,2],
+             summary$coefficients[3,1]+qnorm(0.975)*summary$coefficients[3,2])
+
+interval
+
+exp(interval)
+
+
+#Question 2 
+
+#a
+dose = c(0,0.25,1,2)
+subjects = c(1158,331,552,308)
+noill = c(267,74,130,65)
+prop = noill/subjects
+
+vitC = data.frame(dose,subjects,noill,prop)
+
+logitprop=log((noill+0.5)/(subjects-noill+0.5))
+
+
+plot(dose,logitprop,type='b',ylab="logit observed proportion",xlab="daily dose")
+
+
+#b
+
+y = cbind(vitC$noill,vitC$subjects-vitC$noill)
+
+vitC.logit=glm(y~dose,family=binomial(link=logit))
+
+summary(vitC.logit)
+
+1 - pchisq(0.529, 2) #Deviance goodness-of-fit p-value
+
+#Question 3
+
+
+multpart=c(0,0,1,1)
+circumcised=c(1,0,1,0)
+Y=cbind(c(1,5,5,13),c(46-1,27-5,168-5,52-13))
+HIV.logit=glm(Y~circumcised+multpart,family=binomial(link=logit))
+summary(HIV.logit)
+
+#Odds interval for circumcised men 
+
+interval_cir = c(summary$coefficients[2,1]-qnorm(0.975)*summary$coefficients[2,2],
+             summary$coefficients[2,1]+qnorm(0.975)*summary$coefficients[2,2])
+
+exp(interval_cir) 
+
+#Odds interval for men with multiple partners 
+
+interval_mul = c(summary$coefficients[3,1]-qnorm(0.975)*summary$coefficients[3,2],
+             summary$coefficients[3,1]+qnorm(0.975)*summary$coefficients[3,2])
+
+exp(interval_mul)
+
+
+
+
+
+
+
+
+
+
+
+

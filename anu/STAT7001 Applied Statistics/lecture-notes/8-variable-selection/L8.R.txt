@@ -1,0 +1,138 @@
+#Last Updated: 17/09/2016
+
+
+
+
+
+
+
+setwd('~/Desktop/Research/AppliedStat2017/L8')
+
+
+#Part I
+rm(list=ls())
+library('Sleuth3')
+SATdata=case1201 
+names(SATdata)
+head(SATdata)
+SATdata=SATdata[-29,]  #removing Alaska
+Y<-SATdata[,2]
+X<-SATdata[,-c(1,2)]
+X<-as.matrix(X)
+
+#install.packages('wle')
+library(wle) #need to load this library!
+mle.stepwise(Y~X,f.in=4,f.out=4,type="Forward")
+
+
+
+full=lm(Y~SATdata$Rank) #full model 
+reduced = lm(Y ~ 1) #reduced model
+anova(reduced,full,test='F')
+
+full=lm(Y~SATdata$Rank+SATdata$Expend) #full model 
+reduced = lm(Y~SATdata$Rank) #reduced model
+anova(reduced,full,test='F')
+
+
+
+
+mle.stepwise(Y~X,f.in=4,f.out=4,type="Backward")
+
+mle.stepwise(Y~X,f.in=4,f.out=4,type="Stepwise")
+
+
+#Part II
+X<-data.frame(X)
+fit<-lm(Y~.,data=X)
+#install.packages('MASS')
+library(MASS)
+#Backward AIC
+a=stepAIC(fit,direction="backward",data=X)
+summary(a)
+
+#Backward BIC
+n=length(Y)
+a=stepAIC(fit,direction="backward",data=X, k=log(n))
+summary(a)
+
+#Stepwise AIC
+a=stepAIC(fit,direction="both",data=X)
+summary(a)
+
+#Forward AIC
+fit<-lm(Y~1,data=X)
+a=stepAIC(fit,direction="forward",scope=list(lower=~1,upper=~ Takers + Income + Years + Public + Expend + Rank))
+summary(a)
+
+#Part III
+#install.packages('leaps')
+library(leaps)
+#help(leaps) #get some info on the leaps command
+X=cbind(log(SATdata[,3]),SATdata[,4:8])
+colnames(X)=c('x1','x2','x3','x4','x5','x6')
+Y=SATdata[,2]
+length(X[,1])
+
+#Training data
+Xtraining=X[1:40,]
+Ytraining=Y[1:40]
+#Test data
+Xtest=X[41:49,]
+Ytest=Y[41:49]
+
+#Training data
+Cpsel=leaps(Xtraining,Ytraining,method="Cp",nbest=2) 
+plot(Cpsel$size,Cpsel$Cp)
+
+
+
+cbind(Cpsel$which, Cpsel$size, Cpsel$Cp)
+#Variable Selection Result: size=5, 1 0 1 0 1 1, x1,x3,x5,x6
+
+
+r2sel=leaps(Xtraining,Ytraining,method="adjr2",nbest=2)
+plot(r2sel$size,r2sel$adjr2)
+
+
+
+cbind(r2sel$which, r2sel$size, r2sel$adjr2)
+#Variable Selection Result: size=5, 1 0 1 0 1 1, x1,x3,x5,x6
+
+
+
+#Cross Validation
+fitall=lm(Ytraining~.,data=Xtraining)
+summary(fitall)
+#MPSEfull
+mean((Ytest-predict(fitall,Xtest))^2)
+
+
+fitselect=lm(Ytraining~.,data=Xtraining[,c(1,3,5,6)])
+summary(fitselect)
+#MPSEselect
+mean((Ytest-predict(fitselect,Xtest[,c(1,3,5,6)]))^2)
+
+#Part IV
+Y<-SATdata[,2]
+X<-SATdata[,-c(1,2)]
+fit=lm(Y~.,data=X)
+summary(fit)
+
+#install.packages('car')
+library(car)
+vif(fit)
+#Continue
+#Try dropping Takers
+X1=X[,-1]
+fit1=lm(Y~.,data=X1)
+deviance(fit1)
+#Try dropping Rank
+X2=X[,-6]
+fit2=lm(Y~.,data=X2)
+deviance(fit2)
+#Based on SSE, we choose to eliminate TAKERS. The resulting VIFs after elimination are:
+vif(fit1)
+#Stop
+
+

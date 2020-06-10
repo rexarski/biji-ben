@@ -1,0 +1,59 @@
+library(LearnBayes)
+
+x <- c(-0.86,-0.3,-0.05,0.73)
+n <- rep(10,4)
+y <- c(0,3,7,8)
+res <- cbind(y,n-y)
+res.lm <- glm(res~x,family=binomial)
+summary(res.lm)
+
+mu.a <- summary(res.lm)$coef[1,1]
+sd.a <- summary(res.lm)$coef[1,2]
+mu.b <- summary(res.lm)$coef[2,1]
+sd.b <- summary(res.lm)$coef[2,2]
+S <- 10000
+k <- 1000
+
+g.func <- function(a, b) {
+  pars <- cbind(a,b)
+  newdata <- cbind(x,n,y)
+  post <- c()
+  for (i in 1:nrow(pars)) {
+    post[i] <- logisticpost(pars[i,], newdata)
+  }
+  return(exp(post))
+}
+
+q.func <- function(a, b) {
+  product <- 1
+  for (i in 1:4) {
+    product <- product*
+      (exp(a+b*x[i])/(1+exp(a+b*x[i])))^y[i]*
+      (1/(1+exp(a+b*x[i])))^(n[i]-y[i])
+  }
+  return(product)
+}
+
+imp.r <- function(a, b){
+  return(q.func(a,b)/g.func(a,b))
+}
+
+alpha <- rnorm(S, mu.a, sd.a)
+beta <- rnorm(S, mu.b, sd.b)
+df <- cbind(alpha,beta)
+df <- cbind(df, g.func(alpha,beta), q.func(alpha,beta), imp.r(alpha,beta))
+df <- as.data.frame(df)
+colnames(df) <- c("alpha","beta","g","q","imp.ratio")
+
+resample <- sample(1:S, k, replace=F, prob=df$imp.ratio)
+resample2 <- sample(1:S, k, replace=T, prob=df$imp.ratio)
+
+par(mfrow=c(1,2))
+plot(alpha[resample], beta[resample], 
+     main='Scatterplot of posterior draw without replacement', col='red', xlim=c(-1.5,1.5), ylim=c(-1,6),
+     xlab='alpha', ylab='beta',pch=16)
+
+plot(alpha[resample2], beta[resample2], col='blue',
+     main='Scatterplot of posterior draw with replacement',
+     xlim=c(-1.5,1.5), ylim=c(-1,6),
+     xlab='alpha', ylab='beta',pch=16)
