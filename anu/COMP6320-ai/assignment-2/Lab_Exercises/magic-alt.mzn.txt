@@ -1,0 +1,17 @@
+int: N;
+int: M = (N*N*N+N) div 2;
+array[1..N, 1..N] of var 1..N*N: S;
+include "alldifferent.mzn";
+constraint alldifferent([S[x, y] | x, y in 1..N]);
+constraint forall (x in 1..N) (sum(y in 1..N)(S[x, y]) = M);
+constraint forall (y in 1..N) (sum(x in 1..N)(S[x, y]) = M);
+constraint sum(x in 1..N)(S[x, x]) = M;
+constraint sum(x in 1..N)(S[x, N+1-x]) = M;
+solve satisfy;
+
+% var int corners;
+% constraint corners = S[1,1] + ... + S[N,N];
+% solve minimize corners;
+
+
+

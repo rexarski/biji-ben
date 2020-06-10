@@ -1,0 +1,28 @@
+threshold 99
+growth 0.25
+spread 0.5
+location Brisbane
+location Cairns
+location Darwin
+location Alice
+location Perth
+location Adelaide
+location Melbourne
+location Canberra
+location Sydney
+start Perth
+disease Adelaide 100
+disease Sydney 0
+disease Cairns 0
+disease Darwin 100
+conn Cairns Brisbane
+conn Cairns Darwin
+conn Darwin Alice
+conn Alice Canberra
+conn Alice Perth
+conn Perth Adelaide
+conn Adelaide Melbourne
+conn Melbourne Canberra
+conn Canberra Sydney
+conn Sydney Melbourne
+conn Sydney Brisbane

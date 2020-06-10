@@ -1,0 +1,79 @@
+Starting SAT-based planner...
+Checking for plugins...
+Encodings registered:    3
+Solvers registered:      1
+Command line options:
+    Domain file:          benchmarks/miconic/domain.pddl
+    Problem file:         benchmarks/miconic/problem06.pddl
+    Experiment name:      miconic
+    Query strategy:        ramp, min_h = 15 max_h = 55 step_h = 6
+    Compute plangraph:     False
+    Plangraph constraints: both
+    Encoding:              basic
+    Solver                 precosat
+    SAT solver time out    None
+    Write debug CNF:       False
+    Remove tmp files:      True
+Command line arg processing time: 0.0027954578399658203
+Parsing the PDDL domain...
+Parsing the PDDL problem...
+Simplifying the problem representation...
+Parsing time: 0.07742667198181152
+Grounding the problem...
+Grounding time: 0.024179458618164062
+Simplifying the ground encoding...
+Simplify time: 0.0052187442779541016
+Planning...
+
+Step: 15
+-------------------------------------------------
+Generating base encoding: basic ...
+Encoding generation time: 0.2641291618347168
+Writing CNF file...
+Total variables: 2544
+Total clauses: 161850
+Writing time: 0.19701123237609863
+Solving...
+UNSAT
+Solution time:  12.781312704086304
+Step time: 13.256172895431519
+
+Step: 21
+-------------------------------------------------
+Generating base encoding: basic ...
+Encoding generation time: 0.3443918228149414
+Writing CNF file...
+Total variables: 3552
+Total clauses: 226578
+Writing time: 0.27237462997436523
+Solving...
+SAT
+Solution time:  8.676861763000488
+Extracting the plan...
+Plan:
+0: up f0 f5
+1: board f5 p2
+2: up f5 f7
+3: board f7 p0
+4: depart f7 p2
+5: up f7 f10
+6: board f10 p3
+7: down f10 f9
+8: board f9 p1
+9: board f9 p4
+10: down f9 f1
+11: depart f1 p4
+12: up f1 f2
+13: board f2 p5
+14: down f2 f0
+15: depart f0 p3
+16: up f0 f10
+17: depart f10 p0
+18: down f10 f7
+19: depart f7 p5
+20: depart f7 p1
+Simulating plan for validation.
+Plan valid. 21 actions.
+Step time: 9.307890176773071
+Total time: 22.680668354034424
+

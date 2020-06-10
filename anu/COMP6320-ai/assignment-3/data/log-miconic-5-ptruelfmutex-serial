@@ -1,0 +1,81 @@
+Starting SAT-based planner...
+Checking for plugins...
+Encodings registered:    3
+Solvers registered:      1
+Command line options:
+    Domain file:          benchmarks/miconic/domain.pddl
+    Problem file:         benchmarks/miconic/problem05.pddl
+    Experiment name:      miconic
+    Query strategy:        ramp, min_h = 15 max_h = 55 step_h = 6
+    Compute plangraph:     True
+    Plangraph constraints: fmutex
+    Encoding:              basic
+    Solver                 precosat
+    SAT solver time out    None
+    Write debug CNF:       False
+    Remove tmp files:      True
+Command line arg processing time: 0.0024442672729492188
+Parsing the PDDL domain...
+Parsing the PDDL problem...
+Simplifying the problem representation...
+Parsing time: 0.06358909606933594
+Grounding the problem...
+Grounding time: 0.024541616439819336
+Simplifying the ground encoding...
+Simplify time: 0.0031151771545410156
+Generating Plangraph invariants...
+Step: 0 1 2 3 4 5 
+Plangraph invariants time: 0.020699024200439453
+Planning...
+
+Step: 15
+-------------------------------------------------
+Generating base encoding: basic ...
+Encoding generation time: 0.10177183151245117
+Writing CNF file...
+Total variables: 1820
+Total clauses: 79886
+Writing time: 0.10439324378967285
+Solving...
+UNSAT
+Solution time:  1.9766650199890137
+Step time: 2.1967339515686035
+
+Step: 21
+-------------------------------------------------
+Generating base encoding: basic ...
+Encoding generation time: 0.14711356163024902
+Writing CNF file...
+Total variables: 2540
+Total clauses: 111686
+Writing time: 0.14406085014343262
+Solving...
+SAT
+Solution time:  1.0513083934783936
+Extracting the plan...
+Plan:
+0: up f0 f6
+1: board f6 p3
+2: up f6 f7
+3: board f7 p1
+4: down f7 f2
+5: depart f2 p3
+6: up f2 f9
+7: board f9 p4
+8: down f9 f3
+9: board f3 p0
+10: board f3 p2
+11: down f3 f1
+13: up f1 f4
+14: up f4 f6
+15: depart f6 p0
+16: down f6 f5
+17: depart f5 p1
+18: depart f5 p2
+19: down f5 f1
+20: depart f1 p4
+Simulating plan for validation.
+Plan valid. 20 actions.
+Step time: 1.3555035591125488
+Total time: 3.6742007732391357
+

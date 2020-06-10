@@ -1,0 +1,62 @@
+Starting SAT-based planner...
+Checking for plugins...
+Encodings registered:    3
+Solvers registered:      1
+Command line options:
+    Domain file:          benchmarks/depot/domain.pddl
+    Problem file:         benchmarks/depot/problem01.pddl
+    Experiment name:      depot
+    Query strategy:        ramp, min_h = 15 max_h = 55 step_h = 6
+    Compute plangraph:     True
+    Plangraph constraints: fmutex
+    Encoding:              basic
+    Solver                 precosat
+    SAT solver time out    None
+    Write debug CNF:       False
+    Remove tmp files:      True
+Command line arg processing time: 0.0035262107849121094
+Parsing the PDDL domain...
+Parsing the PDDL problem...
+Simplifying the problem representation...
+Parsing time: 0.07793188095092773
+Grounding the problem...
+Grounding time: 0.033010244369506836
+Simplifying the ground encoding...
+Simplify time: 0.019032955169677734
+Generating Plangraph invariants...
+Step: 0 1 2 3 4 5 6 7 8 
+Plangraph invariants time: 0.033208370208740234
+Planning...
+
+Step: 15
+-------------------------------------------------
+Generating base encoding: basic ...
+Encoding generation time: 0.046710968017578125
+Writing CNF file...
+Total variables: 1508
+Total clauses: 40967
+Writing time: 0.05704331398010254
+Solving...
+SAT
+Solution time:  0.07928013801574707
+Extracting the plan...
+Plan:
+0: lift hoist0 crate1 pallet0 depot0
+1: load hoist0 crate1 truck1 depot0
+2: drive truck1 depot0 distributor0
+4: lift hoist1 crate0 pallet1 distributor0
+5: load hoist1 crate0 truck1 distributor0
+6: unload hoist1 crate1 truck1 distributor0
+7: drive truck1 distributor0 distributor1
+8: drive truck0 distributor1 distributor0
+9: unload hoist2 crate0 truck1 distributor1
+10: drive truck0 distributor0 distributor1
+11: drop hoist1 crate1 pallet1 distributor0
+12: load hoist2 crate0 truck0 distributor1
+13: unload hoist2 crate0 truck0 distributor1
+14: drop hoist2 crate0 pallet2 distributor1
+Simulating plan for validation.
+Plan valid. 14 actions.
+Step time: 0.19806742668151855
+Total time: 0.3744661808013916
+

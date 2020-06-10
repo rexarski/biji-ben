@@ -1,0 +1,36 @@
+containing more details of how quickly your LNS actually converged to the best solution on the smaller problems, and the results of any other experiments you ran on the large ones. You should say how your neighbourhoods were deﬁned—what you destroyed of each solution and what parts of it you kept—and as before comment on what seems to work well or not so well on this logistics problem.
+
+
+###########
+# RESULTS #
+###########
+
+* 5-3: Optimality achieved, the same as Q3.
+
+* 8-4: Improved the solution from Q3.
+
+* 12-4: Converged to the same solution as Q3. However, sometimes due to randomness, it could have an improvement comparing with our solution from Q3. See remark 3 for details.
+
+* 21-8: Additioanlly, the results of this larger instance vary from time to time. (Basically ranges from 54000 to 57000.) As mentioned above, this might be caused by randomness from the simulated annealing process. I believe if more run time is permitted, we could eventually be lead to the global minimum. But generally, we've already have a huge cut from the original solution, and we are pretty happy with that.
+
+---------------------------------------------------
+##################
+# NEIGHBOURHOODS #
+##################
+
+1. Destroy `time_step_id`, i.e. the delivery order of each truck and its corresponding customers. But I didn't do this to all trucks in larger instance. Instead, I rolled a virtual dice, and apply the destruction to half of the cases.
+
+2. Similarly, for about half of the "data entries", I destroied their chilled goods order amount and kept the ambient ones. For the rest half, I did the opposite.
+
+3. Last but not least, I destroied some extra information based on pure randomness. (Picked 20)
+
+---------------------------------------------------
+###########
+# REMARKS #
+###########
+
+1. I didn't use MiniZinc command in command line to terminate the iterations. What I designed was a timer in Python as the kill switch in the while loop. Specifically, the first three instances are given 1 minute, and the last one is given 2 minutes.
+
+2. Since I decided to print out the current cost every 10 iterations (except the last one, I printed out every each of them), thus the final printed cost could still be larger than the one in my csv output. Hence, we should refer to the csv file when looking for the "best" solution generated.
+
+3. Regarding the strange situation in 12-4 case, I wonder, what if we start from the solution in Q3? So I changed the starting solution to the one generated in Q3, gave it a few trial runs. No improvement at all! I want to point out that it could result from the fact that our algorithm is not "bold" enough to jump sideways, so it could stuck at some local optimum and feel satisfied hanging around there.

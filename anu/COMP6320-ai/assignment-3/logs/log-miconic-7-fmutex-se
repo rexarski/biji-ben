@@ -1,0 +1,102 @@
+Starting SAT-based planner...
+Checking for plugins...
+Encodings registered:    3
+Solvers registered:      1
+Command line options:
+    Domain file:          benchmarks/miconic/domain.pddl
+    Problem file:         benchmarks/miconic/problem07.pddl
+    Experiment name:      miconic_temp
+    Query strategy:        ramp, min_h = 15 max_h = 50 step_h = 5
+    Compute plangraph:     True
+    Plangraph constraints: fmutex
+    Encoding:              basic
+    Solver                 precosat
+    SAT solver time out    None
+    Write debug CNF:       False
+    Remove tmp files:      False
+Command line arg processing time: 0.0017621517181396484
+Parsing the PDDL domain...
+Parsing the PDDL problem...
+Simplifying the problem representation...
+Parsing time: 0.11930179595947266
+Grounding the problem...
+Grounding time: 0.019164085388183594
+Simplifying the ground encoding...
+Simplify time: 0.01091313362121582
+Generating Plangraph invariants...
+Step: 0 1 2 3 4 5 
+Plangraph invariants time: 0.07866191864013672
+Planning...
+
+Step: 15
+-------------------------------------------------
+Generating base encoding: basic ...
+PRE_EFF_COUNT:
+8820
+FRAME COUNT:
+840
+INT MUTEX COUNT:
+19110
+FMUTEX COUNT:
+816
+Encoding generation time: 2.501793146133423
+Writing CNF file...
+Total variables: 3388
+Total clauses: 29621
+Writing time: 0.03922605514526367
+Solving...
+UNSAT
+Solution time:  10.095698118209839
+Step time: 12.639239311218262
+
+Step: 20
+-------------------------------------------------
+Generating base encoding: basic ...
+PRE_EFF_COUNT:
+11760
+FRAME COUNT:
+1120
+INT MUTEX COUNT:
+25480
+FMUTEX COUNT:
+816
+Encoding generation time: 3.2935848236083984
+Writing CNF file...
+Total variables: 4508
+Total clauses: 39211
+Writing time: 0.09222698211669922
+Solving...
+SAT
+Solution time:  7.764665126800537
+Extracting the plan...
+Plan:
+0: up f0 f9
+1: board f9 p1
+2: up f9 f10
+3: board f10 p3
+4: down f10 f2
+5: board f2 p5
+5: depart f2 p3
+6: up f2 f5
+7: depart f5 p1
+7: depart f5 p5
+8: down f5 f1
+9: board f1 p0
+9: board f1 p2
+9: board f1 p4
+10: up f1 f3
+11: depart f3 p2
+11: depart f3 p4
+12: up f3 f6
+13: down f6 f4
+14: depart f4 p0
+15: down f4 f2
+16: up f2 f6
+17: board f6 p6
+18: up f6 f11
+19: depart f11 p6
+Simulating plan for validation.
+Plan valid. 25 actions.
+Step time: 11.154368877410889
+Total time: 24.02537202835083
+

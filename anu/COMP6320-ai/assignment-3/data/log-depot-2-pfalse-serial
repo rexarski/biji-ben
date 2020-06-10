@@ -1,0 +1,60 @@
+Starting SAT-based planner...
+Checking for plugins...
+Encodings registered:    3
+Solvers registered:      1
+Command line options:
+    Domain file:          benchmarks/depot/domain.pddl
+    Problem file:         benchmarks/depot/problem02.pddl
+    Experiment name:      depot
+    Query strategy:        ramp, min_h = 15 max_h = 55 step_h = 6
+    Compute plangraph:     False
+    Plangraph constraints: both
+    Encoding:              basic
+    Solver                 precosat
+    SAT solver time out    None
+    Write debug CNF:       False
+    Remove tmp files:      True
+Command line arg processing time: 0.0020585060119628906
+Parsing the PDDL domain...
+Parsing the PDDL problem...
+Simplifying the problem representation...
+Parsing time: 0.07954835891723633
+Grounding the problem...
+Grounding time: 0.02941155433654785
+Simplifying the ground encoding...
+Simplify time: 0.02289724349975586
+Planning...
+
+Step: 15
+-------------------------------------------------
+Generating base encoding: basic ...
+Encoding generation time: 0.6108551025390625
+Writing CNF file...
+Total variables: 4276
+Total clauses: 372350
+Writing time: 0.44452857971191406
+Solving...
+SAT
+Solution time:  0.6396360397338867
+Extracting the plan...
+Plan:
+0: lift hoist0 crate0 pallet0 depot0
+1: load hoist0 crate0 truck0 depot0
+2: drive truck0 depot0 distributor1
+3: lift hoist2 crate2 crate1 distributor1
+4: load hoist2 crate2 truck0 distributor1
+5: lift hoist2 crate1 pallet2 distributor1
+6: load hoist2 crate1 truck0 distributor1
+7: unload hoist2 crate0 truck0 distributor1
+8: drive truck0 distributor1 depot0
+9: drop hoist2 crate0 pallet2 distributor1
+10: unload hoist0 crate2 truck0 depot0
+11: drive truck0 depot0 distributor0
+12: unload hoist1 crate1 truck0 distributor0
+13: drop hoist0 crate2 pallet0 depot0
+14: drop hoist1 crate1 crate3 distributor0
+Simulating plan for validation.
+Plan valid. 15 actions.
+Step time: 1.7112383842468262
+Total time: 1.8534979820251465
+

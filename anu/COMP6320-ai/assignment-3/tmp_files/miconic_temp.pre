@@ -1,0 +1,328 @@
+object(p0).
+object(p1).
+object(p2).
+object(p3).
+object(p4).
+object(p5).
+object(p6).
+object(p7).
+object(p8).
+object(p9).
+object(f0).
+object(f1).
+object(f2).
+object(f3).
+object(f4).
+object(f5).
+object(f6).
+object(f7).
+object(f8).
+object(f9).
+object(f10).
+object(f11).
+object(f12).
+object(f13).
+object(f14).
+object(f15).
+object(f16).
+object(f17).
+object(f18).
+object(f19).
+reachable_a(board(A, B)) :- reachable(c11(A, B)).
+reachable(c11(A, B)) :- reachable(c12(A)), reachable(c13(B)), reachable(c14(A)), reachable(c15(B, A)).
+reachable(c12(A)) :- reachable_f(floor(A)).
+reachable(c13(A)) :- reachable_f(passenger(A)).
+reachable(c14(A)) :- reachable_f(lift__at(A)).
+reachable(c15(A, B)) :- reachable_f(origin(A, B)).
+reachable(c16(B)) :- reachable_a(board(A, B)).
+reachable(c17(A)) :- reachable(c16(A)).
+reachable_f(boarded(A)) :- reachable(c17(A)).
+reachable_a(depart(A, B)) :- reachable(c18(A, B)).
+reachable(c18(A, B)) :- reachable(c19(A)), reachable(c20(B)), reachable(c21(A)), reachable(c22(B, A)), reachable(c23(B)).
+reachable(c19(A)) :- reachable_f(floor(A)).
+reachable(c20(A)) :- reachable_f(passenger(A)).
+reachable(c21(A)) :- reachable_f(lift__at(A)).
+reachable(c22(A, B)) :- reachable_f(destin(A, B)).
+reachable(c23(A)) :- reachable_f(boarded(A)).
+reachable(c24(B)) :- reachable_a(depart(A, B)).
+reachable(c25(A)) :- reachable(c24(A)).
+reachable(c26(A)) :- reachable(c24(A)).
+reachable_f(served(A)) :- reachable(c26(A)).
+reachable_a(up(A, B)) :- reachable(c27(A, B)).
+reachable(c27(A, B)) :- reachable(c28(A)), reachable(c29(B)), reachable(c30(A)), reachable(c31(A, B)).
+reachable(c28(A)) :- reachable_f(floor(A)).
+reachable(c29(A)) :- reachable_f(floor(A)).
+reachable(c30(A)) :- reachable_f(lift__at(A)).
+reachable(c31(A, B)) :- reachable_f(above(A, B)).
+reachable(c32(B, A)) :- reachable_a(up(A, B)).
+reachable(c33(A)) :- reachable(c32(A, B)).
+reachable(c34(B)) :- reachable(c32(A, B)).
+reachable_f(lift__at(A)) :- reachable(c33(A)).
+reachable_a(down(A, B)) :- reachable(c35(A, B)).
+reachable(c35(A, B)) :- reachable(c36(A)), reachable(c37(B)), reachable(c38(A)), reachable(c39(B, A)).
+reachable(c36(A)) :- reachable_f(floor(A)).
+reachable(c37(A)) :- reachable_f(floor(A)).
+reachable(c38(A)) :- reachable_f(lift__at(A)).
+reachable(c39(A, B)) :- reachable_f(above(A, B)).
+reachable(c40(B, A)) :- reachable_a(down(A, B)).
+reachable(c41(A)) :- reachable(c40(A, B)).
+reachable(c42(B)) :- reachable(c40(A, B)).
+reachable_f(lift__at(A)) :- reachable(c41(A)).
+reachable_f(passenger(p0)).
+reachable_f(passenger(p1)).
+reachable_f(passenger(p2)).
+reachable_f(passenger(p3)).
+reachable_f(passenger(p4)).
+reachable_f(passenger(p5)).
+reachable_f(passenger(p6)).
+reachable_f(passenger(p7)).
+reachable_f(passenger(p8)).
+reachable_f(passenger(p9)).
+reachable_f(floor(f0)).
+reachable_f(floor(f1)).
+reachable_f(floor(f2)).
+reachable_f(floor(f3)).
+reachable_f(floor(f4)).
+reachable_f(floor(f5)).
+reachable_f(floor(f6)).
+reachable_f(floor(f7)).
+reachable_f(floor(f8)).
+reachable_f(floor(f9)).
+reachable_f(floor(f10)).
+reachable_f(floor(f11)).
+reachable_f(floor(f12)).
+reachable_f(floor(f13)).
+reachable_f(floor(f14)).
+reachable_f(floor(f15)).
+reachable_f(floor(f16)).
+reachable_f(floor(f17)).
+reachable_f(floor(f18)).
+reachable_f(floor(f19)).
+reachable_f(above(f0, f1)).
+reachable_f(above(f0, f2)).
+reachable_f(above(f0, f3)).
+reachable_f(above(f0, f4)).
+reachable_f(above(f0, f5)).
+reachable_f(above(f0, f6)).
+reachable_f(above(f0, f7)).
+reachable_f(above(f0, f8)).
+reachable_f(above(f0, f9)).
+reachable_f(above(f0, f10)).
+reachable_f(above(f0, f11)).
+reachable_f(above(f0, f12)).
+reachable_f(above(f0, f13)).
+reachable_f(above(f0, f14)).
+reachable_f(above(f0, f15)).
+reachable_f(above(f0, f16)).
+reachable_f(above(f0, f17)).
+reachable_f(above(f0, f18)).
+reachable_f(above(f0, f19)).
+reachable_f(above(f1, f2)).
+reachable_f(above(f1, f3)).
+reachable_f(above(f1, f4)).
+reachable_f(above(f1, f5)).
+reachable_f(above(f1, f6)).
+reachable_f(above(f1, f7)).
+reachable_f(above(f1, f8)).
+reachable_f(above(f1, f9)).
+reachable_f(above(f1, f10)).
+reachable_f(above(f1, f11)).
+reachable_f(above(f1, f12)).
+reachable_f(above(f1, f13)).
+reachable_f(above(f1, f14)).
+reachable_f(above(f1, f15)).
+reachable_f(above(f1, f16)).
+reachable_f(above(f1, f17)).
+reachable_f(above(f1, f18)).
+reachable_f(above(f1, f19)).
+reachable_f(above(f2, f3)).
+reachable_f(above(f2, f4)).
+reachable_f(above(f2, f5)).
+reachable_f(above(f2, f6)).
+reachable_f(above(f2, f7)).
+reachable_f(above(f2, f8)).
+reachable_f(above(f2, f9)).
+reachable_f(above(f2, f10)).
+reachable_f(above(f2, f11)).
+reachable_f(above(f2, f12)).
+reachable_f(above(f2, f13)).
+reachable_f(above(f2, f14)).
+reachable_f(above(f2, f15)).
+reachable_f(above(f2, f16)).
+reachable_f(above(f2, f17)).
+reachable_f(above(f2, f18)).
+reachable_f(above(f2, f19)).
+reachable_f(above(f3, f4)).
+reachable_f(above(f3, f5)).
+reachable_f(above(f3, f6)).
+reachable_f(above(f3, f7)).
+reachable_f(above(f3, f8)).
+reachable_f(above(f3, f9)).
+reachable_f(above(f3, f10)).
+reachable_f(above(f3, f11)).
+reachable_f(above(f3, f12)).
+reachable_f(above(f3, f13)).
+reachable_f(above(f3, f14)).
+reachable_f(above(f3, f15)).
+reachable_f(above(f3, f16)).
+reachable_f(above(f3, f17)).
+reachable_f(above(f3, f18)).
+reachable_f(above(f3, f19)).
+reachable_f(above(f4, f5)).
+reachable_f(above(f4, f6)).
+reachable_f(above(f4, f7)).
+reachable_f(above(f4, f8)).
+reachable_f(above(f4, f9)).
+reachable_f(above(f4, f10)).
+reachable_f(above(f4, f11)).
+reachable_f(above(f4, f12)).
+reachable_f(above(f4, f13)).
+reachable_f(above(f4, f14)).
+reachable_f(above(f4, f15)).
+reachable_f(above(f4, f16)).
+reachable_f(above(f4, f17)).
+reachable_f(above(f4, f18)).
+reachable_f(above(f4, f19)).
+reachable_f(above(f5, f6)).
+reachable_f(above(f5, f7)).
+reachable_f(above(f5, f8)).
+reachable_f(above(f5, f9)).
+reachable_f(above(f5, f10)).
+reachable_f(above(f5, f11)).
+reachable_f(above(f5, f12)).
+reachable_f(above(f5, f13)).
+reachable_f(above(f5, f14)).
+reachable_f(above(f5, f15)).
+reachable_f(above(f5, f16)).
+reachable_f(above(f5, f17)).
+reachable_f(above(f5, f18)).
+reachable_f(above(f5, f19)).
+reachable_f(above(f6, f7)).
+reachable_f(above(f6, f8)).
+reachable_f(above(f6, f9)).
+reachable_f(above(f6, f10)).
+reachable_f(above(f6, f11)).
+reachable_f(above(f6, f12)).
+reachable_f(above(f6, f13)).
+reachable_f(above(f6, f14)).
+reachable_f(above(f6, f15)).
+reachable_f(above(f6, f16)).
+reachable_f(above(f6, f17)).
+reachable_f(above(f6, f18)).
+reachable_f(above(f6, f19)).
+reachable_f(above(f7, f8)).
+reachable_f(above(f7, f9)).
+reachable_f(above(f7, f10)).
+reachable_f(above(f7, f11)).
+reachable_f(above(f7, f12)).
+reachable_f(above(f7, f13)).
+reachable_f(above(f7, f14)).
+reachable_f(above(f7, f15)).
+reachable_f(above(f7, f16)).
+reachable_f(above(f7, f17)).
+reachable_f(above(f7, f18)).
+reachable_f(above(f7, f19)).
+reachable_f(above(f8, f9)).
+reachable_f(above(f8, f10)).
+reachable_f(above(f8, f11)).
+reachable_f(above(f8, f12)).
+reachable_f(above(f8, f13)).
+reachable_f(above(f8, f14)).
+reachable_f(above(f8, f15)).
+reachable_f(above(f8, f16)).
+reachable_f(above(f8, f17)).
+reachable_f(above(f8, f18)).
+reachable_f(above(f8, f19)).
+reachable_f(above(f9, f10)).
+reachable_f(above(f9, f11)).
+reachable_f(above(f9, f12)).
+reachable_f(above(f9, f13)).
+reachable_f(above(f9, f14)).
+reachable_f(above(f9, f15)).
+reachable_f(above(f9, f16)).
+reachable_f(above(f9, f17)).
+reachable_f(above(f9, f18)).
+reachable_f(above(f9, f19)).
+reachable_f(above(f10, f11)).
+reachable_f(above(f10, f12)).
+reachable_f(above(f10, f13)).
+reachable_f(above(f10, f14)).
+reachable_f(above(f10, f15)).
+reachable_f(above(f10, f16)).
+reachable_f(above(f10, f17)).
+reachable_f(above(f10, f18)).
+reachable_f(above(f10, f19)).
+reachable_f(above(f11, f12)).
+reachable_f(above(f11, f13)).
+reachable_f(above(f11, f14)).
+reachable_f(above(f11, f15)).
+reachable_f(above(f11, f16)).
+reachable_f(above(f11, f17)).
+reachable_f(above(f11, f18)).
+reachable_f(above(f11, f19)).
+reachable_f(above(f12, f13)).
+reachable_f(above(f12, f14)).
+reachable_f(above(f12, f15)).
+reachable_f(above(f12, f16)).
+reachable_f(above(f12, f17)).
+reachable_f(above(f12, f18)).
+reachable_f(above(f12, f19)).
+reachable_f(above(f13, f14)).
+reachable_f(above(f13, f15)).
+reachable_f(above(f13, f16)).
+reachable_f(above(f13, f17)).
+reachable_f(above(f13, f18)).
+reachable_f(above(f13, f19)).
+reachable_f(above(f14, f15)).
+reachable_f(above(f14, f16)).
+reachable_f(above(f14, f17)).
+reachable_f(above(f14, f18)).
+reachable_f(above(f14, f19)).
+reachable_f(above(f15, f16)).
+reachable_f(above(f15, f17)).
+reachable_f(above(f15, f18)).
+reachable_f(above(f15, f19)).
+reachable_f(above(f16, f17)).
+reachable_f(above(f16, f18)).
+reachable_f(above(f16, f19)).
+reachable_f(above(f17, f18)).
+reachable_f(above(f17, f19)).
+reachable_f(above(f18, f19)).
+reachable_f(origin(p0, f3)).
+reachable_f(destin(p0, f6)).
+reachable_f(origin(p1, f17)).
+reachable_f(destin(p1, f15)).
+reachable_f(origin(p2, f13)).
+reachable_f(destin(p2, f15)).
+reachable_f(origin(p3, f6)).
+reachable_f(destin(p3, f12)).
+reachable_f(origin(p4, f9)).
+reachable_f(destin(p4, f1)).
+reachable_f(origin(p5, f2)).
+reachable_f(destin(p5, f7)).
+reachable_f(origin(p6, f10)).
+reachable_f(destin(p6, f19)).
+reachable_f(origin(p7, f3)).
+reachable_f(destin(p7, f6)).
+reachable_f(origin(p8, f0)).
+reachable_f(destin(p8, f6)).
+reachable_f(origin(p9, f12)).
+reachable_f(destin(p9, f16)).
+reachable_f(lift__at(f0)).
+equal(A, B) :- object(A), object(B), A = B.
+reachable_goal :- reachable(c0).
+reachable(c0) :- reachable(c1), reachable(c2), reachable(c3), reachable(c4), reachable(c5), reachable(c6), reachable(c7), reachable(c8), reachable(c9), reachable(c10).
+reachable(c1) :- reachable_f(served(p0)).
+reachable(c2) :- reachable_f(served(p1)).
+reachable(c3) :- reachable_f(served(p2)).
+reachable(c4) :- reachable_f(served(p3)).
+reachable(c5) :- reachable_f(served(p4)).
+reachable(c6) :- reachable_f(served(p5)).
+reachable(c7) :- reachable_f(served(p6)).
+reachable(c8) :- reachable_f(served(p7)).
+reachable(c9) :- reachable_f(served(p8)).
+reachable(c10) :- reachable_f(served(p9)).
+#show reachable_a/1.
+#show reachable_f/1.
+#show reachable/1.
+#show reachable_goal/0.

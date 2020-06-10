@@ -1,0 +1,486 @@
+object(package16).
+object(package15).
+object(package14).
+object(package13).
+object(package12).
+object(package11).
+object(package10).
+object(package9).
+object(package8).
+object(package7).
+object(package6).
+object(package5).
+object(package4).
+object(package3).
+object(package2).
+object(package1).
+object(city18).
+object(city17).
+object(city16).
+object(city15).
+object(city14).
+object(city13).
+object(city12).
+object(city11).
+object(city10).
+object(city9).
+object(city8).
+object(city7).
+object(city6).
+object(city5).
+object(city4).
+object(city3).
+object(city2).
+object(city1).
+object(truck26).
+object(truck25).
+object(truck24).
+object(truck23).
+object(truck22).
+object(truck21).
+object(truck20).
+object(truck19).
+object(truck18).
+object(truck17).
+object(truck16).
+object(truck15).
+object(truck14).
+object(truck13).
+object(truck12).
+object(truck11).
+object(truck10).
+object(truck9).
+object(truck8).
+object(truck7).
+object(truck6).
+object(truck5).
+object(truck4).
+object(truck3).
+object(truck2).
+object(truck1).
+object(plane2).
+object(plane1).
+object(city18__3).
+object(city18__2).
+object(city18__1).
+object(city17__3).
+object(city17__2).
+object(city17__1).
+object(city16__3).
+object(city16__2).
+object(city16__1).
+object(city15__3).
+object(city15__2).
+object(city15__1).
+object(city14__3).
+object(city14__2).
+object(city14__1).
+object(city13__3).
+object(city13__2).
+object(city13__1).
+object(city12__3).
+object(city12__2).
+object(city12__1).
+object(city11__3).
+object(city11__2).
+object(city11__1).
+object(city10__3).
+object(city10__2).
+object(city10__1).
+object(city9__3).
+object(city9__2).
+object(city9__1).
+object(city8__3).
+object(city8__2).
+object(city8__1).
+object(city7__3).
+object(city7__2).
+object(city7__1).
+object(city6__3).
+object(city6__2).
+object(city6__1).
+object(city5__3).
+object(city5__2).
+object(city5__1).
+object(city4__3).
+object(city4__2).
+object(city4__1).
+object(city3__3).
+object(city3__2).
+object(city3__1).
+object(city2__3).
+object(city2__2).
+object(city2__1).
+object(city1__3).
+object(city1__2).
+object(city1__1).
+object(city18__4).
+object(city17__4).
+object(city16__4).
+object(city15__4).
+object(city14__4).
+object(city13__4).
+object(city12__4).
+object(city11__4).
+object(city10__4).
+object(city9__4).
+object(city8__4).
+object(city7__4).
+object(city6__4).
+object(city5__4).
+object(city4__4).
+object(city3__4).
+object(city2__4).
+object(city1__4).
+reachable_a(load__truck(A, B, C)) :- reachable(c11(A, B, C)).
+reachable(c11(A, B, C)) :- reachable(c12(A)), reachable(c13(B)), reachable(c14(C)), reachable(c15(B, C)), reachable(c16(A, C)).
+reachable(c12(A)) :- reachable_f(obj(A)).
+reachable(c13(A)) :- reachable_f(truck(A)).
+reachable(c14(A)) :- reachable_f(location(A)).
+reachable(c15(A, B)) :- reachable_f(at(A, B)).
+reachable(c16(A, B)) :- reachable_f(at(A, B)).
+reachable(c17(A, C, B)) :- reachable_a(load__truck(A, B, C)).
+reachable(c18(A, B)) :- reachable(c17(A, B, C)).
+reachable(c19(A, C)) :- reachable(c17(A, B, C)).
+reachable_f(in(A, B)) :- reachable(c19(A, B)).
+reachable_a(load__airplane(A, B, C)) :- reachable(c20(A, B, C)).
+reachable(c20(A, B, C)) :- reachable(c21(A)), reachable(c22(B)), reachable(c23(C)), reachable(c24(A, C)), reachable(c25(B, C)).
+reachable(c21(A)) :- reachable_f(obj(A)).
+reachable(c22(A)) :- reachable_f(airplane(A)).
+reachable(c23(A)) :- reachable_f(location(A)).
+reachable(c24(A, B)) :- reachable_f(at(A, B)).
+reachable(c25(A, B)) :- reachable_f(at(A, B)).
+reachable(c26(A, C, B)) :- reachable_a(load__airplane(A, B, C)).
+reachable(c27(A, B)) :- reachable(c26(A, B, C)).
+reachable(c28(A, C)) :- reachable(c26(A, B, C)).
+reachable_f(in(A, B)) :- reachable(c28(A, B)).
+reachable_a(unload__truck(A, B, C)) :- reachable(c29(A, B, C)).
+reachable(c29(A, B, C)) :- reachable(c30(A)), reachable(c31(B)), reachable(c32(C)), reachable(c33(B, C)), reachable(c34(A, B)).
+reachable(c30(A)) :- reachable_f(obj(A)).
+reachable(c31(A)) :- reachable_f(truck(A)).
+reachable(c32(A)) :- reachable_f(location(A)).
+reachable(c33(A, B)) :- reachable_f(at(A, B)).
+reachable(c34(A, B)) :- reachable_f(in(A, B)).
+reachable(c35(A, B, C)) :- reachable_a(unload__truck(A, B, C)).
+reachable(c36(A, B)) :- reachable(c35(A, B, C)).
+reachable(c37(A, C)) :- reachable(c35(A, B, C)).
+reachable_f(at(A, B)) :- reachable(c37(A, B)).
+reachable_a(unload__airplane(A, B, C)) :- reachable(c38(A, B, C)).
+reachable(c38(A, B, C)) :- reachable(c39(A)), reachable(c40(B)), reachable(c41(C)), reachable(c42(A, B)), reachable(c43(B, C)).
+reachable(c39(A)) :- reachable_f(obj(A)).
+reachable(c40(A)) :- reachable_f(airplane(A)).
+reachable(c41(A)) :- reachable_f(location(A)).
+reachable(c42(A, B)) :- reachable_f(in(A, B)).
+reachable(c43(A, B)) :- reachable_f(at(A, B)).
+reachable(c44(A, B, C)) :- reachable_a(unload__airplane(A, B, C)).
+reachable(c45(A, B)) :- reachable(c44(A, B, C)).
+reachable(c46(A, C)) :- reachable(c44(A, B, C)).
+reachable_f(at(A, B)) :- reachable(c46(A, B)).
+reachable_a(drive__truck(A, B, C, D)) :- reachable(c47(A, B, C, D)).
+reachable(c47(A, B, C, D)) :- reachable(c48(A)), reachable(c49(B)), reachable(c50(C)), reachable(c51(D)), reachable(c52(A, B)), reachable(c53(B, D)), reachable(c54(C, D)).
+reachable(c48(A)) :- reachable_f(truck(A)).
+reachable(c49(A)) :- reachable_f(location(A)).
+reachable(c50(A)) :- reachable_f(location(A)).
+reachable(c51(A)) :- reachable_f(city(A)).
+reachable(c52(A, B)) :- reachable_f(at(A, B)).
+reachable(c53(A, B)) :- reachable_f(in__city(A, B)).
+reachable(c54(A, B)) :- reachable_f(in__city(A, B)).
+reachable(c55(A, B, C)) :- reachable_a(drive__truck(A, B, C, D)).
+reachable(c56(A, B)) :- reachable(c55(A, B, C)).
+reachable(c57(A, C)) :- reachable(c55(A, B, C)).
+reachable_f(at(A, B)) :- reachable(c57(A, B)).
+reachable_a(fly__airplane(A, B, C)) :- reachable(c58(A, B, C)).
+reachable(c58(A, B, C)) :- reachable(c59(A)), reachable(c60(B)), reachable(c61(C)), reachable(c62(A, B)).
+reachable(c59(A)) :- reachable_f(airplane(A)).
+reachable(c60(A)) :- reachable_f(airport(A)).
+reachable(c61(A)) :- reachable_f(airport(A)).
+reachable(c62(A, B)) :- reachable_f(at(A, B)).
+reachable(c63(A, B, C)) :- reachable_a(fly__airplane(A, B, C)).
+reachable(c64(A, B)) :- reachable(c63(A, B, C)).
+reachable(c65(A, C)) :- reachable(c63(A, B, C)).
+reachable_f(at(A, B)) :- reachable(c65(A, B)).
+reachable_f(obj(package16)).
+reachable_f(obj(package15)).
+reachable_f(obj(package14)).
+reachable_f(obj(package13)).
+reachable_f(obj(package12)).
+reachable_f(obj(package11)).
+reachable_f(obj(package10)).
+reachable_f(obj(package9)).
+reachable_f(obj(package8)).
+reachable_f(obj(package7)).
+reachable_f(obj(package6)).
+reachable_f(obj(package5)).
+reachable_f(obj(package4)).
+reachable_f(obj(package3)).
+reachable_f(obj(package2)).
+reachable_f(obj(package1)).
+reachable_f(city(city18)).
+reachable_f(city(city17)).
+reachable_f(city(city16)).
+reachable_f(city(city15)).
+reachable_f(city(city14)).
+reachable_f(city(city13)).
+reachable_f(city(city12)).
+reachable_f(city(city11)).
+reachable_f(city(city10)).
+reachable_f(city(city9)).
+reachable_f(city(city8)).
+reachable_f(city(city7)).
+reachable_f(city(city6)).
+reachable_f(city(city5)).
+reachable_f(city(city4)).
+reachable_f(city(city3)).
+reachable_f(city(city2)).
+reachable_f(city(city1)).
+reachable_f(truck(truck26)).
+reachable_f(truck(truck25)).
+reachable_f(truck(truck24)).
+reachable_f(truck(truck23)).
+reachable_f(truck(truck22)).
+reachable_f(truck(truck21)).
+reachable_f(truck(truck20)).
+reachable_f(truck(truck19)).
+reachable_f(truck(truck18)).
+reachable_f(truck(truck17)).
+reachable_f(truck(truck16)).
+reachable_f(truck(truck15)).
+reachable_f(truck(truck14)).
+reachable_f(truck(truck13)).
+reachable_f(truck(truck12)).
+reachable_f(truck(truck11)).
+reachable_f(truck(truck10)).
+reachable_f(truck(truck9)).
+reachable_f(truck(truck8)).
+reachable_f(truck(truck7)).
+reachable_f(truck(truck6)).
+reachable_f(truck(truck5)).
+reachable_f(truck(truck4)).
+reachable_f(truck(truck3)).
+reachable_f(truck(truck2)).
+reachable_f(truck(truck1)).
+reachable_f(airplane(plane2)).
+reachable_f(airplane(plane1)).
+reachable_f(location(city18__3)).
+reachable_f(location(city18__2)).
+reachable_f(location(city18__1)).
+reachable_f(location(city17__3)).
+reachable_f(location(city17__2)).
+reachable_f(location(city17__1)).
+reachable_f(location(city16__3)).
+reachable_f(location(city16__2)).
+reachable_f(location(city16__1)).
+reachable_f(location(city15__3)).
+reachable_f(location(city15__2)).
+reachable_f(location(city15__1)).
+reachable_f(location(city14__3)).
+reachable_f(location(city14__2)).
+reachable_f(location(city14__1)).
+reachable_f(location(city13__3)).
+reachable_f(location(city13__2)).
+reachable_f(location(city13__1)).
+reachable_f(location(city12__3)).
+reachable_f(location(city12__2)).
+reachable_f(location(city12__1)).
+reachable_f(location(city11__3)).
+reachable_f(location(city11__2)).
+reachable_f(location(city11__1)).
+reachable_f(location(city10__3)).
+reachable_f(location(city10__2)).
+reachable_f(location(city10__1)).
+reachable_f(location(city9__3)).
+reachable_f(location(city9__2)).
+reachable_f(location(city9__1)).
+reachable_f(location(city8__3)).
+reachable_f(location(city8__2)).
+reachable_f(location(city8__1)).
+reachable_f(location(city7__3)).
+reachable_f(location(city7__2)).
+reachable_f(location(city7__1)).
+reachable_f(location(city6__3)).
+reachable_f(location(city6__2)).
+reachable_f(location(city6__1)).
+reachable_f(location(city5__3)).
+reachable_f(location(city5__2)).
+reachable_f(location(city5__1)).
+reachable_f(location(city4__3)).
+reachable_f(location(city4__2)).
+reachable_f(location(city4__1)).
+reachable_f(location(city3__3)).
+reachable_f(location(city3__2)).
+reachable_f(location(city3__1)).
+reachable_f(location(city2__3)).
+reachable_f(location(city2__2)).
+reachable_f(location(city2__1)).
+reachable_f(location(city1__3)).
+reachable_f(location(city1__2)).
+reachable_f(location(city1__1)).
+reachable_f(airport(city18__4)).
+reachable_f(location(city18__4)).
+reachable_f(airport(city17__4)).
+reachable_f(location(city17__4)).
+reachable_f(airport(city16__4)).
+reachable_f(location(city16__4)).
+reachable_f(airport(city15__4)).
+reachable_f(location(city15__4)).
+reachable_f(airport(city14__4)).
+reachable_f(location(city14__4)).
+reachable_f(airport(city13__4)).
+reachable_f(location(city13__4)).
+reachable_f(airport(city12__4)).
+reachable_f(location(city12__4)).
+reachable_f(airport(city11__4)).
+reachable_f(location(city11__4)).
+reachable_f(airport(city10__4)).
+reachable_f(location(city10__4)).
+reachable_f(airport(city9__4)).
+reachable_f(location(city9__4)).
+reachable_f(airport(city8__4)).
+reachable_f(location(city8__4)).
+reachable_f(airport(city7__4)).
+reachable_f(location(city7__4)).
+reachable_f(airport(city6__4)).
+reachable_f(location(city6__4)).
+reachable_f(airport(city5__4)).
+reachable_f(location(city5__4)).
+reachable_f(airport(city4__4)).
+reachable_f(location(city4__4)).
+reachable_f(airport(city3__4)).
+reachable_f(location(city3__4)).
+reachable_f(airport(city2__4)).
+reachable_f(location(city2__4)).
+reachable_f(airport(city1__4)).
+reachable_f(location(city1__4)).
+reachable_f(in__city(city18__4, city18)).
+reachable_f(in__city(city18__3, city18)).
+reachable_f(in__city(city18__2, city18)).
+reachable_f(in__city(city18__1, city18)).
+reachable_f(in__city(city17__4, city17)).
+reachable_f(in__city(city17__3, city17)).
+reachable_f(in__city(city17__2, city17)).
+reachable_f(in__city(city17__1, city17)).
+reachable_f(in__city(city16__4, city16)).
+reachable_f(in__city(city16__3, city16)).
+reachable_f(in__city(city16__2, city16)).
+reachable_f(in__city(city16__1, city16)).
+reachable_f(in__city(city15__4, city15)).
+reachable_f(in__city(city15__3, city15)).
+reachable_f(in__city(city15__2, city15)).
+reachable_f(in__city(city15__1, city15)).
+reachable_f(in__city(city14__4, city14)).
+reachable_f(in__city(city14__3, city14)).
+reachable_f(in__city(city14__2, city14)).
+reachable_f(in__city(city14__1, city14)).
+reachable_f(in__city(city13__4, city13)).
+reachable_f(in__city(city13__3, city13)).
+reachable_f(in__city(city13__2, city13)).
+reachable_f(in__city(city13__1, city13)).
+reachable_f(in__city(city12__4, city12)).
+reachable_f(in__city(city12__3, city12)).
+reachable_f(in__city(city12__2, city12)).
+reachable_f(in__city(city12__1, city12)).
+reachable_f(in__city(city11__4, city11)).
+reachable_f(in__city(city11__3, city11)).
+reachable_f(in__city(city11__2, city11)).
+reachable_f(in__city(city11__1, city11)).
+reachable_f(in__city(city10__4, city10)).
+reachable_f(in__city(city10__3, city10)).
+reachable_f(in__city(city10__2, city10)).
+reachable_f(in__city(city10__1, city10)).
+reachable_f(in__city(city9__4, city9)).
+reachable_f(in__city(city9__3, city9)).
+reachable_f(in__city(city9__2, city9)).
+reachable_f(in__city(city9__1, city9)).
+reachable_f(in__city(city8__4, city8)).
+reachable_f(in__city(city8__3, city8)).
+reachable_f(in__city(city8__2, city8)).
+reachable_f(in__city(city8__1, city8)).
+reachable_f(in__city(city7__4, city7)).
+reachable_f(in__city(city7__3, city7)).
+reachable_f(in__city(city7__2, city7)).
+reachable_f(in__city(city7__1, city7)).
+reachable_f(in__city(city6__4, city6)).
+reachable_f(in__city(city6__3, city6)).
+reachable_f(in__city(city6__2, city6)).
+reachable_f(in__city(city6__1, city6)).
+reachable_f(in__city(city5__4, city5)).
+reachable_f(in__city(city5__3, city5)).
+reachable_f(in__city(city5__2, city5)).
+reachable_f(in__city(city5__1, city5)).
+reachable_f(in__city(city4__4, city4)).
+reachable_f(in__city(city4__3, city4)).
+reachable_f(in__city(city4__2, city4)).
+reachable_f(in__city(city4__1, city4)).
+reachable_f(in__city(city3__4, city3)).
+reachable_f(in__city(city3__3, city3)).
+reachable_f(in__city(city3__2, city3)).
+reachable_f(in__city(city3__1, city3)).
+reachable_f(in__city(city2__4, city2)).
+reachable_f(in__city(city2__3, city2)).
+reachable_f(in__city(city2__2, city2)).
+reachable_f(in__city(city2__1, city2)).
+reachable_f(in__city(city1__4, city1)).
+reachable_f(in__city(city1__3, city1)).
+reachable_f(in__city(city1__2, city1)).
+reachable_f(in__city(city1__1, city1)).
+reachable_f(at(plane2, city10__4)).
+reachable_f(at(plane1, city18__4)).
+reachable_f(at(truck26, city18__2)).
+reachable_f(at(truck25, city17__1)).
+reachable_f(at(truck24, city16__1)).
+reachable_f(at(truck23, city15__2)).
+reachable_f(at(truck22, city14__2)).
+reachable_f(at(truck21, city13__1)).
+reachable_f(at(truck20, city12__3)).
+reachable_f(at(truck19, city11__1)).
+reachable_f(at(truck18, city10__1)).
+reachable_f(at(truck17, city9__1)).
+reachable_f(at(truck16, city8__2)).
+reachable_f(at(truck15, city7__1)).
+reachable_f(at(truck14, city6__1)).
+reachable_f(at(truck13, city5__1)).
+reachable_f(at(truck12, city4__2)).
+reachable_f(at(truck11, city3__2)).
+reachable_f(at(truck10, city2__2)).
+reachable_f(at(truck9, city1__2)).
+reachable_f(at(truck8, city14__1)).
+reachable_f(at(truck7, city3__4)).
+reachable_f(at(truck6, city1__1)).
+reachable_f(at(truck5, city14__1)).
+reachable_f(at(truck4, city8__1)).
+reachable_f(at(truck3, city10__3)).
+reachable_f(at(truck2, city4__3)).
+reachable_f(at(truck1, city14__3)).
+reachable_f(at(package16, city16__2)).
+reachable_f(at(package15, city14__3)).
+reachable_f(at(package14, city14__1)).
+reachable_f(at(package13, city14__4)).
+reachable_f(at(package12, city6__1)).
+reachable_f(at(package11, city3__1)).
+reachable_f(at(package10, city9__4)).
+reachable_f(at(package9, city17__3)).
+reachable_f(at(package8, city15__2)).
+reachable_f(at(package7, city8__4)).
+reachable_f(at(package6, city6__1)).
+reachable_f(at(package5, city10__3)).
+reachable_f(at(package4, city15__2)).
+reachable_f(at(package3, city16__3)).
+reachable_f(at(package2, city11__2)).
+reachable_f(at(package1, city7__3)).
+equal(A, B) :- object(A), object(B), A = B.
+reachable_goal :- reachable(c0).
+reachable(c0) :- reachable(c1), reachable(c2), reachable(c3), reachable(c4), reachable(c5), reachable(c6), reachable(c7), reachable(c8), reachable(c9), reachable(c10).
+reachable(c1) :- reachable_f(at(package16, city14__3)).
+reachable(c2) :- reachable_f(at(package15, city14__2)).
+reachable(c3) :- reachable_f(at(package14, city8__4)).
+reachable(c4) :- reachable_f(at(package13, city4__3)).
+reachable(c5) :- reachable_f(at(package12, city13__4)).
+reachable(c6) :- reachable_f(at(package11, city12__2)).
+reachable(c7) :- reachable_f(at(package10, city16__2)).
+reachable(c8) :- reachable_f(at(package9, city17__4)).
+reachable(c9) :- reachable_f(at(package8, city8__1)).
+reachable(c10) :- reachable_f(at(package7, city8__2)).
+#show reachable_a/1.
+#show reachable_f/1.
+#show reachable/1.
+#show reachable_goal/0.

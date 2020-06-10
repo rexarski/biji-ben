@@ -1,0 +1,17 @@
+C = 4; 		 % Number of customers (excludes depot).
+T = 8; 	 	 % Number of trucks.
+G = 2; 		 % Number of good types.
+MAXCAP = 22; 	 % Largest capacity of any truck.
+
+% Details of the truck types: capacities and refrigeration capabilities.
+% e.g. truck 1 has a capacity of 20 units and no refrigeration capabilities.
+cap 	     = [ 20, 20, 20, 20, 10, 10, 10, 22];
+refrig 	     = [ false, true, true, true, false, false, true, false];
+
+% Orders placed by the customers. Customer 0 is the depot.
+% order[i][j] is the number of units of good of type i that customer j ordered.
+% e.g. customer 1 ordered 3 units of chilled goods and 0 units of ambient goods.
+order = array2d(goods,customers,
+[| 0, 3, 4, 5, 11,
+ | 0, 0, 0, 6, 23 |]);
+

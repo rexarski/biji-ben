@@ -1,0 +1,80 @@
+Starting SAT-based planner...
+Checking for plugins...
+Encodings registered:    3
+Solvers registered:      1
+Command line options:
+    Domain file:          benchmarks/blocks/domain.pddl
+    Problem file:         benchmarks/blocks/problem11.pddl
+    Experiment name:      blocks_temp
+    Query strategy:        ramp, min_h = 15 max_h = 50 step_h = 5
+    Compute plangraph:     False
+    Plangraph constraints: both
+    Encoding:              basic
+    Solver                 precosat
+    SAT solver time out    None
+    Write debug CNF:       False
+    Remove tmp files:      False
+Command line arg processing time: 0.002282857894897461
+Parsing the PDDL domain...
+Parsing the PDDL problem...
+Simplifying the problem representation...
+Parsing time: 0.04778099060058594
+Grounding the problem...
+Grounding time: 0.02415609359741211
+Simplifying the ground encoding...
+Simplify time: 0.06297898292541504
+Planning...
+
+Step: 15
+-------------------------------------------------
+Generating base encoding: basic ...
+PRE_EFF_COUNT:
+28875
+FRAME COUNT:
+4650
+INT MUTEX COUNT:
+181545
+Encoding generation time: 15.31308102607727
+Writing CNF file...
+Total variables: 6440
+Total clauses: 215235
+Writing time: 0.2910897731781006
+Solving...
+UNSAT
+Solution time:  0.31304287910461426
+Step time: 15.919747829437256
+
+Step: 20
+-------------------------------------------------
+Generating base encoding: basic ...
+PRE_EFF_COUNT:
+38500
+FRAME COUNT:
+6200
+INT MUTEX COUNT:
+242060
+Encoding generation time: 20.96624207496643
+Writing CNF file...
+Total variables: 8535
+Total clauses: 286925
+Writing time: 0.38355183601379395
+Solving...
+UNSAT
+Solution time:  1.051645040512085
+Step time: 22.40346598625183
+
+Step: 25
+-------------------------------------------------
+Generating base encoding: basic ...
+PRE_EFF_COUNT:
+48125
+FRAME COUNT:
+7750
+INT MUTEX COUNT:
+302575
+Encoding generation time: 25.122150897979736
+Writing CNF file...
+Total variables: 10630
+Total clauses: 358615
+Writing time: 0.49500513076782227
+Solving...

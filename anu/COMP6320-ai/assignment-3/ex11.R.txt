@@ -1,0 +1,169 @@
+library(ggplot2)
+library(gridExtra)
+library(ggtitle)
+
+files <- list.files("./logs/")
+
+file_mining <- function(filename) {
+    corpus <- strsplit(filename, "-")[[1]]
+    bm <- corpus[2]
+    problem <- as.integer(corpus[3])
+    pg <- corpus[4]
+    ps <- corpus[5]
+    
+    contents <- readLines(paste0("logs/", file))
+    
+    index <- max(which(contents %in% 
+                           "-------------------------------------------------"))-1
+    max_horizon <- as.integer(strsplit(contents[index]," ")[[1]][2])
+    
+    lastline <- contents[length(contents)]
+    seclast <- contents[length(contents)-1]
+    if (startsWith(lastline, "") && startsWith(seclast, "Total")) {
+        SAT <- 1
+        total_time <- strsplit(seclast, " ")[[1]][3]
+    } else {
+        SAT <- 0
+        total_time <- 100.0
+    }
+    return(c(bm, problem, pg, ps, max_horizon, SAT, total_time))
+}
+
+dat <- rep(NA, 7)
+for (file in files) {
+    dat <- rbind(dat, file_mining(file))
+}
+
+dat <- dat[2:nrow(dat),]
+dat <- data.frame(dat)
+colnames(dat) <- c("benchmark","problem","plangraph","ps","horizon",
+                  "SAT","total_time")
+
+dat[,c(2,5,6,7)] <- sapply(dat[, c(2,5,6,7)], as.character)
+dat[,c(2,5,6,7)] <- sapply(dat[, c(2,5,6,7)], as.numeric)
+
+solved <- dat[dat$SAT==1,]
+unsolved <- dat[dat$SAT==0,]
+blocks <- dat[dat$benchmark=="blocks",]
+depot <- dat[dat$benchmark=="depot",]
+miconic <- dat[dat$benchmark=="miconic",]
+
+plot1 <- ggplot(blocks[blocks$ps=="se",], aes(x=problem, y=log(total_time), 
+                                              color=plangraph))+
+    geom_line()+
+    geom_point(size=2)+
+    scale_color_manual(values=c("#e41a1c", "#377eb8", "#4daf4a", "#984ea3"))+
+    theme_bw()+
+    ggtitle("blocks-serial")
+
+plot2 <- ggplot(blocks[blocks$ps=="para",], aes(x=problem, y=log(total_time), 
+                                                color=plangraph))+
+    geom_line()+
+    geom_point(size=2)+
+    scale_color_manual(values=c("#e41a1c", "#377eb8", "#4daf4a", "#984ea3"))+
+    theme_bw()+
+    ggtitle("blocks-parallel")
+
+plot3 <- ggplot(miconic[miconic$ps=="se",], aes(x=problem, y=log(total_time), 
+                                                color=plangraph))+
+    geom_line()+
+    geom_point(size=2)+
+    scale_color_manual(values=c("#e41a1c", "#377eb8", "#4daf4a", "#984ea3"))+
+    theme_bw()+
+    ggtitle("miconic-serial")
+
+plot4 <- ggplot(miconic[miconic$ps=="para",], aes(x=problem, y=log(total_time), 
+                                                  color=plangraph))+
+    geom_line()+
+    geom_point(size=2)+
+    scale_color_manual(values=c("#e41a1c", "#377eb8", "#4daf4a", "#984ea3"))+
+    theme_bw()+
+    ggtitle("miconic-parallel")
+
+plot5 <- ggplot(depot[depot$ps=="se",], aes(x=problem, y=log(total_time), 
+                                            color=plangraph))+
+    geom_line()+
+    geom_point(size=2)+
+    scale_color_manual(values=c("#e41a1c", "#377eb8", "#4daf4a", "#984ea3"))+
+    theme_bw()+
+    ggtitle("depot-serial")
+
+plot6 <- ggplot(depot[depot$ps=="para",], aes(x=problem, y=log(total_time), 
+                                              color=plangraph))+
+    geom_line()+
+    geom_point(size=2)+
+    scale_color_manual(values=c("#e41a1c", "#377eb8", "#4daf4a", "#984ea3"))+
+    theme_bw()+
+    ggtitle("depot-parallel")
+
+grid.arrange(plot1, plot2, plot3, plot4, plot5, plot6, ncol=2)
+
+
+plot7 <- ggplot(miconic[miconic$plangraph=="both",], aes(x=problem, y=log(total_time), 
+                                                         color=ps))+
+    geom_line()+
+    geom_point(size=2)+
+    scale_color_manual(values=c("#e41a1c", "#377eb8"))+
+    theme_bw()+
+    ggtitle("miconic-both")
+
+plot8 <- ggplot(miconic[miconic$plangraph=="fmutex",], aes(x=problem, y=log(total_time),
+                                                           color=ps))+
+    geom_line()+
+    geom_point(size=2)+
+    scale_color_manual(values=c("#e41a1c", "#377eb8"))+
+    theme_bw()+
+    ggtitle("miconic-fmutex")
+
+plot9 <- ggplot(miconic[miconic$plangraph=="noplan",], aes(x=problem, y=log(total_time), 
+                                                           color=ps))+
+    geom_line()+
+    geom_point(size=2)+
+    scale_color_manual(values=c("#e41a1c", "#377eb8"))+
+    theme_bw()+
+    ggtitle("miconic-noplan")
+
+plot10 <- ggplot(miconic[miconic$plangraph=="reach",], aes(x=problem, y=log(total_time),
+                                                           color=ps))+
+    geom_line()+
+    geom_point(size=2)+
+    scale_color_manual(values=c("#e41a1c", "#377eb8"))+
+    theme_bw()+
+    ggtitle("miconic-reach")
+
+grid.arrange(plot7, plot8, plot9, plot10, ncol=2)
+
+
+plot11 <- ggplot(blocks[blocks$plangraph=="both",], aes(x=problem, y=log(total_time), 
+                                                        color=ps))+
+    geom_line()+
+    geom_point(size=2)+
+    scale_color_manual(values=c("#e41a1c", "#377eb8"))+
+    theme_bw()+
+    ggtitle("blocks-both")
+
+plot12 <- ggplot(blocks[blocks$plangraph=="fmutex",], aes(x=problem, y=log(total_time),
+                                                          color=ps))+
+    geom_line()+
+    geom_point(size=2)+
+    scale_color_manual(values=c("#e41a1c", "#377eb8"))+
+    theme_bw()+
+    ggtitle("blocks-fmutex")
+
+plot13 <- ggplot(blocks[blocks$plangraph=="noplan",], aes(x=problem, y=log(total_time),
+                                                          color=ps))+
+    geom_line()+
+    geom_point(size=2)+
+    scale_color_manual(values=c("#e41a1c", "#377eb8"))+
+    theme_bw()+
+    ggtitle("blocks-noplan")
+
+plot14 <- ggplot(blocks[blocks$plangraph=="reach",], aes(x=problem, y=log(total_time), 
+                                                         color=ps))+
+    geom_line()+
+    geom_point(size=2)+
+    scale_color_manual(values=c("#e41a1c", "#377eb8"))+
+    theme_bw()+
+    ggtitle("blocks-reach")
+
+grid.arrange(plot11,plot12,plot13,plot14, ncol=2)

@@ -1,0 +1,77 @@
+%
+%    Enter your details below:
+%
+%    Name: Rui Qiu
+%    Student ID: u6139152
+%    Email: u6139152@anu.edu.au
+%
+
+int: C;                          % Number of customers
+int: T;                     	    % Number of trucks
+int: G;                     		  % Number of goods types 
+int: MAXCAP;                		  % Maximum truck capacity
+
+set of int: trucks = 1..T;    	     	    % Set of trucks
+set of int: customers = 0..C;        	  % Set of customers. Includes depot as customer 0
+set of int: goods = 1..G;            	  % Set of goods types
+int: chilled = 1;  int: ambient = 2; 	  % Good types
+set of int: times = 0..C+1;            	  % Enough time steps to visit each customer once and depot twice if needed
+
+array[trucks] of int: cap;	     	        % Capacity of trucks
+array[trucks] of bool: refrig;	       	  % Whether or not trucks are refrigerated
+array[goods,customers] of int: order;	  % Number of units of goods types ordered by customers
+
+
+
+% Insert your variables and constraints here
+
+% 2 old vars from Q1
+array[customers,trucks] of var 0..MAXCAP: chilled_goods_units_delivered;
+array[customers,trucks] of var 0..MAXCAP: ambient_goods_units_delivered; 
+array[trucks,1..5*C] of var 0..C+T+MAXCAP: a_seq; % a result array, please see report-Q2.txt for details.
+
+% 4 constraints from Q1
+constraint forall (t in trucks)
+    ((sum(c in customers)(chilled_goods_units_delivered[c,t]) + sum(c in customers)(ambient_goods_units_delivered[c,t])) <= cap[t]);
+constraint forall (t in trucks, c in customers)
+    (if refrig[t]==false then chilled_goods_units_delivered[c,t]=0 else true endif);
+constraint forall (c in customers)
+    (sum(t in trucks)(chilled_goods_units_delivered[c,t])=order[1,c]);
+constraint forall (c in customers)
+    (sum(t in trucks)(ambient_goods_units_delivered[c,t])=order[2,c]);
+
+% new constraints
+constraint forall (c in 1..C, t in trucks)
+    (a_seq[t,5*c-1]=chilled_goods_units_delivered[c,t]); % chilled matches
+constraint forall (c in 1..C , t in trucks)
+    (a_seq[t,5*c]=ambient_goods_units_delivered[c,t]); % ambient matches
+constraint forall (t in trucks, c in 1..C)
+    (a_seq[t,5*c-4]=t); % truck_id matches
+constraint forall (t in trucks, c in 1..C)
+    (a_seq[t,5*c-2]=c); % customer_id matches
+% the following constraints play around with time_step_id, see report-Q2.txt for details
+constraint forall (t in trucks, c in 1..C)
+    (if a_seq[t,5*c-1]=0 /\ a_seq[t,5*c]=0 then a_seq[t,5*c-3]=0 else true endif);  % if no chilled nor ambient cargo delivered, stay at the depot, i.e. time_step_id is 0.
+constraint forall (t in trucks, c in 1..C)
+    (if c=1 /\ (a_seq[t,5*c-1]!=0 \/ a_seq[t,5*c]!=0) then a_seq[t,5*c-3]=1 else true endif);		
+constraint forall (t in trucks, c in 2..C)
+    (if a_seq[t,5*c-1]!=0 \/ a_seq[t,5*c]!=0 then a_seq[t,5*c-3]=1+a_seq[t,5*(c-1)-3] else true endif);
+    
+% constraint forall (t in trucks, c in 1..C)(
+%     if c=1 /\ (a_seq[t,5*c-1]!=0 \/ a_seq[t,5*c]!=0) then a_seq[t,5*c-3]=1
+%     elseif a_seq[t,5*c-1]!=0 \/ a_seq[t,5*c]!=0 then a_seq[t,5*c-3]=1+a_seq[t,5*(c-1)-3]
+%     else true endif);
+        
+
+% In question Q2, we are only finding a satisfying solution
+solve satisfy;
+
+
+% Write a Minizinc output item to print the solution in the desired format for Q2
+output 
+    [show(T)++","++show(C)++"\n"] ++
+    [if fix(chilled_goods_units_delivered[c,t])=0 then "" else "" endif | c in customers, t in trucks] ++
+	  [if fix(ambient_goods_units_delivered[c,t])=0 then "" else "" endif | c in customers, t in trucks] ++
+    [if fix(a_seq[t,5*c-1])!=0 \/ fix(a_seq[t,5*c]!=0)
+        then show(a_seq[t,5*c-4])++","++show(a_seq[t,5*c-3])++","++show(a_seq[t,5*c-2])++","++show(a_seq[t,5*c-1])++","++show(a_seq[t,5*c])++"\n"
+        else "" endif | t in trucks, c in 1..C];

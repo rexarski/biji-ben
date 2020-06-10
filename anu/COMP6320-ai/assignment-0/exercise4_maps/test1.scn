@@ -1,0 +1,8 @@
+threshold 0.5
+growth 0.2
+spread 0.1
+location l1
+location l2
+start l1
+disease l2 0.8
+conn l1 l2

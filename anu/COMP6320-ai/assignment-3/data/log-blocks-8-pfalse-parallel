@@ -1,0 +1,43 @@
+Starting SAT-based planner...
+Checking for plugins...
+Encodings registered:    3
+Solvers registered:      1
+Command line options:
+    Domain file:          benchmarks/blocks/domain.pddl
+    Problem file:         benchmarks/blocks/problem08.pddl
+    Experiment name:      blocks
+    Query strategy:        ramp, min_h = 15 max_h = 55 step_h = 6
+    Compute plangraph:     False
+    Plangraph constraints: both
+    Encoding:              basic
+    Solver                 precosat
+    SAT solver time out    None
+    Write debug CNF:       False
+    Remove tmp files:      True
+Command line arg processing time: 0.0026671886444091797
+Parsing the PDDL domain...
+Parsing the PDDL problem...
+Simplifying the problem representation...
+Parsing time: 0.0369873046875
+Grounding the problem...
+Grounding time: 0.026305437088012695
+Simplifying the ground encoding...
+Simplify time: 0.018954038619995117
+Planning...
+
+Step: 15
+-------------------------------------------------
+Generating base encoding: basic ...
+Encoding generation time: 53.57381319999695
+Writing CNF file...
+Total variables: 3584
+Total clauses: 91791
+Writing time: 0.1540360450744629
+Solving...
+UNSAT
+Solution time:  0.2891712188720703
+Step time: 54.051756858825684
+
+Step: 21
+-------------------------------------------------
+Generating base encoding: basic ...

@@ -1,0 +1,81 @@
+Starting SAT-based planner...
+Checking for plugins...
+Encodings registered:    3
+Solvers registered:      1
+Command line options:
+    Domain file:          benchmarks/blocks/domain.pddl
+    Problem file:         benchmarks/blocks/problem08.pddl
+    Experiment name:      blocks
+    Query strategy:        ramp, min_h = 15 max_h = 55 step_h = 6
+    Compute plangraph:     True
+    Plangraph constraints: fmutex
+    Encoding:              basic
+    Solver                 precosat
+    SAT solver time out    None
+    Write debug CNF:       False
+    Remove tmp files:      True
+Command line arg processing time: 0.0022487640380859375
+Parsing the PDDL domain...
+Parsing the PDDL problem...
+Simplifying the problem representation...
+Parsing time: 0.035635948181152344
+Grounding the problem...
+Grounding time: 0.02626657485961914
+Simplifying the ground encoding...
+Simplify time: 0.020739316940307617
+Generating Plangraph invariants...
+Step: 0 1 2 3 4 5 6 7 
+Plangraph invariants time: 0.13147234916687012
+Planning...
+
+Step: 15
+-------------------------------------------------
+Generating base encoding: basic ...
+Encoding generation time: 0.20621037483215332
+Writing CNF file...
+Total variables: 3216
+Total clauses: 155634
+Writing time: 0.1974189281463623
+Solving...
+UNSAT
+Solution time:  0.24733948707580566
+Step time: 0.6803982257843018
+
+Step: 21
+-------------------------------------------------
+Generating base encoding: basic ...
+Encoding generation time: 0.3260056972503662
+Writing CNF file...
+Total variables: 4470
+Total clauses: 216414
+Writing time: 0.26902318000793457
+Solving...
+SAT
+Solution time:  1.8310346603393555
+Extracting the plan...
+Plan:
+0: unstack a g
+1: stack a c
+2: unstack g e
+3: stack g b
+4: unstack a c
+5: stack a g
+7: pick-up c
+8: stack c a
+9: unstack d h
+10: put-down d
+11: pick-up d
+12: put-down d
+13: unstack h f
+14: stack h c
+15: pick-up e
+16: stack e h
+17: pick-up f
+18: stack f e
+19: pick-up d
+20: stack d f
+Simulating plan for validation.
+Plan valid. 20 actions.
+Step time: 2.440624952316284
+Total time: 3.3487043380737305
+

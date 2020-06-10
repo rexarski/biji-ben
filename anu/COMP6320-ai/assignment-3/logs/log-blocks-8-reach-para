@@ -1,0 +1,95 @@
+Starting SAT-based planner...
+Checking for plugins...
+Encodings registered:    3
+Solvers registered:      1
+Command line options:
+    Domain file:          benchmarks/blocks/domain.pddl
+    Problem file:         benchmarks/blocks/problem08.pddl
+    Experiment name:      blocks_temp
+    Query strategy:        ramp, min_h = 15 max_h = 50 step_h = 5
+    Compute plangraph:     True
+    Plangraph constraints: reachable
+    Encoding:              basic
+    Solver                 precosat
+    SAT solver time out    None
+    Write debug CNF:       False
+    Remove tmp files:      False
+Command line arg processing time: 0.001729726791381836
+Parsing the PDDL domain...
+Parsing the PDDL problem...
+Simplifying the problem representation...
+Parsing time: 0.046903133392333984
+Grounding the problem...
+Grounding time: 0.01925492286682129
+Simplifying the ground encoding...
+Simplify time: 0.026034116744995117
+Generating Plangraph invariants...
+Step: 0 1 2 3 4 5 6 7 
+Plangraph invariants time: 0.17796707153320312
+Planning...
+
+Step: 15
+-------------------------------------------------
+Generating base encoding: basic ...
+PRE_EFF_COUNT:
+14040
+FRAME COUNT:
+2430
+INT MUTEX COUNT:
+46200
+REACH COUNT:
+464
+Encoding generation time: 2.1161820888519287
+Writing CNF file...
+Total variables: 3216
+Total clauses: 63222
+Writing time: 0.09611630439758301
+Solving...
+UNSAT
+Solution time:  0.3759329319000244
+Step time: 2.5899760723114014
+
+Step: 20
+-------------------------------------------------
+Generating base encoding: basic ...
+PRE_EFF_COUNT:
+18720
+FRAME COUNT:
+3240
+INT MUTEX COUNT:
+61600
+REACH COUNT:
+464
+Encoding generation time: 2.7365779876708984
+Writing CNF file...
+Total variables: 4261
+Total clauses: 84112
+Writing time: 0.12466907501220703
+Solving...
+SAT
+Solution time:  3.850145101547241
+Extracting the plan...
+Plan:
+0: unstack a g
+1: stack a c
+2: unstack g e
+3: stack g b
+4: unstack a c
+5: stack a g
+7: pick-up c
+8: stack c a
+9: unstack d h
+10: put-down d
+11: unstack h f
+13: stack h c
+14: pick-up e
+15: stack e h
+16: pick-up f
+17: stack f e
+18: pick-up d
+19: stack d f
+Simulating plan for validation.
+Plan valid. 18 actions.
+Step time: 6.715704917907715
+Total time: 9.581028938293457
+

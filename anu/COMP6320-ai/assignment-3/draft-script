@@ -1,0 +1,47 @@
+turn on `-p true` for mutex testing
+
+turn on `-d true` for debuging
+
+Either use the argument "-r true" or clear out
+    your tmp_files directory periodically and manually.
+
+small tests:
+
+python3 planner.py benchmarks/miconic/domain.pddl benchmarks/miconic/problem01.pddl miconic1 4 -d true
+python3 planner.py benchmarks/miconic/domain.pddl benchmarks/miconic/problem06.pddl miconic1 4 -d true
+python3 planner.py benchmarks/blocks/domain.pddl benchmarks/blocks/problem04.pddl blocks1 6 -d true
+python3 planner.py benchmarks/cave_diving/domain.pddl benchmarks/cave_diving/problem.pddl cavediving1 8 -d true
+python3 planner.py benchmarks/depot/domain.pddl benchmarks/depot/problem01.pddl blocks1 8 -d true
+python3 planner.py benchmarks/miconic/domain.pddl benchmarks/miconic/problem06.pddl miconic1 20 -d true -x serial
+python3 planner.py benchmarks/pipesworld/domain.pddl benchmarks/pipesworld/problem01.pddl pipesworld1 8 -d true
+
+
+python3 planner.py benchmarks/depot/domain.pddl benchmarks/depot/problem04.pddl blocks1 6 -d true
+
+
+
+
+
+
+
+----
+logistics
+
+python3 planner.py benchmarks/logistics/domain.pddl benchmarks/logistics/problem01.pddl logistic1 13 -p false
+
+python3 planner.py benchmarks/logistics/domain.pddl benchmarks/logistics/problem01.pddl logistic1 13 -e logistics -p false
+
+python3 planner.py benchmarks/logistics/domain.pddl benchmarks/logistics/problem05.pddl logistic5 13 -p false
+
+python3 planner.py benchmarks/logistics/domain.pddl benchmarks/logistics/problem05.pddl logistic5 13 -e logistics -p false
+
+python3 planner.py benchmarks/logistics/domain.pddl benchmarks/logistics/problem02.pddl logistic2 13 -p false
+
+python3 planner.py benchmarks/logistics/domain.pddl benchmarks/logistics/problem02.pddl logistic2 13 -e logistics -p false
+
+
+python3 planner.py benchmarks/logistics/domain.pddl benchmarks/logistics/problem06.pddl logistic6 25 -p false
+
+python3 planner.py benchmarks/logistics/domain.pddl benchmarks/logistics/problem06.pddl logistic6 25 -e logistics -p false
+
+

@@ -1,0 +1,71 @@
+object(d).
+object(b).
+object(a).
+object(c).
+reachable_a(pick__up(A)) :- reachable(c4(A)).
+reachable(c4(A)) :- reachable(c5(A)), reachable(c6(A)), reachable(c7).
+reachable(c5(A)) :- reachable_f(clear(A)).
+reachable(c6(A)) :- reachable_f(ontable(A)).
+reachable(c7) :- reachable_f(handempty).
+reachable(c8(A)) :- reachable_a(pick__up(A)).
+reachable(c9(A)) :- reachable(c8(A)).
+reachable(c10(A)) :- reachable(c8(A)).
+reachable(c11) :- reachable(c8(A)).
+reachable(c12(A)) :- reachable(c8(A)).
+reachable_f(holding(A)) :- reachable(c12(A)).
+reachable_a(put__down(A)) :- reachable(c13(A)).
+reachable(c13(A)) :- reachable(c14(A)).
+reachable(c14(A)) :- reachable_f(holding(A)).
+reachable(c15(A)) :- reachable_a(put__down(A)).
+reachable(c16(A)) :- reachable(c15(A)).
+reachable(c17(A)) :- reachable(c15(A)).
+reachable(c18) :- reachable(c15(A)).
+reachable(c19(A)) :- reachable(c15(A)).
+reachable_f(clear(A)) :- reachable(c17(A)).
+reachable_f(handempty) :- reachable(c18).
+reachable_f(ontable(A)) :- reachable(c19(A)).
+reachable_a(stack(A, B)) :- reachable(c20(A, B)).
+reachable(c20(A, B)) :- reachable(c21(A)), reachable(c22(B)).
+reachable(c21(A)) :- reachable_f(holding(A)).
+reachable(c22(A)) :- reachable_f(clear(A)).
+reachable(c23(A, B)) :- reachable_a(stack(A, B)).
+reachable(c24(A)) :- reachable(c23(A, B)).
+reachable(c25(B)) :- reachable(c23(A, B)).
+reachable(c26(A)) :- reachable(c23(A, B)).
+reachable(c27) :- reachable(c23(A, B)).
+reachable(c28(A, B)) :- reachable(c23(A, B)).
+reachable_f(clear(A)) :- reachable(c26(A)).
+reachable_f(handempty) :- reachable(c27).
+reachable_f(on(A, B)) :- reachable(c28(A, B)).
+reachable_a(unstack(A, B)) :- reachable(c29(A, B)).
+reachable(c29(A, B)) :- reachable(c30(A, B)), reachable(c31(A)), reachable(c32).
+reachable(c30(A, B)) :- reachable_f(on(A, B)).
+reachable(c31(A)) :- reachable_f(clear(A)).
+reachable(c32) :- reachable_f(handempty).
+reachable(c33(A, B)) :- reachable_a(unstack(A, B)).
+reachable(c34(A)) :- reachable(c33(A, B)).
+reachable(c35(B)) :- reachable(c33(A, B)).
+reachable(c36(A)) :- reachable(c33(A, B)).
+reachable(c37) :- reachable(c33(A, B)).
+reachable(c38(A, B)) :- reachable(c33(A, B)).
+reachable_f(holding(A)) :- reachable(c34(A)).
+reachable_f(clear(A)) :- reachable(c35(A)).
+reachable_f(clear(c)).
+reachable_f(clear(a)).
+reachable_f(clear(b)).
+reachable_f(clear(d)).
+reachable_f(ontable(c)).
+reachable_f(ontable(a)).
+reachable_f(ontable(b)).
+reachable_f(ontable(d)).
+reachable_f(handempty).
+equal(A, B) :- object(A), object(B), A = B.
+reachable_goal :- reachable(c0).
+reachable(c0) :- reachable(c1), reachable(c2), reachable(c3).
+reachable(c1) :- reachable_f(on(d, c)).
+reachable(c2) :- reachable_f(on(c, b)).
+reachable(c3) :- reachable_f(on(b, a)).
+#show reachable_a/1.
+#show reachable_f/1.
+#show reachable/1.
+#show reachable_goal/0.

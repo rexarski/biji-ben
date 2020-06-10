@@ -1,0 +1,195 @@
+object(l).
+object(depot0).
+object(depot1).
+object(depot2).
+object(distributor0).
+object(distributor1).
+object(distributor2).
+object(truck0).
+object(truck1).
+object(pallet0).
+object(pallet1).
+object(pallet2).
+object(pallet3).
+object(pallet4).
+object(pallet5).
+object(crate0).
+object(crate1).
+object(crate2).
+object(crate3).
+object(crate4).
+object(crate5).
+object(hoist0).
+object(hoist1).
+object(hoist2).
+object(hoist3).
+object(hoist4).
+object(hoist5).
+reachable_a(drive(A, B, C)) :- reachable(c5(A, B, C)).
+reachable(c5(A, B, C)) :- reachable(c6(A)), reachable(c7(B)), reachable(c8(C)), reachable(c9(A, B)).
+reachable(c6(A)) :- reachable_f(truck(A)).
+reachable(c7(A)) :- reachable_f(place(A)).
+reachable(c8(A)) :- reachable_f(place(A)).
+reachable(c9(A, B)) :- reachable_f(at(A, B)).
+reachable(c10(A, C, B)) :- reachable_a(drive(A, B, C)).
+reachable(c11(A, B)) :- reachable(c10(A, B, C)).
+reachable(c12(A, C)) :- reachable(c10(A, B, C)).
+reachable_f(at(A, B)) :- reachable(c11(A, B)).
+reachable_a(lift(A, B, C, D)) :- reachable(c13(A, B, C, D)).
+reachable(c13(A, B, C, D)) :- reachable(c14(A)), reachable(c15(B)), reachable(c16(C)), reachable(c17(D)), reachable(c18(A, D)), reachable(c19(A)), reachable(c20(B, D)), reachable(c21(B, C)), reachable(c22(B)).
+reachable(c14(A)) :- reachable_f(hoist(A)).
+reachable(c15(A)) :- reachable_f(crate(A)).
+reachable(c16(A)) :- reachable_f(surface(A)).
+reachable(c17(A)) :- reachable_f(place(A)).
+reachable(c18(A, B)) :- reachable_f(at(A, B)).
+reachable(c19(A)) :- reachable_f(available(A)).
+reachable(c20(A, B)) :- reachable_f(at(A, B)).
+reachable(c21(A, B)) :- reachable_f(on(A, B)).
+reachable(c22(A)) :- reachable_f(clear(A)).
+reachable(c23(A, B, C, D)) :- reachable_a(lift(A, B, C, D)).
+reachable(c24(A, B)) :- reachable(c23(A, B, C, D)).
+reachable(c25(C)) :- reachable(c23(A, B, C, D)).
+reachable(c26(B, D)) :- reachable(c23(A, B, C, D)).
+reachable(c27(B)) :- reachable(c23(A, B, C, D)).
+reachable(c28(A)) :- reachable(c23(A, B, C, D)).
+reachable(c29(B, C)) :- reachable(c23(A, B, C, D)).
+reachable_f(lifting(A, B)) :- reachable(c24(A, B)).
+reachable_f(clear(A)) :- reachable(c25(A)).
+reachable_a(drop(A, B, C, D)) :- reachable(c30(A, B, C, D)).
+reachable(c30(A, B, C, D)) :- reachable(c31(A)), reachable(c32(B)), reachable(c33(C)), reachable(c34(D)), reachable(c35(A, D)), reachable(c36(C, D)), reachable(c37(C)), reachable(c38(A, B)).
+reachable(c31(A)) :- reachable_f(hoist(A)).
+reachable(c32(A)) :- reachable_f(crate(A)).
+reachable(c33(A)) :- reachable_f(surface(A)).
+reachable(c34(A)) :- reachable_f(place(A)).
+reachable(c35(A, B)) :- reachable_f(at(A, B)).
+reachable(c36(A, B)) :- reachable_f(at(A, B)).
+reachable(c37(A)) :- reachable_f(clear(A)).
+reachable(c38(A, B)) :- reachable_f(lifting(A, B)).
+reachable(c39(A, B, D, C)) :- reachable_a(drop(A, B, C, D)).
+reachable(c40(A)) :- reachable(c39(A, B, C, D)).
+reachable(c41(B, C)) :- reachable(c39(A, B, C, D)).
+reachable(c42(B)) :- reachable(c39(A, B, C, D)).
+reachable(c43(B, D)) :- reachable(c39(A, B, C, D)).
+reachable(c44(A, B)) :- reachable(c39(A, B, C, D)).
+reachable(c45(D)) :- reachable(c39(A, B, C, D)).
+reachable_f(available(A)) :- reachable(c40(A)).
+reachable_f(at(A, B)) :- reachable(c41(A, B)).
+reachable_f(clear(A)) :- reachable(c42(A)).
+reachable_f(on(A, B)) :- reachable(c43(A, B)).
+reachable_a(load(A, B, C, D)) :- reachable(c46(A, B, C, D)).
+reachable(c46(A, B, C, D)) :- reachable(c47(A)), reachable(c48(B)), reachable(c49(C)), reachable(c50(D)), reachable(c51(A, D)), reachable(c52(C, D)), reachable(c53(A, B)).
+reachable(c47(A)) :- reachable_f(hoist(A)).
+reachable(c48(A)) :- reachable_f(crate(A)).
+reachable(c49(A)) :- reachable_f(truck(A)).
+reachable(c50(A)) :- reachable_f(place(A)).
+reachable(c51(A, B)) :- reachable_f(at(A, B)).
+reachable(c52(A, B)) :- reachable_f(at(A, B)).
+reachable(c53(A, B)) :- reachable_f(lifting(A, B)).
+reachable(c54(B, C, A)) :- reachable_a(load(A, B, C, D)).
+reachable(c55(A, B)) :- reachable(c54(A, B, C)).
+reachable(c56(C)) :- reachable(c54(A, B, C)).
+reachable(c57(C, A)) :- reachable(c54(A, B, C)).
+reachable_f(in(A, B)) :- reachable(c55(A, B)).
+reachable_f(available(A)) :- reachable(c56(A)).
+reachable_a(unload(A, B, C, D)) :- reachable(c58(A, B, C, D)).
+reachable(c58(A, B, C, D)) :- reachable(c59(A)), reachable(c60(B)), reachable(c61(C)), reachable(c62(D)), reachable(c63(A, D)), reachable(c64(C, D)), reachable(c65(A)), reachable(c66(B, C)).
+reachable(c59(A)) :- reachable_f(hoist(A)).
+reachable(c60(A)) :- reachable_f(crate(A)).
+reachable(c61(A)) :- reachable_f(truck(A)).
+reachable(c62(A)) :- reachable_f(place(A)).
+reachable(c63(A, B)) :- reachable_f(at(A, B)).
+reachable(c64(A, B)) :- reachable_f(at(A, B)).
+reachable(c65(A)) :- reachable_f(available(A)).
+reachable(c66(A, B)) :- reachable_f(in(A, B)).
+reachable(c67(A, B, C)) :- reachable_a(unload(A, B, C, D)).
+reachable(c68(A, B)) :- reachable(c67(A, B, C)).
+reachable(c69(B, C)) :- reachable(c67(A, B, C)).
+reachable(c70(A)) :- reachable(c67(A, B, C)).
+reachable_f(lifting(A, B)) :- reachable(c68(A, B)).
+reachable_f(pallet(pallet0)).
+reachable_f(surface(pallet0)).
+reachable_f(at(pallet0, depot0)).
+reachable_f(clear(crate1)).
+reachable_f(pallet(pallet1)).
+reachable_f(surface(pallet1)).
+reachable_f(at(pallet1, depot1)).
+reachable_f(clear(crate0)).
+reachable_f(pallet(pallet2)).
+reachable_f(surface(pallet2)).
+reachable_f(at(pallet2, depot2)).
+reachable_f(clear(crate4)).
+reachable_f(pallet(pallet3)).
+reachable_f(surface(pallet3)).
+reachable_f(at(pallet3, distributor0)).
+reachable_f(clear(crate5)).
+reachable_f(pallet(pallet4)).
+reachable_f(surface(pallet4)).
+reachable_f(at(pallet4, distributor1)).
+reachable_f(clear(pallet4)).
+reachable_f(pallet(pallet5)).
+reachable_f(surface(pallet5)).
+reachable_f(at(pallet5, distributor2)).
+reachable_f(clear(crate3)).
+reachable_f(truck(truck0)).
+reachable_f(at(truck0, depot1)).
+reachable_f(truck(truck1)).
+reachable_f(at(truck1, depot2)).
+reachable_f(hoist(hoist0)).
+reachable_f(at(hoist0, depot0)).
+reachable_f(available(hoist0)).
+reachable_f(hoist(hoist1)).
+reachable_f(at(hoist1, depot1)).
+reachable_f(available(hoist1)).
+reachable_f(hoist(hoist2)).
+reachable_f(at(hoist2, depot2)).
+reachable_f(available(hoist2)).
+reachable_f(hoist(hoist3)).
+reachable_f(at(hoist3, distributor0)).
+reachable_f(available(hoist3)).
+reachable_f(hoist(hoist4)).
+reachable_f(at(hoist4, distributor1)).
+reachable_f(available(hoist4)).
+reachable_f(hoist(hoist5)).
+reachable_f(at(hoist5, distributor2)).
+reachable_f(available(hoist5)).
+reachable_f(crate(crate0)).
+reachable_f(surface(crate0)).
+reachable_f(at(crate0, depot1)).
+reachable_f(on(crate0, pallet1)).
+reachable_f(crate(crate1)).
+reachable_f(surface(crate1)).
+reachable_f(at(crate1, depot0)).
+reachable_f(on(crate1, pallet0)).
+reachable_f(crate(crate2)).
+reachable_f(surface(crate2)).
+reachable_f(at(crate2, distributor2)).
+reachable_f(on(crate2, pallet5)).
+reachable_f(crate(crate3)).
+reachable_f(surface(crate3)).
+reachable_f(at(crate3, distributor2)).
+reachable_f(on(crate3, crate2)).
+reachable_f(crate(crate4)).
+reachable_f(surface(crate4)).
+reachable_f(at(crate4, depot2)).
+reachable_f(on(crate4, pallet2)).
+reachable_f(crate(crate5)).
+reachable_f(surface(crate5)).
+reachable_f(at(crate5, distributor0)).
+reachable_f(on(crate5, pallet3)).
+reachable_f(place(depot0)).
+reachable_f(place(depot1)).
+reachable_f(place(depot2)).
+reachable_f(place(distributor0)).
+reachable_f(place(distributor1)).
+reachable_f(place(distributor2)).
+equal(A, B) :- object(A), object(B), A = B.
+reachable_goal :- reachable(c0).
+reachable(c0) :- reachable(c1), reachable(c2), reachable(c3), reachable(c4).
+reachable(c1) :- reachable_f(on(crate0, crate4)).
+reachable(c2) :- reachable_f(on(crate2, pallet3)).
+reachable(c3) :- reachable_f(on(crate3, pallet0)).
+reachable(c4) :- reachable_f(on(crate4, pallet5)).
+#show reachable_a/1.
+#show reachable_f/1.
+#show reachable/1.
+#show reachable_goal/0.

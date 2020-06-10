@@ -1,0 +1,78 @@
+Starting SAT-based planner...
+Checking for plugins...
+Encodings registered:    3
+Solvers registered:      1
+Command line options:
+    Domain file:          benchmarks/blocks/domain.pddl
+    Problem file:         benchmarks/blocks/problem12.pddl
+    Experiment name:      blocks
+    Query strategy:        ramp, min_h = 15 max_h = 55 step_h = 6
+    Compute plangraph:     True
+    Plangraph constraints: reachable
+    Encoding:              basic
+    Solver                 precosat
+    SAT solver time out    None
+    Write debug CNF:       False
+    Remove tmp files:      True
+Command line arg processing time: 0.0027074813842773438
+Parsing the PDDL domain...
+Parsing the PDDL problem...
+Simplifying the problem representation...
+Parsing time: 0.04187941551208496
+Grounding the problem...
+Grounding time: 0.03582310676574707
+Simplifying the ground encoding...
+Simplify time: 0.07827019691467285
+Generating Plangraph invariants...
+Step: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 
+Plangraph invariants time: 0.48702526092529297
+Planning...
+
+Step: 15
+-------------------------------------------------
+Generating base encoding: basic ...
+Encoding generation time: 1.1706688404083252
+Writing CNF file...
+Total variables: 7024
+Total clauses: 689807
+Writing time: 0.8119926452636719
+Solving...
+UNSAT
+Solution time:  0.16835665702819824
+Step time: 2.1745872497558594
+
+Step: 21
+-------------------------------------------------
+Generating base encoding: basic ...
+Encoding generation time: 1.683009147644043
+Writing CNF file...
+Total variables: 9766
+Total clauses: 966406
+Writing time: 1.1258716583251953
+Solving...
+UNSAT
+Solution time:  0.8580818176269531
+Step time: 3.8643529415130615
+
+Step: 27
+-------------------------------------------------
+Generating base encoding: basic ...
+Encoding generation time: 2.204072952270508
+Writing CNF file...
+Total variables: 12508
+Total clauses: 1241602
+Writing time: 1.7317819595336914
+Solving...
+UNSAT
+Solution time:  11.781686544418335
+Step time: 15.746397733688354
+
+Step: 33
+-------------------------------------------------
+Generating base encoding: basic ...
+Encoding generation time: 2.8601162433624268
+Writing CNF file...
+Total variables: 15250
+Total clauses: 1516798
+Writing time: 1.8085060119628906
+Solving...

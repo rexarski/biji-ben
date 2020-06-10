@@ -1,0 +1,88 @@
+Starting SAT-based planner...
+Checking for plugins...
+Encodings registered:    3
+Solvers registered:      1
+Command line options:
+    Domain file:          benchmarks/depot/domain.pddl
+    Problem file:         benchmarks/depot/problem07.pddl
+    Experiment name:      depot_temp
+    Query strategy:        ramp, min_h = 15 max_h = 50 step_h = 5
+    Compute plangraph:     True
+    Plangraph constraints: fmutex
+    Encoding:              basic
+    Solver                 precosat
+    SAT solver time out    None
+    Write debug CNF:       False
+    Remove tmp files:      False
+Command line arg processing time: 0.0025610923767089844
+Parsing the PDDL domain...
+Parsing the PDDL problem...
+Simplifying the problem representation...
+Parsing time: 0.13232159614562988
+Grounding the problem...
+Grounding time: 0.038436174392700195
+Simplifying the ground encoding...
+Simplify time: 0.11086893081665039
+Generating Plangraph invariants...
+Step: 0 1 2 3 4 5 6 7 8 9 10 
+Plangraph invariants time: 0.5570070743560791
+Planning...
+
+Step: 15
+-------------------------------------------------
+Generating base encoding: basic ...
+PRE_EFF_COUNT:
+41850
+FRAME COUNT:
+4050
+INT MUTEX COUNT:
+152145
+FMUTEX COUNT:
+10667
+Encoding generation time: 30.186727046966553
+Writing CNF file...
+Total variables: 7200
+Total clauses: 208852
+Writing time: 0.29040002822875977
+Solving...
+SAT
+Solution time:  0.6131367683410645
+Extracting the plan...
+Plan:
+0: drive truck1 depot0 distributor1
+0: lift hoist0 crate5 pallet0 depot0
+0: lift hoist2 crate3 crate2 distributor1
+1: drive truck1 distributor1 distributor0
+1: lift hoist1 crate4 crate0 distributor0
+1: load hoist2 crate3 truck0 distributor1
+2: lift hoist2 crate1 pallet5 distributor1
+2: load hoist1 crate4 truck1 distributor0
+3: drive truck1 distributor0 distributor1
+3: load hoist2 crate1 truck0 distributor1
+4: drive truck0 distributor1 depot0
+4: unload hoist2 crate4 truck1 distributor1
+5: drop hoist2 crate4 pallet5 distributor1
+5: load hoist0 crate5 truck0 depot0
+6: lift hoist2 crate2 pallet2 distributor1
+7: drive truck0 depot0 distributor0
+7: load hoist2 crate2 truck1 distributor1
+8: drive truck1 distributor1 depot0
+8: unload hoist1 crate3 truck0 distributor0
+9: unload hoist0 crate2 truck1 depot0
+10: drive truck1 depot0 distributor0
+10: drive truck0 distributor0 distributor1
+10: drop hoist0 crate2 pallet0 depot0
+11: drop hoist1 crate3 pallet1 distributor0
+11: unload hoist2 crate1 truck0 distributor1
+12: drive truck1 distributor0 distributor1
+12: lift hoist1 crate0 pallet4 distributor0
+12: lift hoist0 crate2 pallet0 depot0
+12: drop hoist2 crate1 crate4 distributor1
+13: unload hoist2 crate5 truck0 distributor1
+14: drop hoist1 crate0 pallet3 distributor0
+14: drop hoist2 crate5 crate1 distributor1
+Simulating plan for validation.
+Plan valid. 32 actions.
+Step time: 31.096466064453125
+Total time: 31.94647979736328
+

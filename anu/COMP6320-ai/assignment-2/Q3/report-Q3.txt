@@ -1,0 +1,18 @@
+a)
+
+* 5-3: solved optimally in 17s 683msec.
+* 8-4: solved in 60 seconds, with a cost of 12509 in total, but cannot prove optimality.
+* 12-4: solvable within 60 seconds, but optimality not proved.
+* 21-8: unsolvable within 60 seconds.
+-----------------------------------------------------------------------------
+
+b)
+
+* 8-4: Gecode solver also solved but hasn't proved optimality. In fact, it performed even worse than ours. Other solvers have some warnings/errors. Hence no improvement can be made for this case.
+* 12-4: Tried with Gecode solver, got a different solution with the same cost in 60 seconds. Optimality is still a doubt.
+* 21-8: Also tried with Gecode, solvable within 60 seconds, not optimally, either.
+-----------------------------------------------------------------------------
+
+c)
+
+Tried really hard in this problem, but not much improvement has been made. :(

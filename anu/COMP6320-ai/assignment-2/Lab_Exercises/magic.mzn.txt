@@ -1,0 +1,57 @@
+int: n = 3;
+set of 1..n*n: N = 1..n*n;
+
+array[1..n, 1..n, N] of var 0..1: x;
+array[1..n, 1..n] of var 1..n*n: square;
+var int: s;
+
+solve :: int_search(
+        [x[i,j,k] | i,j in 1..n, k in N] ++ 
+        [square[i,j] | i,j in 1..n] ++
+        [s],
+        first_fail,
+        indomain_min, 
+        complete
+      ) 
+    satisfy;
+
+constraint 
+  s >= 0 
+  /\
+  s <= n*n*n
+  /\
+  forall(i in 1..n, j in 1..n) (
+     sum(k in N) (x[i,j,k]) = 1
+  )
+  /\
+  forall(k in N) (
+     sum(i in 1..n, j in 1..n) (x[i,j,k]) = 1
+  )
+  /\
+  forall(i in 1..n) (
+     sum(j in 1..n, k in N) (k * x[i,j,k]) = s
+  )
+
+  /\
+  forall(j in 1..n) (
+     sum(i in 1..n, k in N) (k * x[i,j,k]) = s
+  )
+  /\
+  sum(i in 1..n, k in N) (k * x[i,i,k]) = s
+
+  /\
+  sum(i in 1..n, k in N) (k * x[i,n-i+1,k]) = s
+
+  /\
+  forall(i,j in 1..n) ( square[i,j] = sum(k in N) (k * x[i,j,k]))
+;
+
+output [ 
+   "\ns: ", show(s)
+] ++
+[
+  if  j = 1 then "\n" else " " endif ++
+    show(square[i,j]) 
+  | i,j in 1..n
+
+] ++ ["\n"];

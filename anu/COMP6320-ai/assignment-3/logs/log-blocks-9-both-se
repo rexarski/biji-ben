@@ -1,0 +1,157 @@
+Starting SAT-based planner...
+Checking for plugins...
+Encodings registered:    3
+Solvers registered:      1
+Command line options:
+    Domain file:          benchmarks/blocks/domain.pddl
+    Problem file:         benchmarks/blocks/problem09.pddl
+    Experiment name:      blocks_temp
+    Query strategy:        ramp, min_h = 15 max_h = 50 step_h = 5
+    Compute plangraph:     True
+    Plangraph constraints: both
+    Encoding:              basic
+    Solver                 precosat
+    SAT solver time out    None
+    Write debug CNF:       False
+    Remove tmp files:      False
+Command line arg processing time: 0.0030820369720458984
+Parsing the PDDL domain...
+Parsing the PDDL problem...
+Simplifying the problem representation...
+Parsing time: 0.055252790451049805
+Grounding the problem...
+Grounding time: 0.020426034927368164
+Simplifying the ground encoding...
+Simplify time: 0.035215139389038086
+Generating Plangraph invariants...
+Step: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 
+Plangraph invariants time: 0.2227768898010254
+Planning...
+
+Step: 15
+-------------------------------------------------
+Generating base encoding: basic ...
+PRE_EFF_COUNT:
+17820
+FRAME COUNT:
+3000
+INT MUTEX COUNT:
+71820
+REACH COUNT:
+1638
+FMUTEX COUNT:
+4717
+Encoding generation time: 4.197437763214111
+Writing CNF file...
+Total variables: 4030
+Total clauses: 99103
+Writing time: 0.16719627380371094
+Solving...
+UNSAT
+Solution time:  0.16298818588256836
+Step time: 4.5296790599823
+
+Step: 20
+-------------------------------------------------
+Generating base encoding: basic ...
+PRE_EFF_COUNT:
+23760
+FRAME COUNT:
+4000
+INT MUTEX COUNT:
+95760
+REACH COUNT:
+1653
+FMUTEX COUNT:
+7810
+Encoding generation time: 5.37506628036499
+Writing CNF file...
+Total variables: 5340
+Total clauses: 133091
+Writing time: 0.19605588912963867
+Solving...
+UNSAT
+Solution time:  0.1898670196533203
+Step time: 5.7634313106536865
+
+Step: 25
+-------------------------------------------------
+Generating base encoding: basic ...
+PRE_EFF_COUNT:
+29700
+FRAME COUNT:
+5000
+INT MUTEX COUNT:
+119700
+REACH COUNT:
+1653
+FMUTEX COUNT:
+7810
+Encoding generation time: 6.368003845214844
+Writing CNF file...
+Total variables: 6650
+Total clauses: 163971
+Writing time: 0.2365891933441162
+Solving...
+UNSAT
+Solution time:  0.5720529556274414
+Step time: 7.178730010986328
+
+Step: 30
+-------------------------------------------------
+Generating base encoding: basic ...
+PRE_EFF_COUNT:
+35640
+FRAME COUNT:
+6000
+INT MUTEX COUNT:
+143640
+REACH COUNT:
+1653
+FMUTEX COUNT:
+7810
+Encoding generation time: 7.649332046508789
+Writing CNF file...
+Total variables: 7960
+Total clauses: 194851
+Writing time: 0.26537203788757324
+Solving...
+SAT
+Solution time:  3.9928109645843506
+Extracting the plan...
+Plan:
+0: unstack f g
+1: put-down f
+2: unstack g e
+3: put-down g
+4: unstack e a
+5: stack e f
+6: unstack a i
+7: stack a g
+8: unstack i d
+9: put-down i
+10: unstack d h
+11: put-down d
+12: unstack h b
+13: put-down h
+14: unstack e f
+15: stack e h
+16: pick-up f
+17: stack f e
+18: pick-up i
+19: stack i f
+20: unstack a g
+21: stack a i
+22: pick-up c
+23: stack c a
+24: pick-up b
+25: stack b c
+26: pick-up d
+27: stack d b
+28: pick-up g
+29: stack g d
+Simulating plan for validation.
+Plan valid. 30 actions.
+Step time: 11.914013862609863
+Total time: 29.727515935897827
+

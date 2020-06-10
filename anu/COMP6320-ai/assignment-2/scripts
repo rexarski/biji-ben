@@ -1,0 +1,20 @@
+minizinc Logistics-Q1.mzn Logistics-Q1-5-3.dzn --soln-sep "" --search-complete-msg "" > solution-Q1-5-3.csv
+minizinc Logistics-Q1.mzn Logistics-Q1-8-4.dzn --soln-sep "" --search-complete-msg "" > solution-Q1-8-4.csv
+minizinc Logistics-Q1.mzn Logistics-Q1-12-4.dzn --soln-sep "" --search-complete-msg "" > solution-Q1-12-4.csv
+minizinc Logistics-Q1.mzn Logistics-Q1-21-8.dzn --soln-sep "" --search-complete-msg "" > solution-Q1-21-8.csv
+
+minizinc Logistics-Q2.mzn Logistics-Q2-5-3.dzn --soln-sep "" --search-complete-msg "" > solution-Q2-5-3.csv
+minizinc Logistics-Q2.mzn Logistics-Q2-8-4.dzn --soln-sep "" --search-complete-msg "" > solution-Q2-8-4.csv
+minizinc Logistics-Q2.mzn Logistics-Q2-12-4.dzn --soln-sep "" --search-complete-msg "" > solution-Q2-12-4.csv
+minizinc Logistics-Q2.mzn Logistics-Q2-21-8.dzn --soln-sep "" --search-complete-msg "" > solution-Q2-21-8.csv
+
+minizinc Logistics-Q3.mzn Logistics-Q3-5-3.dzn --soln-sep "" --search-complete-msg "" > solution-Q3-5-3.csv
+minizinc Logistics-Q3.mzn Logistics-Q3-8-4.dzn --soln-sep "" --search-complete-msg "" > solution-Q3-8-4.csv
+minizinc Logistics-Q3.mzn Logistics-Q3-12-4.dzn --soln-sep "" --search-complete-msg "" > solution-Q3-12-4.csv
+minizinc Logistics-Q3.mzn Logistics-Q3-21-8.dzn --soln-sep "" --search-complete-msg "" > solution-Q3-21-8.csv
+
+
+python Logistics-LNS.py Logistics-Q4-5-3.dzn start-solution-5-3.csv
+python Logistics-LNS.py Logistics-Q4-8-4.dzn start-solution-8-4.csv
+python Logistics-LNS.py Logistics-Q4-12-4.dzn start-solution-12-4.csv
+python Logistics-LNS.py Logistics-Q4-21-8.dzn start-solution-21-8.csv

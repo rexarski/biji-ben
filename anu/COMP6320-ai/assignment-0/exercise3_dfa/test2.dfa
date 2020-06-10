@@ -1,0 +1,15 @@
+initial state0
+accepting state4 state7 state10 state13
+transition state0 state1 s
+transition state1 state5 a
+transition state1 state2 i
+transition state1 state8 o
+transition state1 state11 u
+transition state2 state3 n
+transition state3 state4 g
+transition state5 state6 n
+transition state6 state7 g
+transition state8 state9 n
+transition state9 state10 g
+transition state11 state12 n
+transition state12 state13 g
