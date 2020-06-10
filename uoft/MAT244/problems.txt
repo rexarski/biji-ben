@@ -1,0 +1,48 @@
+MAT244F Ordinary Differential Equations: Assignments
+
+Warning: This list will be revised and updated. Do not submit assignments. However. quizzes will contains problems mainly from home assignments.
+
+1.1 27, 32, as well as this problem and that problem
+1.3 1--8, 10--14, 16, 18, 23, 24, 25, 26 
+
+2.1 2, 7, 11, 14, 17, 18, 20, 27, 31, 38, 39, 42
+2.2 4, 5, 8, 16, 19, 25, 31, 33
+2.3 10, 12, 19, 24, 27, 29
+2.4 13, 16, 18, 23, 27, 28, 32
+2.5 6, 15, 24
+2.6 3, 9, 14, 17, 21, 24, 26
+Misc. (2.9, p.132) 11, 21, 30, 34 (b) 
+
+3.1 4, 8, 10, 12, 21, 24, 28
+3.2 2, 5, 6, 13, 18, 26
+3.3 5, 9, 15, 17, 20, 26, 37, 40, 42
+3.4 4, 6, 7, 8, 13, 23, 30, 45
+3.5 3, 13, 16, 25, 27
+3.6 1, 5, 7, 15,
+3.7 1, 3, 13, 26, 29
+3.8 15 
+
+4.1 11, 15, 17, 24. Also 20 (theoretical -- only if you're enjoying such things)
+4.2 11, 18, 24, 39a,b. Also 1-10 (if you want extra practice with complex numbers),
+4.3 6,7,8,14,16
+4.4 1,4 
+
+7.1 1,3,5,7,22
+7.2 Choose your own (to review linear algebra)
+7.3 Choose your own (to review linear algebra). Especially some of 16-25.
+7.4 2,3,6,7
+7.5 2,3,7,9,11,15,18,20,25,29,31
+7.6 3,4,9,15,18,23
+7.7 1,3,5,11,13,16,17
+7.8 2,5,6,9,19,21
+7.9 3,4,5,8,14 
+
+9.1 a,b,and first part of c for problems 1,3,5,7,9. Also problem 17
+9.2 Parts a,b,c for problems 8,10.
+9.3 5,7,9,11,27
+9.4 3,4
+9.5 2,3 
+
+5.2 4, 12, 18, 21
+5.3
+5.4
