@@ -1,0 +1,143 @@
+##############################
+# Stratified Random Sampling #
+#      R Code                #
+##############################
+
+# Load package 'Sampling'
+> library(Sampling)
+
+# STRS Example with Groups A,B,C,D and one variable (response)
+
+# Read the data into R from csv file
+
+> strsex<-read.csv("strsex.csv")
+
+> strsex
+   response group
+1       8.8     A
+2      10.6     A
+3      10.6     A
+4       7.6     A
+5       7.7     A
+6      10.0     A
+. . .
+75      8.3     D
+76     12.3     D
+77      9.4     D
+78      7.9     D
+79      6.9     D
+80     11.2     D
+
+# Find population mean and total
+
+> mean(strsex$response) # mean
+[1] 9.8325
+> sum(strsex$response)  # total
+[1] 786.6
+> sum(strsex$response)/length(strsex$response) # same as mean
+[1] 9.8325
+
+
+# Take an STRS sample with sizes 3,4,5,6 in group A,B,C,D respectively
+
+> strs.sample<-strata(strsex,c("group"),size=c(3,4,5,6),method=c("srswor")):
+> strs.sample
+   group ID_unit Prob Stratum
+1      A      12 0.15       1
+2      A      14 0.15       1
+3      A      19 0.15       1
+4      B      23 0.20       2
+5      B      30 0.20       2
+6      B      33 0.20       2
+7      B      36 0.20       2
+8      C      43 0.25       3
+9      C      46 0.25       3
+10     C      48 0.25       3
+11     C      49 0.25       3
+12     C      51 0.25       3
+13     D      64 0.30       4
+14     D      67 0.30       4
+15     D      68 0.30       4
+16     D      69 0.30       4
+17     D      75 0.30       4
+18     D      77 0.30       4
+
+# Get the data from the sample:
+
+> strs.sample.data<-getdata(strsex,strs.sample)
+> strs.sample.data
+   response group ID_unit Prob Stratum
+1       9.3     A      12 0.15       1
+2       9.4     A      14 0.15       1
+3      13.2     A      19 0.15       1
+4      11.1     B      23 0.20       2
+5       8.4     B      30 0.20       2
+6      10.2     B      33 0.20       2
+7      10.1     B      36 0.20       2
+8      10.5     C      43 0.25       3
+9       7.7     C      46 0.25       3
+10      7.9     C      48 0.25       3
+11     10.3     C      49 0.25       3
+12      7.5     C      51 0.25       3
+13      7.5     D      64 0.30       4
+14     11.8     D      67 0.30       4
+15      6.1     D      68 0.30       4
+16      9.2     D      69 0.30       4
+17      8.3     D      75 0.30       4
+18      9.4     D      77 0.30       4
+
+# Calculate N_i , n_i, ybar_i, s^2_i for each stratum :
+
+> Ni<-tapply(strsex$response,strsex$group,length)
+> ni<-tapply(strs.sample.data$response,strs.sample.data$group,length)
+> ssqi<-tapply(strs.sample.data$response,strs.sample.data$group,var)
+> ybari<-tapply(strs.sample.data$response,strs.sample.data$group,mean)
+
+> Ni
+ A  B  C  D
+20 20 20 20
+
+> ni
+A B C D
+3 4 5 6
+
+> ssqi
+       A        B        C        D
+4.943333 1.270000 2.212000 3.741667
+
+> ybari
+        A         B         C         D
+10.633333  9.950000  8.780000  8.716667
+
+
+# Population size
+> N = length(strsex$response)
+> N
+[1] 80
+
+# Calculate ybar_st, estimate of the mean:
+
+> ybar.st<-sum(Ni*ybari)/N
+> ybar.st
+[1] 9.52
+
+# Calculat estimated variance of ybar_st
+
+> var.ybar.st<-sum(Ni^2*(1-ni/Ni)*ssqi/ni)/N^2
+> var.ybar.st
+[1] 0.1514337
+
+# Calculate tauhat_st, estimate of the total:
+
+> tauhat_st = N*ybar.st
+> tauhat_st
+[1] 761.6
+
+# Calculate estimated variance of tauhat_st
+
+> var.tauhat.st = N^2*var.ybar.st
+> var.tauhat.st
+[1] 969.1755
+
+
+

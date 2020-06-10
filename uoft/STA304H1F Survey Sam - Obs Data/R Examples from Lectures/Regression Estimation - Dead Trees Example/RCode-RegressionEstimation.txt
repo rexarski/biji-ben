@@ -1,0 +1,72 @@
+##########################
+# Regression Estimation- #
+# Dead Trees Example     # 
+#       R Code           #
+##########################
+
+# Read data from csv file
+
+> deadtrees <- read.csv("reg_deadtrees.csv")
+> deadtrees
+   field photo
+1     15    10
+2     14    12
+3      9     7
+4     14    13
+.
+.
+25     8    10
+
+> attach(deadtrees)
+
+# Regression model (using non-zero intercept) with field count as response and photo count as predictor
+> regmodel <- lm(field ~ photo)
+
+> summary(regmodel)
+
+Call:
+lm(formula = field ~ photo)
+
+Residuals:
+    Min      1Q  Median      3Q     Max
+-5.0319 -1.8053  0.1947  1.4212  3.8080
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)
+(Intercept)   5.0593     1.7635   2.869 0.008676 **
+photo         0.6133     0.1601   3.832 0.000854 ***
+---
+Residual standard error: 2.406 on 23 degrees of freedom
+Multiple R-squared: 0.3896,     Adjusted R-squared: 0.3631
+F-statistic: 14.68 on 1 and 23 DF,  p-value: 0.0008538
+
+# Average and sample variance of y and x variables
+> mean(field)
+[1] 11.56
+> mean(photo)
+[1] 10.6
+> var(field)
+[1] 9.09
+> var(photo)
+[1] 9.416667
+
+# Variance of residuals
+> var(residuals(regmodel))
+[1] 5.548341
+
+# ANOVA table of regression model
+
+> anova(regmodel)
+
+Analysis of Variance Table
+Response: field
+          Df Sum Sq Mean Sq F value Pr(>F)
+photo      1  85.00   85.00  14.681 0.0008538
+Residuals 23 133.16    5.79
+
+# Scatterplot of photo vs field
+> plot(photo,field)
+
+# Add in fitted line from regression onto scatterplot
+> abline(regmodel)
+

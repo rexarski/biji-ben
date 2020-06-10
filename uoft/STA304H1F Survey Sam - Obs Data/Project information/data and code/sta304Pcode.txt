@@ -1,0 +1,275 @@
+#can’t guarantee correntness at this moment but they are roughly correct
+#EthanStart==================================================================================================
+
+
+#GLOBAL VARIABLES(CONSTANT)
+n=4 #total number of clusters sampled
+N=75 #total numbers of clusters (average 70 night class on a given day plus some library cafeteria)
+Mbar = 101 #estimated mean cluster size
+Mi = c(93,60,180,150) #sampled cluster size(mat334,robartCafe,sta302,sta304)
+#Mi = c(100,200,300,400)
+#mi = tapply(dataNoOut$cash, dataNoOut$cluster, length)
+#----------WITH ALL outliers
+data = subset(clusterdata.complete, cash != "NA")
+dataNoOut = subset(clusterdata.complete, cash != "NA"& cash < 2000)
+boxplot(data$cash~data$cluster, main = "With Outlier")
+means <- tapply(data$cash,data$cluster,mean)
+points(means,col="red",pch=18)
+dataNoOut1 = subset(clusterdata.complete, cash != "NA" & cash < 2000&credit >=4)
+
+#----------WITHOUT THE 2000 outlier
+# dataNoOut = subset(clusterdata.complete, cash != "NA" & cash < 2000)
+# boxplot(dataNoOut$cash~dataNoOut$cluster,main = "Without Outlier")
+# means <- tapply(dataNoOut$cash,dataNoOut$cluster,mean)
+# points(means,col="red",pch=18)
+
+# #----------WITHOUT THE 2000 and 400 outlier
+# dataNoOut = subset(clusterdata.complete, cash != "NA" & cash < 400)
+# boxplot(dataNoOut$cash~dataNoOut$cluster)
+# 
+# means <- tapply(dataNoOut$cash,dataNoOut$cluster,mean)
+# points(means,col="red",pch=18)
+
+# 
+# #----------WITH ALL outliers
+# 
+#data = subset(clusterdata.complete, cash != "NA")
+boxplot(data$cash~data$gender,main = "With Outlier")
+means <- tapply(data$cash,data$gender,mean)
+points(means,col="red",pch=18)
+# 
+# #----------WITHOUT THE 2000 outlier
+#dataNoOut = subset(clusterdata.complete, cash != "NA" & cash < 2000)
+boxplot(dataNoOut$cash~dataNoOut$gender,main = "Without Outlier")
+
+means <- tapply(dataNoOut$cash,dataNoOut$gender,mean)
+points(means,col="red",pch=18)
+
+ybari = tapply(dataNoOut$cash,dataNoOut$cluster,mean)
+ybarhatr = sum(Mi*ybari)/sum(Mi)
+sqi = tapply(dataNoOut$cash,dataNoOut$cluster,var)
+bigsum = sum(Mi^2 * (ybari - ybarhatr)^2)
+samllsum = sum( Mi^2 *(1-mi/Mi)*(sqi/mi) )
+
+return ((1-(n/N))*(bigsum/(n-1))*(1/(n*Mbar^2)) + (1/(n*N*Mbar^2))*samllsum)
+
+
+#estimated variance for the ratio estimator 
+varEstimatedYBarRatio <- function(dataset, n,N,Mi,mi,Mbar) {
+      ybari = tapply(dataset$cash,dataset$cluster,mean)
+      ybarhatr = sum(Mi*ybari)/sum(Mi)
+      sqi = tapply(dataset$cash,dataset$cluster,var)
+      bigsum = sum(Mi^2 * (ybari - ybarhatr)^2)
+      samllsum = sum( Mi^2 *(1-mi/Mi)*(sqi/mi) )
+  
+       return ((1-(n/N))*(bigsum/(n-1))*(1/(n*Mbar^2)) + (1/(n*N*Mbar^2))*samllsum)
+  }
+
+# varEstimatedYBarRatioDown <- function(dataset, n,N,Mi,mi,Mbar) {
+#   ybari = tapply(dataset$downtime,dataset$plant,mean)
+#   ybarhatr = sum(Mi*ybari)/sum(Mi)
+#   sqi = tapply(dataset$downtime,dataset$plant,var)
+#   bigsum = sum(Mi^2 * (ybari - ybarhatr)^2)
+#   samllsum = sum( Mi^2 *(1-mi/Mi)*(sqi/mi) )
+#   
+#   return ((1-(n/N))*(bigsum/(n-1))*(1/(n*Mbar^2)) + (1/(n*N*Mbar^2))*samllsum)
+# }
+
+
+varEstimatedYBarUnb <- function(testdata,n,N,Mi,mi,Mbar) {
+  ybari = tapply(testdata$cash,testdata$cluster,mean)
+  ybarhatUnb = sum(Mi*ybari)/(n*Mbar)
+  sqi = tapply(testdata$cash,testdata$cluster,var)
+  sb2 = sum((Mi*ybari - Mbar*ybarhatUnb)^2)/(n-1)
+  samllsumUnb = sum( Mi^2 *(1-(mi/Mi))*(sqi/mi) )
+  return (((1-(n/N))*(sb2) *(1/(n*Mbar^2))+ (1/(n*N*Mbar^2))*samllsumUnb))
+}
+
+# 
+# varEstimatedYBarUnbDown <- function(testdata,n,N,Mi,mi,Mbar) {
+#   ybari = tapply(testdata$downtime,testdata$plant,mean)
+#   ybarhatUnb = sum(Mi*ybari)/(n*Mbar)
+#   sqi = tapply(testdata$downtime,testdata$plant,var)
+#   sb2 = sum((Mi*ybari - Mbar*ybarhatUnb)^2)/(n-1)
+#   samllsumUnb = sum( Mi^2 *(1-(mi/Mi))*(sqi/mi) )
+#   return (((1-(n/N))*(sb2) *(1/(n*Mbar^2))+ (1/(n*N*Mbar^2))*samllsumUnb))
+# }
+
+
+
+
+
+#=====================================================================================================
+# estimating adjusted Rsqr after deletion of the 2000 outlier
+
+summary(lm(dataNoOut$cash~factor(dataNoOut$cluster)))
+anova(lm(dataNoOut$cash~factor(dataNoOut$cluster)))
+
+summary(lm(data$cash~factor(data$cluster)))
+anova(lm(dataNoOut$cash~factor(data$cluster)))
+
+# Residual standard error: 75.55 on 156 degrees of freedom
+# Multiple R-squared:  0.09218,  Adjusted R-squared:  0.07472 
+# F-statistic:  5.28 on 3 and 156 DF,  p-value: 0.001705
+
+
+#=====================================================================================================
+# ratio estimating average cash carrying for male
+
+
+#sta302: 13 female, 6 male     male ratio: 32%    estimated from the sample
+#sta304: 50 female, 26 male    male ratio: 30%
+#mat334: 6 female 14 male    male ratio: 70%
+#robart: female 21, male 23   male ratio: 52%
+
+
+maledata = subset(dataNoOut, gender == "male")
+MiMale = c(93*0.7,100*0.52,180*0.32,150*0.3) #based on sample proportion of gender, Mi is the total cluster size for male
+miMale=tapply(maledata$gender, maledata$cluster, length) #total male students we have sampled in the cluster
+ybariMale = tapply(maledata$cash,maledata$cluster,mean)
+ybarhatrMale = sum(MiMale*ybariMale)/sum(MiMale)
+varYbarHatrForMale = varEstimatedYBarRatio(maledata,n,N,MiMale,miMale,Mbar/2)
+CIyBarHatRmale = c(ybarhatrMale-1.96*(varYbarHatrForMale^0.5),ybarhatrMale+1.96*(varYbarHatrForMale^0.5)) #the 95% confidence interval for the population mean
+ybarhatrMale
+varYbarHatrForMale
+CIyBarHatRmale
+
+# > ybarhatrMale
+# [1] 62.37986
+# > varYbarHatrForMale
+# [1] 546.7696
+# > CIyBarHatRmale
+# [1]  16.54897 108.21074
+#===========================unbiasedestimateforMale==========================
+
+ybarhatUnbMale = sum(MiMale*ybariMale)/(n*(Mbar/2))
+varYbarHatUnbMale = varEstimatedYBarUnb(maledata,n,N,MiMale,miMale,Mbar/2)
+CIyBarUnbMale = c(ybarhatUnbMale-1.96*(varYbarHatUnbMale^0.5),ybarhatUnbMale+1.96*(varYbarHatUnbMale^0.5)) #the 95% confidence interval for the population mean
+
+
+
+ybarhatUnbMale
+varYbarHatUnbMale
+CIyBarUnbMale
+
+# > ybarhatUnbMale
+# [1] 67.84582
+# > varYbarHatUnbMale
+# [1] 697.2034
+# > CIyBarUnbMale
+# [1]  16.09278 119.59885
+
+#=====================================================================================================
+# ratio estimating average cash carrying for female
+#sta302: 13 female, 6 male     male ratio: 32%    estimated from the sample
+#sta304: 50 female, 26 male    male ratio: 30%
+#mat334: 6 female 14 male    male ratio: 70%
+#robart: female 21, male 23   male ratio: 52%
+
+femaledata = subset(dataNoOut, gender == "female")
+
+MiFemale = c(93*0.3,100*0.48,180*0.68,150*0.7)  #based on sample proportion of gender, Mi is the total cluster size for female
+miFemale=tapply(femaledata$gender, femaledata$cluster, length) #how many female students we have sampled in the cluster
+ybarifemale = tapply(femaledata$cash,femaledata$cluster,mean)
+ybarhatrFemale = sum(MiFemale*ybarifemale)/sum(MiFemale)
+varYbarHatrForFemale = varEstimatedYBarRatio(femaledata,n,N,MiFemale,miFemale,Mbar/2)
+CIyBarHatRfemale= c(ybarhatrFemale-1.96*(varYbarHatrForFemale^0.5),ybarhatrFemale+1.96*(varYbarHatrForFemale^0.5)) #the 95% confidence interval for the population mean
+ybarhatrFemale
+varYbarHatrForFemale
+CIyBarHatRfemale
+
+# > ybarhatrFemale
+# [1] 52.28142
+# > varYbarHatrForFemale
+# [1] 362.1823
+# > CIyBarHatRfemale
+# [1] 14.98049 89.58235
+
+#===========================unbiasedestimateforFemale==========================
+
+#ybariUnbMale = tapply(maledata$cash,maledata$cluster,mean)
+ybarhatUnbFemale = sum(MiFemale*ybarifemale)/(n*(Mbar/2))
+#mi=tapply(femaledata$gender, femaledata$cluster, length)
+varYbarHatUnbFemale = varEstimatedYBarUnb(femaledata,n,N,MiFemale,miFemale,Mbar/2)
+CIyBarUnbFemale = c(ybarhatUnbFemale-1.96*(varYbarHatUnbFemale^0.5),ybarhatUnbFemale+1.96*(varYbarHatUnbFemale^0.5)) #the 95% confidence interval for the population mean
+
+
+
+ybarhatUnbFemale
+varYbarHatUnbFemale
+CIyBarUnbFemale
+  
+# > ybarhatUnbFemale
+# [1] 78.49978
+# > varYbarHatUnbFemale
+# [1] 252.6164
+# > CIyBarUnbFemale
+# [1]  47.34772 109.65184
+
+#=====================================================================================================
+# estimating the confidence interval for mean difference between male and female
+
+CLdifference = c((ybarhatrMale - ybarhatrFemale)-1.96*(varYbarHatrForFemale+varYbarHatrForMale)^0.5,(ybarhatrMale - ybarhatrFemale)+1.96*(varYbarHatrForFemale+varYbarHatrForMale)^0.5)
+CLdifference
+
+#[1] -48.99327  69.19014
+#=====================================================================================================
+# estimating average cash carrying for all using ratio estimate
+
+
+mi=tapply(dataNoOut$cash, dataNoOut$cluster, length)
+ybariRatio = tapply(dataNoOut$cash,dataNoOut$cluster,mean)
+
+
+ybarhatr = sum(Mi*ybariRatio)/sum(Mi)
+varYbarHatr = varEstimatedYBarRatio(dataNoOut,n,N,Mi,mi,Mbar)
+CIyBarHatR = c(ybarhatr-1.96*(varYbarHatr^0.5),ybarhatr+1.96*(varYbarHatr^0.5)) #the 95% confidence interval for the population mean
+
+ybarhatr
+varYbarHatr
+CIyBarHatR
+# 
+# > ybarhatr
+# [1] 56.44764
+# > varYbarHatr
+# [1] 461.1091
+# > CIyBarHatR
+# [1] 14.35967 98.53561
+
+
+
+#=====================================================================================================
+# estimating average cash carrying for all using unbiased estimate
+
+
+ybariUnb = tapply(dataNoOut$cash,dataNoOut$cluster,mean)
+ybarhatUnb = sum(Mi*ybariUnb)/(n*Mbar)
+mi=tapply(dataNoOut$gender, dataNoOut$cluster, length)
+varYbarHatUnb = varEstimatedYBarUnb(dataNoOut,n,N,Mi,mi,Mbar)
+CIyBarUnb = c(ybarhatUnb-1.96*(varYbarHatUnb^0.5),ybarhatUnb+1.96*(varYbarHatUnb^0.5)) #the 95% confidence interval for the population mean
+
+
+
+ybarhatUnb
+varYbarHatUnb
+CIyBarUnb
+
+# > ybarhatUnb
+# [1] 67.48567
+# > varYbarHatUnb
+# [1] 266.5387
+# > CIyBarUnb
+# [1] 35.48668 99.48466
+
+
+#=====================================================================================================
+# estimating the confidence interval for unbaised mean difference between male and female 
+
+CLdifferenceUnb = c((ybarhatUnbMale - ybarhatUnbFemale)-1.96*(varYbarHatUnbMale+varYbarHatUnbFemale)^0.5,(ybarhatUnbMale - ybarhatUnbFemale)+1.96*(varYbarHatUnbMale+varYbarHatUnbFemale)^0.5)
+CLdifferenceUnb
+
+#[1] -71.05949  49.75156
+
+
+#EthanEnd==================================================================================================
+

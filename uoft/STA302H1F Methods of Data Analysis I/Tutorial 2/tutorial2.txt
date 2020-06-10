@@ -1,0 +1,106 @@
+########## Tutorial 2, 24/sep/2013
+
+install.packages("alr3") #install package if not already intalled
+
+library(alr3) # load the library
+
+?heights # help on heights
+
+head(heights) # show the first few rows of heights dataframe
+
+attach(heights) # attach the variables in heights dataframe to R's session. Now we can avoid using $ to
+                # access the variables in heights
+
+n = length(heights[,2]) # number of rows (here number of the observations)
+
+length(x= heights[,2])
+
+# Find the mean of the heights
+mean(heights) # will give error
+
+?mean
+
+mean(heights[,1]) #average height of mothers
+mean(heights[,2]) #average height of daughters
+
+apply(X= heights,MARGIN=2,FUN=sum) # do the above commands in one line. Mean of the columns of height
+                                   # apply is a very useful command. Makes the code faster and cleaner 
+
+temp = matrix(c(1,2,3,4),nrow=2, ncol=2,byrow=F) # create a 2 by 2 matrix. Fill by rows
+temp
+
+apply(temp,1,sum)
+apply(temp,2,sum)
+
+# find the variance-covariance matrix of the heights
+var(heights)
+
+plot(heights$Mheight,heights$Dheight)
+
+# Same command as above but because of attach command no need to specify the dataframe.
+plot(Mheight,Dheight)
+
+########################################################
+
+# fit a linear model Dheight = beta_0 + beta_1*Mheight + eps
+?lm
+
+#fit = lm(Dheight ~ Mheight ,data= heights) # if attach command was not used, we can either use 
+# the $ to access the variables or specify the data argument in lm
+fit = lm(heights$Dheight~ heights$Mheight) 
+fit
+
+summary(fit) # provides everything you need about the estimation
+
+qf(0.95,1,n-2)
+
+
+20.87^2 # t_obs^2
+stdError = sqrt(sum(fit$residuals^2)/(n-1)) # estiamte of the standard error sigma
+
+plot(Mheight,Dheight)
+abline(a= fit$coefficients[1], b = fit$coefficients[2])
+
+?par # plotting options
+
+# customized plots
+plot(Mheight,Dheight,xlab = 'Height of Mothers',ylab = 'Height of Daugthers', main= 'Regression Example')
+abline(a= fit$coefficients[1], b = fit$coefficients[2],lwd = 5,col = 'blue')
+
+
+#######################
+
+summary(fit)
+anova(fit)
+
+# residual standard error squared = Mean sq in anova table
+
+anv = anova(fit)
+
+SS = anv$Sum
+MS = anv$Mean
+df = anv$Df
+
+SS
+MS
+df
+
+SS/df
+MS
+
+SS/df - MS
+
+sum(SS)
+sum((Dheight- mean(Dheight))^2)
+
+
+
+############################ More plots and some diagnostics
+par(mfrow = c(1,2))   # number f plots in a window, a matrix of 1 row and two columns, fill by rows
+qqnorm(fit$residuals/sd(fit$residuals))
+abline(a=0,b=1,col = 'red',lwd=3)
+plot(fit$fitted.values, fit$residuals) #sum(yhat*e) = 0 
+abline(h=0,col = 'red',lwd=3)
+
+
+# Good explanation of R's lm output http://stats.stackexchange.com/questions/5135/interpretation-of-rs-lm-output

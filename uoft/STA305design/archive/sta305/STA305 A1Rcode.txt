@@ -1,0 +1,83 @@
+#STA305 Assignment 1
+
+#Read Data
+Beerwings = read.csv(file = "/Users/guozh_000/Desktop/Beerwings.csv")
+attach(Beerwings)
+
+#Q2(a)
+
+model_1 = lm(Beer ~ Hotwings, data=Beerwings)
+summary(model_1)
+plot(model_1)
+#According to the R output,beer assumption significantly increase as wing consumption increases.
+#(because we have p value with 2.953e-07, which is much less than 0.05. This sentence should 
+#not appear in the plain language interpretation)
+#Also, all assumuptions are satisfied.(linearity, normality, and constant variance)
+
+#Q2(b)
+
+#Calculate the mean/median/sd of Hotwings by varies gender
+tapply(Beerwings$Hotwings, Beerwings$Gender, mean)
+hotwing_male = Beerwings[which(Gender=="M"),]
+hotwing_female = Beerwings[which(Gender=="F"),]
+mean(hotwing_male$Hotwings)
+mean(hotwing_female$Hotwings)
+median(hotwing_male$Hotwings)
+median(hotwing_female$Hotwings)
+sd(hotwing_male$Hotwings)
+sd(hotwing_female$Hotwings)
+
+observed <- mean(hotwing_male$Hotwings) - mean(hotwing_female$Hotwings);observed
+
+#Observational Study
+
+
+
+#Get hotwings variable
+hotwings <- subset(Beerwings, select=Hotwings, drop=T);hotwings
+
+#set.seed(0)s
+
+yM <- c(7,8,8,11,13,13,14,16,16,17,17,18,18,21,21)
+yF <- c(4,5,5,6,7,7,8,9,11,12,12,13,13,14,14)
+
+#pool data
+fert <-c(yM,yF)
+
+
+N <-  10^5 -1  #set number of times to repeat this process
+ result <- numeric(N) # space to save the random differences
+ for(i in 1:N)
+  {
+  index <- sample(30, size=15, replace = FALSE) # sample of numbers from 1:30
+  result[i] <- mean(hotwings[index]) - mean(hotwings[-index])
+}
+hist(result)
+##Plot
+observed <- mean(yM) - mean(yF)
+
+#P-value
+pleft <- (sum(result < observed)+1)/(N+1)
+pright <- (sum(result >= observed)+1)/(N+1)
+2*min(pleft,pright) 
+
+
+
+
+
+diff = yM - yF;diff
+
+diff = hotwing_male$Hotwings - hotwing_female$Hotwings;diff
+hist(diff)
+
+#Compute P-value
+#???????????????N??????????????????,????????????slide???????????????
+
+#Q3
+#Two sample t statistics assumes that each group is normally distributed with a common variabce
+#,however, we do not have same variance. Thus, violate the assumption of t-test.
+t.test(hotwing_male$Hotwings, hotwing_female$Hotwings,var.equal=T)
+t.test(yM,yF,var.equal=T)
+
+
+#????????????slide?????????,???????????????N???????????????????????????????????????,????????????????????????

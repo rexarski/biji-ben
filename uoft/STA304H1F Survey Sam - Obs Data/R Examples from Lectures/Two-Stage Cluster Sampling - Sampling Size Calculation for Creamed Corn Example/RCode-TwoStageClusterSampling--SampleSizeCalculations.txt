@@ -1,0 +1,59 @@
+###############################
+# Two-Stage Cluster Sampling- #
+#   Creamed Corn Example      # 
+#   Sample Size Calculation   #   
+#          R Code             #
+###############################
+
+# Creamed Corn - Preliminary Study of 12 cases with 3 cans each
+
+C1:  1 5 7 
+C2:  4 2 4 
+C3:  0 1 2 
+C4:  3 6 6 
+C5:  4 9 8 
+C6:  0 7 3
+C7:  5 5 1 
+C8:  3 0 2 
+C9:  7 3 5 
+C10: 3 1 4 
+C11: 4 7 9 
+C12: 0 0 0
+
+
+# Make the case variable - number each case
+> case=rep(seq(1,12,1),each=3)
+
+> case
+ [1]  1  1  1  2  2  2  3  3  3  4  4  4  5  5  5  6  6  6
+      7  7  7  8  8  8  9  9  9 10 10 10 11 11 11 12 12 12
+
+# Make case a factor
+> case=factor(case)
+
+> case
+ [1] 1  1  1  2  2  2  3  3  3  4  4  4  5  5  5  6  6  6
+     7  7  7  8  8  8  9  9  9  10 10 10 11 11 11 12 12 12
+Levels: 1 2 3 4 5 6 7 8 9 10 11 12
+
+# Input the number of fragments for each can
+> frag=c(1,5,7,4,2,4,0,1,2,3,6,6,4,9,8,0,7,3,5,5,1,3,0,2,7,3,5,3,1,4,4,7,9,0,0,0)
+
+> frag
+ [1] 1 5 7 4 2 4 0 1 2 3 6 6 4 9 8 0 7 3 5 5 1 3 0 2 7 3 5 3 1 4 4 7 9 0 0 0
+
+# Regression model with number of fragments as response and case and factor
+> model <- lm(frag ~ case)
+
+# ANOVA table for model
+> anova(model)
+Analysis of Variance Table
+
+Response: frag
+          Df Sum Sq Mean Sq F value  Pr(>F)
+case      11 149.64 13.6035  3.0045 0.01172 *
+Residuals 24 108.67  4.5278
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+

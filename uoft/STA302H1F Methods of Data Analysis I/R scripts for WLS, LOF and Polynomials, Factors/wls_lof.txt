@@ -1,0 +1,69 @@
+# Weighted Least Squares
+#
+# Weighted least squares estimates are most easily obtained using the 
+# "weights" argument for the "lm" command.  In the physics data, the 
+# weights are the inverse squares of the variable SD in the data frame.
+
+library(MASS)
+library(nnet)
+library(car)
+library(alr3)
+
+data(physics)
+attach(physics)
+physics
+m1<-lm(y~x, weights=1/SD^2, data=physics)
+summary(m1)
+anova(m1)
+
+
+###########################################################################
+
+# Testing for lack of fit, Variance unknown
+#
+# Step1: Calculate the pure error estimate of variance
+
+x<-c(1,1,1,2,3,3,4,4,4,4)
+y<-c(2.55,2.75,2.57,2.40,4.19,4.70,3.81,4.87,2.93,4.52)
+z<-numeric(4)
+z[1]<-(3-1)*var(y[1:3])
+z[2]<-0
+z[3]<-(2-1)*var(y[5:6])
+z[4]<-(4-1)*var(y[7:10])
+SS.pe<-sum(z[1:4])
+Sigma.pe<-SS.pe/6
+
+# Step2: Now suppose we fit a linear regression mean function to the data
+m1<-lm(y~x)
+anova(m1)
+
+# Step3: The residual sum of squares obtained in step2 is divided into two 
+# parts, the sum of squares for pure error, as given in step1 (SS_pe), and 
+# the remainder, called the sum of squares for lack of fit.
+# a) SS_lof=RSS-SS_pe with df=n-(p+1)-df_pe.
+# b) the F-test is the ratio of the mean square for lack of fit to the mean 
+#    square for pure error.
+
+# The "alr3" library includes a function called "pureErrorAnova" that 
+# will do the test for lack of fit when the variance is unknown.
+
+pureErrorAnova(m1)
+
+
+###########################################################################
+
+# General F testing (we have done that before)
+
+data(fuel2001)
+fuel<-fuel2001
+fuel$Dlic <- 1000*fuel$Drivers/fuel$Pop
+fuel$Fuel <- 1000*fuel$FuelC/fuel$Pop
+fuel$Income <- fuel$Income/1000
+fuel$logMiles <- logb(fuel$Miles,2)
+m1<-lm(fuel$Fuel~fuel$Dlic+fuel$Income+fuel$logMiles+fuel$Tax,data=fuel)
+m2<-update(m1,~.-fuel$Dlic-fuel$Income)
+anova(m2,m1)  
+
+# note the sequential ANOVA is obtained by anova(m1), 
+# the ordering of terms are decided by the formula used in lm
+
