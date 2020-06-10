@@ -1,0 +1,575 @@
+Checking Assignment 3 (Part 1) Solutions
+
+======= Output of query1 on dataset1 =======
+
+------ raw output ------
+
+<noplaylist><song sid="s20561"/><song sid="s22222"/><song sid="s5"/></noplaylist>
+
+------ formatted output (therefore well-formed) ------
+
+<?xml version="1.0" standalone="no"?>
+<noplaylist>
+  <song sid="s20561"/>
+  <song sid="s22222"/>
+  <song sid="s5"/>
+</noplaylist>
+
+------ checking validity of output ------
+
+Results valid? (no news is good news)
+
+======= Output of query1 on dataset2 =======
+
+------ raw output ------
+
+<noplaylist/>
+
+------ formatted output (therefore well-formed) ------
+
+<?xml version="1.0" standalone="no"?>
+<noplaylist/>
+
+------ checking validity of output ------
+
+Results valid? (no news is good news)
+
+======= Output of query1 on dataset3 =======
+
+------ raw output ------
+
+<noplaylist/>
+
+------ formatted output (therefore well-formed) ------
+
+<?xml version="1.0" standalone="no"?>
+<noplaylist/>
+
+------ checking validity of output ------
+
+Results valid? (no news is good news)
+
+======= Output of query1 on dataset4 =======
+
+------ raw output ------
+
+<noplaylist><song sid="s-TheOnlyAnswer"/></noplaylist>
+
+------ formatted output (therefore well-formed) ------
+
+<?xml version="1.0" standalone="no"?>
+<noplaylist>
+  <song sid="s-TheOnlyAnswer"/>
+</noplaylist>
+
+------ checking validity of output ------
+
+Results valid? (no news is good news)
+
+======= Output of query2 on dataset1 =======
+
+------ raw output ------
+
+<fewfollowers/>
+
+------ formatted output (therefore well-formed) ------
+
+<?xml version="1.0" standalone="no"?>
+<fewfollowers/>
+
+------ checking validity of output ------
+
+Results valid? (no news is good news)
+
+======= Output of query2 on dataset2 =======
+
+------ raw output ------
+
+<fewfollowers><who uid="u20"/><who uid="u45"/><who uid="u9"/></fewfollowers>
+
+------ formatted output (therefore well-formed) ------
+
+<?xml version="1.0" standalone="no"?>
+<fewfollowers>
+  <who uid="u20"/>
+  <who uid="u45"/>
+  <who uid="u9"/>
+</fewfollowers>
+
+------ checking validity of output ------
+
+Results valid? (no news is good news)
+
+======= Output of query2 on dataset3 =======
+
+------ raw output ------
+
+<fewfollowers/>
+
+------ formatted output (therefore well-formed) ------
+
+<?xml version="1.0" standalone="no"?>
+<fewfollowers/>
+
+------ checking validity of output ------
+
+Results valid? (no news is good news)
+
+======= Output of query2 on dataset4 =======
+
+------ raw output ------
+
+<fewfollowers><who uid="u3"><follower uid="u1"/><follower uid="u2"/></who><who uid="u4"><follower uid="u1"/><follower uid="u2"/><follower uid="u3"/></who><who uid="u6"/></fewfollowers>
+
+------ formatted output (therefore well-formed) ------
+
+<?xml version="1.0" standalone="no"?>
+<fewfollowers>
+  <who uid="u3">
+    <follower uid="u1"/>
+    <follower uid="u2"/>
+  </who>
+  <who uid="u4">
+    <follower uid="u1"/>
+    <follower uid="u2"/>
+    <follower uid="u3"/>
+  </who>
+  <who uid="u6"/>
+</fewfollowers>
+
+------ checking validity of output ------
+
+Results valid? (no news is good news)
+
+======= Output of query3 on dataset1 =======
+
+------ raw output ------
+
+<favourites><user uid="u20"/><user uid="u45"/><user uid="u9"/></favourites>
+
+------ formatted output (therefore well-formed) ------
+
+<?xml version="1.0" standalone="no"?>
+<favourites>
+  <user uid="u20"/>
+  <user uid="u45"/>
+  <user uid="u9"/>
+</favourites>
+
+------ checking validity of output ------
+
+Results valid? (no news is good news)
+
+======= Output of query3 on dataset2 =======
+
+------ raw output ------
+
+<favourites><user uid="u20" pid="p1000" playcount="20"/><user uid="u45" pid="p1001" playcount="5"/><user uid="u9" pid="p1005" playcount="99"/></favourites>
+
+------ formatted output (therefore well-formed) ------
+
+<?xml version="1.0" standalone="no"?>
+<favourites>
+  <user uid="u20" pid="p1000" playcount="20"/>
+  <user uid="u45" pid="p1001" playcount="5"/>
+  <user uid="u9" pid="p1005" playcount="99"/>
+</favourites>
+
+------ checking validity of output ------
+
+Results valid? (no news is good news)
+
+======= Output of query3 on dataset3 =======
+
+------ raw output ------
+
+<favourites><user uid="u20" pid="p1000" playcount="125"/><user uid="u45" pid="p1001" playcount="105"/><user uid="u9" pid="p1005" playcount="199"/></favourites>
+
+------ formatted output (therefore well-formed) ------
+
+<?xml version="1.0" standalone="no"?>
+<favourites>
+  <user uid="u20" pid="p1000" playcount="125"/>
+  <user uid="u45" pid="p1001" playcount="105"/>
+  <user uid="u9" pid="p1005" playcount="199"/>
+</favourites>
+
+------ checking validity of output ------
+
+Results valid? (no news is good news)
+
+======= Output of query3 on dataset4 =======
+
+------ raw output ------
+
+<favourites><user uid="u20" pid="p1000" playcount="125"/><user uid="u20" pid="p1001" playcount="125"/><user uid="u20" pid="p1005" playcount="125"/><user uid="u45" pid="p1000" playcount="105"/><user uid="u45" pid="p1001" playcount="105"/><user uid="u45" pid="p1005" playcount="105"/><user uid="u9" pid="p1000" playcount="10"/><user uid="u9" pid="p1001" playcount="10"/><user uid="u9" pid="p1005" playcount="10"/></favourites>
+
+------ formatted output (therefore well-formed) ------
+
+<?xml version="1.0" standalone="no"?>
+<favourites>
+  <user uid="u20" pid="p1000" playcount="125"/>
+  <user uid="u20" pid="p1001" playcount="125"/>
+  <user uid="u20" pid="p1005" playcount="125"/>
+  <user uid="u45" pid="p1000" playcount="105"/>
+  <user uid="u45" pid="p1001" playcount="105"/>
+  <user uid="u45" pid="p1005" playcount="105"/>
+  <user uid="u9" pid="p1000" playcount="10"/>
+  <user uid="u9" pid="p1001" playcount="10"/>
+  <user uid="u9" pid="p1005" playcount="10"/>
+</favourites>
+
+------ checking validity of output ------
+
+Results valid? (no news is good news)
+
+======= Output of query3 on dataset5 =======
+
+------ raw output ------
+
+<favourites><user uid="u20"/><user uid="u45" pid="p1005" playcount="209"/><user uid="u9" pid="p1000" playcount="10"/><user uid="u9" pid="p1001" playcount="10"/><user uid="u9" pid="p1005" playcount="10"/><user uid="u10" pid="p1000" playcount="101"/></favourites>
+
+------ formatted output (therefore well-formed) ------
+
+<?xml version="1.0" standalone="no"?>
+<favourites>
+  <user uid="u20"/>
+  <user uid="u45" pid="p1005" playcount="209"/>
+  <user uid="u9" pid="p1000" playcount="10"/>
+  <user uid="u9" pid="p1001" playcount="10"/>
+  <user uid="u9" pid="p1005" playcount="10"/>
+  <user uid="u10" pid="p1000" playcount="101"/>
+</favourites>
+
+------ checking validity of output ------
+
+Results valid? (no news is good news)
+
+======= Output of query4 on dataset1 =======
+
+------ raw output ------
+
+<pairs/>
+
+------ formatted output (therefore well-formed) ------
+
+<?xml version="1.0" standalone="no"?>
+<pairs/>
+
+------ checking validity of output ------
+
+Results valid? (no news is good news)
+
+======= Output of query4 on dataset2 =======
+
+------ raw output ------
+
+<pairs/>
+
+------ formatted output (therefore well-formed) ------
+
+<?xml version="1.0" standalone="no"?>
+<pairs/>
+
+------ checking validity of output ------
+
+Results valid? (no news is good news)
+
+======= Output of query4 on dataset3 =======
+
+------ raw output ------
+
+<pairs><pair uid1="u45" uid2="u20"/></pairs>
+
+------ formatted output (therefore well-formed) ------
+
+<?xml version="1.0" standalone="no"?>
+<pairs>
+  <pair uid1="u45" uid2="u20"/>
+</pairs>
+
+------ checking validity of output ------
+
+Results valid? (no news is good news)
+
+======= Output of query4 on dataset4 =======
+
+------ raw output ------
+
+<pairs><pair uid1="u45" uid2="u20"/><pair uid1="u9" uid2="u20"/><pair uid1="u9" uid2="u45"/></pairs>
+
+------ formatted output (therefore well-formed) ------
+
+<?xml version="1.0" standalone="no"?>
+<pairs>
+  <pair uid1="u45" uid2="u20"/>
+  <pair uid1="u9" uid2="u20"/>
+  <pair uid1="u9" uid2="u45"/>
+</pairs>
+
+------ checking validity of output ------
+
+Results valid? (no news is good news)
+
+======= Output of query5 on dataset1 =======
+
+------ raw output ------
+
+<popularity><histogram pid="p1001"><low count="0"/><medium count="3"/><high count="0"/></histogram><histogram pid="p1002"><low count="0"/><medium count="3"/><high count="0"/></histogram><histogram pid="p1003"><low count="0"/><medium count="3"/><high count="0"/></histogram><histogram pid="p1004"><low count="0"/><medium count="3"/><high count="0"/></histogram><histogram pid="p1005"><low count="0"/><medium count="3"/><high count="0"/></histogram></popularity>
+
+------ formatted output (therefore well-formed) ------
+
+<?xml version="1.0" standalone="no"?>
+<popularity>
+  <histogram pid="p1001">
+    <low count="0"/>
+    <medium count="3"/>
+    <high count="0"/>
+  </histogram>
+  <histogram pid="p1002">
+    <low count="0"/>
+    <medium count="3"/>
+    <high count="0"/>
+  </histogram>
+  <histogram pid="p1003">
+    <low count="0"/>
+    <medium count="3"/>
+    <high count="0"/>
+  </histogram>
+  <histogram pid="p1004">
+    <low count="0"/>
+    <medium count="3"/>
+    <high count="0"/>
+  </histogram>
+  <histogram pid="p1005">
+    <low count="0"/>
+    <medium count="3"/>
+    <high count="0"/>
+  </histogram>
+</popularity>
+
+------ checking validity of output ------
+
+Results valid? (no news is good news)
+
+======= Output of query5 on dataset2 =======
+
+------ raw output ------
+
+<popularity><histogram pid="p1001"><low count="2"/><medium count="1"/><high count="0"/></histogram><histogram pid="p1002"><low count="3"/><medium count="0"/><high count="0"/></histogram><histogram pid="p1003"><low count="3"/><medium count="0"/><high count="0"/></histogram><histogram pid="p1004"><low count="3"/><medium count="0"/><high count="0"/></histogram><histogram pid="p1005"><low count="3"/><medium count="0"/><high count="0"/></histogram></popularity>
+
+------ formatted output (therefore well-formed) ------
+
+<?xml version="1.0" standalone="no"?>
+<popularity>
+  <histogram pid="p1001">
+    <low count="2"/>
+    <medium count="1"/>
+    <high count="0"/>
+  </histogram>
+  <histogram pid="p1002">
+    <low count="3"/>
+    <medium count="0"/>
+    <high count="0"/>
+  </histogram>
+  <histogram pid="p1003">
+    <low count="3"/>
+    <medium count="0"/>
+    <high count="0"/>
+  </histogram>
+  <histogram pid="p1004">
+    <low count="3"/>
+    <medium count="0"/>
+    <high count="0"/>
+  </histogram>
+  <histogram pid="p1005">
+    <low count="3"/>
+    <medium count="0"/>
+    <high count="0"/>
+  </histogram>
+</popularity>
+
+------ checking validity of output ------
+
+Results valid? (no news is good news)
+
+======= Output of query5 on dataset3 =======
+
+------ raw output ------
+
+<popularity><histogram pid="p1001"><low count="2"/><medium count="1"/><high count="0"/></histogram><histogram pid="p1002"><low count="3"/><medium count="0"/><high count="0"/></histogram><histogram pid="p1003"><low count="3"/><medium count="0"/><high count="0"/></histogram><histogram pid="p1004"><low count="3"/><medium count="0"/><high count="0"/></histogram><histogram pid="p1005"><low count="3"/><medium count="0"/><high count="0"/></histogram></popularity>
+
+------ formatted output (therefore well-formed) ------
+
+<?xml version="1.0" standalone="no"?>
+<popularity>
+  <histogram pid="p1001">
+    <low count="2"/>
+    <medium count="1"/>
+    <high count="0"/>
+  </histogram>
+  <histogram pid="p1002">
+    <low count="3"/>
+    <medium count="0"/>
+    <high count="0"/>
+  </histogram>
+  <histogram pid="p1003">
+    <low count="3"/>
+    <medium count="0"/>
+    <high count="0"/>
+  </histogram>
+  <histogram pid="p1004">
+    <low count="3"/>
+    <medium count="0"/>
+    <high count="0"/>
+  </histogram>
+  <histogram pid="p1005">
+    <low count="3"/>
+    <medium count="0"/>
+    <high count="0"/>
+  </histogram>
+</popularity>
+
+------ checking validity of output ------
+
+Results valid? (no news is good news)
+
+======= Output of query5 on dataset4 =======
+
+------ raw output ------
+
+<popularity><histogram pid="p1001"><low count="3"/><medium count="0"/><high count="0"/></histogram><histogram pid="p1002"><low count="3"/><medium count="0"/><high count="0"/></histogram><histogram pid="p1003"><low count="3"/><medium count="0"/><high count="0"/></histogram><histogram pid="p1004"><low count="0"/><medium count="0"/><high count="3"/></histogram><histogram pid="p1005"><low count="0"/><medium count="0"/><high count="3"/></histogram></popularity>
+
+------ formatted output (therefore well-formed) ------
+
+<?xml version="1.0" standalone="no"?>
+<popularity>
+  <histogram pid="p1001">
+    <low count="3"/>
+    <medium count="0"/>
+    <high count="0"/>
+  </histogram>
+  <histogram pid="p1002">
+    <low count="3"/>
+    <medium count="0"/>
+    <high count="0"/>
+  </histogram>
+  <histogram pid="p1003">
+    <low count="3"/>
+    <medium count="0"/>
+    <high count="0"/>
+  </histogram>
+  <histogram pid="p1004">
+    <low count="0"/>
+    <medium count="0"/>
+    <high count="3"/>
+  </histogram>
+  <histogram pid="p1005">
+    <low count="0"/>
+    <medium count="0"/>
+    <high count="3"/>
+  </histogram>
+</popularity>
+
+------ checking validity of output ------
+
+Results valid? (no news is good news)
+
+======= Output of query5 on dataset5 =======
+
+------ raw output ------
+
+<popularity><histogram pid="p1001"><low count="3"/><medium count="0"/><high count="0"/></histogram><histogram pid="p1002"><low count="3"/><medium count="0"/><high count="0"/></histogram><histogram pid="p1003"><low count="3"/><medium count="0"/><high count="0"/></histogram><histogram pid="p1004"><low count="0"/><medium count="3"/><high count="0"/></histogram><histogram pid="p1005"><low count="0"/><medium count="3"/><high count="0"/></histogram></popularity>
+
+------ formatted output (therefore well-formed) ------
+
+<?xml version="1.0" standalone="no"?>
+<popularity>
+  <histogram pid="p1001">
+    <low count="3"/>
+    <medium count="0"/>
+    <high count="0"/>
+  </histogram>
+  <histogram pid="p1002">
+    <low count="3"/>
+    <medium count="0"/>
+    <high count="0"/>
+  </histogram>
+  <histogram pid="p1003">
+    <low count="3"/>
+    <medium count="0"/>
+    <high count="0"/>
+  </histogram>
+  <histogram pid="p1004">
+    <low count="0"/>
+    <medium count="3"/>
+    <high count="0"/>
+  </histogram>
+  <histogram pid="p1005">
+    <low count="0"/>
+    <medium count="3"/>
+    <high count="0"/>
+  </histogram>
+</popularity>
+
+------ checking validity of output ------
+
+Results valid? (no news is good news)
+
+======= Output of query6 on dataset1 =======
+
+------ raw output ------
+
+<songcounts><song sid="s20561" title="Living For Love" playcount="167"/><song sid="s22222" title="Lady Madonna" playcount="159"/><song sid="s5" title="Lady Medusa" playcount="124"/></songcounts>
+
+------ formatted output (therefore well-formed) ------
+
+<?xml version="1.0" standalone="no"?>
+<songcounts>
+  <song sid="s20561" title="Living For Love" playcount="167"/>
+  <song sid="s22222" title="Lady Madonna" playcount="159"/>
+  <song sid="s5" title="Lady Medusa" playcount="124"/>
+</songcounts>
+
+------ checking validity of output ------
+
+Results valid? (no news is good news)
+
+======= Output of query6 on dataset2 =======
+
+------ raw output ------
+
+<songcounts><song sid="s20561" title="Living For Love" playcount="0"/><song sid="s22222" title="Lady Madonna" playcount="159"/><song sid="s5" title="Lady Medusa" playcount="124"/></songcounts>
+
+------ formatted output (therefore well-formed) ------
+
+<?xml version="1.0" standalone="no"?>
+<songcounts>
+  <song sid="s20561" title="Living For Love" playcount="0"/>
+  <song sid="s22222" title="Lady Madonna" playcount="159"/>
+  <song sid="s5" title="Lady Medusa" playcount="124"/>
+</songcounts>
+
+------ checking validity of output ------
+
+Results valid? (no news is good news)
+
+======= Output of query6 on dataset3 =======
+
+------ raw output ------
+
+<songcounts><song sid="s20561" title="Living For Love" playcount="167"/><song sid="s22222" title="Lady Madonna" playcount="159"/><song sid="s5" title="Lady Medusa" playcount="0"/></songcounts>
+
+------ formatted output (therefore well-formed) ------
+
+<?xml version="1.0" standalone="no"?>
+<songcounts>
+  <song sid="s20561" title="Living For Love" playcount="167"/>
+  <song sid="s22222" title="Lady Madonna" playcount="159"/>
+  <song sid="s5" title="Lady Medusa" playcount="0"/>
+</songcounts>
+
+------ checking validity of output ------
+
+Results valid? (no news is good news)
+

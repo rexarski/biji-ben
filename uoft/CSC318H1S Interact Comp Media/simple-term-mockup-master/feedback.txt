@@ -1,0 +1,14 @@
+Criticisms:
+- error reponse is an exit window?
+- people want to hide verbose responses
+- Topbar questionably useful
+
+- non clickable elements because it's not a shell convention, and would make moving to other things hard?
+- autocompletion with arguments?
+	- show most popular args with ... to show there are more flags
+
+- command and responses should probably be the other way around?
+	- we read left aligned
+	- alex, alec
+
+	- provide emphasis on your commands over the responses

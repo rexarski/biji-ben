@@ -1,0 +1,66 @@
+Task 1
+enrol/drop student course (20 p. limit)
+  - waiting list if full
+create student
+delete student
+
+student:
+  - First Name - String
+  - Last Name - String
+  - Student # - int
+
+course:
+  - Course Code - String
+  - Lecture Code - String
+  - Tutorial Code - String
+  - Lab Code - String
+  - Lecture Enrollment - List
+  - Tutorial Enrollment - List
+  - Lab Enrollment - List
+  - Waitlist - List
+
+registry:
+  - students
+    - {'student number' : student}
+  - courses
+    - {'course code' : course}
+    
+Functions
+  - create student: create student bob smith 4324234
+    - args: first name [, last name [, student number]]
+    - if last name or student number is blank, ask for it. If it's not given, delete student.
+    - if the student number already exists, display message: "That student already exists."
+  - delete student:
+    - args: student number
+    - if student number doesn't exist, display an error message: "Sorry, that student does not exist."
+  - enrol student# course:
+    - args: student number, course code
+    - if student number doesn't exist, display: "That student does not exist."
+    - if course code doesn't exist, display: "That course doesn't exist!"
+    - if # of students enrolled == 20, display "Sorry, that course is full. Do you want to be added to the waiting list?"
+      - If response is y(es)? Add student to waiting list.
+      - If response is n(o)? Don't add student.
+  - drop student# course
+    - args: student number, course code
+    - if student number doesn't exist, display: "That student does not exist."
+    - if course code doesn't exist, display: "That course doesn't exist!"
+    - if student is not enrolled in the course, display: "The student is not enrolled in the course."
+    - if student is enrolled in the course:
+      - remove the student from the course
+      - if enrollment number is < 20:
+	- if the waiting list contains students:
+	  - move the first student on the waiting list to the course and remove that student from the waiting list.
+      
+      
+    
+    
+
+
+
+
+Task 2
+exit: print a goodbye message
+op n m: n * m, op = add/subtract/multiple/divide
+store key value
+lookup key
+execute file: output command/output

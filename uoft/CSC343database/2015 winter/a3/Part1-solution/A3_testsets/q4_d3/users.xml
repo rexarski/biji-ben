@@ -1,0 +1,40 @@
+<?xml version="1.0" standalone="no" ?>
+<!DOCTYPE users SYSTEM "users.dtd">
+<users>
+   <user uid = "u20" dob = "950624" email = "davey@gmail.com">
+      <surname>Liu</surname>
+      <givennames>David</givennames>
+      <follows who="u45"/>
+      <playlists>
+         <playlist pid="p1001" created="150101" playcount="25"/>
+         <playlist pid="p1002" created="150101" playcount="5"/>
+         <playlist pid="p1003" created="150101" playcount="25"/>
+         <playlist pid="p1004" created="150101" playcount="25"/>
+         <playlist pid="p1005" created="150101" playcount="25"/>
+         <playlist pid="p1006" created="150101" playcount="25"/>
+      </playlists>
+   </user>
+   <user uid = "u45" dob = "940624" email = "knowle99@gmail.com">
+      <surname>Knowle</surname>
+      <givennames>Robert John</givennames>
+      <follows who="u20 u9"/>
+      <playlists>
+         <playlist pid="p1001" created="150101" playcount="25"/>
+         <playlist pid="p1002" created="150101" playcount="5"/>
+         <playlist pid="p1003" created="150101" playcount="25"/>
+         <playlist pid="p1004" created="150101" playcount="25"/>
+         <playlist pid="p1005" created="150101" playcount="25"/>
+         <playlist pid="p1006" created="150101" playcount="25"/>
+      </playlists>
+   </user>
+   <user uid = "u9" dob = "960624" email = "dlh@gmail.com">
+      <surname>Horton</surname>
+      <givennames>Diane</givennames>
+      <follows who="u20"/>
+      <playlists>
+         <playlist pid="p1001" created="150101" playcount="10"/>
+         <playlist pid="p1002" created="150101" playcount="3"/>
+         <playlist pid="p1003" created="150101" playcount="99"/>
+      </playlists>
+   </user>
+</users>

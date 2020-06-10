@@ -1,0 +1,5 @@
+<!ELEMENT favourites (user*)>
+<!ELEMENT user EMPTY>
+<!ATTLIST user uid CDATA #REQUIRED
+               pid CDATA #IMPLIED
+               playcount CDATA #IMPLIED>

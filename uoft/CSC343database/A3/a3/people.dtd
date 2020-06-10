@@ -1,0 +1,14 @@
+<!ELEMENT People (Person*)>
+<!ELEMENT Person (Name+, Oscar*)>
+<!ELEMENT Name (First, Last)>
+<!ELEMENT First (#PCDATA)>
+<!ELEMENT Last (#PCDATA)>
+
+<!ATTLIST Person PID CDATA #REQUIRED>
+<!ATTLIST Person gender CDATA #REQUIRED>
+<!ATTLIST Person dob CDATA #IMPLIED>
+<!ATTLIST Person pob CDATA #IMPLIED>
+
+<!ELEMENT Oscar EMPTY>
+<!ATTLIST Oscar OID CDATA #REQUIRED>
+

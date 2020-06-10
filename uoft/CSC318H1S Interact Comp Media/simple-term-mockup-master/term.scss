@@ -1,0 +1,275 @@
+$gu: 32px;
+$input_line_height: 2 * $gu;
+$navbar_height: 2 * $gu;
+
+$sidebar_width: 7 * $gu;
+
+@mixin animated() { 
+    -webkit-animation-duration: 0.2s; 
+    animation-duration: 0.2s; 
+    -webkit-animation-fill-mode: both; 
+    animation-fill-mode: both; 
+} 
+
+@-webkit-keyframes fadeInUp { 
+    0% { 
+        opacity: 0; 
+        -webkit-transform: translateY(20px); 
+    } 
+    100% { 
+        opacity: 1; 
+        -webkit-transform: translateY(0); 
+    } 
+} 
+
+@keyframes fadeInUp { 
+    0% { 
+        opacity: 0; 
+        transform: translateY(20px); 
+    } 
+    100% { 
+        opacity: 1; 
+        transform: translateY(0); 
+    } 
+} 
+
+@mixin fadeInUp() {     
+  -webkit-animation-name: fadeInUp; 
+  animation-name: fadeInUp; 
+}
+
+
+@mixin abs($val) {
+  position: absolute;
+  left: $val;
+  top: $val;
+  bottom: $val;
+  right: $val;
+}
+
+*, *:after, *:before{
+  box-sizing: border-box;
+  margin:0;
+}
+
+html, body{
+  width: 100%;
+  height: 100%;
+  min-width: 10* $gu;
+}
+
+.shaded {
+  -webkit-box-shadow: 0px 0px 31px 0px rgba(0,0,0,0.2);
+}
+
+textarea {
+  border: none;
+  overflow: auto;
+  outline: none;
+
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
+
+a{
+  color: auto;
+  text-decoration: none;
+}
+
+#navbar{
+  @include abs(0);
+
+  bottom: auto;
+  height: $navbar_height;
+  left: $sidebar_width;
+
+  position:absolute;
+
+  font-family: Ubuntu Mono, monospace;
+  line-height: $navbar_height;
+  padding-left: $gu/2;
+  padding-right: $gu/2;
+  font-size: $gu*0.5;
+
+
+  background-color: #2980B9;
+  color: #FFFFFF;
+
+  z-index:5;
+}
+
+#sidebar{
+  @include abs(0);
+  z-index: 20;
+  right:auto;
+  width: $sidebar_width;
+  font-family: Ubuntu Mono, monospace;
+  padding: $gu/2;
+
+  background-color: #EEEEEE;
+
+  h2{
+    font-size:1.2em;
+    font-weight: normal;
+    margin-bottom: 0.2em;
+  }
+
+  overflow-y: auto;
+  overflow-x: hidden;
+  li {
+    overflow-x: ellipsis;
+  }
+}
+
+#message-buffer {
+  @include abs(0);
+  top: $navbar_height;
+  bottom: $input_line_height;
+  left: $sidebar_width;
+
+  overflow-y: scroll;
+  background-color: #F7F7F7;
+
+
+  .message {
+    position: relative;
+    padding: $gu/2;
+    margin: $gu/2;
+    background-color: #EEEEEE;
+
+    @include animated;
+    @include fadeInUp;
+
+    //-webkit-box-shadow: 0px 3px 10px 0px rgba(0,0,0,0.2);
+
+    font-family: Ubuntu Mono, monospace;
+
+    &:before{
+      content:attr(data-sender);
+      display:block;
+      margin-bottom: 0.5em;
+      opacity: 0.5;
+    }
+
+
+    &[data-sender='me@localhost'] {
+      padding-top: $gu/4;
+      padding-bottom: $gu/4;
+      font-size: 0.9em;
+  
+      &:after{
+        content: " ";
+        transition: opacity 0.2s;
+        opacity:0;
+      }
+
+    }
+
+    &[data-sender='helpbot'] {
+      background-color:#D8E7F7;
+    }
+
+    &[data-sender='me@localhost'] {
+    }
+
+    &:not([data-sender='me@localhost']) {
+      margin-left: 2*$gu;
+    }
+
+    &[data-sender='me@localhost']+.message[data-sender='shellbot'] {
+      //margin-top: -$gu/2;
+    }
+  }
+}
+
+#ia-wrapper{
+  @include abs(0);
+  top: auto;
+  left: $sidebar_width;
+  height: 2 * $gu;
+}
+#input-area {
+  position:relative;
+
+  width:100%;
+  height:100%;
+
+  background-color: #EEEEEE;
+  padding: $gu/2;
+  font-size:0;
+
+  font-weight: 200;
+  font-size: 14px;
+  font-family: Ubuntu Mono, monospace;
+  background-color: #ffffff;
+
+  resize:none;
+
+  line-height:$gu;
+  padding:$gu/2;
+  padding-left: $gu;
+  position:absolute;
+}
+
+#modal-display {
+
+}
+
+
+code{
+  font-family: inherit;
+  background-color: rgba(0,0,0,0.1);
+  padding-left: 0.3em;
+  padding-right: 0.3em;
+  padding-top: 0.05em;
+  padding-bottom: 0.05em;
+  border-radius: 2px;
+}
+
+aside {
+  font-family: inherit;
+  color: rgba(0,0,0,0.5);
+  display:block;
+  line-height: 1em;
+  font-size: 0.8em;
+  margin-top: 0.2em;
+
+}
+
+p, ul{
+  margin-bottom:$gu/4;
+}
+
+.lsout {
+  margin:0;
+  padding-left: $gu/2;
+  display:inline-block;
+  min-width:6 * $gu;
+
+  vertical-align: top;
+
+  li{
+    display: block;
+  }
+
+  li[data-filetype]:before{
+    font-family: "FontAwesome";
+    margin-right: 0.5em;
+  }
+
+  li[data-filetype='folder']:before { content: "\f07b"; }
+  li[data-filetype='dotfolder']:before { content: "\f114"; }
+  li[data-filetype='textfile']:before { content: "\f0f6"; }
+  li[data-filetype='photofile']:before { content: "\f1c5"; }
+  li[data-filetype='wordfile']:before { content: "\f1c2"; }
+  li[data-filetype='zipfile']:before { content: "\f1c6"; }
+  li[data-filetype='soundfile']:before { content: "\f1c7"; }
+  li[data-filetype='dotfile']:before{content: "\f016";}
+}
+
+.help_desc{
+  margin-top: 0;
+  margin-bottom: 1em;
+  margin-left: $gu;
+}

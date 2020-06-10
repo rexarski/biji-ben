@@ -1,0 +1,696 @@
+CSC207 Final Review
+========================================
+Week 1
+Lec 1 checked
+========================================
+Lec 2
+subversion (svn)
+svn checkout URL
+svn add [filenames]
+svn status [filenames]
+svn update [filenames]
+svn commit [filenames]
+svn remove [filenames]	need to commit (like add)	removes file from repo
+svn diff [filenames]	see difference
+svn log [filenames]	show history of files
+========================================
+Week 2
+Lec 3 interpreted vs. compiled	(hybrid -> Java)
+public class Helloworld {
+	public static void main (String[] args) {
+		System.out.println("Helloworld!");
+	}
+}
+========================================
+Lec 4
+Python vs. Java
+Python						Java
+a statement is a program			need a class, need main method to be a program
+values have types				variables have types
+variables have no types			primitive types: int, double, boolean, char, etc.
+Objective-oriented; 3 is an Objective-oriented 	wrapper class...
+
+- primitive types are not objects
+	- int, boolean, char, double, byte, short, long, float
+- can reassign (but has to be the same type)
+- cannot redeclare (even the same type)
+
+class type
+Integer myInteger = new Integer(10);
+Integer xInteger = new Integer(x);
+
+String
+indexing: char letter = s2.charAt(3);
+slicing: String slice = s2.subsring(4);
+	String slice = s2.substring(5,7);
+strippling (remove whitespace from beginning and end of the string): String s3 = "     hi  there     ";
+									s3 = s3.trim();
+splitting: s3 = "before hi there after";
+	String[] parts = s3.split("e");
+	System.out.println(parts[0]);
+	System.out.println(parts[1]);
+	System.out.println(parts[2]);
+	System.out.println(parts[3]);
+	...
+
+Arrays: not like Python's list because arrays in Java has fiexed length
+int[] intArray = new int[4];
+all elements must have the same type
+========================================
+Week 3
+Lec 5
+Java OO
+public class Circle {
+	private String radius;
+}
+radius is an instance variable. each object/instance of the class Circle has its own radius variable.
+
+constructors
+	- has the same name as the class
+	- no return type, not even void
+	- no constructor defined -> supplies one with no parameter and no body
+	- once defined one -> use it instead
+
+this (an instance var without declaring)
+
+method (return type must be declared, use void if nothing returned)
+	return expression;
+public - callable anywhere
+private - callable only from this class
+non-final instance var -> private or protected
+
+More Java types
+Basic for-loop
+for (int i=0; i<integer.length; i++) {
+	System.out.println(integers[i]);
+}
+Enhanced for-loop
+for (int item: integers) {
+	...
+}
+
+AutoBoxing
+Intger x = new Integer(2);
+Integer x = 2 // short cut, automatically put a primitive type into a "box"
+
+Double d1 = new Double(3.14);
+double d2 = d1; // unboxing
+Double d3 = d1; // aliasing (same object as d1)
+
+AutoBoxing behavior
+two different object not equal, so i2 == i1 false
+i1 == i3 and i2 == i3 because auto unboxed
+
+s1 == s2 compares memory address
+s1.equals(s2) compares values
+
+System.out.println(jen)	 used overridden toString in Person instead of toString in Objectc class
+========================================
+Lec 6
+Memory model
+More Java OO
+Inheritance
+	- in a subclass, super refers to the part of object defined by parent class
+	- A is a parent class, AChild is its child class
+		- both have instance var x and instance method m
+		- A's x is shadowed by AChild's x (not good)
+		- A's m is overridden by AChild's m (sometimes useful)
+	- if a method must not be overridden in child class, declare it final.
+
+casting down
+Object o = new String("hello");
+char c = ((String) o).charAt(1);
+
+public class Student extends Person {
+	... // "Child extends Parent"
+}
+========================================
+Week 4
+Lec 7
+UML (unified modeling language)
+data member
+name: type
+
+method
+methodName(para1:type1, para2:type2, ...):returnType
+
+notation
+- private
++ public
+# protected
+~ package
+
+static: underlined
+abstract method: italic
+abstract class: italic
+interface: <<interface>>
+inheritance: arrow
+interface: dotted arrow
+
+Polymorphism: one object having multiple forms
+enhanced for-loop is an example:
+for (Person person: people) {
+	System.out.println(person);
+}
+
+static: can access the static var before any Student instances exist
+for example, the Student count is a static var
+
+an abstract class
+	- cannot be instantiated but can be subclassed
+	- can but not necessarily contain abstract methods
+an abstract method
+	- is declared without implementation
+	- if a class contains an abstract method, must be abstract
+
+final variable is a constant, cannot be reinitialized
+
+public abstract double gpa(); // if an abstract class has an abstract method, then this method must be overridden/implemented in all of its child classes
+
+switch statement
+public double gpa() {
+    double gpa_value = 0.0;
+    switch (grade) {
+    case "A": gpa_value = 4.0; break;
+    case "B": gpa_value = 3.0; break;
+    case "C": gpa_value = 2.0; break;
+    case "D": gpa_value = 1.0; break;
+    case "F": gpa_value = 0.0;
+    }
+    return gpa_value;
+}
+========================================
+Lec 8
+Interface
+	- cannot be instantiated
+	- all methods in it are abstract
+	- cannot have instance var (can only have public static final var)
+	- a class may implements multiple interfaces
+
+"Child extends Parent implements Interface1, Interface2"
+
+public interface IDed {
+	public String getID();
+}
+
+generic
+public interface IDed<T> {
+	public T getID();
+}
+
+Map
+private Map<String, Grade> courseToGrade;
+
+// initialized the courseToGrade:
+courseToGrade = new HashMap<String, Grade>();
+// or
+this.courseToGrade = new HashMap<>(); // autoboxing
+
+public void addGrade(String course, int grade) {
+	this.courseToGrade.put(course, new NumericGrade(grade));
+}
+
+public void addGrade(String course, String grade) {
+	this.courseToGrade.put(course, new LetterGrade(grade));
+} // this method is a overloaded method, one call, two statements
+
+method overloading is a feature that allows a class to have two or more methods having same name, if their argument lists are different.
+
+2DArray
+int[][] table = new int[3][4] // a 3 x 4 array with 3 rows 4 cols
+
+int[][] jagged = new int[3][];
+jagged[0] = new int[4];
+jagged[1] = new int[2];
+jagged[2] = new int[3]; // 3 rows but different cols length
+
+Java Collections
+	- Map, List, Set, Queue, etc (all interfaces)
+	- List
+		- similar to Python's lists
+		- declare and initialized an ArrayList of Strings
+		- Lists are generic
+		
+		List<String>  team = new ArrayList<String>();
+		team.add("jen");
+		team.add("hi"); // can only add the specified type, String
+		
+		- Generics must use object types
+		- can use automatically box/unbox here
+
+		List<Integer> intList = new ArrayList<Integer>();
+		intList.add(12);
+		int x = intList.get(0);
+	- Map
+		- similar to Python's dictionary
+		- unordered pairs
+
+		Map<String, Integer> myMap = new HashMap<String, Integer>();
+========================================
+Week 5
+Lec 9
+Java & OOP concepts
+Memory
+data is stored in two areas of memory: the (call) stack and the heap
+call stack: keeps track of method calls including parameter values, local vars and return addresses
+heap: stores objects. vars reference of the objects stored in the heap
+
+Generics
+- allow types to be parameters to classes, interfaces, and methods
+- code uses generics:
+	- allows type checking at compile time.
+	- the aim is to detect bugs at compile time, rather than at run time
+	- eliminates the need for typecasting
+
+Abstract class
+	- may contain instance and static class var
+	- may contain abstract methods
+	- may contain implemented methods
+	- cannot be instantiated
+	- a class can extend an abstract class
+
+Interface
+	- may contain only public static final var
+	- may contain abstract method
+	- cannot contain implemented methods
+	- cannot be instantiated
+	- a class can implement one or more interfaces
+
+Java's Queues
+Queue<String> lineUp = new  ConcurrentLinkedQueue<>(); // autoboxing
+lineUp.add("first in line");
+lineUp.add("second in line");
+
+System.out.println(lineUp);
+lineUp.poll();
+
+System.out.println(lineUp);
+
+compareTo
+	- returns a negative int, zero or a positive int as this object is less than, equal to, or greater than the specified object
+
+WaitList
+	- a generic class
+	- T stands for type, but for collections, we use E as in Java API
+
+public class WaitList<E> {
+	private Queue<E> content;
+	public WaitList() {
+		this.content = new ConcurrentLinkedQueue<>(); // box
+	}
+
+	public WaitList(Collection<E> c) {
+	this.content = new ConcurrentLinkedQueue<>(c);
+	} 
+
+	public void add(E element) {
+		this.content.add(element);
+	}
+
+	public E remove() {
+		return this.content.poll();
+	}
+
+	...
+}
+========================================
+Lec 10
+CRC - Class Responsibility and Collaboration
+	- Class
+		- an OO class name
+		- include info about super- and sub-class
+	- Responsibility
+		- what info this class stores
+		- what this class does
+		- the behavior for which an object is accountable
+	- Collaboration
+		- relationship to other classes
+		- which other classes this class uses
+
+equals
+s1.equals(s2) compares the value
+s1 == s2 compares memory addresses
+
+compareTo
+can even compare two LetterGrade. why? the subclass (LetterGrade and NumericGrade) is calling on the compareTo method from grade. That method calls on gpa() which is overridden in LetterGrade and NumericGrade.
+========================================
+Week 6
+Lec 11
+========================================
+Lec 12
+Exceptions
+Exceptions report exceptional conditions which deserve exceptional treatment
+
+- to "throw an exception"
+	- throw Throwable
+- to "catch an exception" and deal with it:
+	try {
+		statements
+	// The catch belongs to the try.
+	} catch (Throwable parameter) {
+		statements
+	}
+- hierarchy
+	- Throwable
+		- Error
+			- AssertionError
+			- OutofMemoryError
+			- ..
+		- Exception
+			- IOException
+			- ...
+			- RuntimeException
+				- ArithmeticException
+				- ClassCastException
+				- ...
+Throwable
+Constructors: Throwable(), Throwable(String message)
+Other useful methods: getMessage(), printStackTrace(), getStackTrace()
+can throw:
+	- an instance of Throwable or any subclass of it
+cannot throw:
+	- an instance of Error or any subclass of it
+	- an instance of Exception (which is not specific)
+can throw:
+	- specific subclasses of Exception that are already defined
+	- specific subclasses of Exception that I define
+
+Two major things we don't need to handle:
+	- Error && RuntimeException
+
+Checked & Unchecked Exceptions
+if extends RuntimeException(unchecked), no "throws"
+if extends Exception(checked), throws
+
+multiple catches:
+suppose ExSup is the parent of ExSubA and ExSubB
+try {
+	...
+} catch (ExSubA e) {
+	// we do this if an ExSubA is thrown.
+} catch (ExSup e) {
+	// we do this if any ExSup that's not an ExSubA is thrown.
+} catch (ExSubB e) {
+	// we never do this, even if an ExSubB is thrown.
+} finally {
+	// we always do this, even if no exception is thrown.
+}
+
+finally clause is always executed, whether an exception was thrown or not, and whether or not the thrown exception was caught. even there are return statements in try-catch block, finally will run anyways.
+
+RuntimeException
+int[] myArray = new int[10];
+
+myArray[12] = 8;  // A runtime exception could occur.
+
+// We don't usually catch unchecked exceptions, but it is possible.
+// try {
+//     myArray[12] = 8;
+// } catch (ArrayIndexOutOfBoundsException e) {
+//     System.out.println("Program exits without error.");
+// }
+
+========================================
+Week 7
+Lec 13
+Managing Objects
+Manager's responsibilities:
+- read objects from a file
+- maintain id
+- write objects to a file
+
+first launch
+- read data from a CSV file
+- construct Student objects based on data from the CSV file and populating a Map with those Student objects.
+
+before termination
+- write Student data to file
+
+An object is serializable if it can be represented as a sequence of bytes.
+
+In order for a class to be serializable, it and its ancestor(s) must implement the Serializable interface and every instance variable in the class must also be serializable. (all primitive types in Java are serializable)
+
+in Person class:
+private static final long serialVersionUID = 1113659063027473468L;
+
+StudentManager: read, add, write
+public StudentManager() {
+   students = new HashMap<>();
+}
+
+public void readFromCSVFile(String filePath) 
+        throws FileNotFoundException {
+    
+    // FileInputStream can be used for reading raw bytes, like an image. 
+    Scanner scanner = new Scanner(new FileInputStream(filePath));
+    String[] record;
+    Student student;
+
+    while(scanner.hasNextLine()) {
+        record = scanner.nextLine().split(",");
+        student = new Student(record[0].split(" "), record[1], record[2], record[3]);
+        students.put(student.getID(), student);
+    }
+    scanner.close();
+}
+
+public void add(Student record) {
+    students.put(record.getID(), record);
+}
+
+public void saveToFile(String filePath) throws IOException {
+
+    OutputStream file = new FileOutputStream(filePath);
+    OutputStream buffer = new BufferedOutputStream(file);
+    ObjectOutput output = new ObjectOutputStream(buffer);
+
+    // serialize the Map
+    output.writeObject(students);
+    output.close();
+}
+========================================
+Week 8
+Lec 14
+Logs
+Logging is the process of recording events that occur during execution of a program in a central location.
+Messages may be written to logfile or to another location such as the standard error stream, System.err
+
+Testing
+Assertion
+Single-Outcome Assertions:
+fail;
+Stated Outcome Assertions:
+assertNotNull(object); OR assertNotNull(msg, object);
+assertTrue(booleanEx); OR assertTrue(msg, booleanEx);
+Equality Assertions:
+assertEqual(exp, act); OR assertEqual(msg, exp, act);
+Fuzzy Equality Assertions:
+assertEqual(msg, expected, actual, tolerance);
+
+Possible results
+- pass
+- fail
+- error
+========================================
+Lec 15
+JUnit test
+
+PersonTest and StudentTest
+@Before
+public void setUp() throws Exception {
+	...
+}
+
+@After
+public void tearDown() throws Exception {
+	... // for PersonTest, nothing here; for StudentTest, super.tearDown()
+}
+========================================
+Week 9
+Lec 16
+A design pattern is a general description of the solution to a well-established problem using an arrangement of classes and objects.
+
+Observer
+public void update(Observable o, Object arg) {
+	System.out.println("Company " + this.name + 
+            " observed a change in " + o);
+    System.out.println("   The notification said: " + arg);
+}
+
+Observable
+public void updateLocation(String newLocation) {
+    location = newLocation;
+    setChanged();
+    notifyObservers("Updated location to " + location + ".");
+}
+========================================
+Week 10
+Lec 19
+Singleton
+context
+	- classes for which only one instance should exist (singleton).
+	- provide a global point of access.
+problem: how to ensure it is never possible to create more than one instance of a singleton class
+
+2 approaches:
+approach1:
+	- private static final instance var
+	- private constructor
+	- public static getInstance method
+public class PrintSpooler1 {
+    private static final PrintSpooler1 instance = new PrintSpooler1();
+    private PrintSpooler1() {}
+    public static PrintSpooler1 getInstance() {
+        return instance;
+    }
+ }
+advantanges:
+	- static instance: created only once
+	- final: cannot be modified
+	- public static getInstance() method provides a global point of access
+disadvantages:
+	- instance created when class PrintSpooler1 is loaded, that is before getInstance() is called for the first time
+
+approach2:
+	- private constructor
+	- a nested "holder" class contains the instance
+	- getInstance() returns the instance stored in the holder class
+public class PrintSpooler2 {
+  private PrintSpooler2() {}
+  public static PrintSpooler2 getInstance() {
+    return PrintSpooler2Holder.INSTANCE;
+  }
+  private static class PrintSpooler2Holder {
+    private static final PrintSpooler2 INSTANCE = new PrintSpooler2();
+  }
+}	
+advantages:
+	- same as option 1
+	- instance created when class PrintSpooler2Holder is loaded, which happens when getInstance() is called for the first time
+
+Iterator
+context
+	- a container/collection object.
+problem
+	- want a way to iterate over the elements of the container
+	- want to have multiple, independent iterators over the elements of the container
+	- do not want to expose the underlying representation
+========================================
+Week 11
+Lec 20
+Regular Expressions
+A regular expression is a pattern that a string may or may not match.
+[0-9]+
+strings that match: 9125	4
+strings not match: abc 	empty string
+
+symbols like [, ], and + have special meaning, if we want them to be matching, should use backslash.
+
+simple patterns
+Pattern 	Matches		Explanation
+a*			'','a','aa'	zero or more
+b+			'b','bb'	one or more
+ab?c 		'ac','abc'	zero or one
+[abc]		'a','b','c'	one from a set
+[a-c]		'a','b','c'	one from a range
+[abc]*		'','a','aa','acbccb'	combination
+
+Anchoring
+	- lets you force the position of match
+	^ matches the beginning of the line
+	$ matches the end
+	Neither consumes any characters
+Pattern 	Text		Result
+b+			abbc 		Matches
+^b+ 		abbc 		Fails (no b at start)
+^a*$		aabaa 		Fails (not all a's)
+
+Escaping
+	- match actual ^, $, [, etc. using escape sequences, e.g., \^ and \$ and \[
+	- also use escapes for other characters:
+		- \t is a tab character
+		- \n is a new line
+
+Predefined Character Classes
+Construct 	Description
+.			any character
+\d 			a digit [0-9]
+\D 			a non-digit [^0-9]
+\s 			a whitespace char [\t\n\x0B\f\r]
+\S 			a non-whitespace char [^\w]
+\w 			a word char[0-9a-zA-Z]
+\W 			a non-word char [^\W]
+
+Character Classes
+Construct 	Description
+[abc]		a, b, or c (simple class)
+[^abc]		any char except a, b, or c (negation)
+[a-zA-Z]	a through z or A through Z inclusive (range)
+[a-d[m-p]]	a through d or m through p (union)
+[a-z&&[def]]	d, e, or f (intersection)
+[a-z&&[^bc]]	a through z except for b and c (subtraction)
+[a-z&&[^m-p]]	a through z and not m through p (subtraction)
+
+Quantifiers
+Construct 	Description
+X?			0 or 1 time
+X*			0 or more times
+X+			1 or more times
+X{n}		exactly n times
+X{n,}		at least n times
+x{n.m}		at least n but no more than m times
+
+Capturing Groups and Backreferences
+capturing groups is a way to treat multiple characters as a single unit
+use parentheses to group
+capturing groups are numbered by counting their opening parentheses from left to right.
+((A)(B(C))) has the following groups:
+1. ((A)(B(C)))
+2. (A)
+3. (B(C))
+4. (C)
+
+the section of the input string matching the capturing group(s) is saved in memory for later recall via backreference
+
+a backreference is specified in the regualr expression as a backslash(\) followed by a digit indicating the number of group to be recalled.
+
+Pattern 	Example matching string
+(\d\d)\1	1212
+(\w*)\s\1	asdf asdf 
+
+note the asdf has two whitespaces!
+========================================
+Lec 21
+Floating point
+some weird errors happen in Java (and Python) because numbers are stored binarily.
+
+IEEE-754 floating point
+like a binary version of scientific notation
+32 bits for a float (64 bits for a doulbe) as follows:
+- 1 bit for the sign
+	- 1 for negative and 0 for positive
+- 8 bits for the exponent e
+- 23 bits for the mantissa (significand) M
+
+rounding
+- in rounding a decimal to a whole number, an issue arises: if we have 0.5, up or down?
+- proper rounding: round to the neareset even number
+e.g. 17.5 -> 18, 16.5 -> 16.
+- The IEEE standard uses proper rounding.
+
+since 0.1 cannot be represented exactly in binary, so we have a problem in Adding.java
+
+IMPORTANT LESSON:
+- when adding floating point numbers, add the smallest first
+- more generally, try to avoid adding dissimilar quantities
+- specific scenaro: when adding a list of floating point numbers, sort them first
+
+- don't use floating point variables to control what is essentailly a counted loop.
+- notice what we wrote
+	x = 1.0 + i * 0.1;
+	instead of initializing x to 1.0 and then repeatedly adding 0.1
+	why? fewer total arithmetic operations means fewer rounding errors are introduced
+- use fewer arithmetic operations where possible
+
+- don't print more precision in your output than you are holding
+========================================

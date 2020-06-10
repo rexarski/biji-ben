@@ -1,0 +1,35 @@
+source("lab5defs.r")
+
+set.seed(1)
+plot(biased_random_walk(0.8,1000))
+title("biased random walk")
+
+set.seed(1)
+w <- random_walks_1 (1000, 5)
+plot_walks(w)
+title("random_walks_1")
+
+set.seed(1)
+w <- random_walks_2 (1000, 5)
+plot_walks(w)
+title("random_walks_2")
+
+set.seed(1)
+w <- random_walks_3 (1000, 5)
+plot_walks(w)
+title("random_walks_3")
+
+set.seed(1)
+w <- random_walks_3 (1000, 50)
+plot(walk_sd(w))
+lines(sqrt(0:(nrow(w)-1)))
+title("walk_sd with seed 1")
+set.seed(2)
+w <- random_walks_3 (1000, 50)
+plot(walk_sd(w))
+lines(sqrt(0:(nrow(w)-1)))
+title("walk_sd with seed 2")
+
+set.seed(1)
+h <- steps_distribution (4, 500)
+print(sort(h))

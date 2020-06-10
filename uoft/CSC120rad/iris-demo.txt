@@ -1,0 +1,36 @@
+# Analyse the relationship of petal length to sepal length in the flowers of
+# three iris species, fitting regression models to all data and to each species.
+
+species <- levels(iris$Species)         # Names of the three species of iris
+species_col <- c("red","green","blue")  # Colours to use for the three species
+names(species_col) <- species
+
+# Plot the sepal and petal lengths for each flower that was measured.  Identify
+# species by colour.  Randomly jitter the data slightly to prevent overlap.
+
+plot (iris$Sepal.Length + runif(nrow(iris),-0.02,0.02), xlab="Sepal Length",
+      iris$Petal.Length + runif(nrow(iris),-0.02,0.02), ylab="Petal Length",
+      col=species_col[as.character(iris$Species)],
+      main="Petal Length Versus Sepal Length in Three Iris Species")
+
+mtext (paste("    Iris",species), adj=0, line=c(-5,-3.5,-2), col=species_col)
+
+# Show and plot regression line of petal length on sepal length fit to all data.
+
+m <- lm (Petal.Length ~ Sepal.Length, data=iris)   # Find fit for all data
+cat ("\nModel for all iris flowers:\n\n")          # Print the regression 
+print (coef(m))                                    #   coefficients
+abline (m)                                         # Add regression line to plot
+
+# Print and plot linear regression lines for petal length on sepal length 
+# fit to data on each species separately.
+
+for (sp in species) {
+    d <- iris[iris$Species==sp,]                    # Data for one species
+    m <- lm (Petal.Length ~ Sepal.Length, data=d)   # Find fit for one species
+    cat ("\nModel for species ",sp,":\n\n", sep="") # Print the regression
+    print (coef(m))                                 #   coefficients
+    clip (min(d$Sepal.Length)-0.2,                  # Add the regression line
+          max(d$Sepal.Length)+0.2, -1e10, 1e10)     #   for this species to
+    abline (m, col=species_col[sp])                 #   to the plot
+}

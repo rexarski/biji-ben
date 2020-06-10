@@ -1,0 +1,68 @@
+# FIND THE DISTANCE BETWEEN TWO CASES.  The two arguments are lists
+# containing the inputs for two cases, which must be the same length,
+# and have elements with matching types.  The value returned is the
+# distance between these two cases, which is the sum of contributions
+# to the distance from each pair of corresponding elements.  The
+# contribution to the distance for numerical elements is the absolute
+# value of their difference.  For non-numerical elements, the
+# contribution is one if they are not equal and zero if they are
+# equal.
+
+distance <- function (ax, bx)
+{
+    d <- 0
+
+    for (j in 1:length(ax)) {
+        if (is.numeric(ax[[j]])) {
+            d <- d + abs (ax[[j]] - bx[[j]])
+        }
+        else {
+            if (ax[[j]] != bx[[j]]) d <- d + 1
+        }
+    }
+
+    d
+}
+
+
+# FIND THE NEAREST TRAINING CASE TO A TEST CASE.  The first argument
+# is a data frame of inputs for training case.  The second argument is
+# a list containing the inputs for a test case, whose length and
+# element types should match the columns of the data frame of training
+# inputs.  The value returned is the index in the data frame of the
+# training case whose distance to the test case is smallest (the first
+# one if there is a tie).
+
+nearest <- function (train_x, ax)
+{
+    mind <- Inf
+
+    for (i in 1:nrow(train_x)) {
+        d <- distance (ax, as.list(train_x[i,]))
+        if (d < mind) {
+            mind <- d
+            mini <- i
+        }
+    }
+
+    mini
+}
+
+
+# CLASSIFY TEST CASES.  The first two arguments are the data frame of
+# inputs for training cases and the corresponding vector of classes
+# for these training cases.  The third argument is a data frame of
+# inputs for test cases.  The value returned is a vector of guesses
+# for the classes of the test cases, with each guess equal to the
+# class of the training case whose inputs are nearest to the test case.
+
+classify <- function (train_x, train_y, test_x)
+{
+    cl <- numeric(nrow(test_x))
+
+    for (i in 1:nrow(test_x)) {
+        cl[i] <- train_y [ nearest (train_x, as.list(test_x[i,])) ]
+    }
+
+    cl
+}

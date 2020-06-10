@@ -1,0 +1,7 @@
+s <- function(n) {
+  res <- 0
+  for (i in 1:n) {
+    res <- res + (factorial(n)/factorial(i))
+  }
+  return(res)
+}

@@ -1,0 +1,19 @@
+<!ELEMENT music (songs, playlists)>
+<!ELEMENT songs (song+)>
+<!ELEMENT song (title, artist, composers, album?)>
+<!ATTLIST song
+    sid ID #REQUIRED
+    time CDATA #REQUIRED
+    year CDATA #REQUIRED>
+<!ELEMENT title (#PCDATA)>
+<!ELEMENT artist (#PCDATA)>
+<!ELEMENT composers (composer+)>
+<!ELEMENT composer (#PCDATA)>
+<!ELEMENT album (#PCDATA)>
+<!ELEMENT playlists (playlist+)>
+<!ATTLIST playlist
+    pid ID #REQUIRED
+    creator CDATA #IMPLIED>
+<!ELEMENT playlist (track+)>
+<!ELEMENT track EMPTY>
+<!ATTLIST track sid IDREF #REQUIRED>

@@ -1,0 +1,117 @@
+# CSC 120, Spring 2016, Assignment 2 functions.
+
+
+# Forecast that the next value in a series will be the same as the
+# value the previous day.
+
+forecast_previous <- function (df, series)
+{
+    i <- length(series)
+    series[i]
+}
+
+
+# Forecast that the next value in a series will be the same as the
+# value one week before.
+
+forecast_week_ago <- function (df, series)
+{
+    i <- length(series)
+    series[i-6]
+}
+
+
+# Forecast that the next value in a series will be the mean of the
+# values on all previous days.
+  
+forecast_mean <- function (df, series)
+{
+    mean(series)
+}
+
+
+# Forecast that the next value in a series will be the mean of the
+# values on the previous 14 days.
+  
+forecast_mean14 <- function (df, series)
+{
+    i <- length(series)
+    mean(series[(i-13):i])
+}
+
+
+# Forecast that the next value in a series will be the mean of the
+# values on previous days that are the same day of the week as the day
+# being forecast.  The data frame passed must have a "day_of_week"
+# column.
+
+forecast_same_day_of_week <- function (df, series)
+{
+    i <- length(series)
+    which <- df$day_of_week[1:i] == df$day_of_week[i+1]
+    mean(series[which])
+}
+
+
+# Forecast that the next value in a series will be the mean of the
+# values on previous days that are the same month as the day being
+# forecast.  The data frame passed must have a "month" column.
+
+forecast_same_month <- function (df, series)
+{
+    i <- length(series)
+    which <- df$month[1:i] == df$month[i+1]
+    mean(series[which])
+}
+
+
+# Forecast that the next value in a series will be the mean of the
+# values on those previous days for which tmax differed from tmax on
+# the day being forecast by no more than 4 degrees.  The data frame
+# passed must have a "tmax" column.
+
+forecast_similar_tmax <- function (df, series)
+{   i <- length(series)
+    which <- abs(df$tmax[1:i]-df$tmax[i+1]) <= 4
+    mean(series[which])
+}
+
+
+# Make predictions using the specified forecast function for each of
+# the values in the given series, starting from the index specified,
+# based on the values in the series before the value being forecast.
+# The data frame passed contains information for each day in the
+# series, which may or may not be used by the forecasting function.
+# The predictions (from index "start") are returned as the value of
+# this function.
+
+predictions <- function (forecast_function, df, series, start)
+{
+    end <- length(series)
+    pred <- numeric(end-start+1)
+    for (i in start:end) {
+        pred[i-start+1] <- forecast_function (df, series[1:(i-1)])
+    }
+    pred
+}
+
+
+# Make predictions using two forecast functions.  The first function
+# makes preliminary forecasts, starting from index start1, The second
+# function is then used to forecast the errors (actual-predicted) of
+# the first function's predictions, starting from start2.  The
+# predicted errors are added to the preliminary predictions to try to
+# get better predictions (from the index start2), which are returned
+# as the value of this function.
+
+predictions2 <- function (forecast_function1, forecast_function2, 
+                          df, series, start1, start2)
+{
+    end <- length(series)
+    pred1 <- predictions (forecast_function1, df, series, start1)
+    err1 <- series[start1:end] - pred1
+    pred2 <- pred1[(start2-start1+1):(end-start1+1)] +
+             predictions (forecast_function2, df[start1:end,], err1, 
+                          start2-start1+1)
+    pred2
+}

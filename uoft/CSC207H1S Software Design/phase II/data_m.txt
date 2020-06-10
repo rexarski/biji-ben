@@ -1,0 +1,22 @@
+There are 5 data structures that we need to clarify.
+
+1. flightPool is an ArrayList of stored flights. The list is appended either by an Admin entering flight information or by uploading a file with detailed flight information.
+	- flightPool is stored in a text file, with each separate line representing one uniqe flight. For example, if we have a flight AC088 operated by Air Canada from Shanghai to Toronto which departs at 17:50 Feb 22nd, 2015 and arrives at 05:50 Feb 23rd, 2015 ($500), the first line of this text file should be:
+AC088$150222$1750$150223$0550$Air Canada$Shanghai$Toronto$12h00min$500
+
+2. clientPool is an ArrayList of stored clients who can successfully log in the system and perform regular actions like book an itinerary etc. The clients in ClientPool can be identified by their username.
+	- clientPool is also stored in a text file, with each separate line representing one unique client. For example a user with username 'jack123' and password '12345' will be written as:
+	jack123$12345$personalinfo$billinginfo
+
+3. itineraryList is an ArrayList generated from method 'search' of User class. It will be used in the following methods: 'displaySearchTravelTime' and 'displaySearchCost'. Specifically, if we input a departure date, a travel origin and a destination, we will get an ItineraryList (but we don't print it).
+
+4. bookedItineraryList is a ArrayList of itineraries that booked by a client. It is convenient to deal with the latest booked itinerary in this way. (Assume one wants to cancel his/her latest booked itinerary?)
+	- bookedItineraryList is stored in a text file, with each separate line representing one unique booked itinerary. For example, we have an itinerary numbered 123 contains two consecutive flights:
+	- flight AC088 operated by Air Canada from Shanghai to Toronto which departs at 17:50 Feb 22nd, 2015 and arrives at 05:50 Feb 23rd, 2015($500),
+	- flight HA1234 operated by Air Haha from Toronto to New York which departs at 17:50 Feb 23rd, 2015 and arrives at 05:50 Feb 24th, 2015($500),
+	booked by client with username 'jack123'. Then we write the following in this text file:
+	jack123$123$Shanghai$New York$36h00min$1000
+
+5. flightList is a LinkedList under the class Itinerary, which indicates the flights our client should take in order. Specifically, the origin of the first flight in this list (with index 0) should be the origin of the whole itinerary; the destination of the last flight in this list should be the destination of the whole itinerary; and every destination of a flight should be the origin of the next flight.
+
+6. availableFlights is an ArrayList of LinkedList generated from the method 'getAvailableFlights' of the User class. It contains all available flightLists departing from the given origin and destination at the given departureDate, which will be later used by 'createItinerary' method to create Itinerary objects. 

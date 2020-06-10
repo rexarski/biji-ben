@@ -1,0 +1,67 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE Movies SYSTEM "movies.dtd">
+<Movies>
+<Movie MID="movie_1" year="2009" rating="7.9" winner="yes">
+<Title>Avatar</Title>
+<Director PID="person_1"/>
+<Actors>
+<Actor PID="person_2">
+<Role>Jake Sully</Role>
+</Actor>
+<Actor PID="person_3">
+<Role>Neytiri</Role>
+</Actor>
+<Actor PID="person_4">
+<Role>Grace</Role>
+</Actor>
+</Actors>
+<Genre>
+<Category>Action</Category>
+<SubCategory>Science Fiction</SubCategory>
+<SubCategory>Fantasy</SubCategory>
+</Genre>
+<Oscar OID="oscar_1"/>
+<Oscar OID="oscar_2"/>
+<Oscar OID="oscar_3"/>
+</Movie>
+
+<Movie MID="movie_2" year="1997" rating="7.6" winner="yes">
+<Title>Titanic</Title>
+<Director PID="person_1"/>
+<Actors>
+<Actor PID="person_5">
+<Role>Jack</Role>
+</Actor>
+<Actor PID="person_6">
+<Role>Rose</Role>
+</Actor>
+</Actors>
+<Genre>
+<Category>Drama</Category>
+<SubCategory>Romance</SubCategory>
+</Genre>
+<Oscar OID="oscar_4"/>
+<Oscar OID="oscar_5"/>
+<Oscar OID="oscar_6"/>
+<Oscar OID="oscar_7"/>
+<Oscar OID="oscar_8"/>
+</Movie>
+
+<Movie MID="movie_3" year="2009" rating="8.0" winner="yes">
+<Title>Star Trek</Title>
+<Director PID="person_7"/>
+<Actors>
+<Actor PID="person_3">
+<Role>Uhura</Role>
+</Actor>
+<Actor PID="person_8">
+<Role>Kirk</Role>
+</Actor>
+</Actors>
+<Genre>
+<Category>Action</Category>
+<SubCategory>Adventure</SubCategory>
+</Genre>
+<Oscar OID="oscar_12"/>
+</Movie>
+</Movies>

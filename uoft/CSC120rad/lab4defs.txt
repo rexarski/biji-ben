@@ -1,0 +1,54 @@
+# Lab exercise 4 solutions.
+
+
+# Function to create an n-by-n matrix with 1s on and below the
+# diagonal, and 0s above the diagonal.
+
+lower_ones <- function (n)
+{
+    M <- matrix (0, nrow=n, ncol=n)
+    for (i in 1:n) {
+        for (j in 1:i) M[i,j] <- 1
+    }
+    M
+}
+
+
+# Function to create an n by n matrix containing zeros except for ones
+# in an "X" going along the diagonal and anti-diagonal.
+
+X_matrix <- function (n) {
+    M <- matrix (0, nrow=n, ncol=n)
+    for (i in 1:n) {
+        M[i,i] <- 1
+        M[i,n-i+1] <- 1
+    }
+    M
+}
+
+
+# Create the initial configuration of temperatures on an nr by nc
+# rectangle.
+
+initial_temperatures <- function (nr,nc)
+{
+    M <- matrix (0, nrow=nr, ncol=nc)
+    for (i in 1:nr) M[i,nc] <- 1
+    for (j in 1:nc) M[nr,j] <- 1
+    M
+}
+
+
+# Update the configuration of temperatures by one time step, returning
+# the new configuration.
+
+heat_flow <- function (M)
+{
+    R <- M
+    for (i in 2:(nrow(M)-1)) {
+        for (j in 2:(ncol(M)-1)) {
+            R[i,j] <- (M[i,j] + M[i-1,j] + M[i,j-1] + M[i+1,j] + M[i,j+1]) / 5
+        }
+    }
+    R
+}

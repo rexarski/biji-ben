@@ -1,0 +1,53 @@
+#+ setup,include=FALSE
+source("http://www.cs.utoronto.ca/~radford/csc120/options.r")
+#+
+
+#' Read the function defintions.
+
+source("http://www.cs.utoronto.ca/~radford/csc120/ex12funs.r")
+
+#' Read the inputs and classes for the training cases.
+
+train_x <- read.table ("http://www.cs.utoronto.ca/~radford/csc120/ex12trainx2",
+                        head=TRUE)
+train_y <- scan ("http://www.cs.utoronto.ca/~radford/csc120/ex12trainy2",
+                 character())
+
+#' Read the inputs for test cases.
+
+test_x <- read.table ("http://www.cs.utoronto.ca/~radford/csc120/ex12testx2", 
+                       head=TRUE)
+
+#' Classify the test cases with the original inputs, putting the guessed 
+#' classes in 'cl'.
+
+cl <- classify (train_x, train_y, test_x)
+
+#' Classify the test cases using rescaled inputs, putting the guessed
+#' classes in 'cl_rescaled'.
+
+rescale <- function (datax) 
+{
+    datax$age <- datax$age / 10
+    datax$BP <- datax$BP / 100
+    datax$chol <- datax$chol / 100
+    datax$rate <- datax$rate / 100
+
+    datax
+}
+
+cl_rescaled <- classify (rescale(train_x), train_y, rescale(test_x))
+
+#' Read the actual classes for the test cases.
+
+test_y <- scan ("http://www.cs.utoronto.ca/~radford/csc120/ex12testy2",
+                 character())
+
+#' Print the classification accuracy with the original inputs and the
+#' rescaled inputs.
+
+cat ("Classification accuracy with original inputs:", 
+      mean (cl == test_y), "\n")
+
+cat ("Classification accuracy with rescaled inputs:", 
+      mean (cl_rescaled == test_y), "\n")

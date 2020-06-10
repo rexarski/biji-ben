@@ -1,0 +1,36 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE BOOKS SYSTEM "books.dtd">
+<BOOKS>
+   <BOOK id="b12345">
+      <TITLE>Alex Ferguson My Autobiography</TITLE>
+      <AUTHOR>Alex Ferguson</AUTHOR>
+      <YEAR>2013</YEAR>
+      <RATING>4</RATING>
+      <RATING>5</RATING>
+   </BOOK>
+   <BOOK id="b88888">
+      <TITLE>Leading: Learning from Life and My Years at Manchester United</TITLE>
+      <AUTHOR>Alex Ferguson</AUTHOR>
+      <AUTHOR>Michael Moritz</AUTHOR>
+      <YEAR>2015</YEAR>
+      <RATING>5</RATING>
+      <RATING>5</RATING>
+      <REVIEW>
+         <CONTENT>A great book by a great man. A must read for young people trying to learn about how managers think/should think.</CONTENT>
+         <USERNAME>Issa</USERNAME>
+      </REVIEW>
+   </BOOK>
+   <BOOK id="b98765">
+      <TITLE>Voices from Chernobyl</TITLE>
+      <AUTHOR>Svetlana Alexievich</AUTHOR>
+      <AUTHOR>Keith Gessen</AUTHOR>
+      <YEAR>2015</YEAR>
+      <RATING>4</RATING>
+      <RATING>5</RATING>
+      <REVIEW>
+         <CONTENT>A highly recommended read for those who know or want to know more about the worst nuclear accident in history, especially from those closely involved either. The insightful accounts give this book a great deal of credibility and expose the reader to the Soviet Union , Ukraine, Russia and Belarus in an intimate way. Like the voices in the books The Union Moujik, The Master and the Margarita, the people in this book come alive with alacrity.</CONTENT>
+      </REVIEW>
+   </BOOK>
+</BOOKS>
+
+

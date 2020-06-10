@@ -1,0 +1,95 @@
+# lecture 10
+
+2015-11-24
+
+# database design theory
+
+- general idea
+  - express constraints on the relationships between attributes
+  - use these to decompose the relations
+  - ultimately, get a schema that is in a "normal form" that guarantees good properties, such as ...
+- recap
+  - functional dependencies (DP)
+    - A->B (any 2 tuples that agree on A must agree on B)
+  - closure
+    - A+ everything i can determine from A, using a given set of FDs
+  - FD projection
+  - minimal cover
+  - today: normalization: BCNF, 3NF
+- minimal basis comment:
+  - step 1
+    - make all RHS singleton (one attribute)
+  - step 2
+- decomposition
+  - decompose a badly-designed schema into smaller relations
+  - **Boyce-Codd Normal Form**
+- BCNF
+  - we say a relation R is in *BCNF* if: for every nontrivial FD X->Y that holds in R, *X is a superkey*
+    - remember nontrivial means Y is not contained in X
+    - remember a superkey doesn't have to be minimal
+  - in other words, BCNF requires that:
+    - only things that FD everything, can FD anything
+  - algorithm
+    - if an FD X->Y in F violates BCNF
+      - 1. Compute X+
+      - 2. replace R by two relations with schemas
+        - R1 = X+
+        - R2 = (R-X+)+X
+          - X: common between R1 and R2
+      - 3. project the FD's F onto R1 and R2
+      - 4. recursively decomposes R1 and R2 into BCNF
+  - example
+    - R(A,B,C,D,E): A->B, CD->E
+    - iteration 1
+      - A+ = AB
+      - A is not superkey
+      - decompose: R1=AB, R2=ACDE
+      - project FDs
+        - R1(A,B): A->B (A is a superkey in R1, R1 is in BCNF)
+        - R2(A,C,D,E): CD->E (CD is not a superkey)
+    - iteration 2
+      - decompose R2
+      - R2(A,C,D,E): CD->
+      - CD is not a superkey (CD->E violates BCNF)
+      - CD+ = CDE
+      - R3=CDE, R4=ACD
+      - R3(C,D,E): CD->E (CD superkey, so R3 in BCNF)
+      - R4(A,C,D) no FDs, key:ACD (R4 in BCNF)
+    - result of decomposition: R1(A,B), R3(C,D,E), R4(A,C,D)
+  - speed-ups for BCNF decomposition
+    - don't need to know all superkeys
+      - only need to check LHS
+    - when projecting FDs onto a new relation, check each new FD:
+      - does the new relation violate BCNF because of this FD?
+      - if so, abort the projection
+  - what we want from a decomposition
+    - 1. no anomalies
+    - 2. lossless join: (section3.4.1)
+      - should be possible to
+        - a) project the original relations onto the decomposed schema
+        - b) then reconstruct the original by joining. should get back **exactly the original tuples**
+    - 3. dependency preservation
+  - BCNF property does not guarantee lossless join
+    - if you use the BCNF decomposition algorithm, then yes a lossless join is guaranteed
+    - if you generate a decomposition some other way
+        - you have to check to make sure your...
+- 3NF
+  - 3rd normal form modifies the BCNF condition to the less strict
+  - def: an attribute is *prime* if it is a member of any key
+  - **X->A is in 3NF is X is a superkey OR if A is prime**
+  - 3NF Synthesis
+    - compute all keys for R
+    - find the minimal cover
+    - use FDs in minimal basis to define new relations
+    - if none are superkey R, add relation whose schema is some key
+  - What a 3NF decomposition offers
+    - 1. no anomalies (not guaranteed!!!)
+    - 2. lossless join
+    - 3. dependency preservation
+  - neither BCNF nor 3NF can guarantee all 3!
+  - decompose too far => can't enforce all...
+  - ...
+  - how can we get anomalies in 3NF?
+    - ...
+  - [chase test](https://en.wikipedia.org/wiki/Chase_(algorithm))
+  -

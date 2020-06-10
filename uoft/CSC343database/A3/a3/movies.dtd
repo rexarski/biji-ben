@@ -1,0 +1,22 @@
+<!ELEMENT Movies (Movie*)>
+<!ELEMENT Movie (Title, Director, Actors, Genre, Oscar*)>
+<!ELEMENT Title (#PCDATA)>
+<!ATTLIST Movie MID CDATA #REQUIRED>
+<!ATTLIST Movie year CDATA #REQUIRED>
+<!ATTLIST Movie rating CDATA #REQUIRED>
+<!ATTLIST Movie winner (yes|no) #REQUIRED>
+
+<!ELEMENT Director EMPTY>
+<!ATTLIST Director PID CDATA #REQUIRED>
+
+<!ELEMENT Actors (Actor+)>
+<!ELEMENT Actor (Role+)>
+<!ELEMENT Role (#PCDATA)>
+<!ATTLIST Actor PID CDATA #REQUIRED>
+
+<!ELEMENT Genre (Category+, SubCategory*)>
+<!ELEMENT Category (#PCDATA)>
+<!ELEMENT SubCategory (#PCDATA)>
+
+<!ELEMENT Oscar EMPTY>
+<!ATTLIST Oscar OID CDATA #REQUIRED>

@@ -1,0 +1,30 @@
+3.4.1 (v3.4.1:c0e311e010fc, May 18 2014, 00:54:21) 
+[GCC 4.2.1 (Apple Inc. build 5666) (dot 3)]
+Python Type "help", "copyright", "credits" or "license" for more information.
+[evaluate stack_usage.py]
+from stack import Stack
+s = Stack()
+s.is_empty()
+True
+s.push(3)
+s
+<stack.Stack object at 0x101b0add8>
+s.is_empty()
+False
+s.push(4)
+s.push(-1)
+s.push('hi')
+s.pop()
+'hi'
+s.pop()
+-1
+s.pop()
+4
+s.pop()
+3
+s.pop()
+Traceback (most recent call last):
+  File "/Applications/Wing101.app/Contents/MacOS/src/debug/tserver/_sandbox.py", line 1, in <module>
+    # Used internally for debug sandbox under external interpreter
+  File "/Users/Rexarski/Dropbox/academic/CSC148H1F Intro to Comp Sci/@week2/@@Exercise_2/@@@Task3/stack.py", line 13, in pop
+builtins.IndexError: pop from empty list

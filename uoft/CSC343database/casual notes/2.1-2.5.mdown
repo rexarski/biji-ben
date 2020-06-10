@@ -1,0 +1,272 @@
+#notes
+
+2015-09-20
+
+##chapter 2 the relational model of data
+
+**what is a data model?**
+
+it's a notation for describing data or information. three parts:
+
+1. structure of the data;
+2. operations on the data;
+3. constraints on the data.
+
+**important data models?**
+
+1. the relational model, including object-relational extensions;
+2. the semistructured-data model, including XML and related standards.
+
+- a 4 by 3 table is a perfect example of relation
+
+- an example of semistructured model, is movie data as XML
+
+**basics**
+
+- the columns are named after attributes
+- the name of a relation and the set of attributes for a relation is called the schema for that relation: e.g., `Movies(title, year, length, genre)`
+- the rows are called tuples; a tuple has one component for each attribute of the relation, e.g., `(Gone With the Wind, 1939, 231, drama)`
+- the relational model that each component of each tuple be atomic(integer or string), e.g., `Movies(title:string, year:integer, length:integer, genre:string)`
+- relations are sets of tuples, not lists of tuples, so order does not matter. can also reorder the organizing of attributes
+- a relation is not static, it's dynamic
+- a set of tuples for a given relation is called an instance of that relation
+- current instance
+- key constraints: a set of attributes forms a key for a relation if we do not allow two tuples in a relation instance to have the same values in all the attributes of the key. e.g., `title` and `year` in `Movies()`
+
+	Movies(
+		title:string,
+		year:integer,
+		length:integer,
+		genre:string,
+		studioName:string,
+		producerC#:intger
+	)
+	MovieStar(
+		name:string,
+		address:string,
+		gender:char,
+		birthdate:date
+	)
+	StarsIn(
+		movieTitle:string,
+		movieYear:integer,
+		starName:string
+	)
+	MovieExec(
+		name:string,
+		address:string,
+		cert#:integer,
+		netWorth:integer
+	)
+	Studio(
+		name:string,
+		address:string,
+		presC#:integer
+	)
+
+**two aspects to SQL**:
+
+1. the data-definition sublanguage for declaring database schemas and
+2. the data-manipulation sublanguage for querying (asking questions about) databases and for modifying the database.
+
+**relations in SQL**
+SQL makes a distinction between 3 kinds of relations:
+
+1. stored relations are called tables. (a relation that exists in the database and that can be modified by changing its tuples, as well as queried.)
+2. views, are relations defined by a computation. (not stored, but are constructed, when needed.)
+3. temporary tables, constructed by SQL language processor when executing queries and data modifications. (thrown away afterwards, not stored.)
+
+**Data types**
+
+1. character strings of fixed or varying length, `CHAR(n)`, `VARCHAR(n)`
+2. bit strings of fiexed or varying length. `BIT(n)`, `BIT VARYING(n)`
+3. `BOOLEAN`: `TRUE`, `FALSE`, `UNKNOWN`
+4. `INT` or `INTEGER`, `SHORTINT`
+5. floating-point numbers, `FLOAT` or `REAL` for typical floating-point numbers, `DOUBLE PRECISION` for higher precision. `DECIMAL(n, d)`, `NUMERIC`
+6. dates and times by `DATE` and `TIME`
+
+**simple table declarations**
+
+- `CREATE TABLE`
+
+	CREATE TABLE Movies (
+		title 		CHAR(100)),
+		year 		INT,
+		length		INT,
+		genre 		CHAR(10),
+		studioName 	CHAR(30),
+		producerC# 	INT
+	);
+
+**modifying relation schemas**
+
+- `DROP TABLE R;` delete a relation `R`; then we can no longer access its tuples
+- `ALTER TABLE` modify the schema of an existing relation:
+	- then `ADD` followed by an attribute name and its data type
+		- the newly added attribute will have `NULL` in its all values
+	- then `DROP` followed by an attribute name
+
+	ALTER TABLE MoiveStar ADD phone CHAR(16);
+	ALTER TABLE MovieStar DROP birthdate;
+
+**default values**
+say `NULL` is the default value for integers, but we can use another choice of default value.
+
+- `DEFAULT` either `NULL` or a constant
+
+	gender CHAR(1) DEFAULT '?',
+	birthdate DATE DEFAULT DATE '0000-00-00'
+
+also we can change default value when creating that attribute
+
+	ALTER TABLE MoiveStar ADD phone CHAR(16) DEFAULT 'unlisted';
+
+**declaring keys**
+2 ways to declare, either declare when that attribute is listed in the relation schema, or add to the list of items declared in the schema an additional declaration says a particualr attribute or set of attributes forms the key.
+
+method 1:
+
+	CREATE TABLE MovieStar(
+		name CHAR(30) PRIMARY KEY,
+		address VARCHAR(255),
+		gender CHAR(1),
+		birthdate DATE
+	);
+
+method 2:
+	
+	CREATE TABLE MovieStar(
+		name CHAR(30),
+		address VARCHAR(255),
+		gender CHAR(1),
+		birthdate DATE,
+		PRIMARY KEY (name)
+	);
+
+if the key consists of more than one, use method 2, ow, use method 1.
+
+	CREATE TABLE Moives(
+		title 		CHAR(100),
+		year 		INT,
+		length 		INT,
+		genre 		CHAR(10),
+		studioName 	CHAR(30),
+		producerC# 	INT,
+		PRIMARY KEY (title, year)
+	);
+
+- `PRIMARY KEY`;
+- `UNIQUE`
+
+**if one attribute is declared key using `PRIMARY KEY`, its components mustn't have `NULL`; however, it can have `NULL` when using `UNIQUE`**. A DBMS makes other distinctions between the two.
+
+##an algebraic query language
+- create new relatons from given relations
+- atomic operands are:
+	- variables that stand for relations
+	- constants, which are finite relations
+- operations:
+	- usual set operations: union, intersection, difference, applied to relations
+	- operations that remove parts of a relation: "selection" eliminates some rows (tuples), and "projection" eliminates some columns
+	- operations that combine the tuples of two relations, including "Cartesian product,", and various kinds of "join" operations
+	- an operation called "renaming" that does not affect the tuples of a relation, but changes the relation schema, the names of the attributes and/or the name of the relation iteself
+
+**set operations**
+
+- `R` and `S` are two arbitrary sets, both must have schemas with identical sets of attributes, and the types (domains) for each attribute must be the same in `R` and `S`; the columns must be ordered in the same way before computation.
+- for difference, `R - S` is different from `S - R`
+
+**projection**
+
+- used to produce from a relation `R` a new relation that has only some of `R`'s columns, in the form of:
+
+	pi\_{A\_1,A\_2,...,A\_n}(R), e.g. pi_{title,year,length}(Movies)
+
+**selection**
+
+- produces a new relation with a subset of `R`'s tuples, `sigma_C(R)`:
+
+	sigma_{length>=100}(Movies)
+	sigma_{length>=100 AND studioName='Fox'}(Movies)
+
+**Cartesian product**
+
+- aka, cross-product
+
+R:
+
+A   	|B
+--------|----------
+1       |2
+3       |4
+
+S:
+
+B   	|C       |D
+--------|--------|--------
+2       |5       |6
+4       |7       |8
+9       |10      |11
+
+R x S
+
+A   	|R.B     |S.B     |C       |D
+--------|--------|--------|--------|--------
+1       |2       |2       |5       |6
+1       |2       |4       |7       |8
+1       |2       |9       |10      |11
+3       |4       |2       |5       |6
+3       |4       |4       |7       |8
+3       |4       |9       |10      |11
+
+
+**natural joins**
+
+- denoted as `R 蝴蝶结 S`, in which we pair only those tuples from `R` and `S` that agree in whatever attributes are common to the schemas of `R` and `S`. i.e., let A\_1,A\_2,...,A\_n be all the attributes both the schema of `R` and `S`, then a tuple `r` from `R` and `s` from `S` are successfully paired iff `r` and `s` agree on each of the A\_i.
+
+R 蝴蝶结 S
+
+A   	|B       |C       |D
+--------|--------|--------|--------
+1       |2       |5       |6       
+3       |4       |7       |8
+
+**theta-joins**
+Cartesian product + select by some conditions
+
+	U
+	A 	B 	C
+	1	2	3
+	6	7	8
+	9	7	8
+
+	V
+	B 	C 	D
+	2	3	4
+	2	3	5
+	7	8	10
+
+	U joins V
+	A 	B 	C 	D
+	1	2	3	4
+	1	2	3	5
+	6	7	8	10
+	9	7	8	10
+
+	U joins (A < D) V
+	A 	U.B 	U.C 	V.B 	V.C 	D
+	1	2		3		2		3		4
+	1	2		3		2		3		5
+	1	2		3		7		8		10
+	6	7		8		7		8		10
+	9	7		8		7		8		10
+
+**combine operations to queries**
+
+...
+
+**naming and renaming**
+- `rho_S(A_1,...A_n)(R)`, rename relation `R` to `S` and attributes corresponding; if change name only, just `rho_S(R)`
+
+
+

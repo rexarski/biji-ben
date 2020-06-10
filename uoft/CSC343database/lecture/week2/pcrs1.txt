@@ -1,0 +1,36 @@
+part 1
+
+1. That would disallow a movie from having the same actor in two different roles.
+
+2. Adding the tuple <5, 2, "Han Solo">.
+
+3. A foreign key constraint restricts the data that can go in a relation; A foreign key constraint is a kind of integrity constraint; Y must be a key in the table R2.
+
+4. A role in a movie that doesn't exist in the Movies table.
+
+part 2
+
+1. This query is ill-formed
+
+2. 2 and 2
+
+3. 1
+
+4. 24: one for every combination of a tuple from Roles and a tuple from Artists.
+
+part 3
+
+1. \project_{character} roles;
+
+2. \project_{title} \select_{length>145} movies;
+
+3. \project_{character, title} \select_{movies.director='Kubrick' and roles.mID=movies.mID} (movies \product roles);
+
+
+-----
+
+for the last question:
+
+what's the difference between the following one and the correct answer above?
+
+\project_{character, title} \select_{movies.director='Kubrick' and roles.mID=movies.mID} movies \product roles;

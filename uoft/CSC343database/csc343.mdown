@@ -1,0 +1,12 @@
+Nosayba El-Sayed's email: nosayba@cs.toronto.edu
+
+##marking scheme
+
+- lecutre prep(7%, 1% each week, due Sundays 11:00pm)
+- in-class exercises(3%, weekly, at the end of lectures)
+- a1(10%, relational algebra, due on **Friday, October 16 10:00pm**)
+- a2(10%, interactive and embedded SQL, due on **Friday, November 13 10:00pm**)
+- a3(10%, XML Query language (XPATH, XQuery) design and normalization), due on **Wednesday, December 9 10:00pm**)
+- midterm(15%, on **Tuesday, October 27 from 6:00pm to 7:00pm**)
+- final(45%, TBD)
+

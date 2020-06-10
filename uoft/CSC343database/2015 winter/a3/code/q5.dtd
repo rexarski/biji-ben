@@ -1,0 +1,9 @@
+<!ELEMENT popularity (histogram*)>
+<!ELEMENT histogram (low, medium, high)>
+<!ATTLIST histogram pid ID #REQUIRED>
+<!ELEMENT low EMPTY>
+<!ELEMENT medium EMPTY>
+<!ELEMENT high EMPTY>
+<!ATTLIST low count CDATA #REQUIRED>
+<!ATTLIST medium count CDATA #REQUIRED>
+<!ATTLIST high count CDATA #REQUIRED>

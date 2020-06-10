@@ -1,0 +1,85 @@
+# CSC 120, Spring 2016, Assignment 2 script to make predictions on houston data.
+
+source("a2funs.r")
+
+
+# Read the data.
+
+houston <- read.table("http://www.cs.utoronto.ca/~radford/csc120/houston",
+                      head=TRUE)
+
+
+# Specify the starting point, and extract the two series to predict
+# (deaths and tmax).
+
+start <- 365+365+1
+end <- nrow(houston)
+deaths <- houston$deaths
+tmax <- houston$tmax
+
+
+# Function to make plots of predictions as needed for this assignment.
+# The arguments are the predictions, the (full) series of actual
+# values, and a string describing how the predictions were made (used
+# in the title).  The start and end of the portion of "series" to
+# predict are taken from global variables.  The average absolute error
+# is included in the title for the set of plots.
+
+plot_predictions <- function (pred, series, header)
+{
+  actual <- series[start:end]
+  errors <- actual-pred
+
+  par(mfrow=c(2,2))
+  plot(actual,pch=20)
+  plot(pred,pch=20)
+  plot(errors,pch=20)
+  plot(houston$day_of_year[start:end],errors,pch=20,xlab="day of year")
+
+  ave_err <- mean(abs(errors))
+  title (paste (header, "- average error:",round(ave_err,3)),
+         outer=TRUE, line=-2)
+  cat(header,"- Average error:",round(ave_err,3),"\n")
+}
+
+
+# Make predictions and produce plots as specified in the assignment handout.
+
+pdf("a2plots.pdf")
+
+plot_predictions (predictions (forecast_previous, houston, deaths, start),
+                  deaths, "Deaths, previous day")
+plot_predictions (predictions (forecast_week_ago, houston, deaths, start),
+                  deaths, "Deaths, one week ago")
+plot_predictions (predictions (forecast_mean, houston, deaths, start),
+                  deaths, "Deaths, mean all previous days")
+plot_predictions (predictions (forecast_mean14, houston, deaths, start),
+                  deaths, "Deaths, mean previous 14 days")
+plot_predictions(predictions(forecast_same_day_of_week, houston, deaths, start),
+                 deaths, "Deaths, mean same day of week")
+plot_predictions (predictions (forecast_same_month, houston, deaths, start),
+                  deaths, "Deaths, mean same month")
+plot_predictions (predictions (forecast_similar_tmax, houston, deaths, start),
+                  deaths, "Deaths, mean similar tmax")
+cat("\n")
+
+plot_predictions (predictions (forecast_previous, houston, tmax, start),
+                  tmax, "Tmax, previous day")
+plot_predictions (predictions (forecast_week_ago, houston, tmax, start),
+                  tmax, "Tmax, one week ago")
+plot_predictions (predictions (forecast_mean, houston, tmax, start),
+                  tmax, "Tmax, mean all previous days")
+plot_predictions (predictions (forecast_mean14, houston, tmax, start),
+                  tmax, "Tmax, mean previous 14 days")
+plot_predictions (predictions (forecast_same_day_of_week, houston, tmax, start),
+                  tmax, "Tmax, mean same day of week")
+plot_predictions (predictions (forecast_same_month, houston, tmax, start),
+                  tmax, "Tmax, mean same month")
+
+cat("\n")
+
+plot_predictions (predictions2 (forecast_same_month, forecast_similar_tmax,
+                                houston, deaths, 365+1, start),
+                  deaths, "Deaths, with month, then tmax")
+
+dev.off()

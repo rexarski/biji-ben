@@ -1,0 +1,5 @@
+<!ELEMENT Oscars (Oscar*)>
+<!ELEMENT Oscar (Type)>
+<!ELEMENT Type (#PCDATA)>
+<!ATTLIST Oscar OID CDATA #REQUIRED>
+<!ATTLIST Oscar year CDATA #REQUIRED>

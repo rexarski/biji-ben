@@ -1,0 +1,23 @@
+make_matrix <- function (element, nrow, ncol)
+{
+    M <- matrix(0,nrow,ncol)
+    for (i in 1:nrow)
+        for (j in 1:ncol)
+            M[i,j] <- element(i,j)
+    M
+}
+
+away_from_mean <- function (vec, d)
+{
+    m <- mean(vec)
+    vec [ vec <= m-d | vec >= m+d ]
+}
+
+iris [iris$Petal.Length / iris$Petal.Width >= 4, ]
+
+sum_both_pos_rows <- function (A, B) 
+{
+  A_pos <- rowSums(A) > 0
+  B_pos <- rowSums(B) > 0
+  A[A_pos & B_pos,] + B[A_pos & B_pos, ]
+}

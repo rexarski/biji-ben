@@ -1,0 +1,126 @@
+2016-01-12 (3 hours)
+0.   What is Scientific Computing? (1.1, 1.2.1)
+1.   Computer arithmetic; data and computational errors
+1.1  (Human) Representation of nonnegative integers
+   - Algorithm for converting base b integers to decimal
+   - Algorithm for converting decimal integers to base b
+1.2  (Human) Representation of reals
+   - Algorithm for converting base b fractions to decimal
+   - Algorithm for converting decimal fractions to base b
+1.3  Computer representation of numbers (1.3.1-7)
+   - floating-point numbers, mantissa, exponent, normalized mantissa,
+     significant digits, overflow, underflow, range of representable numbers,
+     representable numbers, chopping, rounding
+   - The IEEE Standard
+1.4  Round-off error (1.3.5)
+1.5  Absolute and relative errors (1.2.2)
+1.6  Computer arithmetic (1.3.8)
+1.7  Machine epsilon (1.3.5)
+1.8  Error propagation in simple arithmetic calculations (1.3.8-9)
+   - Multiplication, division, addition/subtraction
+   - catastrophic cancellation
+Tutorial on MATLAB
+2016-01-19 (3 hours)
+1.9  Error propagation in computation: conditioning of problems (1.2.6)
+   - condition number of function
+1.10 Error propagation in computation: stability of algorithms (1.2.7)
+1.11 Forward and backward errors (1.2.3-5)
+     Propagated data error
+     Truncation (discretization) and rounding errors, computational error
+     Total error
+1.12 Taylor series
+Tutorial on Computer Arithmetic
+
+2.   Direct methods for solving square linear systems
+2.1  Vectors and matrices -- review of terminology
+2016-01-26 (3 hours)
+2.2  Solving lower triangular linear systems [2.4.2]
+     Forward substitution (f/s)
+2.3  Solving upper triangular linear systems [2.4.2]
+     Back substitution (b/s)
+2.4  Equivalent linear systems - row operations [2.4.1]
+2.5  An example of solving a linear system by GE and b/s
+2.6  Gaussian elimination (GE) [2.4.3, 2.4.4, 2.4.6-7]
+2.7  LU factorization [2.4.3, 2.4.4, 2.4.7]
+     elementary Gauss (elimination) transformation matrices
+Tutorial on matrices, b/f/s, and operation counts
+2016-02-02 (3 hours)
+2.8  Symmetric and symmetric positive definite matrices [2.5.1, 2.5.2]
+     LDL^T and Choleski factorizations
+2.9  Banded matrices [2.5.3]
+     Banded LU/GE and b/f/s
+2.10 Computing the inverse of a matrix [2.4.7]
+Last question of Tutorial on matrices, b/f/s, and operation counts
+2.11 GE with partial pivoting [2.4.5-6]
+     breakdown or instability of GE, interchanges of rows, columns
+     types of pivoting
+     elementary Gauss transformation matrices; elementary permutation matrices
+     example
+2.12 Scaled partial pivoting [2.4.10]
+2.13 Complete pivoting
+2.14 Effect of pivoting to special matrices -- symmetry and bandedness
+2.15 MATLAB and solution of linear systems
+2.16 Mathematical software [2.7]
+2016-02-09 (3 hours)
+Tutorial on GE/LU/piv/scaling, etc
+
+2.17 Inner products
+2.18 Norms [2.3]
+2.19 Vector norms [2.3.1]
+2.20 Matrix norms [2.3.2]
+2.21 Condition number of a matrix [2.3.3-5]
+     Other interpretations of the condition number of a matrix
+Tutorial on norms and condition numbers of matrices (q2 and q3).
+
+2016-02-23 (3 hours)
+Solutions to assignment 1
+Tutorial on norms and condition numbers of matrices (q1, q4, q5, q6, q8, q9)
+
+3.   Nonlinear equations and systems [5.1, 5.2]
+     roots, multiplicity
+3.1  Fixed points and roots of functions [5.2]
+     systolic or contractive functions
+3.2  Existence and uniqueness of root and fixed point [5.2]
+2016-03-01 (3- hours)
+3.3  Numerical methods for solving nonlinear equations [5.3, 5.4, 5.5]
+     Nonlinear solvers, residual, stopping criteria
+3.4  Convergence rate of iterative methods [5.4]
+3.5  The bisection method [5.5]
+2016-03-08 (3 hours)
+3.6  Fixed-point (functional) iteration methods [5.5]
+     Convergence of fixed-point iteration
+     Convergence rate of fixed-point iteration
+3.7  Newton's method (Newton-Raphson method) [5.5]
+3.8  The secant method [5.5]
+3.9  Numerical methods for solving nonlinear systems of equations [5.6]
+     Newton's method
+Discussion on midterm exam
+
+2016-03-15 (3 hours)
+Tutorial on nonlinear equations
+4    Interpolation
+4.1  Approximation and interpolation - Introduction [7.1]
+4.2  Polynomial approximation - Weierstrass theorem
+4.3  Evaluating a polynomial -- Horner's rule (nested multiplication) [7.3.1]
+4.4  Polynomial interpolation using monomial basis functions [7.3.1]
+4.5  Polynomial interpolation using Lagrange basis functions [7.3.2]
+4.6  Existence and uniqueness of polynomial interpolant [7.2]
+4.7  Polynomial interpolation using Newton's basis functions
+     and the Divided Differences Table [7.3.3]
+2016-03-22 (3 hours)
+4.8  Comparison of the three bases
+4.9  Error of the polynomial interpolant [7.3.5]
+4.10 Pitfalls of polynomial interpolation [7.3.5]
+4.11 Piecewise polynomials and splines [7.4]
+4.12 Linear spline interpolation (Lagrange form) [7.4.2]
+     Error in linear spline interpolation
+4.13 Cubic spline interpolation -- choice of end-conditions [7.4.2]
+     Error in cubic spline interpolation
+2016-03-29 (3 hours)
+4.14 Spline interpolation in MATLAB
+Tutorial on polynomial interpolation
+Tutorial on piecewise polynomial interpolation
+Assignment 2, question 1
+To be done next
+Assignment 2, other questions
+Summary

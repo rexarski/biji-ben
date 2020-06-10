@@ -1,0 +1,151 @@
+# CSC 120, Spring 2016, Assignment 1 - Script with function definitions.
+
+
+# Find the Euclidean distance between two vectors.
+
+distance <- function (x, y) sqrt(sum((x-y)^2))
+
+
+# Plot the points given by the rows of the n-by-2 matrix d, along with lines
+# connecting pairs of points as specified in the n/2-by-2 matrix e, whose
+# entries are indexes into rows of d (ie, integers from 1 to n).
+
+plot_pairs <- function (d, e) {
+    plot (d[,1],d[,2],xlab="",ylab="",asp=1,pch=20)
+    for (i in 1:nrow(e))
+        lines (c(d[e[i,1],1],d[e[i,2],1]), c(d[e[i,1],2],d[e[i,2],2]))
+}
+
+
+# Compute the total distance between pairs of points (with coordinates in the
+# n-by-k matrix d), with the pairs specified by the n/2-by-2 matrix e.
+
+total_distance <- function (d, e)
+{
+    m <- nrow(e)
+    t <- 0
+    for (i in 1:m) {
+        t <- t + distance(d[e[i,1],],d[e[i,2],])
+    }
+    t
+}
+
+
+# Generate a matrix specifying n/2 random pairings of n points.
+
+random_pairings <- function (n) matrix (sample(n), nrow=n/2, ncol=2)
+
+
+# Improve the pairings of points in d specified by e, by looking at all
+# combinations of two pairs, and considering whether rearranging the way
+# the four points in these two paris are paired would reduce the total
+# distance between points in these pairs.
+
+improve_pairings <- function (d, e)
+{
+    m <- nrow(e)
+
+    for (i in 1:(m-1)) {
+        for (j in (i+1):m) {
+
+            # Find the distance between these two pairs with current pairings.
+
+            d0 <- distance(d[e[i,1],],d[e[i,2],]) +
+                    distance(d[e[j,1],],d[e[j,2],])
+
+            # Find the distance between these pairs with the two other possible
+            # pairings.
+
+            d1 <- distance(d[e[i,1],],d[e[j,1],]) +
+                    distance(d[e[i,2],],d[e[j,2],])
+
+            d2 <- distance(d[e[i,1],],d[e[j,2],]) +
+                    distance(d[e[i,2],],d[e[j,1],])
+
+            # Switch to one of the other pairings if it gives smaller total
+            # distance than the current pairings.
+
+            if (d1 < d2) {
+                if (d1 < d0) {
+                    t <- e[i,2]
+                    e[i,2] <- e[j,1]
+                    e[j,1] <- t
+                }
+            }
+            else {
+                if (d2 < d0) {
+                    t <- e[i,2]
+                    e[i,2] <- e[j,2]
+                    e[j,2] <- t
+                }
+            }
+        }
+    }
+
+    # Return the updated set of pairings.
+
+    e
+}
+
+
+# Try to find a good set of pairings for the data points in the n-by-2 matrix d,
+# with n even, returning an n/2-by-2 matrix whose rows contain the indexes of
+# paired points.  Pairings are found by starting with a random set of pairings
+# and then improving the set of pairings until there is no change.  The "tries"
+# argument specifies how many times to try this procedure with different random
+# initial pairings, with the best (lowest total distance) result returned.
+#
+# The "plot" argument specifies whether or not to plot the all the sets of
+# pairings found along the way.  It only makes sense for 2D points.
+
+find_pairings <- function (d, tries=1, plot=FALSE) {
+
+    # Record the best total distance found so far, infinity when none found yet.
+
+    best_dist <- Inf
+
+    # Try "tries" random initial pairings, which are then improved.
+
+    for (try in 1:tries) {
+
+        # Generate a random initial set of pairings, and compute its total
+        # distance, storing this in the dist variable.
+
+        e <- matrix(sample(1:nrow(d)),nrow=nrow(d)/2,ncol=2)
+        dist <- total_distance(d, e)
+
+        # Try to improve this set of pairings, stopping when no improvement
+        # occurs (which will also be when no pairings are changed).  The
+        # prev_dist variable records the best previous distance with this
+        # random initial pairings (infinity at the start).  The dist variable
+        # holds the total distance for the most recently-found pairings.
+
+        prev_dist <- Inf
+        i <- 0
+        while (dist < prev_dist) {
+            if (plot) {
+                plot_pairs(d,e)
+                title (paste("Try",try,"iteration",i,": Total distance",
+                             round(dist,4)))
+            }
+            prev_dist <- dist
+            e <- improve_pairings (d, e)
+            dist <- total_distance (d, e)
+            i <- i + 1
+        }
+        cat ("Try",try,": Total distance",dist,"\n")
+
+        # Check if the final result from this random set of initial pairings is
+        # better than any found previously.
+
+        if (dist < best_dist) {
+            best_dist <- dist
+            best_e <- e
+        }
+    }
+
+    # Return the best set of pairings from those found starting with any of the
+    # random initial sets of pairings.
+
+    best_e
+}

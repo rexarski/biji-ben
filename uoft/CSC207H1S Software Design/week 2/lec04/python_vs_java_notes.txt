@@ -1,0 +1,21 @@
+Python: 
+    - a statement is a program
+Java: 
+    - a statement is not a program
+    - need a class
+    - need a main method
+
+Python: 
+    - values have types
+    - variables do not have types, they are just names
+Java:  
+    - variables have types
+
+Python: 
+    - fully object-oriented
+    - 3 is an object, it has methods, etc.
+Java: 
+    - primitive types: int, double, boolean, char, etc.
+      (e.g., 3 is a primitive type)
+    - objects (these have methods, etc.)
+    - wrapper classes for primitive types (e.g. Integer for int)

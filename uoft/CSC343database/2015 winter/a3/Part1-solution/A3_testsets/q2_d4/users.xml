@@ -1,0 +1,59 @@
+<?xml version="1.0" standalone="no" ?>
+<!DOCTYPE users SYSTEM "users.dtd">
+<users>
+   <user uid = "u1" dob = "950624" email = "davey@gmail.com">
+      <surname>Liu</surname>
+      <givennames>David</givennames>
+      <follows who="u2 u3 u4 u5"/>
+   </user>
+   <user uid = "u2" dob = "940624" email = "knowle99@gmail.com">
+      <surname>Knowle</surname>
+      <givennames>Robert John</givennames>
+      <follows who="u1 u3 u4 u5"/>
+      <playlists>
+         <playlist pid="p1000" created="150101" playcount="25"/>
+         <playlist pid="p1001" created="150102" playcount="5"/>
+         <playlist pid="p1005" created="150102" playcount="25"/>
+      </playlists>
+   </user>
+   <user uid = "u3" dob = "960624" email = "dlh@gmail.com">
+      <surname>Horton</surname>
+      <givennames>Diane</givennames>
+      <follows who="u1 u2 u4 u5"/>
+      <playlists>
+         <playlist pid="p1000" created="150101" playcount="10"/>
+         <playlist pid="p1001" created="150102" playcount="3"/>
+         <playlist pid="p1005" created="150102" playcount="99"/>
+      </playlists>
+   </user>
+   <user uid = "u4" dob = "930624" email = "u4s@gmail.com">
+      <surname>John</surname>
+      <givennames>Doe</givennames>
+      <follows who="u1 u2 u5"/>
+      <playlists>
+         <playlist pid="p1000" created="150101" playcount="10"/>
+         <playlist pid="p1001" created="150102" playcount="3"/>
+         <playlist pid="p1005" created="150102" playcount="99"/>
+      </playlists>
+   </user>
+   <user uid = "u5" dob = "930614" email = "u5@gmail.com">
+      <surname>Alex</surname>
+      <givennames>Mohinat</givennames>
+      <follows who="u1 u2"/>
+      <playlists>
+         <playlist pid="p1000" created="150101" playcount="10"/>
+         <playlist pid="p1001" created="150102" playcount="3"/>
+         <playlist pid="p1005" created="150102" playcount="99"/>
+      </playlists>
+   </user>
+   <user uid = "u6" dob = "931214" email = "u6@gmail.com">
+      <surname>Toby</surname>
+      <givennames>One</givennames>
+      <follows who="u1 u2"/>
+      <playlists>
+         <playlist pid="p1000" created="150101" playcount="10"/>
+         <playlist pid="p1001" created="150102" playcount="3"/>
+         <playlist pid="p1005" created="150102" playcount="99"/>
+      </playlists>
+   </user>   
+</users>

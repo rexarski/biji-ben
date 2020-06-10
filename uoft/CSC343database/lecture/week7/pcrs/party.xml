@@ -1,0 +1,44 @@
+<?xml version="1.0" standalone="no" ?>
+<!DOCTYPE GuestList [
+   <!ELEMENT GuestList (Event, Invitee*)>
+   <!ELEMENT Event EMPTY>
+      <!ATTLIST Event date CDATA #REQUIRED>
+      <!ATTLIST Event start CDATA #REQUIRED>
+      <!ATTLIST Event end CDATA #REQUIRED>
+   <!ELEMENT Invitee (Who)>
+      <!ATTLIST Invitee response CDATA #REQUIRED>
+      <!ATTLIST Invitee nickname CDATA #IMPLIED>
+   <!ELEMENT Who (First?, Middle?, Last?)>
+      <!ATTLIST Who age CDATA #REQUIRED>
+      <!ATTLIST Who email CDATA #IMPLIED>
+   <!ELEMENT First (#PCDATA)>
+   <!ELEMENT Middle (#PCDATA)>
+   <!ELEMENT Last (#PCDATA)>
+]>
+<GuestList>
+   <Event date="150113" start="1400" end="1630"/>
+   <Invitee nickname="Pumpkin" response="yes">
+      <Who age="7" email="diane@gmail.com">
+         <First>Catherine</First>
+         <Middle>Julia</Middle>
+         <Last>Fairgrieve</Last>
+      </Who>
+   </Invitee>
+   <Invitee response = "no">
+      <Who age="6" email="cm@gmail.com">
+         <First>Chloe</First>
+         <Last>McLaughlin</Last>
+      </Who>
+   </Invitee>
+   <Invitee response = "yes">
+      <Who age="2"> 
+         <First>Otis</First>
+      </Who>
+   </Invitee>
+   <Invitee response = "yes">
+      <Who age="4" email="harper@gmail.com">
+         <First>Mia</First>
+         <Last>H.F.</Last>
+      </Who>
+   </Invitee>
+</GuestList>

@@ -1,0 +1,10 @@
+random_walk <- function (steps) {
+    position <- numeric(steps+1)
+    for (i in 1:steps) {
+        if (runif(1) < 0.5)
+            position[i+1] <- position[i] + 1
+        else
+            position[i+1] <- position[i] - 1
+    }
+    position
+}

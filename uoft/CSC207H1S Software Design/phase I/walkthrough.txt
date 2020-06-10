@@ -1,0 +1,17 @@
+Scenario: Search all itineraries from Toronto to Venice on May 3, 2015.
+
+0)	System: search
+	given Itinerary, origin, destination, departureDate, flightPool and Client
+
+1)	Client: getAvailableFlights
+	given origin, destination, departureDate, and flightPool
+
+2)	Client: createItinerary, for all available flightList from getAvailableFlights
+	given Itinerary, origin, destination, departureDate
+
+3)	Itinerary: Create Itinerary objects
+	given origin, destination, departureDate, and flightPool
+
+4)	Client: search
+	given Itinerary
+

@@ -1,0 +1,41 @@
+sum_first_last <- function (vec) vec[1] + vec[length(vec)]
+
+midvalue <- function (vec) {
+    if (length(vec) %% 2 == 0)
+        (vec[length(vec)/2] + vec[1+length(vec)/2]) / 2
+    else
+        vec[(1+length(vec))/2]
+}
+
+sum_positive <- function (vec) {
+    s <- 0
+    for (e in vec)
+        if (e > 0) s <- s + e
+    s
+}
+
+swap_first_last <- function (vec) {
+    len <- length(vec)
+    result <- vec
+    result[1] <- vec[len]
+    result[len] <- vec[1]
+    result
+}
+
+find_cos_integer <- function (x) {
+    i <- 0
+    while (abs(cos(i)-x) >= 0.001) 
+        i <- i + 1
+    i
+}
+
+count_char <- function (str, chr) {
+    counts <- numeric(length(str))
+    for (i in 1:length(str)) {
+        counts[i] <- 0
+        for (j in 1:nchar(str[i]))
+            if (substring(str[i],j,j) == chr)
+                counts[i] <- counts[i] + 1
+    }
+    counts
+}

@@ -1,0 +1,27 @@
+# Run the functions for lab exercise 4.  Use "source" with echo=TRUE to run.
+
+source("lab4defs.r")
+
+
+# Try the lower_ones function.
+
+lower_ones(5)
+
+
+# Try the X_matrix function.
+
+X_matrix(4)
+X_matrix(5)
+
+
+# Plot temperatures after 50 and 1000 iterations of heat flow.
+
+M <- initial_temperatures(30,30)
+
+for (k in 1:50) M <- heat_flow(M)
+persp(M,phi=30,theta=-10)
+contour(M)
+
+for (k in 1:950) M <- heat_flow(M)
+persp(M,phi=30,theta=-10)
+contour(M)

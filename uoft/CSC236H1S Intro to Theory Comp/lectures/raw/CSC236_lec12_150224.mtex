@@ -1,0 +1,76 @@
+tex example: $$ f(n) = \left\{ \begin{array}{l l} n/2 & \quad \text{if $n$ is even}\\  -(n+1)/2 & \quad \text{if $n$ is odd} \end{array} \right. $$
+
+
+
+#Lecture 12
+
+February 24, 2015
+
+Define $$ T $$ by:
+
+$$ T(n) = \left\{ \begin{array}{l l} 1 & \quad , n = 1\\ 1 + \max(T(\lceil\frac{n}{2}\rceil), T(\lfloor\frac{n}{2}\rfloor)) & \quad , n\geqslant2 \end{array} \right. $$
+
+$$ T(1) \leqslant T(1) $$ 
+
+$$ T(1) \leqslant T(2) $$ 
+
+$$ T(2) \leqslant T(2) $$
+
+$$ T(1) \leqslant T(3) $$
+
+$$ T(2) \leqslant T(3) $$
+
+$$ T(3) \leqslant T(3) $$
+
+->...<-
+
+$$ T(123) \leqslant T(135) $$ 
+
+ 
+$$ T(135) = 1 + \max(T(68), T(67)) $$
+
+$$ T(123) = 1 + \max(T(62), T(61)) $$
+
+For $$ n \in \mathbb{N}, ~\text{let}~ P(n)  $$ be:
+
+$$ T(1) \leqslant T(n) $$
+
+$$ T(2) \leqslant T(n) $$
+
+->...<-
+
+$$ T(n) \leqslant T(n) $$
+
+$$ P(67) \land P(68) \implies (T(61) \leqslant T(67)) \land (T(62) \leqslant T(67)) \land (T(61) \leqslant T(68)) \land (T(62) \leqslant T(68)) \implies T(123) \leqslant T(135)$$
+
+BASE CASE:
+
+IS: Let $$ n \in \mathbb{N}, n \geqslant 2. $$
+
+[Prove $$ T(1) \leqslant T(n) $$ and ... and $$ T(n) \leqslant T(n) $$]
+
+IH: Assume $$ T(1) \leqslant T(1) ... P(1) $$
+$$ T(1) \leqslant T(2) $$ and $$ T(2) \leqslant T(2) ... P(2) $$
+...
+$$ T(1) \leqslant T(n-1) $$ ... and $$ T(n-1) \leqslant T(n-1) ... P(n-1)$$ 
+
+Assume $$ P(n) $$ is true for all natural numbers that are at least 1 and less than $$ n $$.
+
+$$ T(n) = 1 + \max(T(\lceil\frac{n}{2}\rceil), T(\lfloor\frac{n}{2}\rfloor)) $$ since $$ n \geqslant 2 \geqslant 1 $$
+
+let $$ m \in \mathbb{N} $$ such that $$ 1 \leqslant m \leqslant n $$
+
+Case: $$ m = 1, T(n) = 1 + \max(...) = 1 + T(\lceil\frac{n}{2}\rceil) \geqslant 1 + T(1) \geqslant T(1)$$ since $$ 1 \leqslant \lceil\frac{n}{2}\rceil $$ and $$ P(\lceil\frac{n}{2}\rceil) $$
+
+Case: $$ m \geqslant 2, T(m) = 1 + \max(T(\lceil\frac{n}{2}\rceil), T(\lfloor\frac{n}{2}\rfloor)) $$
+
+$$ \lceil\frac{n}{2}\rceil \geqslant \lceil\frac{n}{2}\rceil = 1 $$ 
+$$ \lceil\frac{n}{2}\rceil \in \mathbb{Z} $$ so $$ \lceil\frac{n}{2}\rceil \in \mathbb{N} $$
+$$ \frac{n}{2} = n - \frac{n}{2} \leqslant n - 1 $$ so $$ n \geqslant 2 $$ 
+so $$ \lceil\frac{n}{2}\rceil \leqslant n -1 $$ since $$ n \in \mathbb{N} $$ 
+so $$ \lceil\frac{n}{2}\rceil \leqslant n $$
+so $$ P(\lceil\frac{n}{2}\rceil) $$ from (IH)
+Also $$ 1 \leqslant \lfloor\frac{n}{2}\rfloor \leqslant \lceil\frac{n}{2}\rceil $$, so from $$ P(\lceil\frac{n}{2}\rceil) $$: $$ T(\lfloor\frac{n}{2}\rfloor) \leqslant T(\lceil\frac{n}{2}\rceil)$$
+
+$$ 1 \leqslant \lceil\frac{m}{2}\rceil \leqslant \lceil\frac{n}{2}\rceil$$ since $$ m \leqslant n $$ 
+from $$ P(\lceil\frac{n}{2}\rceil) $$: $$ T(\lceil\frac{m}{2}\rceil) \leqslant T(\lceil\frac{n}{2}\rceil) $$, so $$ T(m) \leqslant T(n) $$

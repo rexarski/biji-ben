@@ -1,0 +1,61 @@
+<?xml version="1.0" standalone="no" ?>
+<!DOCTYPE music SYSTEM "music.dtd">
+<music>
+<songs>
+   <song sid="s20561" time="3:38" year="2015">
+      <title>
+         Living For Love
+      </title>
+      <artist>
+         Madonna
+      </artist>
+      <composers>
+         <composer>Madonna</composer>
+         <composer>Diplo</composer>
+         <composer>Maureen McDonald</composer>
+         <composer>Toby Gad</composer>
+         <composer>Ariel Rechtshaid</composer>
+      </composers>
+      <album>
+         Rebel Heart
+      </album>
+   </song>
+   <song sid="s22222" time="2:17" year="1968">
+      <title>
+         Lady Madonna
+      </title>
+      <artist>
+         Beatles, The
+      </artist>
+      <composers>
+         <composer>Paul McCartney</composer>
+         <composer>John Lennon</composer>
+      </composers>
+   </song>
+   <song sid="s5" time="5:17" year="2014">
+      <title>
+         Lady Medusa
+      </title>
+      <artist>
+         Nobody
+      </artist>
+      <composers>
+         <composer>Nobody</composer>
+      </composers>
+   </song>
+</songs>
+<playlists>
+   <playlist pid="p1000" creator="u45">
+      <track sid="s20561"/>
+      <track sid="s22222"/>
+   </playlist>
+   <playlist pid="p1001" creator="u45">
+      <track sid="s20561"/>
+   </playlist>
+   <playlist pid="p1005" creator="u45">
+      <track sid="s20561"/>
+      <track sid="s22222"/>
+      <track sid="s5"/>
+   </playlist>
+</playlists>   
+</music>

@@ -1,0 +1,153 @@
+#6.1-6.5
+
+2015-10-03
+
+##simple queries in SQL
+
+	Movies(title, year, length, genre, studioName, producerC#)
+
+	SELECT *
+	FROM Movies
+	WHERE studioName = 'Disney' AND year = 1990;
+
+- `FROM` clause gives the relation to which the query refers.
+- `WHERE` clause is a condition.
+- `SELECT` clause tells which attributes of the tuples matching the condition are produced as part of the answer. The `*` indicates that the entire tuple is produced.
+
+Trick: the order of reading and writing queires -- `FROM-WHERE-SELECT`
+
+	SELECT title, length
+	FROM Movies
+	WHERE studioName = 'Disney' AND year = 1990;
+
+result is a table with two columns
+
+can also modify the attribute name using `AS`:
+
+	SELECT title AS name, length AS duration
+	FROM Movies
+	WHERE studioName = 'Disney' AND year = 1990;
+
+another:
+	
+	SELECT title AS name, length*0.016667 AS lengthInHours
+
+> SQL is case insensitive.
+
+- six common comparison operators: `=, <>, <, >, <=, >=`, where `<>` is 'not equal to' in SQL, and `=` is 'equal to'.
+	- `(year - 1930) * (year - 1930) < 100` indicating years within 9 of 1930.
+- concatenation operator `||` to strings:
+	- `'foo' || 'bar'` has value `'foobar'`
+
+###comparison of strings
+
+- equal if same sequence of characters
+- `'fodder' < 'foo'`
+- `'bar' < 'bargain'`
+
+###parttern matching
+
+	s LIKE p
+
+`s` is a string, `p` is pattern.
+
+	SELECT title
+	FROM Movies
+	WHERE title LIKE 'Star ____';
+
+	SELECT title
+	FROM Movies
+	WHERE title LIKE '%' 's%';
+
+###dates and times
+
+- `DATE`
+- `TIME`
+- `TIMESTAMP`
+
+###null values
+
+- NULL
+
+###truth-value
+
+- UNKNOWN
+
+###ordering the output
+
+	ORDER BY <list of attributes>
+
+	SELECT *
+	FROM Movies
+	WHERE studioName = 'Disney' AND year = 1990
+	ORDER BY length, title;
+
+	SELECT *
+	FROM R
+	ORDER BY A+B DESC;
+
+##queries involving more than one relation
+
+	Movies(title, year, length, genre, studioName, producerC#)
+	MovieExec(name, address, cert#, netWorth)
+
+	SELECT name
+	FROM Movies, MovieExec
+	WHERE title = 'Star Wars' AND producerC# = cert#;
+
+	MovieStar(name, address, gender, birthdate)
+	MovieExec(name, address, cert#, netWorth)
+
+	SELECT MoiveStar.name, MovieExec.name
+	FROM MovieStar, MovieExec
+	WHERE MovieStar.address = MovieExec.address;
+
+	SELECT Star1.name, Star2.name
+	FROM MovieStar Star1, MovieStar Star2
+	WHERE Star1.address = Star2.address
+		  AND Star1.name < Star2.name;
+
+	(SELECT name, address
+	 FROM MovieStar
+	 WHERE gender = 'F')
+	 	 INTERSECT
+	(SELECT name, address
+	 FROM MovieExec
+	 WHERE netWorth > 10000000);
+
+	(SELECT name, address FROM MovieStar)
+		EXCEPT
+	(SELECT name, address FROM MovieExec);
+
+##subqueries
+
+	Movies(title, year, length, genre, studioName, producerC#)
+	MovieExec(name, address, cert#, netWorth)
+
+	SELECT name
+	FROM MovieExec
+	WHERE cert# =
+		(SELECT producerC#
+		 FROM Movies
+		 WHERE title = 'Star Wars'
+		);
+
+conditions involving relations
+- `EXISTS R` is a condition that is true iff `R` is not empty
+- `s IN R` is true iff `s` is equal to one of the values in `R`; likewise, `s NOT IN R`...
+- `s > ALL R` is true iff `s` is greater than every value in unary relation `R`; `s <> ALL R` is the same as `s NOT IN R`
+- `s > ANY R` is true iff `s` is greater than at least one value in unary relation `R`; `s = ANY R` is the same as `s IN R`
+
+conditions involving tuples
+
+	SELECT name
+	FROM MovieExec
+	WHERE cert# IN
+		(SELECT producerC#
+		 FROM Movies
+		 WHERE (title, year) IN
+		 	(SELECT movieTitle, movieYear
+		 	 FROM StarsIn
+		 	 WHERE starName = 'Hasrrison Ford'
+		 	)
+		);

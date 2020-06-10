@@ -1,0 +1,5 @@
+<!ELEMENT songcounts (song*)>
+<!ELEMENT song EMPTY>
+<!ATTLIST song sid ID #REQUIRED
+               title CDATA #REQUIRED
+               playcount CDATA #REQUIRED>

@@ -1,0 +1,67 @@
+
+        List of relations
+ Schema |  Name  | Type   | Owner
+--------+--------+--------+--------
+ mimdb  | movies | table  | c3qiurui
+ mimdb  | oscars | table  | c3qiurui
+ mimdb  | people | table  | c3qiurui
+(3 rows)
+
+
+
+
+                Table "mimdb.movies"
+   Column    |          Type         | Modifiers
+-------------+-----------------------+-----------
+ mid         | integer               |
+ year        | integer               | not null
+ rating      | float                 | not null
+ winner      | character varying(3)  | not null
+ title       | character varying(50) | not null
+ role        | character varying(30) | not null
+ category    | character varying(30) | 
+ subcategory | character varying(30) | 
+ oid         | integer               |
+ pid         | integer               | not null
+Indexes:
+    "movies_pkey" PRIMARY KEY, btree (mid)
+Check constraints:
+    "movie_winner_check" CHECK (winner::text = ANY (ARRAY['yes'::character varying, 'no'::character varying]::text[]))
+Foreign-key constraints:
+    "movies_oid_fkey" FOREIGN KEY (oid) REFERENCES oscars(oid)
+    "movies_pid_fkey" FOREIGN KEY (pid) REFERENCES people(pid)
+
+
+
+
+            Table "mimdb.oscars"
+ Column |          Type         | Modifiers
+--------+-----------------------+-----------
+ type   | character varying(30) |
+ oid    | integer               |
+ year	| integer               | not null
+Indexes:
+    "oscars_pkey" PRIMARY KEY, btree(oid)
+Referenced by:
+    TABLE "movies" CONSTRAINT "movie_oid_fkey" FOREIGN KEY (oid) REFERENCES oscars(oid)
+    TABLE "people" CONSTRAINT "people_oid_fkey" FOREIGN KEY (oid) REFERENCES oscars(oid)
+
+
+
+
+            Table "mimdb.people"
+ Column |          Type         | Modifiers
+--------+-----------------------+-----------
+ first  | character varying(30) | not null
+ last   | character varying(30) | not null
+ pid    | integer               |
+ gender | character varying(10) | not null
+ dob    | date                  |
+ pod    | character varying(30) |
+ oid    | integer               | not null
+Indexes:
+    "people_pkey" PRIMARY KEY, btree(pid)
+Foreign-key constraints:
+    "people_oid_fkey" FOREIGN KEY (oid) REFERENCES oscars(oid)
+Referenced by:
+    TABLE "movies" CONSTRAINT "movie_pid_fkey" FOREIGN KEY (pid) REFERENCES people(pid)

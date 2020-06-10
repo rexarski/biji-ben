@@ -1,0 +1,93 @@
+houston <- read.table("http://www.cs.utoronto.ca/~radford/csc120/houston",head=TRUE)
+source("ass2.r")
+
+sd <- 365+365+1 # =731
+ed <- 2557
+
+drawplots <- function(ff,df,sd,ed,target) {
+  # ff,df,sd,ed are defined as before,
+  # target = 1 if we want to forecast deaths
+  # target = 2 if we want to forecast tmax
+  par(mfrow=c(2,2))
+  plot(sd:ed,df[sd:ed,target],xlab="time index",
+       ylab="actual values",family="Palatino")
+  plot(sd:ed,predictions(ff,df,sd,ed)[,target],xlab="time index",
+       ylab="forecasts",family="Palatino")
+  plot(sd:ed,df[sd:ed,target]-predictions(ff,df,sd,ed)[,target],
+       xlab="time index",ylab="errors",family="Palatino")
+  plot(df[sd:ed,4],df[sd:ed,target]-predictions(ff,df,sd,ed)[,target],
+       xlab="day of the year",ylab="errors",family="Palatino")
+  target_vec <- c("deaths","tmax")
+  title(main=paste("Plots of prediction on ",
+                   target_vec[target]),outer=T,family="Palatino")
+}
+
+# 7 plots of forecast of deaths:
+drawplots(forecast_previous,houston,sd,ed,1)
+cat("The average of absolute value of the error of forecasting deaths with forecast_previous is ", 
+    mean(abs(houston[sd:ed,1]-predictions(forecast_previous,houston,sd,ed)[,1])), "\n")
+drawplots(forecast_week_ago,houston,sd,ed,1)
+cat("The average of absolute value of the error of forecasting deaths with forecast_week_ago is ", 
+    mean(abs(houston[sd:ed,1]-predictions(forecast_week_ago,houston,sd,ed)[,1])), "\n")
+drawplots(forecast_mean,houston,sd,ed,1)
+cat("The average of absolute value of the error of forecasting deaths with forecast_mean is ", 
+    mean(abs(houston[sd:ed,1]-predictions(forecast_mean,houston,sd,ed)[,1])), "\n")
+drawplots(forecast_mean14,houston,sd,ed,1)
+cat("The average of absolute value of the error of forecasting deaths with forecast_mean14 is ", 
+    mean(abs(houston[sd:ed,1]-predictions(forecast_mean14,houston,sd,ed)[,1])), "\n")
+drawplots(forecast_same_day_of_week,houston,sd,ed,1)
+cat("The average of absolute value of the error of forecasting deaths with forecast_same_day_of_week is ", 
+    mean(abs(houston[sd:ed,1]-predictions(forecast_same_day_of_week,houston,sd,ed)[,1])), "\n")
+drawplots(forecast_same_month,houston,sd,ed,1)
+cat("The average of absolute value of the error of forecasting deaths with forecast_same_month is ", 
+    mean(abs(houston[sd:ed,1]-predictions(forecast_same_month,houston,sd,ed)[,1])), "\n")
+drawplots(forecast_similar_tmax,houston,sd,ed,1)
+cat("The average of absolute value of the error of forecasting deaths with forecast_similar_tmax is ", 
+    mean(abs(houston[sd:ed,1]-predictions(forecast_similar_tmax,houston,sd,ed)[,1])), "\n")
+
+# 6 plots of forecast of tmax:
+drawplots(forecast_previous,houston,sd,ed,2)
+cat("The average of absolute value of the error of forecasting tmax with forecast_previous is ", 
+    mean(abs(houston[sd:ed,2]-predictions(forecast_previous,houston,sd,ed)[,2])), "\n")
+drawplots(forecast_week_ago,houston,sd,ed,2)
+cat("The average of absolute value of the error of forecasting tmax with forecast_week_ago is ", 
+    mean(abs(houston[sd:ed,2]-predictions(forecast_week_ago,houston,sd,ed)[,2])), "\n")
+drawplots(forecast_mean,houston,sd,ed,2)
+cat("The average of absolute value of the error of forecasting tmax with forecast_mean is ", 
+    mean(abs(houston[sd:ed,2]-predictions(forecast_mean,houston,sd,ed)[,2])), "\n")
+drawplots(forecast_mean14,houston,sd,ed,2)
+cat("The average of absolute value of the error of forecasting tmax with forecast_mean14 is ", 
+    mean(abs(houston[sd:ed,2]-predictions(forecast_mean14,houston,sd,ed)[,2])), "\n")
+drawplots(forecast_same_day_of_week,houston,sd,ed,2)
+cat("The average of absolute value of the error of forecasting tmax with forecast_same_day_of_week is ", 
+    mean(abs(houston[sd:ed,2]-predictions(forecast_same_day_of_week,houston,sd,ed)[,2])), "\n")
+drawplots(forecast_same_month,houston,sd,ed,2)
+cat("The average of absolute value of the error of forecasting tmax with forecast_same_month is ", 
+    mean(abs(houston[sd:ed,2]-predictions(forecast_same_month,houston,sd,ed)[,2])), "\n")
+
+
+# problem: what's the ending date of first forecast? the end we assume
+sd1 <- sd
+sd2 <- 1700 # we define this ourselves
+predictions2 <- function(ff1,ff2,df,sd1,sd2,target) {
+  # target <- 1 if we forecast deaths
+  backup <- df
+  backup[sd1:ed,target] <- backup[sd1:ed,target]-predictions(ff1,df,sd1,ed)[,target]
+  # this time errors stay as data frame
+  predictions(ff2,backup,sd2,ed)
+}
+
+pres <- predictions2(forecast_same_month,forecast_similar_tmax,houston,sd1,sd2,1)
+true_errors <- (houston[sd1:ed,1]-predictions(forecast_same_month,houston,sd1,ed)[,1])[(sd2-sd1+1):(ed-sd1+1)]
+par(mfrow=c(2,2))
+plot(sd2:ed,true_errors,xlab="time index",
+     ylab="actual error",family="Palatino")
+plot(sd2:ed,pres[,1],xlab="time index",
+     ylab="predicted error",family="Palatino")
+plot(sd2:ed,true_errors-pres[,1],
+     xlab="time index",ylab="error of error",family="Palatino")
+plot(houston[sd2:ed,4],true_errors-pres[,1],
+     xlab="day of the year",ylab="error or error",family="Palatino")
+title(main="Plots of predictions2 on deaths",outer=T,family="Palatino")
+cat("The average of absolute value of the error of forecasting deaths with mixed forecast functions is ",
+    mean(abs(true_errors-pres[,1])), "\n")

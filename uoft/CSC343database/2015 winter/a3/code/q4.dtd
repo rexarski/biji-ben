@@ -1,0 +1,4 @@
+<!ELEMENT pairs (pair*)>
+<!ELEMENT pair EMPTY>
+<!ATTLIST pair uid1 CDATA #REQUIRED
+               uid2 CDATA #REQUIRED>

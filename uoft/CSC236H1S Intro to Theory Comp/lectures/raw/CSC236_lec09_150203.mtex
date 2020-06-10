@@ -1,0 +1,75 @@
+#Lecture 9
+
+February 3, 2015
+
+Recall: a binary tree is empty or a left binary tree and a right binary tree.
+
+Let $$ \mathbb{BT} $$ be the set of Binary Trees.
+
+_Define_ $$ l $$ on $$ \mathbb{BT} $$ by:
+
+->$$ l$$(empty) $$ = 0 $$ <-
+
+->$$ l$$(single node) $$ = 0 $$<-
+
+If $$ t \in \mathbb{BT} $$, $$ t \not =  $$ empty, $$ t \not = $$ single node, let $$ t_l $$ and $$ t_r $$ be the left and right subtree.
+
+$$ l(t) = l(t_l)+ l(t_r)$$ 
+
+note: $$ l $$ stands for the number of leaves of a given binary tree
+
+![eg](file:///Users/Rexarski/Desktop/bt.jpg)
+
+For $$ t \in \mathbb{BT}, l(t) \leqslant 2^{h(t) - 1} $$
+
+**Proof by structural induction**:
+
+BASE CASE empty
+
+->$$ l $$(empty) $$ = 0 $$  (By definition)<-
+
+->$$ \leqslant \frac{1}{2} = 2^0 = 2^{h(empty)-1} $$ (by definition of $$ h $$)<-
+
+INDUCTIVE STEP
+
+let $$ t \in \mathbb{BT} $$ with left and right subtrees $$ t_l, t_r$$
+
+_Case $$ t_l, t_r $$ are empty, i.e. $$ t $$ is single node_
+
+(IH)Assume $$ l(t_l) \leqslant 2^{h(t_l) - 1}, l(t_r) \leqslant 2^{h(t_r)-1} $$
+
+$$ l(t) = 1 $$ (by defn)
+$$ h(t) = 1 + \max(h(t_l) +h(t_r)) $$ (by defn)
+$$ =1 + \max(h(empty)+h(empty)) $$
+$$ = 1+ \max(0, 0) $$ (by defn)
+$$ = 1 $$
+$$ l(t) = 1 = 2^0 = 2^{1-1} = 2^{h(t)-1} \leqslant 2^{h(t)-1}$$
+
+_Case $$ t $$ not just a single node_ 
+
+(IH)Assume $$ l(t_l) \leqslant 2^{h(t_l) - 1}, l(t_r) \leqslant 2^{h(t_r)-1} $$
+
+$$ l(t) = l(t_r) + l(t_l) $$ (by defn)]
+$$ \leqslant 2^{h(t_l)-1} +2^{h(t_r)-1}$$ (by IH)
+$$ \leqslant 2^{\max(h(t_l), h(t_r))-1} + 2^{\max(h(t_l), h(t_r))-1} = 2\cdot 2^{\max(h(t_l), h(t_r))-1} = 2^{1+\max(h(t_l), h(t_r))-1}$$
+$$ =2^{h(t)-1} $$
+
+Let $$ \mathbb{BT} $$ be defined by:
+empty $$ \in \mathbb{BT} $$,
+if left, right $$ \in \mathbb{BT} $$, then total $$ \in \mathbb{BT} $$.
+
+$$ [P(empty), \forall left, right \in \mathbb{BT}, P(left)\land P(right) \implies P(total)] \implies \forall part \in \mathbb{BT}, P(part)$$
+
+Question: Nonempty full BTs have an odd number of nodes.
+For $$ t \in \mathbb{BT} $$, let $$ P(t) $$ be: if $$ t $$ not empty tree and $$ t $$ is full, then $$ t $$ has an odd number of nodes.
+
+Proof by structural induction:
+$$ P(empty): $$ vacuously true
+INDUCTIVE STEP:
+Let $$ t\in \mathbb{BT}$$ with left and right subtrees $$ t_l, t_r $$ 
+(IH) If $$ t_l $$ is full and not empty, then it has odd number of nodes,
+if $$ t_r $$ is full and not empty, then it has odd number of nodes.
+Assume $$ t $$ not empty and $$ t $$ is full, either $$ t_l $$ and $$ t_r $$ are both empty, or they are both not empty.
+If $$ t_l, t_r $$ are empty, $$ t $$ is just single node, so odd number nodes.
+If $$ t_l, t_r $$ are non-empty and full, then by (IH) they have an odd number of nodes.
+The number of nodes in $$ t $$ is $$ 1 +  $$ # in $$ t_l $$ + # in $$ t_r $$ is $$ 1 +  $$ odd + odd is odd

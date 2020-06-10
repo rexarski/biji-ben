@@ -1,0 +1,39 @@
+1.
+
+a)
+P	Q	R	S	T
+1	2	3	4	5
+1	2	3	4	6
+
+b)
+P	Q	R	S	T
+1	1	1	0	0
+0	1	0	0	0
+
+c)
+P	Q	R	S	T
+1	0	1	1	0
+0	0	1	1	0
+
+d)
+P	Q	R	S	T
+3	1	2	4	4
+3	1	2	4	4	
+3	1	2	4	4
+3	1	2	4	4
+
+2.
+a) B+ = BDE
+b) CF+ = ABCDEF
+c) DF+ = ADEF
+d) BC+ = BCDE
+e) ABC+ = ABCDE
+
+3.
+A+ = ACDE yields A->D
+B+ = ABCDE yields B->AD
+D+ = ACDE yields D->A
+AD+ = ACDE yields nothing 
+B already determines A and D, so no more B needed
+So the projection of the FDs onto ABD is {A->D, B->AD, D->A}
+

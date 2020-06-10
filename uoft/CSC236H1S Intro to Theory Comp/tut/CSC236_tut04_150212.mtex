@@ -1,0 +1,29 @@
+#Week 6 Tutorial - unrolling
+
+Use repeated substitution, AKA **unrolling or unwinding**, to find a closed form for $$ T(n) $$ when $$ n = 2^k $$ and $$ k \in \mathbb{N} $$.
+
+$$ T(n) = 1 $$ if $$ n=1 $$ 
+
+$$ T(n) = 1 + T(\lceil\frac{n}{2}\rceil) + T(\lfloor\frac{n}{2}\rfloor) $$ if $$ n > 1 $$
+
+Prove your closed form is correct (for the subset of natural numbers indicated) by Induction.
+
+
+**Solution**:
+
+**unrolling**:$$ T(2^k) = 1 + T(2^{k-1}) + T(2^{k-1}) = 1 + 2T(2^{k-1}) = 1 + 2(1 + 2T(2^{k-2})) = 1 + 2 + 2^2T(2^{k-2}) = 1 + 2 + 2^2 + 2^3T(2^{k-3}) $$
+$$ = ... 1 + 2 + 2^2 + ... + 2^kT(1) = 1 + 2 + 2^2 + ... + 2^k = 2^{k+1} - 1$$
+
+**Base case:** $$ k = 0, T(1) = 1 $$, $$ P(0) $$ holds.
+
+**Inductive steps:**
+(IH) assume for $$ k = m, P(m)$$ holds, and we want to show it holds for $$ P(m+1) $$.
+
+$$ T(2^m) = 2^{m+1} - 1 $$
+then $$ T(2^{m+1}) = 1 + T(2^m) + T(2^m) = 1 + 2^{m+1} - 1 + 2^{m+1} - 1 = 2\cdot2^{m+1} - 1 = 2^{m+2} - 1 $$
+
+hence $$ P(m+1) $$ holds.
+
+Therefore, conclusion...
+
+->$$ \blacksquare $$

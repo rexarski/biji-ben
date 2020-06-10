@@ -1,0 +1,28 @@
+drop schema if exists MusicService cascade;
+create schema MusicService;
+set search_path to MusicService;
+
+create table Songs (
+	sid integer primary key,
+	time time,
+	year integer,
+	title text,
+	artist text,
+	composer text,
+	album text);
+
+create table Playlists (
+	pid integer primary key,
+	foreign key (creator) references Users,
+	playcount integer);
+
+create table Users (
+	uid integer primary key,
+	dob date,
+	email text,
+	surname text,
+	givennames text,
+	follows integer,
+	foreign key (playlist) references Playlists,
+	unique(email));
+

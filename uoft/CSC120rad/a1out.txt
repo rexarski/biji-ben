@@ -1,0 +1,10 @@
+Try 1 : Total distance 15.18675 
+Try 2 : Total distance 15.18675 
+Try 3 : Total distance 15.93159 
+Try 4 : Total distance 16.27302 
+Try 5 : Total distance 16.68584 
+Try 6 : Total distance 15.93809 
+Try 7 : Total distance 16.53089 
+Try 8 : Total distance 15.76911 
+Try 9 : Total distance 16.97379 
+Try 10 : Total distance 17.3467 

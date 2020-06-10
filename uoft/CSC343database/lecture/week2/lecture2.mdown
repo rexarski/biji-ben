@@ -1,0 +1,175 @@
+#34302
+
+2015-09-22
+
+- a1 will be posted next week
+
+##questions from last week
+
+- is every key also a superkey? Yes, a key is a special type of superkeys (minimal)
+- movies schema: is there a limit to the number of directors a movie can have? Yes, but can't we add a new tuple for the same movie only with different director? Again, yes! But from the perspective of a database, it's a totally different movie, since two of them have different mID. So the conclusive answer is NO.
+
+##RA basics
+
+operands? tables
+operators? 
+
+- choose only the rows you want
+- choose only the columns you want
+- combine tables
+- and a few others...
+
+###select: choose rows
+
+- notation: `\sigma_c(R)`
+	- R is a table
+	- conidition c is a boolean expression.
+		- it can use comparison operators and boolean operators
+		- the operands are either constants or attributes of R
+
+- the result is a relation
+	- with the same schema as the operand
+	- ... only some tuples from the original relation
+
+
+> can use logical AND '^'' or literal AND 'AND' in the condition 
+
+###project: choose columns
+
+- notation: `\pi_L(R)`
+	- R is a table
+	- L is a subset of the attributes of R
+
+- The result is a relation
+	- will all the tuples from R
+	- but with only the attributes in L, and in that order
+
+- project eliminates duplicates!
+	- so `\pi_director(Movies)` gives {Kubrick, Altman, Polanski, Lucas}
+
+###Cartesian product
+
+- notation: R1 x R2
+- the result is a relation with
+	- every combination of a tuple from R1 concatenated to a tuple from R2
+	- its schema is every attribute from R1 followed by every attribute of R2, in order
+- how many tuples are in R1 x R2? |R| cardinality of R
+	- |R1| x |R2|
+- if an attribute occurs in both relations, it occurs twice in the result (prefixed by relation name), e.g. Movies.mID, Roles.mID
+
+- it can introduce nonsense tuples, can get rid of them with selects.
+
+###joins
+
+joining two relations
+
+####natural join
+
+- notation: R .X. S (the missing sign is a knot?)
+- the result is formed by:
+
+1. taking the Cartesian product
+2. select to ensure equality on attributes that are in both relations (determined by name)
+3. project after eliminating redundant columns...
+
+**special cases for natural join**
+- if no common attributes, nothing will be shown in the result
+
+**over-match**
+- natural join bases the matching on attribute names.
+- what if two attributes have the same name, but we don't want them to have to match?
+- example: "Artists" used "name", "Movies" also used "name".
+- so we need to "rename"
+- or use a Cartesian product + select ;-)
+
+**under-match**
+- two attributes don't have the same name and we do want them to match
+- example: suppose we want aName and director to match (Which artists are also directors?)
+- solution? Theta Join
+
+####Theta join
+
+- it's common to use `\sigma` to check conditions after a Cartesian product. like this: `\sigma_condition(R x S)`
+- theta join makes this easier
+- `R X_condition S`
+	- note that the notation is not a condition on natural join!
+- the result is...
+
+- the word theta has no special connotation. It is an artifact of a definition in an early paper.
+- you still have to write out the conditions, sicne they are not inferred.
+- e.g.... comments: not necessary to use prefixes here, but it's explicit to do so.
+
+
+####dangling tuples
+- if a tuple in one relation has no match in the other, natural join leaves that tuple out.
+- example schema:
+	- People(phone, name, address)
+	- Donations(phone, charity, amount, date)
+		- Phone is a foreign key referencing People.
+- what if someone has made no donations?
+- natural join leaves out those tuples, but you may want them!
+
+####outer join
+- outer join leaves those tuples in, padding them with nulls where no value actually exists.
+- three variants:
+	- left outer join: pad only left operand
+	- right outer join: pad only right operand
+	- full outer join: pad both operands
+
+
+##composing larger expressions(plus a few new operators)
+
+###assignment operator
+
+- notation: `R:= Expression`
+- alternate notation: `R(A_1, ..., A_n) := Expression`
+
+whether / how small to break things down is up to you, all for readability.
+
+it also allows us to change the names of relations (and attributes)
+
+###rename operation
+- notation `\rho_R1(R2)`
+- alternate notation: `\rho_{R1(A_1,...,A_n)}(R2)`
+- note that these are equivalent:
+	- R1(A1,...,An) := R2
+	- R1 := rho\_R1(A1,...An)(R2)
+- rho is useful if you want to rename within an expression.
+
+##Precedence
+- expressions can be composed recursively
+- make sure attributes match as you wish
+- parentheses and precedence rules define the order of evaluation
+- precedence, from highest to lowest is:
+	 - select, project, rename
+	 - cartesian product, natural join
+	 - intersection
+	 - union, difference
+
+**expression trees**
+
+
+##set operations
+
+- intersection, union, difference
+
+
+##summary of techniques for writing queries in relational algebra
+
+- approaching the problem
+	- relations, ignore the rest
+	- every time combine relations, confirm that
+		- attributes that should match will be made to match and
+		- attributes that will be made to match should match
+	- ...
+
+- break down the problem
+	 - must look one tuple at a time
+	 - intermediate relation useful?
+	 - use assignment to simplify?
+
+
+RA is procedural
+
+
+

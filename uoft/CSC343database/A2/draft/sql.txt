@@ -1,0 +1,27 @@
+"SET search_path TO artistdb"
+
+
+
+SELECT DISTINCT a2.name
+FROM Artist a1, Artist a2, Collaboration Co
+WHERE a1.name = XXXX
+AND f(a1.artist_id = Co.artist1 AND a2.artist_id = Co.artist2)
+OR (a1.artist_id = Co.artist2 AND a2.artist_id = Co,.artist1)
+
+
+
+
+
+"SET search_path TO artistdb "
++ "SELECT DISTINCT a2.name 
+   FROM Album, Artist a1, Artist a2, BelongsToAlbum bta, Song
+   WHERE a1.name = " + artist + " 
+   AND Album.artist_id = a1.artist_id
+   AND bta.album_id = Album.album_id
+   AND bta.song_id = Song.song_id
+   AND a1.artist_id <> Song.songwriter_id
+   AND a2.artist_id = Song.songwriter_id"
+
+
+
+expected: Akon

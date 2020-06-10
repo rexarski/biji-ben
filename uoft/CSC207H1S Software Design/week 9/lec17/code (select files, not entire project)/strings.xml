@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">UniversityRegistry</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="register_student">Register a student</string>
+    <string name="title_activity_launch">Launch</string>
+    <string name="first_name">First name</string>
+    <string name="last_name">Last name</string>
+    <string name="submit_text">Submit</string>
+    <string name="title_activity_display">DisplayActivity</string>
+    <string name="male_text">M</string>
+    <string name="female_text">F</string>
+    <string name="date_format">DDMMYYYY</string>
+    <string name="student_num_text">Student number</string>
+    <string name="newly_registered"></string>
+
+</resources>

@@ -1,0 +1,5 @@
+\relax 
+\@writefile{toc}{\contentsline {section}{\numberline {1}What I wrote}{1}}
+\@writefile{lol}{\contentsline {lstlisting}{]}{1}}
+\@writefile{toc}{\contentsline {section}{\numberline {2}what to test}{1}}
+\@writefile{toc}{\contentsline {section}{\numberline {3}results}{1}}
