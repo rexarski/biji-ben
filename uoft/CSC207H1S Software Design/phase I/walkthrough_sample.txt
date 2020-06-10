@@ -1,0 +1,10 @@
+Scenario: Reviewer writes a review.
+
+0) System: addReview
+   given Reviewer, thumbsUP, comment, and Restaurant.
+1) Reviewer: writeReview
+   given thumbsUP, comment, and Restaurant.
+2) Review: Create a Review object
+   given thumbsUP, comment, and Reviewer.
+3) Restaurant: addReview
+   given Review 

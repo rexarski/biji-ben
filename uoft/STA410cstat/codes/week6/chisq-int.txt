@@ -1,0 +1,30 @@
+# Demo of multivariate integration using nested univariate integration.
+#
+# Finds the probability that two independent standard normal random
+# variables, x and y, will have the sum of their squares be less than
+# one.  Do do this, we integrate the normal density over the interior
+# of a circle with radius one, centred at the origin.
+
+# Inner integral, over y from -sqrt(1-x^2) to +sqrt(1-x^2).  Note that
+# the x passed may be a vector of values, not just a single number, and
+# we need to return a vector of function values (the normal densities)
+# at all these x values.
+
+int1 <- function (x) {
+  r <- numeric(length(x))
+  for (i in 1:length(x))
+    r[i] <- integrate (function(y) dnorm(x[i])*dnorm(y),
+                       -sqrt(1-x[i]^2), +sqrt(1-x[i]^2)) $ value
+  r
+}
+
+# Outer integral, integrating the inner integral over x from -1 to 1.
+
+int2 <- function () 
+  integrate(int1,-1,1) $ value
+
+# Do it, and compare to the exact value, which is the probability that a
+# chi-squared(2) random value will be less than one, which is 1-exp(-1/2).
+
+options(digits=17)
+print(rbind(int2(),1-exp(-1/2)))

@@ -1,0 +1,83 @@
+Starting SAT-based planner...
+Checking for plugins...
+Encodings registered:    3
+Solvers registered:      1
+Command line options:
+    Domain file:          benchmarks/miconic/domain.pddl
+    Problem file:         benchmarks/miconic/problem07.pddl
+    Experiment name:      miconic
+    Query strategy:        ramp, min_h = 15 max_h = 55 step_h = 6
+    Compute plangraph:     False
+    Plangraph constraints: both
+    Encoding:              basic
+    Solver                 precosat
+    SAT solver time out    None
+    Write debug CNF:       False
+    Remove tmp files:      True
+Command line arg processing time: 0.0020818710327148438
+Parsing the PDDL domain...
+Parsing the PDDL problem...
+Simplifying the problem representation...
+Parsing time: 0.09090518951416016
+Grounding the problem...
+Grounding time: 0.03141331672668457
+Simplifying the ground encoding...
+Simplify time: 0.008859395980834961
+Planning...
+
+Step: 15
+-------------------------------------------------
+Generating base encoding: basic ...
+Encoding generation time: 4.846904277801514
+Writing CNF file...
+Total variables: 3388
+Total clauses: 29015
+Writing time: 0.05603361129760742
+Solving...
+UNSAT
+Solution time:  16.408323049545288
+Step time: 21.323662519454956
+
+Step: 21
+-------------------------------------------------
+Generating base encoding: basic ...
+Encoding generation time: 9.532856225967407
+Writing CNF file...
+Total variables: 4732
+Total clauses: 40607
+Writing time: 0.07598114013671875
+Solving...
+SAT
+Solution time:  12.606703996658325
+Extracting the plan...
+Plan:
+0: up f0 f1
+1: board f1 p0
+2: board f1 p2
+2: board f1 p4
+3: up f1 f4
+4: depart f4 p0
+5: up f4 f9
+6: board f9 p1
+7: down f9 f6
+8: board f6 p6
+9: up f6 f11
+10: depart f11 p6
+11: down f11 f3
+12: up f3 f10
+13: board f10 p3
+14: down f10 f2
+15: board f2 p5
+15: depart f2 p3
+16: up f2 f3
+17: depart f3 p2
+17: depart f3 p4
+18: up f3 f6
+19: down f6 f5
+20: depart f5 p1
+20: depart f5 p5
+Simulating plan for validation.
+Plan valid. 25 actions.
+Step time: 22.22789478302002
+Total time: 43.69516730308533
+

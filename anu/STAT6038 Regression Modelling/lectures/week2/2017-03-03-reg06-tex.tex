@@ -1,0 +1,47 @@
+\documentclass[a4paper, 11pt, twoside]{article}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\begin{document}
+2017-03-03\\
+
+\subsection{Hypothesis Test}
+
+\begin{enumerate}
+	\item Step I (Specify hypotheses)\\ 
+		$H_0: \beta_1 = 0$ which is a specific hypothesis\\ 
+		$H_A: \beta_1 > 0$ however, is a general hypothesis.
+	\item Step II (Test statistics)\\
+		Estimated value $\hat{\beta_1}$.\\
+		And under $H_0$, $E[\beta_1|H_0]$ is $0$. \\
+		So the \[\frac{\hat{\beta_1} - E[\beta_1|H_0]}{\hat{se}(\hat{\beta_1})}\sim t_{n-2}\]
+		is the standardized test statistics, where \[\hat{se}(\hat{\beta_1}) = \sqrt{\frac{\hat{\sigma}^2}{s_{xx}}}=\frac{\hat{\sigma}}{\sqrt{s_{xx}}}\]
+	\item Step III (Decision rule)\\
+		Reject $H_0$ at $\alpha=0.05$ if observed test statistic $> t_{n-2=136, 0.95}=1.66$\\
+		Note that $0.95=1-\alpha$
+	\item Step IV (Calculations)\\
+		Observed test statistic
+		\[t=\frac{\hat{\beta_1}-0}{\hat{se}(\hat{\beta_1})}=\frac{0.007045-0}{\sqrt{\frac{\hat{\sigma}^2}{s_{xx}}}} = \frac{0.007045}{\sqrt{0.0259/218994.5}} = 20.48\]
+	\item Step V (Conclusion)\\
+		As $20.48 \gg 1.66$, reject $H_0$ in favour of $H_A$ and conclude $\beta_1>0.$\\
+		So the slope of the linear regression model relating average temperature anomalies(?) to year (time) is significantly positive $\implies$ temperatures have been increasing over time!\\
+\end{enumerate}
+
+Finally, ew need to assess the analysis and the results
+
+\begin{itemize}
+	\item Is the data we used the best available to address the research question?\\ 
+		(issue of the science)
+	\item Is the model a good fit?\\
+		(is the model not only appropriate, but also useful?)\\
+		\[R^2 = \frac{SS_{Regression}}{SS_{Total}}=75.5\%\] is the coefficient of determination.\\
+		Just a summary measure! better answer is look at the assumptions underlying the model and check if they are satisfied. \\
+		Check the residual plots (here that means we still have a caveat!
+		\begin{itemize}
+			\item (!) Linear models just address association (correlation), they do not necessarily reflect causation (no measure of possible causal factors in these data).
+			\item (!) Also this analysis does not necessarily rule out alternative explanations.\\
+				Like time series (seasonal trend maybe?)
+		\end{itemize}
+\end{itemize}
+
+In summary, model and analysis are indicative of a positive (association), an increase in global av. temp over time, but the research question is wider than that and we need to do further research (more data, more analysis).
+\end{document}

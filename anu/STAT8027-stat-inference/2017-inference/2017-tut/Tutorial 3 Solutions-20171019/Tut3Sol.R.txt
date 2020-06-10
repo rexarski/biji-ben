@@ -1,0 +1,52 @@
+## ------------------------------------------------------------------------
+set.seed(1001)
+n <- 100
+x <- runif(n)
+
+Var.mc <- (1/n^2)*( sum( cos(2*pi*x)^2 ) - (1/n)*( sum(cos(2*pi*x)) )^2)
+Var.mc
+0.5/n
+abs(0.5/n - Var.mc)
+
+## ------------------------------------------------------------------------
+set.seed(1001)
+n <- 1000
+x <- runif(n)
+
+Var.mc <- (1/n^2)*( sum( cos(2*pi*x)^2 ) - (1/n)*( sum(cos(2*pi*x)) )^2)
+Var.mc
+0.5/n
+abs(0.5/n - Var.mc)
+
+## ------------------------------------------------------------------------
+set.seed(1001)
+n <- 10000
+x <- rexp(n, rate=1/25)  # the true mean is 25
+mean(x)
+
+I.f.samples <- x^2 * cos(x^2)
+I.f.hat <- mean(I.f.samples)
+I.f.hat
+
+## ------------------------------------------------------------------------
+u <- seq(0, 1, by=0.001)
+plot( log(u/(1-u)), u, type="l", lwd=3)
+
+## ------------------------------------------------------------------------
+set.seed(1001)
+S <- 25000
+mu <- 3
+beta <- 2 
+
+
+## empirical 
+u <- runif(S, 0, 1)
+y <- beta* log( u/(1-u) ) + mu
+plot(density(y), type="l", col="blue", lwd=3, 
+     main="Blue = empirical, Red=analytical")
+
+## analytical 
+y.an <- seq(-15, 15 , by=0.01)
+f.y.an <- (1/beta)*( exp( - (y.an - mu)/beta )/ ( 1 + exp( - (y.an - mu)/beta ))^2 )
+lines(y.an, f.y.an, col="red", lwd=3)
+

@@ -1,0 +1,62 @@
+forecast_previous <- function(df,index) {
+  # input index is the ordinal date of our data frame, for example,
+  # the index of "1994-01-05" is 5.
+  res <- c(0,0)
+  res[1] <- df[index-1,1]
+  res[2] <- df[index-1,2]
+  res # note that the output is a vector, and we want to stick with the vector form
+}
+
+forecast_week_ago <- function(df,index) {
+  res <- c(0,0)
+  res[1] <- df[index-7,1]
+  res[2] <- df[index-7,2]
+  res
+}
+
+forecast_mean <- function(df,index) {
+  res <- c(0,0)
+  res[1] <- mean(df[1:index-1,1])
+  res[2] <- mean(df[1:index-1,2])
+  res
+}
+
+forecast_mean14 <- function(df,index) {
+  res <- c(0,0)
+  res[1] <- mean(df[(index-14):(index-1),1])
+  res[2] <- mean(df[(index-14):(index-1),2])
+  res
+}
+
+forecast_same_day_of_week <- function(df,index) {
+  res <- c(0,0)
+  res[1] <- mean(df[1:index-1,][df[1:index-1,]$day_of_week==df[index,3],1])
+  res[2] <- mean(df[1:index-1,][df[1:index-1,]$day_of_week==df[index,3],2])
+  res
+}
+
+forecast_same_month <- function(df,index) {
+  res <- c(0,0)
+  res[1] <- mean(df[1:index-1,][df[1:index-1,]$month==df[index,5],1])
+  res[2] <- mean(df[1:index-1,][df[1:index-1,]$month==df[index,5],2])
+  res
+}
+
+forecast_similar_tmax <- function(df,index) {
+  res <- c(0,NA)
+  res[1] <- mean(df[1:index-1,][abs(df[1:index-1,]$tmax-df[index,2])<=4,1])
+  res
+}
+
+predictions <- function(ff,df,sd,ed) {
+  # ff: certain forecast function
+  # df: date frame to be operated on
+  # sd: starting date ordinal index
+  # ed: end date ordinal index
+  fres <- matrix(0,nrow=ed-sd+1,ncol=2) # this is where we store forecasts
+  for (i in sd:ed) {
+    fres[i-sd+1,1] <- ff(df,i)[1]
+    fres[i-sd+1,2] <- ff(df,i)[2]
+  }
+  fres
+}

@@ -1,0 +1,44 @@
+---
+title: "tutnotes4"
+output:
+  notebook
+  html_document:
+    df_print: paged
+---
+
+# Q1
+
+Treating number of bedrooms as categorical variables instead of continuous variable is to treat the estimate difference between each type of `Bedroom` are the same.
+
+(a) Check diagnostic plots $\implies$ check unusual observations
+```{r}
+house <- read.table("House.txt",header=T)
+attach(house)
+house.lm <- lm(Price~ Age + Taxes + LotSize + LivingSpace + factor(Bedrooms), data=house)
+anova(house.lm)
+plot(house.lm, which = 1) # house 9, 10 stand out
+plot(house.lm, which = 2)
+plot(house.lm, which = 5) # house 27 might be influential
+# now we can refit the data without house 27
+house.lm1 <- lm(Price~ Age + Taxes + LotSize + LivingSpace + factor(Bedrooms), data=house[-27,])
+```
+
+(b) expected difference in price
+
+\[H_0:\ 1\cdot\hat{\mu}_{\text{4-bed}}+(-1)\cdot\hat{\mu}_{\text{3-bed}}=0\]
+
+design matrix \[X=(1,\text{Age},\text{Taxes},\text{LivingSpace},\text{LotSize},\text{Bedrooms}\]
+
+the contrast coefficients look like:
+
+\[h^T=(0,0,0,0,0,-1,1,0)\]
+
+where the last three are levels of `Bedrooms`.
+
+T-test:
+
+\[TS=\frac{h^T\hat{\beta}}{\hat{\sigma}\sqrt{h^T(X^TX)^{-1}h}}\]
+
+where $\hat{\sigma}$ is the square root of MSE.
+
+\[CI=\mu^T\hat{\beta}\pm t\cdot \hat{\sigma}\sqrt{h^T(X^TX)^{-1}h}\]

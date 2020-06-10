@@ -1,0 +1,129 @@
+Python 2.7.2 (v2.7.2:8527427914a2, Jun 11 2011, 14:13:39) 
+[GCC 4.0.1 (Apple Inc. build 5493)]
+Type "help", "copyright", "credits" or "license" for more information.
+>>> x = 45
+>>> measurement1 = 45.27
+>>> measurement2 = 45.26
+>>> measurement3 = 45.24
+>>> measurements = [45.27, 45.26, 45.24]    # Type list
+measurements
+>>> [45.27, 45.26, 45.24]
+>>> measurements[0]    # element at position 0
+45.27
+>>> measurements[1]
+45.26
+>>> measurements[2]
+45.24
+>>> measurements[3]
+Traceback (most recent call last):
+  File "<string>", line 1, in <fragment>
+IndexError: list index out of range
+>>> instructors = ['Andrew', 'Anna', 'Steve']
+>>> student = ['Jon Reed', 'Trinity College', 123456789, 3.45]
+>>> s = 'hello'
+>>> s[0] = 'j'    # strs are immutable
+Traceback (most recent call last):
+  File "<string>", line 1, in <fragment>
+TypeError: 'str' object does not support item assignment
+>>> instructors
+['Andrew', 'Anna', 'Steve']
+>>> instructors[2] = 'Diane'  # lists are mutable
+>>> instructors
+['Andrew', 'Anna', 'Diane']
+>>> help(id)
+Help on built-in function id in module __builtin__:
+
+id(...)
+    id(object) -> integer
+    
+    Return the identity of an object.  This is guaranteed to be unique among
+    simultaneously existing objects.  (Hint: it's the object's memory address.)
+>>> id(instructors)
+5498240
+>>> id(instructors[0]) 
+17220992
+>>> id(instructors[1])
+17221024
+>>> id(instructors[2])
+17221792
+>>> instructors[2] = 'Karen'
+>>> id(instructors[2])
+17220864
+>>> instructors.append('Paul')
+>>> instructors
+['Andrew', 'Anna', 'Karen', 'Paul']
+
+
+>>> # Aliasing with immutable types
+>>> a = 19
+>>> b = a
+>>> print a, b  # a and b are two names for the same object
+19 19
+>>> print id(a), id(b)
+9285296 9285296
+>>> a = 12
+>>> print a, b    # changing a does not change b; a refers to a different int
+12 19
+>>> print id(a), id(b)
+9285380 9285296
+
+>>> # Aliasing with mutable types
+>>> a = [1, 2, 3]
+>>> b = a
+>>> print a, b  # a and b are two names for the same object
+[1, 2, 3] [1, 2, 3]
+>>> print id(a), id(b)
+17233600 17233600
+>>> a[0] = 10
+>>> print a, b        # a and b still refer to the same list as each other;  the list items change
+[10, 2, 3] [10, 2, 3]
+>>> print id(a), id(b)
+17233600 17233600
+>>> print a
+[10, 2, 3]
+>>> b[1] = 5
+>>> print a, b
+[10, 5, 3] [10, 5, 3]
+
+[evaluate mutable_parameters.py]
+[68.4, 45.3, 63.2]
+# data and values are two names for the same list.
+# Lots of pictures on the board.
+
+>>> # List functions
+>>> instructors
+['Andrew', 'Anna', 'Karen', 'Paul']
+>>> len(instructors)
+4
+>>> instructors[0]
+'Andrew'
+>>> instructors[3]
+'Paul'
+>>> instructors[len(instructors) - 1]   # get the last element of the list
+'Paul'
+>>> measurements
+[45.27, 45.26, 45.24]
+>>> min(measurements)
+45.24
+>>> max(measurements)
+45.27
+>>> sum(measurements)
+135.77
+>>> min(23, 45)
+23
+>>> min("Hi, class!")
+' '
+>>> min("abcde")
+'a'
+>>> sum("abced")
+Traceback (most recent call last):
+  File "<string>", line 1, in <fragment>
+TypeError: unsupported operand type(s) for +: 'int' and 'str'
+>>> min("Hi,class!")
+'!'
+>>> min("Hi,class")
+','
+>>> min("Hiclass")
+'H'
+>>> min("iclass")
+'a'

@@ -1,0 +1,72 @@
+---
+title: "Limiting spectral distributions"
+output:
+  html_document:
+---
+
+First, we load some packages.
+```{r}
+library(Matrix)   # matrix operations
+library(MASS)     # Multivariate Normal Distribution
+```
+
+
+Sample a covariance based on $\mathbb{S}_n = \frac{1}{n} \mathbb{X} \mathbb{X^*}$ where $\mathbb{X}$ is a $p \times n$ matrix with Gaussian entries with mean zero and variance 1. This gives a matrix $\mathbb{S}_n$ of size $p\times p$.
+
+```{r}
+p <- 50
+n <- 500
+X <- matrix(rnorm(p*n), p, n)
+Sn <- X %*% t(X) / n
+dim(Sn)
+```
+
+Calculate the ratio $y=p/n$
+```{r}
+p/n
+```
+
+Calculate the eigenvalues.
+```{r}
+e<-eigen(Sn)
+L<-e$values
+```
+
+We have $p$ eigenvalues.
+
+```{r}
+length(L)
+```
+
+Print out the eigenvalues, notice that are all real numbers.
+```{r}
+L
+```
+
+Draw a horizontal line at every eigenvalue.
+```{r}
+plot(c(0,1.5*max(L)), c(0,1), type='n', xlab='x', ylab='')
+abline(v=L, col=2)
+```
+
+```{r}
+F_ <- function(x) {
+  total <- 0.
+  for (i in 1:p) {
+    if (L[i] <= x) {
+      total <- total + 1
+    }
+  }
+  return (total/p)
+}
+F <- Vectorize(F_)
+```
+
+```{r}
+plot(F, from=0., to=2*max(L), main="Empirical CDF")
+```
+
+Plot a histogram of the eigenvalues.
+```{r}
+hist(L, breaks=p/3, xlim=c(0,1.2*max(L)), freq=FALSE, col=1, main='')
+```

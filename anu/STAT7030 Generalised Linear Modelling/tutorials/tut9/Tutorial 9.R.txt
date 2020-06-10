@@ -1,0 +1,90 @@
+# STAT3015/STAT7030 GLMs
+# R command file for Tutorial 9
+
+# read in data
+leuk <- read.table("Leuk.txt", header=TRUE)
+attach(leuk)
+names(leuk)
+
+# Question 1
+# (a)
+leuk.glm <- glm(surv ~ log(wbc), family = Gamma(link = log))
+par(pty = "s") # generates a square plotting region
+# par(pty = "m") # generates the maximal plotting region
+par(mfrow = c(1, 2))
+
+plot(leuk.glm$linear.predictors, residuals(leuk.glm),
+     xlab=expression(hat(eta)), ylab="Deviance residuals")
+plot(leuk.glm$linear.predictors, residuals(leuk.glm), type="n",
+     xlab=expression(hat(eta)), ylab="Deviance residuals")
+points(leuk.glm$linear.predictors[ag==1], residuals(leuk.glm)[ag==1], pch="+")
+points(leuk.glm$linear.predictors[ag==2], residuals(leuk.glm)[ag==2], pch="-", col=2)
+
+# alternatively, we can do the plotting as 
+# plot(residuals(leuk.glm)~predict(leuk.glm, type="link"),
+#      xlab=expression(hat(eta)), ylab="Deviance residuals")
+# plot(residuals(leuk.glm)~predict(leuk.glm, type="link"), type="n",
+#      xlab=expression(hat(eta)), ylab="Deviance residuals")
+# points(predict(leuk.glm, type="link")[ag==1], residuals(leuk.glm)[ag==1],
+#      pch="+")
+# points(predict(leuk.glm, type="link")[ag==2], residuals(leuk.glm)[ag==2],
+#      pch="-", col=2)
+
+# (b)
+ag.ind <- ifelse(ag == 2, 1, 0)
+leuk.glm1 <- glm(surv ~ log(wbc) + ag.ind, family = Gamma(link = log))
+anova(leuk.glm1, test = "Chisq")
+# check dispersion 
+summary(leuk.glm1)$dispersion
+# check model coefficient
+summary(leuk.glm1)$coef  
+2*(1-pt(2.794474, leuk.glm1$df.res)) # reproduce the t-test
+# making plots of deviance residuals
+par(pty="s")
+par(mfrow=c(1, 2))
+plot(residuals(leuk.glm1)~predict(leuk.glm1, type="link"),
+  xlab=expression(hat(eta)), ylab="Deviance residuals")
+plot(residuals(leuk.glm1)~predict(leuk.glm1, type="link"), type="n",
+  xlab=expression(hat(eta)), ylab="Deviance residuals")
+points(predict(leuk.glm1, type="link")[ag==1], residuals(leuk.glm1)[ag==1], pch="+")
+points(predict(leuk.glm1, type="link")[ag==2], residuals(leuk.glm1)[ag==2],
+  pch="-", col=2)
+
+# (c) a simply method to include interaction term
+leuk.glm2 <- glm(surv ~ log(wbc)*agind, family = Gamma(link = log))
+anova(leuk.glm2, test = "Chisq")
+
+# Question 2
+# (a)
+trns <- read.table("Transaction.txt", header = TRUE)
+attach(trns)
+names(trns)  
+trns.reg <- lm(Time ~ Type1 + Type2)
+summary(trns.reg)$coef
+
+par(mfrow = c(2, 2))
+plot(trns.reg)
+
+# (b)
+trns.glm <- glm(Time ~ Type1 + Type2, family = Gamma(link = identity))
+summary(trns.glm)$coef
+par(mfrow=c(1, 1))
+plot(trns.glm$linear.predictors, residuals(trns.glm),
+     xlab=expression(hat(eta)), ylab="Deviance residuals")
+
+trns.glm1 <- glm(Time ~ Type1 + Type2-1, family = Gamma(link = identity))
+# refit the model without intercept
+
+# (c)
+summary(trns.glm1)$coef # beta hat
+summary(trns.glm1)$dispersion # phi hat
+
+cf <- coef(trns.glm1)
+est <- cf[1]/(cf[1]+cf[2])
+dh <- c(cf[2],-cf[1])/((cf[1]+cf[2])^2)
+sd <- sqrt(summary(trns.glm1)$dispersion)
+sd <- sd*sqrt(t(dh)%*%summary(trns.glm1)$cov.unscaled%*%dh)
+upper <- est + qt(0.975,259)*sd
+lower <- est - qt(0.975,259)*sd
+as.vector(c(lower, est, upper))
+

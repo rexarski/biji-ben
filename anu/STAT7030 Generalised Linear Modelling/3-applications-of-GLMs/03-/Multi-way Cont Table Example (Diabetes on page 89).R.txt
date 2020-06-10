@@ -1,0 +1,255 @@
+# The following R code is a modified version of the code shown on pages 90 & 91 of the brick
+# and is used to analyse the insulin dependence and diabetes data described on page 89.
+
+yijk <- array(0, c(2,2,2), dimnames=list(c("<45yo",">=45yo"),c("ins.yes","ins.no"),c("hist.yes","hist.no")))
+yijk[,,1] <- matrix(c(6,6,1,36),ncol=2)
+yijk[,,2] <- matrix(c(16,8,2,48),ncol=2)
+yijk
+
+agetot <- apply(yijk,1,sum)
+agetot
+instot <- apply(yijk,2,sum)
+instot
+histtot <- apply(yijk,3,sum)
+histtot
+tot <- sum(yijk)
+tot
+
+# Expected values under the assumption of 3-way independence of the three variables:
+
+eijk <- array(0, c(2,2,2), dimnames=list(c("<45yo",">=45yo"),c("ins.yes","ins.no"),c("hist.yes","hist.no")))
+eijk[,,1] <- histtot[1]*agetot %*% t(instot) / (tot^2)
+eijk[,,2] <- histtot[2]*agetot %*% t(instot) / (tot^2)
+eijk
+ 
+prsd <- (yijk - eijk)/sqrt(eijk)
+prsd
+
+# Each of these Pearson residuals can be used to calculate a individual Pearson Chi-square statistic on 1 df:
+
+prsd^2
+qchisq(0.95, 1)
+
+# However, as we have constrained everything to add up to the row, column, sub-table and overall totals,
+# and there are I=2 rows, J=2 columns and K=2 sub-tables, so there are IJK = 8 observations and 
+# the total degrees of freedom are:
+# IJK - (I-1) - (J-1) - (K-1) - 1  
+
+df <- 8-(2-1)-(2-1)-(2-1)-1
+df
+sum(prsd^2)
+1-pchisq(sum(prsd^2), df)
+
+# So history, age and insulin are not all independent of each other.
+
+# Now to test whether history is independent of both age and insulin, we collapse the 3-way table over history: 
+
+aitot <- apply(yijk,c(1,2),sum)
+aitot
+
+# The expected values for this assumption of conditional independence are now calulated based on these
+# "age by insulin" totals (which by inspection, you may note suggest a strong relationship between age and insulin - 
+# more on this relationship later): 
+
+eijk12 <- array(0, c(2,2,2), dimnames=list(c("<45yo",">=45yo"),c("ins.yes","ins.no"),c("hist.yes","hist.no")))
+eijk12[,,1] <- histtot[1]*aitot/tot
+eijk12[,,2] <- histtot[2]*aitot/tot
+eijk12
+
+# In calculating the expected values, we have essentially added an age * insulin interaction term to our previous model,
+# so the degrees of freedom are now:
+# IJK - (I-1) - (J-1) - (K-1) - 1 - (J-1)(K-1) = IJK - JK - I + 1
+
+pres12 <- (yijk-eijk12)/sqrt(eijk12)
+pres12
+pres12^2
+df <- 8-4-2+1
+df
+c(sum(pres12^2), 1-pchisq(sum(pres12^2),df))
+
+# So age and insulin are both independent of history, suggesting that the lack of 3-way independence in the first analysis
+# is due to a relationship between age of onset and insulin dependence!
+
+# Similarly, is insulin independent of both age and history? 
+
+ahtot <- apply(yijk,c(1,3),sum)
+ahtot
+
+eijk13 <- array(0, c(2,2,2), dimnames=list(c("<45yo",">=45yo"),c("ins.yes","ins.no"),c("hist.yes","hist.no")))
+eijk13[,1,] <- instot[1]*ahtot/tot
+eijk13[,2,] <- instot[2]*ahtot/tot
+eijk13
+
+pres13 <- (yijk-eijk13)/sqrt(eijk13)
+pres13
+pres13^2
+c(sum(pres13^2), 1-pchisq(sum(pres13^2),df))
+
+# The answer is no, insulin is not independent of both age and history (because there is a strong relationship
+# between age and insulin)
+
+# Finally, is age independent of both insulin and history?
+
+ihtot <- apply(yijk,c(2,3),sum)
+ihtot
+
+eijk23 <- array(0, c(2,2,2), dimnames=list(c("<45yo",">=45yo"),c("ins.yes","ins.no"),c("hist.yes","hist.no")))
+eijk23[1,,] <- agetot[1]*ihtot/tot
+eijk23[2,,] <- agetot[2]*ihtot/tot
+eijk23
+
+pres23 <- (yijk-eijk23)/sqrt(eijk23)
+pres23
+pres23^2
+c(sum(pres23^2), 1-pchisq(sum(pres23^2),df))
+
+# The answer is again no, age is not independent of both insulin and history (because there is a strong relationship
+# between age and insulin)
+
+# However, because age and insulin were both independent of history, we could collapse over history and use the
+# simpler collapsed table to examine the relationship between age and insulin:
+
+aitot
+
+# With marginal totals:
+
+agetot
+instot
+tot
+
+# So, as per the discussion at the bottom of page 91 of the brick, 22/25 or 88% of the early onset diabetics (age <45yo) 
+# are insulin dependent (ins.yes), whilst only 14/98 or 14% of the late onset diabetics (age >=45yo) are insulin dependent.
+
+# Expected values assuming independence:
+
+eij <- agetot %*% t(instot)/tot
+eij
+
+pres <- (aitot - eij)/sqrt(eij)
+pres
+pres^2
+df <- 4-(2-1)-(2-1)-1
+df
+sum(pres^2)
+1-pchisq(sum(pres^2), df)
+
+# Or to use the likelihood ratio statistic:
+
+aicounts <- as.vector(aitot)
+likelihoodratioG2 <- 2 * sum(aitot * log(aitot/eij))
+likelihoodratioG2
+1 - pchisq(likelihoodratioG2, df)
+
+# To test the independence of pairs of factors, an alternative (to the version shown on page 91 of the brick)
+# is to model the data using a Poisson GLM, but first we need to reorganise the data
+
+diabetes <- as.vector(yijk)
+history <- c(rep("Yes",4), rep("No",4))
+age <- rep(c("<45yo", ">=45yo"),4)
+insulin <- rep(c("Yes", "Yes", "No", "No"),2)
+
+data.frame(diabetes, history, age, insulin)
+yijk
+
+diabetes.glm <- glm(diabetes ~ history*age*insulin, family=poisson)
+anova(diabetes.glm, test="Chisq")
+
+# There is a significant interaction term between age and insulin, but the interactions between history and the
+# other variables are not significant!
+
+# Note that the test we performed above for 3-way independence is equivalent to assuming that the three-way 
+# interaction and all three two-way interactions are all equal to zero:
+
+diabetes.glm1 <- glm(diabetes ~ history + age + insulin, family=poisson)
+anova(diabetes.glm1, test="Chisq")
+residuals(diabetes.glm1, type="pearson")
+
+# Compare the Pearson residuals from this latest model with the residuals from the first test:
+
+prsd
+
+# The equivalent of the collapsed test (collapsing over history) then involves adding back into the model the important
+# two-way interaction term (and ignoring the history main effect): 
+
+diabetes.glm2 <- glm(diabetes ~ age*insulin, family=poisson)
+anova(diabetes.glm2, test="Chisq")
+
+# The change in deviance associated with this interaction term is the same as the likelihood ratio statistic we
+# calculated above:
+
+likelihoodratioG2
+
+# This latest model is also a reasonable fit to the data:
+
+plot(diabetes.glm2)
+
+# Even though the residual deviance for the model suggests possible over-dispersion:
+
+deviance(diabetes.glm2)
+diabetes.glm2$df.residual
+deviance(diabetes.glm2)/diabetes.glm2$df.residual
+
+# But this is not significant over-dispersion (even using a more powerful 1-tailed test):
+
+deviance(diabetes.glm2)
+c(qchisq(0.025, diabetes.glm2$df.residual), qchisq(0.975, diabetes.glm2$df.residual))
+qchisq(0.95, diabetes.glm2$df.residual)
+1-pchisq(deviance(diabetes.glm2), diabetes.glm2$df.residual)
+
+# Note an even better Poisson GLM is found by still fixing the history totals by including a history main effect
+# (which was significant in the full model diabetes.glm, but which has been excluded from diabetes.glm2), however
+# this model does not correspond to any of the models actually fitted in the brick:
+
+diabetes.glm3 <- glm(diabetes ~ history + age*insulin, family=poisson)
+anova(diabetes.glm3, test="Chisq")
+
+# This is slightly, but definitely not significantly under-dispersed:
+
+deviance(diabetes.glm3)/diabetes.glm3$df.residual
+
+deviance(diabetes.glm3)
+c(qchisq(0.025, diabetes.glm3$df.residual), qchisq(0.975, diabetes.glm3$df.residual))
+
+# And the plots look as good as can be expected:
+
+plot(diabetes.glm3)
+
+# Finally, note that collapsing the table over either age or insulin could be a mistake: 
+ 
+ihtot
+instot
+histtot
+tot
+
+eij <- histtot %*% t(instot)/tot
+dimnames(eij)[[1]] <- names(histtot)
+eij
+
+pres <- (ihtot - eij)/sqrt(eij)
+pres
+pres^2
+df <- 4-(2-1)-(2-1)-1
+df
+sum(pres^2)
+1-pchisq(sum(pres^2), df)
+
+# So, collapsing over age would lead us to incorrectly conclude there is an association between insulin and history!
+
+ahtot
+agetot
+histtot
+tot
+
+eij <- agetot %*% t(histtot)/tot
+dimnames(eij)[[1]] <- names(agetot)
+eij
+
+pres <- (ahtot - eij)/sqrt(eij)
+pres
+pres^2
+df <- 4-(2-1)-(2-1)-1
+df
+sum(pres^2)
+1-pchisq(sum(pres^2), df)
+
+# Though collapsing over insulin would not lead us to conclude there is an association between age and history!

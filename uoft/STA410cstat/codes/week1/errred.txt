@@ -1,0 +1,69 @@
+# Plot how error when estimating the population mean from the sample mean 
+# is reduced as the sample size increases.  Arguments:
+#
+#    sizes    a vector of sample sizes
+#    gen      a function to generate from the population distribution
+#    repl     number of replicated samples to plot errors for
+#    ...      zero or more arguments to pass to 'plot'
+
+plot_error_reduction <- function (sizes, gen, repl, ...) {
+
+    # Allocate a matrix to store the estimates for each sample size (columns)
+    # and replication (rows).
+
+    means <- matrix(nrow=repl,ncol=length(sizes))
+
+    # Generate estimates for each sample size.
+
+    for (i in 1:length(sizes)) {
+        n <- sizes[i]  # n is the size of the sample
+        # Generate 'repl' samples, and find the estimate from each
+        for (r in 1:repl) 
+            means[r,i] <- mean(gen(n))
+    }
+
+    # Plot the estimates for each sample size vertically, with horizontal
+    # position given by the sample size.
+
+    plot(rep(sizes,each=repl), means, xlab="sample size", ylab="estimates", ...)
+}
+
+
+set.seed(1)  # So we can reproduce the results.
+
+
+# Try it out for a standard normal distribution.
+
+plot_error_reduction (c(10,20,30,40), rnorm, 50)
+abline(h=0)
+
+plot_error_reduction (c(10,100,1000,10000), rnorm, 50, log="x")
+abline(h=0)
+
+
+# Try it out for a gamma(0.05) distribution.
+
+plot_error_reduction (c(10,100,1000,10000), 
+                      function (n) rgamma(n,0.05), 
+                      50, log="x");
+abline(h=0.05)
+
+
+# Try it out for a t(3) distribution.
+
+plot_error_reduction (c(10,100,1000,10000), 
+                      function (n) rt(n,3), 
+                      50, log="x");
+abline(h=0)
+
+
+# Try it out for a t(1) distribution.
+
+plot_error_reduction (c(10,100,1000,10000), 
+                      function (n) rt(n,1), 
+                      50, log="x", ylim=c(-20,20));
+abline(h=0)
+
+# Surprisingly, for the t(1) - aka, Cauchy - distribution, the sample
+# mean of any number of independent points has the same distribution as
+# a single point!

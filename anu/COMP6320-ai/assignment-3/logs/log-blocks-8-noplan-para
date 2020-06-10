@@ -1,0 +1,88 @@
+Starting SAT-based planner...
+Checking for plugins...
+Encodings registered:    3
+Solvers registered:      1
+Command line options:
+    Domain file:          benchmarks/blocks/domain.pddl
+    Problem file:         benchmarks/blocks/problem08.pddl
+    Experiment name:      blocks_temp
+    Query strategy:        ramp, min_h = 15 max_h = 50 step_h = 5
+    Compute plangraph:     False
+    Plangraph constraints: both
+    Encoding:              basic
+    Solver                 precosat
+    SAT solver time out    None
+    Write debug CNF:       False
+    Remove tmp files:      False
+Command line arg processing time: 0.001705169677734375
+Parsing the PDDL domain...
+Parsing the PDDL problem...
+Simplifying the problem representation...
+Parsing time: 0.04865074157714844
+Grounding the problem...
+Grounding time: 0.021907329559326172
+Simplifying the ground encoding...
+Simplify time: 0.026469707489013672
+Planning...
+
+Step: 15
+-------------------------------------------------
+Generating base encoding: basic ...
+PRE_EFF_COUNT:
+15600
+FRAME COUNT:
+2670
+INT MUTEX COUNT:
+58530
+Encoding generation time: 2.8750431537628174
+Writing CNF file...
+Total variables: 3584
+Total clauses: 76896
+Writing time: 0.09760880470275879
+Solving...
+UNSAT
+Solution time:  0.596121072769165
+Step time: 3.571228265762329
+
+Step: 20
+-------------------------------------------------
+Generating base encoding: basic ...
+PRE_EFF_COUNT:
+20800
+FRAME COUNT:
+3560
+INT MUTEX COUNT:
+78040
+Encoding generation time: 3.973904848098755
+Writing CNF file...
+Total variables: 4749
+Total clauses: 102496
+Writing time: 0.15707707405090332
+Solving...
+SAT
+Solution time:  5.334887981414795
+Extracting the plan...
+Plan:
+0: unstack a g
+1: put-down a
+2: unstack g e
+4: stack g b
+5: pick-up a
+6: stack a g
+7: pick-up c
+8: stack c a
+10: unstack d h
+11: put-down d
+12: unstack h f
+13: stack h c
+14: pick-up e
+15: stack e h
+16: pick-up f
+17: stack f e
+18: pick-up d
+19: stack d f
+Simulating plan for validation.
+Plan valid. 18 actions.
+Step time: 9.470376968383789
+Total time: 13.142914056777954
+

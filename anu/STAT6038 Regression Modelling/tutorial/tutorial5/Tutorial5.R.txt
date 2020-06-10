@@ -1,0 +1,707 @@
+# STAT2008/STAT6038 Regression Modelling Tutorial 5 - R Commands
+
+# Question One
+
+# This was Question 1 of Assignment 2 for 2014. There is a separate file of R commands
+# for this old assignment available in the Assessment topic on Wattle, which is
+# essentially the "appendix" mentioned in the assignment instructions. There is also 
+# a carefully edited file of the output from these R commands, which contains the 
+# solutions to the assignment question.
+
+# Question Two
+
+# Q2 (a)
+
+clouds <- read.csv("clouds.csv", header=T)
+clouds
+attach(clouds)
+
+clouds.lm <- lm(Y ~ A+D+S+C+P+E)
+
+plot(fitted(clouds.lm), rstudent(clouds.lm), main="Residuals vs Fitted", xlab="Fitted Values", ylab="Externally Studentized Residuals", sub="lm(Y ~ A+D+S+C+P+E)")
+abline(h=0, lty=2)
+identify(fitted(clouds.lm), rstudent(clouds.lm))
+
+plot(clouds.lm, which=2)
+
+# The residual plot is suggesting either increasing variance and/or potential problems
+# with quite a few observations. The normal quantile plot identifes most of the same 
+# observations which are all in the tail of distribution (the plot is "heavy-tailed").
+# A sensible approach would be to try some transformation. The usual transformations 
+# of taking natural logarithms or square roots tend to work best when the residuals 
+# appear to be skewed rather than heavy-tailed and neither really work in this
+# instance, as they both affect mainly the upper tail:
+
+clouds.lm1a <- lm(log(Y) ~ A+D+S+C+P+E)
+
+plot(fitted(clouds.lm1a), rstudent(clouds.lm1a), main="Residuals vs Fitted", xlab="Fitted Values", ylab="Externally Studentized Residuals", sub="lm(log(Y) ~ A+D+S+C+P+E)")
+abline(h=0, lty=2)
+
+plot(clouds.lm1a, which=2)
+
+clouds.lm1b <- lm(sqrt(Y) ~ A+D+S+C+P+E)
+
+plot(fitted(clouds.lm1b), rstudent(clouds.lm1b), main="Residuals vs Fitted", xlab="Fitted Values", ylab="Externally Studentized Residuals", sub="lm(sqrt(Y) ~ A+D+S+C+P+E)")
+abline(h=0, lty=2)
+
+plot(clouds.lm1b, which=2)
+
+# A cube root transformation will also tend to reduce heterosceasticity, but since it 
+# is a symmetric transformation, it can also help to fix heavy-tailed distributions as
+# it will affect both tails of the distribution. As the response values are measured in 
+# terms of volume, a cube root transformation to the response also seems reasonable 
+# mathematically.
+
+# Q2 (b)
+
+clouds.lm2 <- lm(Y^(1/3) ~ A+D+S+C+P+E)
+
+plot(fitted(clouds.lm2), rstudent(clouds.lm2), main="Residuals vs Fitted", xlab="Fitted Values", ylab="Externally Studentized Residuals", sub="lm(Y^(1/3) ~ A+D+S+C+P+E)")
+abline(h=0, lty=2)
+identify(fitted(clouds.lm2), rstudent(clouds.lm2))
+
+plot(clouds.lm2, which=2)
+
+# It appears to have fixed some of the problems, though observation 7 in the lower tail
+# of the residual distribution still stands out on both plots as a potential vertical 
+# outlier and also possibly observation 15 in the upper tail. Also two of the
+# potentially influential observations 24 and 2 at either ends of the fitted values
+# are giving the plot an appearance of having some curvature.
+
+data.frame(Y, "ext Stud res"=rstudent(clouds.lm2), "Cooks D"=round(cooks.distance(clouds.lm2),7), "leverages"=hatvalues(clouds.lm2))
+
+qt(0.975,clouds.lm2$df-1)
+
+plot(clouds.lm2, which=4)
+
+# Observations 7 and 15 are well outside into the tails of the externally Studentised
+# residual distribution. Observation 2 is also in the outer 5%, and also stands out
+# on the Cook's distance and has a high leverage value. Observation 18 also has a
+# relatively high leverage value, though this by itself is not necessarily a problem.
+
+# I would prefer to treat these problems one at time, starting with observation 2
+# on the basis it is the most influential problem and was identified by the 
+# investigators as a possible error.
+
+# I would probably also prefer to find the right form for the model before dealing
+# with outliers, but the wording says we must account for the effects of 
+# the other candidate variables, suggesting that the investigators want a model
+# that not only has Y and A included as the variables of main interest, but that 
+# we should also keep D, S, C, P & E in the model to control for their effects.
+
+Ym1 <- Y[-2]
+Am1 <- A[-2]
+Dm1 <- D[-2]
+Sm1 <- S[-2]
+Cm1 <- C[-2]
+Pm1 <- P[-2]
+Em1 <- E[-2]
+
+clouds.lm2a <- lm(Ym1^(1/3) ~ Am1+Dm1+Sm1+Cm1+Pm1+Em1)
+
+plot(fitted(clouds.lm2a), rstudent(clouds.lm2a), main="Residuals vs Fitted", xlab="Fitted Values", ylab="Externally Studentized Residuals", sub="Ym1^(1/3) ~ Am1+Dm1+Sm1+Cm1+Pm1+Em1")
+abline(h=0, lty=2)
+identify(fitted(clouds.lm2a), rstudent(clouds.lm2a))
+
+plot(clouds.lm2a, which=2)
+
+data.frame(Ym1, "ext Stud res"=rstudent(clouds.lm2a), "Cooks D"=round(cooks.distance(clouds.lm2a),7), "leverages"=hatvalues(clouds.lm2a))
+
+qt(0.975,clouds.lm2a$df-1)
+
+plot(clouds.lm2a, which=4)
+
+# Observations 7 and 15 have moved up the list with the removal of observation 2 and 
+# are observations 6 and 14 and both still appear to be vertical outliers, at different
+# ends of the distribution. Observation 6 is the more extreme of the two.
+
+Ym2 <- Ym1[-6]
+Am2 <- Am1[-6]
+Dm2 <- Dm1[-6]
+Sm2 <- Sm1[-6]
+Cm2 <- Cm1[-6]
+Pm2 <- Pm1[-6]
+Em2 <- Em1[-6]
+
+clouds.lm2b <- lm(Ym2^(1/3) ~ Am2+Dm2+Sm2+Cm2+Pm2+Em2)
+
+plot(fitted(clouds.lm2b), rstudent(clouds.lm2b), main="Residuals vs Fitted", xlab="Fitted Values", ylab="Externally Studentized Residuals", sub="Ym2^(1/3) ~ Am2+Dm2+Sm2+Cm2+Pm2+Em2")
+abline(h=0, lty=2)
+identify(fitted(clouds.lm2b), rstudent(clouds.lm2b))
+
+plot(clouds.lm2b, which=2)
+
+data.frame(Ym2, "ext Stud res"=rstudent(clouds.lm2b), "Cooks D"=round(cooks.distance(clouds.lm2b),7), "leverages"=hatvalues(clouds.lm2b))
+
+qt(0.975,clouds.lm2b$df-1)
+
+plot(clouds.lm2b, which=4)
+
+# Observation 15 is now observation 13 on the revised list and still appears to be
+# a vertical outlier, but is no longer particularly influential - I would stop at 
+# this point - the fit of the model is still not great, but we have already deleted
+# 2/24ths of an already small dataset. Note the MSE has dropped considerably and the
+# coefficients have also changed (the coefficient for C has changed sign, but is
+# still not significant).
+
+anova(clouds.lm2)
+anova(clouds.lm2a)
+anova(clouds.lm2b)
+
+summary(clouds.lm2)
+summary(clouds.lm2a)
+summary(clouds.lm2b)
+
+# Q2 (c)
+
+# Note my earlier comment about getting the form of the model right before 
+# dealing with outliers - this is a good reason to go back to the original
+# data to answer this question. We can revisit the issue of outliers once we 
+# have a better model - which is what is suggested if you read ahead to part (e).
+
+plot(residuals(lm(P~A+D+S+C+E)),residuals(lm(Y^(1/3)~A+D+S+C+E)),xlab="P net of A,D,S,M,C,E", ylab="Cub root of Y net of A,D,S,M,C,E", sub=paste("r =", cor(residuals(lm(P~A+D+S+C+E)),residuals(lm(Y^(1/3)~A+D+S+C+E)))))
+abline(0, coef(clouds.lm2)[6], lty=2)
+title("Added variable plot for P in the Cloud data\n(observations 2 and 7 included)")
+
+# The added variable plot shows clear non-linearity. We could try a transformation to
+# P, presumably the same transformation we applied to Y (for the sake of consistency, 
+# given the similar nature of the two variables ).
+
+Ytrans <- Y^(1/3)
+Ptrans <- P^(1/3)
+
+clouds.lm3 <- lm(Ytrans ~ A+D+S+C+Ptrans+E)
+
+plot(fitted(clouds.lm3), rstudent(clouds.lm3), main="Residuals vs Fitted", xlab="Fitted Values", ylab="Externally Studentized Residuals", sub="lm(Ytrans ~ Am2+Dm2+Sm2+Cm2+Ptrans+Em2)")
+abline(h=0, lty=2)
+identify(fitted(clouds.lm3), rstudent(clouds.lm3))
+
+plot(clouds.lm3, which=2)
+
+data.frame(Y, "ext Stud res"=rstudent(clouds.lm3), "Cooks D"=round(cooks.distance(clouds.lm3),7), "leverages"=hatvalues(clouds.lm3))
+
+qt(0.975,clouds.lm3$df-1)
+
+plot(clouds.lm3, which=4)
+
+anova(clouds.lm3)
+summary(clouds.lm3)
+
+# Possibly has fixed some of the problems, but we are back to the issue with outliers -
+# observation 7 is an even more extreme vertical outlier.
+# Alternatively we could work on the reduced dataset to refine the model, then 
+# experiment with adding the excluded data back in, later on.
+
+plot(residuals(lm(Pm2~Am2+Dm2+Sm2+Cm2+Em2)),residuals(lm(Ym2~Am2+Dm2+Sm2+Cm2+Em2)),xlab="P net of A,D,S,M,C,E", ylab="Y net of A,D,S,M,C,E", sub=paste("r =", cor(residuals(lm(Pm2~Am2+Dm2+Sm2+Cm2+Em2)),residuals(lm(Ym2~Am2+Dm2+Sm2+Cm2+Em2)))))
+abline(0, coef(clouds.lm2b)[6], lty=2)
+title("Added variable plot for P in the Cloud data\n(observations 2 and 7 removed)")
+
+Ym2trans <- Ym2^(1/3)
+Pm2trans <- Pm2^(1/3)
+
+clouds.lm3a <- lm(Ym2trans ~ Am2+Dm2+Sm2+Cm2+Pm2trans+Em2)
+
+plot(fitted(clouds.lm3a), rstudent(clouds.lm3a), main="Residuals vs Fitted", xlab="Fitted Values", ylab="Externally Studentized Residuals", sub="lm(Ym2trans ~ Am2+Dm2+Sm2+Cm2+Pm2trans+Em2)")
+abline(h=0, lty=2)
+identify(fitted(clouds.lm3a), rstudent(clouds.lm3a))
+
+plot(clouds.lm3a, which=2)
+
+data.frame(Ym2, "ext Stud res"=rstudent(clouds.lm3a), "Cooks D"=round(cooks.distance(clouds.lm3a),7), "leverages"=hatvalues(clouds.lm3a))
+
+qt(0.975,clouds.lm3a$df-1)
+
+plot(clouds.lm3a, which=4)
+
+anova(clouds.lm3a)
+summary(clouds.lm3a)
+
+library(faraway)
+vif(cbind(Am2, Dm2, Sm2, Cm2, Pm2trans, Em2))
+
+# We are not getting a consistent story from the ANOVA table and the table of
+# coefficients, suggesting order is important, even though the Variance Inflation
+# Factors are not particularly large. A is supposedly the most important predictor,
+# but is not a significant predictor of Y by itself (it is not significant as the
+# first variable into the model in the ANOVA table), only when we control
+# for the other predictors. Not all of the other predictors are significant,
+# so there is some scope for further model refinement (do we really need to control 
+# for the effects of a predictor if that predictor only has an neglible effect?)
+
+# Q2 (d)
+
+# Using the code from the surgery example in lectures:
+
+selection.criteria <- function(model,ideal_mse=I(summary(model)$sigma^2)) {
+  parameters <- model$rank
+  sample.size <- parameters + model$df.residual
+  leverages <- hatvalues(model)
+  deletion.residuals <- residuals(model)/(1-leverages)
+  mse <- summary(model)$sigma^2
+  pressp <- sum(deletion.residuals^2)
+  r.squared <- summary(model)$r.squared
+  adj.r.squared <- summary(model)$adj.r.squared
+  Cp <- parameters + (((sample.size-parameters)*(mse-ideal_mse))/ideal_mse)
+  temp <- cbind(parameters, mse, pressp, r.squared, adj.r.squared, Cp)
+  dimnames(temp) <- list(paste(model$call)[2],c("p","MSE","PRESSp","R-Squared","Adj.R-Sqd","Cp"))
+  temp
+}
+
+selection.criteria(clouds.lm3) 
+
+model.selection <- function(response, predictors, model.list=matrix(1:ncol(predictors),nrow=1)) {
+  full.model <- lm(response ~ predictors)
+  full.mse <- summary(full.model)$sigma^2
+  temp <- model.list
+  dimnames(temp) <- list(dimnames(model.list)[[1]],dimnames(predictors)[[2]])
+  result <- cbind(temp,p=0,MSE=0,PRESSp=0,"R-Squared"=0,"Adj.R-Sqd"=0,"Cp"=0)
+  for (i in (1:nrow(model.list))) {
+    variables <- model.list[i,]
+    for (j in (1:length(variables))) {
+      ifelse(variables[j]>0,variables[j]<-j,variables[j]<-0)
+    }
+    part.model <- lm(response ~ predictors[,variables])
+    result[i,(ncol(predictors)+1):ncol(result)] <- selection.criteria(part.model, ideal_mse=full.mse)
+  }
+  as.data.frame(result)
+}
+
+models <- rbind(
+  c(1,0,0,0,0,0),
+  c(1,1,0,0,0,0),
+  c(1,0,1,0,0,0),
+  c(1,0,0,1,0,0),
+  c(1,0,0,0,1,0),
+  c(1,0,0,0,0,1),
+  c(1,1,1,0,0,0),
+  c(1,1,0,1,0,0),
+  c(1,1,0,0,1,0),
+  c(1,1,0,0,0,1),
+  c(1,0,1,1,0,0),
+  c(1,0,1,0,1,0),
+  c(1,0,1,0,0,1),
+  c(1,0,0,1,1,0),
+  c(1,0,0,1,0,1),
+  c(1,0,0,0,1,1),
+  c(1,1,1,1,0,0),
+  c(1,1,1,0,1,0),
+  c(1,1,1,0,0,1),
+  c(1,1,0,1,1,0),
+  c(1,1,0,1,0,1),
+  c(1,1,0,0,1,1),
+  c(1,0,1,1,1,0),
+  c(1,0,1,1,0,1),
+  c(1,0,1,0,1,1),
+  c(1,0,0,1,1,1),
+  c(1,1,1,1,1,0),
+  c(1,1,1,1,0,1),
+  c(1,1,1,0,1,1),
+  c(1,1,0,1,1,1),
+  c(1,0,1,1,1,1),
+  c(1,1,1,1,1,1))
+
+bigtable <- model.selection(Ytrans,cbind(A, D, S, C, Ptrans, E),models)
+bigtable
+
+plot(bigtable$p, bigtable$"MSE", xlab="Number of parameters", ylab="MSE")
+identify(bigtable$p, bigtable$"MSE")
+
+plot(bigtable$p, bigtable$"Adj.R-Sqd", xlab="Number of parameters", ylab="Adjusted R-squared")
+identify(bigtable$p, bigtable$"Adj.R-Sqd")
+
+plot(bigtable$p, bigtable$PRESSp, xlab="Number of parameters", ylab="PRESSp")
+identify(bigtable$p, bigtable$PRESSp)
+
+plot(bigtable$p, bigtable$Cp, xlab="Number of parameters", ylab="Mallows' Cp")
+abline(0,1)
+identify(bigtable$p, bigtable$Cp)
+
+# There is no good 2 parameter model (basically A does not do a good job in
+# a simple linear regression model by itself).
+# The best 3 parameter model is #2: A+D
+# The best 4 parameter model is #10: A+D+E
+# The best 5 parameter model is either #22: A+D+Ptrans+E or #25: A+S+Ptrans+E
+# The best 6 parameter model is either #29: A+D+S+Ptrans+E or #30: A+D+C+Ptrans+E
+# The best 7 parameter model is #32: A+D+S+C+Ptrans+E (clouds.lm3)
+
+anova(clouds.lm3)
+
+# Only D and E appear to be significant additions to a model containing A, 
+# so we could reorder the model and try a nested F test for the addition of
+# S, C, Ptrans as a group:
+
+anova(lm(Ytrans ~ A+D+E+cbind(S, C, Ptrans)))
+
+# Addition not needed, so try #10 and the two smaller subsets of that model:
+
+anova(lm(Ytrans ~ A+D+E))
+anova(lm(Ytrans ~ A+D))
+anova(lm(Ytrans ~ A+E))
+
+# Model #2 Ytrans ~ A+D does appear to be the best fitting of these model
+# (none of which have very large adjusted R-square values). Note that A is 
+# not significant in any of the models (even though it has been fitted 
+# first), suggesting that seeding may not be having any effect on rainfall.
+
+# The significance of A generally improves as more of the other predictors
+# are added to the model, which generally means there is some "negative"
+# confounding or multicollinearity involving negative correlations:
+
+cor(cbind(A, D, S, C, Ptrans, E))
+diag(solve(cor(cbind(A, D, S, C, Ptrans, E))))
+
+# There are indeed negative correlations between the important predictors,
+# but they are only small and the VIFs are also small, which are probably
+# not enough to mask or hide a possible relationship between the response
+# A, it is simply that A is not really having any effect on the response.
+
+# Q2 (e)
+
+bigtable2 <- model.selection(Ym2trans,cbind(Am2, Dm2, Sm2, Cm2, Pm2trans, Em2),models)
+bigtable2
+
+plot(bigtable2$p, bigtable2$Cp, xlab="Number of parameters", ylab="Mallows' Cp")
+abline(0,1)
+identify(bigtable2$p, bigtable2$Cp)
+
+# Now the best models (the only ones where Cp is of the same order as p)
+# appear to be #18, #27, #29 and #32 (which was clouds.lm3a)
+
+anova(clouds.lm3a)
+anova(lm(Ym2trans ~ Am2+Sm2+Cm2+Pm2trans+Em2))
+anova(lm(Ym2trans ~ Am2+Dm2+Sm2+Pm2trans+Em2))
+anova(lm(Ym2trans ~ Am2+Sm2+Pm2trans+Em2))
+
+# Definitely different models than before, suggesting the models are highly 
+# sensitive to outliers, but A is still not having an effect!
+
+# Question Three
+
+# This bit of mathematics shows that, on average, we will have an R-squared
+# value of (p-1)/(n-1) even when there is no relationship between the response
+# and the predictors. For instance, in a regression with 5 unrelated predictors
+# and 25 data points, the expected value of the coefficient of determination
+# would be 4/24 = 0.167. Certainly, this is not a very large R-squared, but it
+# shows how the R-squared will tend to increase as we include more predictors.
+# Judging models by their R-squared tends to lead to over-fitting, if two
+# nested models have marginally different R-squared, the model with the larger
+# R-squared is not necessarily a better fit - with nested models, we can use
+# a F-test to examine the differences between the two models and this is a 
+# far better basis for comparison that just a small increase in R-squared.
+
+# Question Four
+
+# Q4 (a)
+
+highway <- read.csv("highway.csv", header=T)
+highway
+attach(highway)
+
+highway.lm <- lm(accdnt ~ lngth+ADT+trcks+spdlim+lwdth+shld+intrchngs+sgnls+accsspt+lns)
+
+plot(highway.lm, which=2)
+
+# No obvious departures from normality in the qq-plot, maybe some problems with outliers,
+# but no real need for a transformation at this stage.
+
+plot(fitted(highway.lm), rstudent(highway.lm), main="Residuals vs Fitted", xlab="Fitted Values", ylab="Externally Studentized Residuals", sub="lm(accdnt ~ lngth+ADT+trcks+spdlim+lwdth+shld+intrchngs+sgnls+accsspt+lns)")
+abline(h=0, lty=2)
+identify(fitted(highway.lm), rstudent(highway.lm))
+
+# Residual plot shows definite problems with non-linearity and/or inceasing variance,
+# with observation 25 as a potential problem in the extreme lower right hand corner
+# of the plot.
+
+# Note the default residual vs fitted plot does not highlight observation 25 as
+# extreme as it is not one of the three largest raw residuals, but it does stand out
+# on the other default plots:
+
+plot(highway.lm)
+
+# Q4 (b)
+
+barplot(hatvalues(highway.lm))
+plot(highway.lm, which=4)
+barplot(dffits(highway.lm))
+
+# Observations 25 and 34 appear to be relatively influential in the fit of the model.
+
+# Q4 (c)
+
+highwaym2 <- data.frame(highway[-c(25, 34),])
+highwaym2
+
+attach(highwaym2)
+length(accdnt) # Now 37 rather than 39
+
+highwaym2.lm <- lm(accdnt ~ lngth+ADT+trcks+spdlim+lwdth+shld+intrchngs+sgnls+accsspt+lns)
+
+plot(highwaym2.lm, which=2)
+
+plot(fitted(highwaym2.lm), rstudent(highwaym2.lm), main="Residuals vs Fitted", xlab="Fitted Values", ylab="Externally Studentized Residuals", sub="lm(accdnt ~ lngth+ADT+trcks+spdlim+lwdth+shld+intrchngs+sgnls+accsspt+lns)")
+abline(h=0, lty=2)
+identify(fitted(highwaym2.lm), rstudent(highwaym2.lm))
+
+# Normal qq plot still looks okay and main "Residuals vs Fitted" plot has definitely
+# improved, though there may still be a problem with non-linearity (rather than
+# increasing variance, though there is still a hint of that).
+
+# Q4 (d)
+
+plot(residuals(lm(lngth ~ ADT+trcks+spdlim+lwdth+shld+intrchngs+sgnls+accsspt+lns)), residuals(lm(accdnt ~ ADT+trcks+spdlim+lwdth+shld+intrchngs+sgnls+accsspt+lns)),xlab="Length net of other predictors", ylab="Accident Rate net of all predictors except length")
+abline(0, coef(highwaym2.lm)[2], lty=2)
+identify(residuals(lm(lngth ~ ADT+trcks+spdlim+lwdth+shld+intrchngs+sgnls+accsspt+lns)), residuals(lm(accdnt ~ ADT+trcks+spdlim+lwdth+shld+intrchngs+sgnls+accsspt+lns)))
+
+# If we ignore the obvious influence of observation 21 at the extreme right of the plot, 
+# there might be a suggestion of curvature in the relationship shown on this added
+# variable plot, so it might be worthwhile experimenting with a squared term.
+
+# Q4 (e)
+
+detach(highwaym2)
+length(accdnt) # Back to 39 observations
+
+lngthsqd <- lngth^2
+
+step(lm(accdnt ~ lngth+ADT+trcks+spdlim+lwdth+shld+intrchngs+sgnls+accsspt+lns+lngthsqd), scope=list(lower=as.formula("accdnt ~ 1")), direction="backward")
+
+# Backward elimination suggests a model with lngth, trcks, lwdth, shld, accsspt
+# and lngthsqd (6 predictors, 7 parameters).
+
+step(lm(accdnt ~ 1), scope=list(upper=as.formula("accdnt ~ lngth+ADT+trcks+spdlim+lwdth+shld+intrchngs+sgnls+accsspt+lns+lngthsqd")), direction="forward")
+
+# Forward selection suggests a model with accsspt, lngth, spdlim and sgnls
+# (4 predictors, 5 parameters).
+
+step(lm(accdnt ~ 1), scope=list(upper=as.formula("accdnt ~ lngth+ADT+trcks+spdlim+lwdth+shld+intrchngs+sgnls+accsspt+lns+lngthsqd")), direction="both")
+
+# Stepwise refinement suggests the same model as forwards selection in this instance.
+
+# Q4 (f)
+
+# To make things a little easier, just stick to the smaller set of variables
+# suggested by one of the above models {spdlim, lngth, lngthsqd, accsspt, trcks, 
+# lwdth, shld and sgnls}. Note that any model that includes lngthsqd 
+# should also include lngth and reading ahead to part (h), we definitely want 
+# spdlim in the model so we can test it's significance.
+
+highway.preds <- cbind(spdlim, lngth, lngthsqd, accsspt, trcks, lwdth, shld, sgnls)
+
+models <- rbind(
+  c(1,1,1,0,0,0,0,0),
+  c(1,1,1,1,0,0,0,0),
+  c(1,1,1,0,1,0,0,0),
+  c(1,1,1,0,0,1,0,0),
+  c(1,1,1,0,0,0,1,0),
+  c(1,1,1,0,0,0,0,1),
+  c(1,1,1,1,1,0,0,0),
+  c(1,1,1,1,0,1,0,0),
+  c(1,1,1,1,0,0,1,0),
+  c(1,1,1,1,0,0,0,1),
+  c(1,1,1,0,1,1,0,0),
+  c(1,1,1,0,1,0,1,0),
+  c(1,1,1,0,1,0,0,1),
+  c(1,1,1,0,0,1,1,0),
+  c(1,1,1,0,0,1,0,1),
+  c(1,1,1,0,0,0,1,1),
+  c(1,1,1,1,1,1,0,0),
+  c(1,1,1,1,1,0,1,0),
+  c(1,1,1,1,1,0,0,1),
+  c(1,1,1,1,0,1,1,0),
+  c(1,1,1,1,0,1,0,1),
+  c(1,1,1,1,0,0,1,1),
+  c(1,1,1,0,1,1,1,0),
+  c(1,1,1,0,1,1,0,1),
+  c(1,1,1,0,1,0,1,1),
+  c(1,1,1,0,0,1,1,1),
+  c(1,1,1,1,1,1,1,0),
+  c(1,1,1,1,1,1,0,1),
+  c(1,1,1,1,1,0,1,1),
+  c(1,1,1,1,0,1,1,1),
+  c(1,1,1,0,1,1,1,1),
+  c(1,1,1,1,1,1,1,1),
+  c(1,1,0,0,0,0,0,0),
+  c(1,1,0,1,0,0,0,0),
+  c(1,1,0,0,1,0,0,0),
+  c(1,1,0,0,0,1,0,0),
+  c(1,1,0,0,0,0,1,0),
+  c(1,1,0,0,0,0,0,1),
+  c(1,1,0,1,1,0,0,0),
+  c(1,1,0,1,0,1,0,0),
+  c(1,1,0,1,0,0,1,0),
+  c(1,1,0,1,0,0,0,1),
+  c(1,1,0,0,1,1,0,0),
+  c(1,1,0,0,1,0,1,0),
+  c(1,1,0,0,1,0,0,1),
+  c(1,1,0,0,0,1,1,0),
+  c(1,1,0,0,0,1,0,1),
+  c(1,1,0,0,0,0,1,1),
+  c(1,1,0,1,1,1,0,0),
+  c(1,1,0,1,1,0,1,0),
+  c(1,1,0,1,1,0,0,1),
+  c(1,1,0,1,0,1,1,0),
+  c(1,1,0,1,0,1,0,1),
+  c(1,1,0,1,0,0,1,1),
+  c(1,1,0,0,1,1,1,0),
+  c(1,1,0,0,1,1,0,1),
+  c(1,1,0,0,1,0,1,1),
+  c(1,1,0,0,0,1,1,1),
+  c(1,1,0,1,1,1,1,0),
+  c(1,1,0,1,1,1,0,1),
+  c(1,1,0,1,1,0,1,1),
+  c(1,1,0,1,0,1,1,1),
+  c(1,1,0,0,1,1,1,1),
+  c(1,1,0,1,1,1,1,1),
+  c(1,0,0,0,0,0,0,0),
+  c(1,0,0,1,0,0,0,0),
+  c(1,0,0,0,1,0,0,0),
+  c(1,0,0,0,0,1,0,0),
+  c(1,0,0,0,0,0,1,0),
+  c(1,0,0,0,0,0,0,1),
+  c(1,0,0,1,1,0,0,0),
+  c(1,0,0,1,0,1,0,0),
+  c(1,0,0,1,0,0,1,0),
+  c(1,0,0,1,0,0,0,1),
+  c(1,0,0,0,1,1,0,0),
+  c(1,0,0,0,1,0,1,0),
+  c(1,0,0,0,1,0,0,1),
+  c(1,0,0,0,0,1,1,0),
+  c(1,0,0,0,0,1,0,1),
+  c(1,0,0,0,0,0,1,1),
+  c(1,0,0,1,1,1,0,0),
+  c(1,0,0,1,1,0,1,0),
+  c(1,0,0,1,1,0,0,1),
+  c(1,0,0,1,0,1,1,0),
+  c(1,0,0,1,0,1,0,1),
+  c(1,0,0,1,0,0,1,1),
+  c(1,0,0,0,1,1,1,0),
+  c(1,0,0,0,1,1,0,1),
+  c(1,0,0,0,1,0,1,1),
+  c(1,0,0,0,0,1,1,1),
+  c(1,0,0,1,1,1,1,0),
+  c(1,0,0,1,1,1,0,1),
+  c(1,0,0,1,1,0,1,1),
+  c(1,0,0,1,0,1,1,1),
+  c(1,0,0,0,1,1,1,1),
+  c(1,0,0,1,1,1,1,1))
+
+bigtable3 <- model.selection(accdnt,highway.preds,models)
+bigtable3
+
+plot(bigtable3$p, bigtable3$Cp, xlab="Number of parameters", ylab="Mallows' Cp")
+abline(0,1)
+identify(bigtable3$p, bigtable3$Cp)
+
+# Judging by the Cp criteria, there is no reasonable model with only 2 or 3
+# parameters (p). The closest to Cp=p with more parameters is
+# p=4, model #34: accdnt ~ spdlim + lngth + accsspt
+# p=5, model #42: accdnt ~ spdlim + lngth + accsspt + sgnls
+# p=6, model # 7: accdnt ~ spdlim + lngth + lngthsqd + accsspt + trcks
+# p=7, model #17: accdnt ~ spdlim + lngth + lngthsqd + accsspt + trcks + lwdth
+# p=8, model #27: accdnt ~ spdlim + lngth + lngthsqd + accsspt + trcks + lwdth + shld
+# p=9, model #32: accdnt ~ spdlim + lngth + lngthsqd + accsspt + trcks + lwdth + shld + sgnls
+
+# Using "manual" backward elimination from model #32 (so that we don't eliminate spdlim):
+
+anova(lm(accdnt ~ spdlim + lngth + lngthsqd + accsspt + trcks + lwdth + shld + sgnls))
+
+# Check if any of the last four terms are needed:
+
+anova(lm(accdnt ~ spdlim + lngth + lngthsqd + accsspt + cbind(trcks, lwdth, shld, sgnls)))
+
+# This suggests model #34, with the squared term in lngth as a marginally
+# significant addition (this is model #2 in the list). Note model #42 is
+# not very different and was the model suggested by "automatic" forwards
+# selection and stepwise refinement in part (e):
+
+anova(lm(accdnt ~ spdlim + lngth + accsspt + lngthsqd))
+anova(lm(accdnt ~ spdlim + lngth + accsspt + sgnls))
+
+# Neither lngthsqd or sgnls appear to be significant additions to model #34,
+# so even though they have slightly better values of most of the diagnostics
+# in the list, I would go with the simpler model #34:
+
+highway.lm34 <- lm(accdnt ~ spdlim + lngth + accsspt)
+
+anova(highway.lm34)
+summary(highway.lm34)
+vif(highway.lm34)
+
+plot(fitted(highway.lm34), rstudent(highway.lm34), main="Residuals vs Fitted", xlab="Fitted Values", ylab="Externally Studentized Residuals", sub="lm(accdnt ~ spdlim + lngth + accsspt)")
+abline(h=0, lty=2)
+identify(fitted(highway.lm34), rstudent(highway.lm34))
+
+plot(highway.lm34, which=2)
+
+barplot(hatvalues(highway.lm34))
+plot(highway.lm34, which=4)
+barplot(dffits(highway.lm34))
+
+# The plots indicate this model definitely has an issue with outliers
+# and influential points, definitely with observation 25 and 
+# possibly also 26 and 27.
+
+# Q4 (g)
+
+highwaym3 <- data.frame(highway[-c(25, 26, 27),])
+highwaym3
+
+attach(highwaym3)
+length(accdnt) # Now 36 rather than 39
+
+lngthsqd <- lngth^2
+
+step(lm(accdnt ~ lngth+ADT+trcks+spdlim+lwdth+shld+intrchngs+sgnls+accsspt+lns+lngthsqd), scope=list(lower=as.formula("accdnt ~ 1")), direction="backward")
+step(lm(accdnt ~ 1), scope=list(upper=as.formula("accdnt ~ lngth+ADT+trcks+spdlim+lwdth+shld+intrchngs+sgnls+accsspt+lns+lngthsqd")), direction="forward")
+step(lm(accdnt ~ 1), scope=list(upper=as.formula("accdnt ~ lngth+ADT+trcks+spdlim+lwdth+shld+intrchngs+sgnls+accsspt+lns+lngthsqd")), direction="both")
+
+# A completely different set of models with these three points excluded and note
+# that with backward elimination spdlim is one of the first couple of variables 
+# to be excluded.
+
+highway.preds <- cbind(spdlim, lngth, lngthsqd, accsspt, trcks, lwdth, shld, sgnls)
+
+bigtable4 <- model.selection(accdnt,highway.preds,models)
+bigtable4
+
+plot(bigtable4$p, bigtable4$Cp, xlab="Number of parameters", ylab="Mallows' Cp")
+abline(0,1)
+identify(bigtable4$p, bigtable4$Cp)
+
+# This gives a more familiar list of models, so applying the same strategy as before.
+# Using "manual" backward elimination from model #32 (so that we don't eliminate spdlim):
+
+anova(lm(accdnt ~ spdlim + lngth + lngthsqd + accsspt + trcks + lwdth + shld + sgnls))
+
+# sgnls now plays a bigger role, but a similar story on everything else:
+
+anova(lm(accdnt ~ spdlim + lngth + accsspt + sgnls + cbind(lngthsqd, trcks, lwdth, shld)))
+
+# So, maybe model 42 is a better choice this time:
+
+highway.lm42 <- lm(accdnt ~ spdlim + lngth + accsspt + sgnls)
+
+anova(highway.lm42)
+summary(highway.lm42)
+vif(highway.lm42)
+
+plot(fitted(highway.lm42), rstudent(highway.lm42), main="Residuals vs Fitted", xlab="Fitted Values", ylab="Externally Studentized Residuals", sub="lm(accdnt ~ spdlim+lngth++accsspt+sgnls)")
+abline(h=0, lty=2)
+identify(fitted(highway.lm42), rstudent(highway.lm42))
+
+plot(highway.lm42, which=2)
+
+barplot(hatvalues(highway.lm42))
+plot(highway.lm42, which=4)
+barplot(dffits(highway.lm42))
+
+# Overall, better than before, but still some qualms and I am reluctant to 
+# declare any more of this small dataset to be outliers.
+
+# Q4 (h)
+
+# I am not convinced about the fit of these models. Note that when we do force
+# the inclusion of spdlim in the model, it tends to have a negative coefficient, 
+# which suggests that if we were to lower speed limits, the accident rate
+# would actually increase!
+

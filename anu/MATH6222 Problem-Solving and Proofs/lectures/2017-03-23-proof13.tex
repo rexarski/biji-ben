@@ -1,0 +1,79 @@
+\documentclass[a4paper, 11pt, twoside]{article}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\begin{document}
+\title{MATH6222 week 5 lecture 13}
+\author{Rui Qiu}
+\date{2017-03-23}
+
+\maketitle
+
+\paragraph{Chapter 5: Combinatorial Reasoning}\ \\
+
+\textbf{Question:} Let $A$ be a set with $n$ elements, let $k\leq n$ be an integer. How many size $k$ subsets $B\subseteq A$ are there?\\
+
+\textbf{Example:} $\{\text{chocolate, vanilla, rainbow}\}\ (n=3)$
+
+\begin{itemize}
+	\item $k=0, \emptyset$
+	\item $k=1, \{\text{c}\}, \{\text{v}\}, \{\text{r}\}.$
+	\item $k=2, \{\text{c,v}\}, \{\text{v,r }\}, \{\text{r,c}\}.$
+	\item $k=3, \{\text{c,v,r}\}.$\\
+\end{itemize}
+
+\textbf{Example:} $\{c,v,r,s\}.$
+
+\begin{itemize}
+	\item $k=0, \emptyset$
+	\item $k=1, \{\text{c}\}, \{\text{v}\}, \{\text{r}, \{\text{s}\}.$
+	\item $k=2, \{\text{c,v}\}, \{\text{v,r }\}, \{\text{r,c}\}, \{\text{c, s}\}, \{\text{v, s}\}, \{\text{r, s}\}.$
+	\item $k=3, \{\text{c,v,r}\}, \{\text{c,v,s}\}, \{\text{c,r, s}\}, \{\text{s,v,r}\}.$
+	\item $k=4, \{\text{c,v,r,s}\}.$\\
+\end{itemize}
+
+\paragraph{Definition:} If $n$ integer, $n!=n(n-1)(n-2)\cdots \cdot 2 \cdot 1.$\\
+
+This is the number of bijections from $[n]\to [n]$.\\
+
+How many ordered $k$-tuples of elements from $A$?
+
+\[|\{(a_1,\dots , a_k): a_i\in A\}| = n^k\]
+
+How many ordered $k$-tuples with no repeats?
+
+\[|\{(a_1,\dots, a_k): a_i\in A,\text{ all $a_i$ distinct $a_i\not= a_j$}|=n(n-1)(n-2)\cdots (n-k+1) = \frac{n!}{(n-k)!}.\]
+
+\paragraph{Proposition:} If $|A| =n$, let ${n\choose k}$ (read as $n$ choose $k$) denote the number of subsets $B\subseteq A$ of size $k$. Then
+
+\[{n \choose k} = \frac{n!}{(n-k)!}\]
+
+\paragraph{Proof:} The number of ordered $k$-tuples from $A$ with no repeats is: $n(n-1)(n-2)\cdots (n-k+1)$. Each subset of $k$ can be listed as an ordered $k$-tuple in $k!$ ways.
+
+\[k!{n \choose k}=n(n-1)(n-2)\cdots (n-k+1)\]
+
+\paragraph{Properties:}\ \\
+
+\begin{enumerate}
+	\item $\sum\limits^n_{k=0}{n \choose k} = 2^n.$
+	\item $\sum\limits^n_{k=0, k \text{ even}}{n \choose k} = \sum\limits^{\lfloor n/2\rfloor}_{k=0}{n \choose 2k} = \sum\limits^n_{k=0, k \text{ odd}}{n \choose k}$
+	\item ${n \choose k} = {n \choose n-k}$\\
+	hint: to prove \{subset of size $k$\}$\iff$\{subset of size $n-k$\}
+\end{enumerate}
+
+Reminder: If $A$ is finite set, $2^A$ (power set of $A$) has size $2^{|A|}$.
+
+If $|A|=n,$ subsets of $A$ correspond to $0-1$ strings of length $n$.\\
+
+\paragraph{Different Interpretations of ${n \choose k}$}\ \\ 
+
+${n \choose k}$ as the number of binary strings of length $n$ with exactly $k$ $1$'s.\\
+
+Suppose a bug moves only up and to the right. How many paths can the bug take to reach point $(a, b)$?\\
+
+\[{a+b \choose a} = {a+b \choose b}\]
+
+\paragraph{Proof:} Any path requires $a+b$ steps, and is uniquely determined by choosing a size of subset of steps in which to move "right".\\
+
+Therefore, ${n \choose k}$ can be interpreted as the number of bug-paths to the point $(k, n-k)$.
+
+\end{document}

@@ -1,0 +1,79 @@
+Starting SAT-based planner...
+Checking for plugins...
+Encodings registered:    3
+Solvers registered:      1
+Command line options:
+    Domain file:          benchmarks/blocks/domain.pddl
+    Problem file:         benchmarks/blocks/problem13.pddl
+    Experiment name:      blocks_temp
+    Query strategy:        ramp, min_h = 15 max_h = 50 step_h = 5
+    Compute plangraph:     True
+    Plangraph constraints: fmutex
+    Encoding:              basic
+    Solver                 precosat
+    SAT solver time out    None
+    Write debug CNF:       False
+    Remove tmp files:      False
+Command line arg processing time: 0.0037050247192382812
+Parsing the PDDL domain...
+Parsing the PDDL problem...
+Simplifying the problem representation...
+Parsing time: 0.08226799964904785
+Grounding the problem...
+Grounding time: 0.034485816955566406
+Simplifying the ground encoding...
+Simplify time: 0.10920023918151855
+Generating Plangraph invariants...
+Step: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 
+Plangraph invariants time: 0.8715016841888428
+Planning...
+
+Step: 15
+-------------------------------------------------
+Generating base encoding: basic ...
+PRE_EFF_COUNT:
+37440
+FRAME COUNT:
+5880
+INT MUTEX COUNT:
+286650
+FMUTEX COUNT:
+9976
+Encoding generation time: 30.93829607963562
+Writing CNF file...
+Total variables: 8206
+Total clauses: 340154
+Writing time: 0.46404099464416504
+Solving...
+UNSAT
+Solution time:  0.43553805351257324
+Step time: 31.840825080871582
+
+Step: 20
+-------------------------------------------------
+Generating base encoding: basic ...
+PRE_EFF_COUNT:
+49920
+FRAME COUNT:
+7840
+INT MUTEX COUNT:
+382200
+FMUTEX COUNT:
+22165
+Encoding generation time: 41.67570996284485
+Writing CNF file...
+Total variables: 10876
+Total clauses: 462333
+Writing time: 0.6215591430664062
+Solving...
+UNSAT
+Solution time:  0.5903761386871338
+Step time: 42.89012908935547
+
+Step: 25
+-------------------------------------------------
+Generating base encoding: basic ...
+PRE_EFF_COUNT:
+62400
+FRAME COUNT:
+9800

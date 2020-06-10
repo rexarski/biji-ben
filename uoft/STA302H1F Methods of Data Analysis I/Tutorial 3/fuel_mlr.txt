@@ -1,0 +1,104 @@
+# Tutorial 3, Oct 8/2013
+#
+# We will use the fuel consumption data to show how to use R to do 
+# multiple linear regressions. 
+#
+# The data are given in fuel2001 of the package "alr3".
+#
+# From the six initial predictors, we derive a set of 4 terms.
+
+library(car)
+library(MASS)
+library(nnet)
+library(alr3)
+
+data(fuel2001)
+
+# For MAC users, you have to download the data file in .txt format from
+# the author's website and use read.table command to load the data.
+#
+# fuel2001 <- read.table("fuel2001.txt", header=TRUE)
+
+names(fuel2001)
+
+fuel2001$Dlic <- 1000*fuel2001$Drivers/fuel2001$Pop
+fuel2001$Fuel <- 1000*fuel2001$FuelC/fuel2001$Pop
+fuel2001$Income <- fuel2001$Income/1000
+fuel2001$logMiles <- log(fuel2001$Miles,2)
+
+head(fuel2001, n=10)  # print the first 10 rows of fuel2001
+
+f <- fuel2001[,c(7,8,3,10,9)]
+head(f, n=10)
+summary(f)
+
+# We can get the standard deviations easily, by the "apply" command
+
+apply(f,2,sd)
+
+# 1 indicates rows, 2 indicates columns, c(1,2) indicates rows and columns.
+#
+# Of course, these univariate summaries can not tell us much about 
+# how the fuel consumption depends on other variables. The scatterplot 
+# matrix for the fuel data is very useful.
+
+attach(f)
+pairs( ~ Tax + Dlic + Income + logMiles + Fuel)
+
+# We specify the variables we want to appear in the plot using a 
+# one-sided formula, which consists of a "~" followed by the variable 
+# names separated by "+" signs.
+#
+# A more traditional, and less informative, summary of the two-variable 
+# relationships is the matrix of sample correlation.
+
+round(cor(f),4)
+
+# The sample covariance matrix is computed using either "var" or "cov":
+
+cov(f)
+
+# Betahat = (X'X)(-1) * (X'Y)
+#
+# We will compute the inverse of matrix X'X. To start we need the 
+# matrix X, which has 51 rows, one column for each predictor, and 
+# one column for the intercept.
+
+f$Intercept <- rep(1,51)
+X <- as.matrix(f[,c(6,1,2,3,4)])
+head(X, n=10)
+
+xtx <- t(X) %*% X
+xtxinv <- solve(xtx)
+
+# The "solve" command returns the inverse of its argument; it is also 
+# used to solve linear equations of the command has two arguments.
+
+print(xtxinv,digits=4)
+xty <- t(X) %*% f$Fuel
+betahat <- xtxinv %*% xty
+betahat
+
+# As with simple regression the command "lm" is used to automate the 
+# fitting of a multiple linear regression mean function. The only 
+# difference between the simple and multiple regression is the formula:
+
+m1 <- lm(formula = Fuel ~ Tax + Dlic + Income + logMiles, data = f)
+summary(m1)
+
+# we can get an F-test for the hypothesis that beta1 = 0 versus a 
+# general alternative by fitting two models, the larger one we have 
+# already fitted for the model under the alternative hypothesis. For the 
+# smaller model under the null hypothesis, We can fit this second model 
+# using the "update" command:
+
+m2 <- update(m1, ~.-Tax)
+summary(m2)
+
+# "update" takes an existing object and updates it in some way, usually 
+# by changing the mean function or by changing the data. In this 
+# instance, we have updated the mean function on the right-hand side by 
+# taking the existing terms, indicated by the "." and then removing Tax 
+# by putting it in the mean function with a negative sign.
+
+anova(m2,m1)

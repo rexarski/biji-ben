@@ -1,0 +1,149 @@
+# Stepwise model regression, using the Surgery data from the "brick" 
+# (example 7 from page 36 of chapter 2 of the lecture notes)
+
+# Create the vif() function so we can use it later:
+
+vif <- function(xmatrix) {
+  if (class(xmatrix) == "matrix" | class(xmatrix) == "data.frame")
+    diag(solve(cor(xmatrix))) 
+  else  
+    diag(solve(cor(model.matrix(xmatrix)[,-1])))
+  # assuming a linear model object, if not a matrix
+}
+
+# Now let's take another look at this example - again read in and 
+# attach the data and recalculate the transformed variables: 
+
+surgery <- read.csv("surgery.csv")
+surgery
+attach(surgery)
+
+# This is one of the few examples where the old S-Plus code in the brick
+# will no longer work - there is no stepwise function in the current 
+# versions of R:
+
+??stepwise
+
+# The current R equivalent is the step() function:
+
+help(step)
+
+# To use this function, first reorganise the data as we did earlier:
+
+log_survival <- log(survival)
+int_pe <- prog*enzyme
+prog2 <- prog^2
+enzyme2 <- enzyme^2
+
+surgery.all <- data.frame(cbind(clot, prog, enzyme, liver, prog2, int_pe, enzyme2, log_survival))
+pairs(surgery.all)
+
+# Following the example in the help file, we could try:
+
+step(lm(log_survival ~ ., data=surgery.all))
+
+# Working through the details in the help file, we find that this model
+# was actually arrived at using backward elimination. If we want to
+# use forward selection, we have to set the scope argument:
+
+surgery.loglm <- step(lm(log_survival ~ 1), scope=list(upper=as.formula("log_survival ~ clot + prog + enzyme + liver + prog2 + int_pe + enzyme2")),direction="forward")
+surgery.loglm
+
+# But this model arguably has some redundant (non-significant) terms:
+
+plot(surgery.loglm, which=c(1,2,4))
+
+anova(surgery.loglm)
+summary(surgery.loglm)
+vif(surgery.loglm)
+
+# We could also use different settings for scope and repeat the 
+# backward elimination process:
+
+surgery.loglm <- step(lm(log_survival ~ clot + prog + enzyme + liver + prog2 + int_pe + enzyme2), scope=list(lower=as.formula("log_survival ~ 1")), direction="backward")
+surgery.loglm
+
+plot(surgery.loglm, which=c(1,2,4))
+
+anova(surgery.loglm)
+summary(surgery.loglm)
+vif(surgery.loglm)
+
+# Or, we could use a bit of both (i.e. stepwise refinement):
+
+surgery.loglm <- step(lm(log_survival ~ 1), scope=list(upper=as.formula("log_survival ~ clot + prog + enzyme + liver + prog2 + int_pe + enzyme2")), direction="both")
+surgery.loglm
+
+plot(surgery.loglm, which=c(1,2,4))
+
+anova(surgery.loglm)
+summary(surgery.loglm)
+vif(surgery.loglm)
+
+# Which is indeed the same model we reached in the earlier example!
+
+# Whilst it might assist with the search, step() doesn't guarantee 
+# results, for example, here is how it would have performed with the
+# prostate data from the sample assignment and question in Tutorial 5.
+
+prostate <- read.csv("prostate.csv", header=T)
+attach(prostate)
+
+# This time, backward elimination doesn't produce great results:
+
+prostate.lm <- step(lm(lcavol ~ ., data=prostate))
+prostate.lm
+
+plot(prostate.lm, which=c(1,2,4))
+
+anova(prostate.lm)
+summary(prostate.lm)
+vif(prostate.lm)
+
+# Stepwise does better, but still with some redundant terms:
+
+prostate.lm <- step(lm(lcavol ~ 1), scope=list(upper=as.formula("lcavol ~ lweight + age + lbph + svi + lcp + gleason + pgg45 + lpsa")), direction="both")
+prostate.lm
+
+plot(prostate.lm, which=c(1,2,4))
+
+anova(prostate.lm)
+summary(prostate.lm)
+vif(prostate.lm)
+
+prostate.lm <- lm(lcavol ~ lpsa + lcp + lbph + age)
+anova(prostate.lm)
+summary(prostate.lm)
+
+prostate.lm <- lm(lcavol ~ lpsa + lcp + cbind(age, lbph))
+anova(prostate.lm)
+summary(prostate.lm)
+
+prostate.lm <- lm(lcavol ~ lpsa + lcp + lbph * age)
+anova(prostate.lm)
+summary(prostate.lm)
+
+prostate.lm <- lm(lcavol ~ lpsa + lcp + age)
+anova(prostate.lm)
+summary(prostate.lm)
+
+# Leading to the same final models you hopefully chose as answers 
+# to the questions in the second sample assignment and Tutorial 5:
+
+prostate.lm <- lm(lcavol ~ lpsa + lcp)
+prostate.lm
+
+plot(prostate.lm, which=c(1,2,4))
+
+anova(prostate.lm)
+summary(prostate.lm)
+vif(prostate.lm)
+
+prostate.lm2 <- lm(lcavol ~ lpsa * lcp)
+prostate.lm2
+
+plot(prostate.lm2, which=c(1,2,4))
+
+anova(prostate.lm2)
+summary(prostate.lm2)
+vif(prostate.lm2)

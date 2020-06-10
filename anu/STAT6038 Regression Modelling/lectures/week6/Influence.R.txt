@@ -1,0 +1,147 @@
+# Example on highly influential points.
+
+# These data have been "made up" to illustrate a point.
+
+X <- c(1:18,46)
+Y <- c(6.982933082,9.912253755,13.123901,14.13841463,18.96916063,23.56787716,24.56079674,28.15757763,33.2661378,34.42390825,36.54348875,41.65607754,41.69287387,45.91341774,48.33245269,53.56300495,54.36758661,58.27525138,141.7646798)
+data.frame(X,Y)
+
+# Plot the data:
+
+plot(X, Y)
+
+# Bar plot of the leverage values (which just rely on the X values):
+
+barplot(hat(X), names.arg=X)
+abline(h=4/length(X))
+
+# Try an initial model:
+
+example.lm <- lm(Y ~ X)
+plot(example.lm)
+
+plot(example.lm, which=4)
+
+plot(X, Y)
+abline(example.lm$coef)
+
+# Observation 19 has high leverage, but does appear to following the 
+# same model as the rest of the data. Is it really influential?
+
+example.lm
+
+example.lm2 <- lm(Y[-19] ~ X[-19])
+example.lm2
+
+abline(example.lm2$coef)
+
+# What if we try a more extreme example:
+
+Y
+newY <- Y
+newY[19] <- 170
+newY
+
+plot(X, newY)
+example.lm3 <- lm(newY ~ X)
+example.lm3
+abline(example.lm3$coef)
+
+example.lm4 <- lm(newY[-19] ~ X[-19])
+example.lm4
+abline(example.lm4$coef)
+
+plot(example.lm3)
+
+plot(example.lm3, which=4)
+
+# Observation 19 has exactly the same high leverage as before (as the X
+# value hasn't changed), but it is now also highly influential  
+# (by definition) as it has had obvious influence on the calculation
+# of the coefficients of the model. 
+
+# Note that the model example.lm4 is exactly the same as example.lm2, as
+# both of them exclude observation 19 and the residual plots for this model
+# are fine:
+
+plot(example.lm4)
+
+plot(example.lm4, which=4)
+
+# Another good example, illustrating problems with outliers and influential
+# data points was "constructed" (i.e. it again uses "made-up" data) by
+# Francis Anscombe in 1973 (American Statistician 27 (1): 17-21). 
+# The data are available as part of standard R in the datasets library,
+# which should already be attached to your search path:
+
+search()
+ls(pos="package:datasets")
+
+anscombe
+attach(anscombe)
+
+# In the Anscombe data, there are 4 simple linear regression datasets
+# (x1,y1), (x2,y2), (x3,y3) and (x4,y4) - we will plot the four side by side
+# using graphs of the same scale and fit a SLR model to each:
+
+par(mfrow=c(2,2))
+
+# Firstly (x1,y1), but we will start all 4 plots with a blank plot, so we have 
+# the same scale for all 4 plots:
+plot(c(0,max(anscombe[,1:4])), c(0, max(anscombe[,5:8])), type="n", xlab="x1",ylab="y1")
+points(x1, y1)
+anscombe1.lm <- lm(y1 ~ x1)
+abline(coef(anscombe1.lm))
+
+# Same code for the other three datasets:
+plot(c(0,max(anscombe[,1:4])), c(0, max(anscombe[,5:8])), type="n", xlab="x2",ylab="y2")
+points(x2, y2)
+anscombe2.lm <- lm(y2 ~ x2)
+abline(coef(anscombe2.lm))
+
+plot(c(0,max(anscombe[,1:4])), c(0, max(anscombe[,5:8])), type="n", xlab="x3",ylab="y3")
+points(x3, y3)
+anscombe3.lm <- lm(y3 ~ x3)
+abline(coef(anscombe3.lm))
+
+plot(c(0,max(anscombe[,1:4])), c(0, max(anscombe[,5:8])), type="n", xlab="x4",ylab="y4")
+points(x4, y4)
+anscombe4.lm <- lm(y4 ~ x4)
+abline(coef(anscombe4.lm))
+
+# Four very different datasets, but almost the same SLR model for all four:
+coef(anscombe1.lm)
+coef(anscombe2.lm)
+coef(anscombe3.lm)
+coef(anscombe4.lm)
+
+# And, even worse, almost identical summary measures:
+summary(anscombe1.lm)
+summary(anscombe2.lm)
+summary(anscombe3.lm)
+summary(anscombe4.lm)
+
+# It is only when we look at the main residual plot for each of the models,
+# that the differences in the fit of the four models becomes obvious:
+plot(anscombe1.lm, which=1)
+plot(anscombe2.lm, which=1)
+plot(anscombe3.lm, which=1)
+plot(anscombe4.lm, which=1)
+
+# Arguably, the SLR model is only appropriate for the first of the four datasets:
+plot(anscombe1.lm, which=c(1,2,4,5))
+
+# For (x2,y2), the assumption of independent errors has been violated:
+plot(anscombe2.lm, which=c(1,2,4,5))
+
+# For (x3,y3), there is an obvious vertical outlier:
+plot(anscombe3.lm, which=c(1,2,4,5))
+
+# And for (x4,y4), there is one highly influential observation:
+plot(anscombe4.lm, which=c(1,2,4,5))
+
+# Note for model 4, the standard default outlier plots fail, as the discordant
+# observation is so extreme it has "perfect" leverage (=1):
+par(mfrow=c(1,1))
+barplot(hat(x4), names.arg=row.names(anscombe))
+abline(h=2*2/nrow(anscombe))

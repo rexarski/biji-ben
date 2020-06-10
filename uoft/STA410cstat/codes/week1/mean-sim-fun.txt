@@ -1,0 +1,22 @@
+# Simulate the distribution of the error in the sample mean as an
+# estimate of the population mean, for iid data from a specified
+# distribution.
+#
+# The arguments are the sample size (n), the number of replications to
+# use in simulating the distribution of error (rep), the function for
+# generating random values (gen), which takes the sample size as its
+# sole argument, and finally the true mean (true_mean) of the
+# distribution.  
+#
+# The value returned is a sample (of size rep) of the errors in
+# estimating the mean.
+
+mean_sim <- function (n, rep, gen, true_mean)
+{
+    errors <- numeric(rep)
+    for (i in 1:rep) {
+        samp <- gen(n)
+        errors[i] <- mean(samp) - true_mean
+    }
+    errors
+}

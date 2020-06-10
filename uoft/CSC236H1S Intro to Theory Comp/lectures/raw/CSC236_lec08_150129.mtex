@@ -1,0 +1,75 @@
+#Lecture 8
+
+January 29, 2015
+
+
+Let $$ \mathbb{E} $$ be the set defined by:
+Consider the set $$ \mathbb{E} $$ "built" by:
+Let $$ \mathbb{E} $$ be the smallest set such that:
+
+- The strings $$ x, y ,z \in \mathbb{E} $$
+- If $$ e_1, e_2 \in \mathbb{E} $$ then the strings
+
+->$$ (e_1+e_2), (e_1\times e_2), (e_1/e_2), (e_1-e_2) \in \mathbb{E}$$<-
+
+in Python: '('+'$$ e_1 $$' +'$$ e_2 $$' +')'+...
+
+
+$$ x \in \mathbb{E}$$
+$$ y \in \mathbb{E}$$
+$$ z \in \mathbb{E}$$
+
+$$ x \in \mathbb{E} $$ and $$ y \in \mathbb{E} $$ so $$ (x+y) \in \mathbb{E} $$.
+
+$$ x \in \mathbb{E} $$ and $$ x \in \mathbb{E}$$ so $$ (x+x) \in \mathbb{E} $$
+
+so are $$ (x-z), (y/y), ((x+y)\times y), ((x+x)\times (y/y)) $$, etc.
+
+but $$ w \not \in \mathbb{E} $$.
+
+For $$ (x+y) \in \mathbb{E} $$, we call $$ x, y $$ **variables**, and call $$ + $$ **operator**.
+
+For $$ e \in \mathbb{E} $$, let $$ v(e) $$ be the number of occurences of variables in $$ e $$; $$ o(e) $$ be the number of occurences of operators in $$ e $$.
+
+Prove $$ \forall e \in \mathbb{E}, v(e) = o(e) + 1 $$.
+
+By _Structural Induction_:
+	
+Base Case: $$ x, y, z $$, each of those is a variable, there are no operations,
+
+->$$ v(x) = 1 = 0 + 1 = o(x) + 1$$,<-
+
+->$$ v(y) = 1 = 0 + 1 = o(y) + 1$$,<-
+
+->$$ v(z) = 1 = 0 + 1 = o(z) + 1$$,<-
+
+Inductive Step: Let $$e_1, e_2 \in \mathbb{E}$$.
+
+	Assume $$ v(e_1) = o(e_1) +1, v(e_2) = o(e_2) + 1 $$ (IH)
+	Then $$ v((e_1 + e_2)) = v(e_1) +v(e_2) $$ 
+	// the $$ + $$ on the left stands for a string, 
+	//while the one on the right means addition
+		$$ o((e_1+e_2)) = o(e_1) + 1 ($$for $$'x') + o(e_2) $$. (*)
+	$$ v(e_1) + v(e_2)  = (o(e_1) + 1) + (o_(e_2) + 1)$$ by IH
+				$$ = (o(e_1) + 1 + o(e_2)) + 1 = o(e_1 + e_2) + 1 $$ by (*)
+	$$ v((e_1\times e_2)) = v(e_1) + v(e_2) = (o(e_1)+1) + (o(e_2)+1) $$ by (IH)
+
+Let $$ \bigodot $$ be one of $$ +, \times, /, - $$, then
+
+->$$ v((e_1\bigodot e_2)) = ...$$ <-
+
+Let $$ BT $$ be defined by:
+
+- empty $$ \in BT$$
+- If $$ t_l, t_r \in BT $$, then the tree $$ t $$ with a root node and left and right subtrees $$ t_l, t_r $$ is in $$ BT $$.
+
+Let's _define_ for $$ t \in BT, height(t) $$.
+- $$ height(empty) = 0 $$,
+- let $$ t $$ be a tree with left and right subtrees $$ t_l \in BT, t_r \in BT $$, then $$ h(t) = 1 + \max (h(t_l), h(t_r)) $$. 
+
+-> number of leaves $$ \leqslant 2^{h(t)-1} $$ <-
+
+-> leaves(empty) = 0 <-
+
+For $$ t $$ with subtrees $$ t_r, t_l $$: leaves(t)	= leaves($$ t_l $$) + leaves($$ t_r $$)
+

@@ -1,0 +1,501 @@
+%
+% This is a borrowed LaTeX template file for lecture notes for CS267,
+% Applications of Parallel Computing, UCBerkeley EECS Department.
+% Now being used for CMU's 10725 Fall 2012 Optimization course
+% taught by Geoff Gordon and Ryan Tibshirani.  When preparing 
+% LaTeX notes for this class, please use this template.
+%
+% To familiarize yourself with this template, the body contains
+% some examples of its use.  Look them over.  Then you can
+% run LaTeX on this file.  After you have LaTeXed this file then
+% you can look over the result either by printing it out with
+% dvips or using xdvi. "pdflatex template.tex" should also work.
+%
+
+\documentclass[twoside]{article}
+\setlength{\oddsidemargin}{0.25 in}
+\setlength{\evensidemargin}{-0.25 in}
+\setlength{\topmargin}{-0.6 in}
+\setlength{\textwidth}{6.5 in}
+\setlength{\textheight}{8.5 in}
+\setlength{\headsep}{0.75 in}
+\setlength{\parindent}{0 in}
+\setlength{\parskip}{0.1 in}
+
+%
+% ADD PACKAGES here:
+%
+
+\usepackage{amsmath,amsfonts,graphicx,soul}
+
+%
+% The following commands set up the lecnum (lecture number)
+% counter and make various numbering schemes work relative
+% to the lecture number.
+%
+\newcounter{lecnum}
+\renewcommand{\thepage}{\thelecnum-\arabic{page}}
+\renewcommand{\thesection}{\thelecnum.\arabic{section}}
+\renewcommand{\theequation}{\thelecnum.\arabic{equation}}
+\renewcommand{\thefigure}{\thelecnum.\arabic{figure}}
+\renewcommand{\thetable}{\thelecnum.\arabic{table}}
+
+\newcommand*\conj[1]{\bar{#1}}
+\newcommand*\mean[1]{\bar{#1}}
+\newcommand{\indep}{\rotatebox[origin=c]{90}{$\models$}}
+%
+% The following macro is used to generate the header.
+%
+\newcommand{\lecture}[4]{
+   \pagestyle{myheadings}
+   \thispagestyle{plain}
+   \newpage
+   \setcounter{lecnum}{#1}
+   \setcounter{page}{1}
+   \noindent
+   \begin{center}
+   \framebox{
+      \vbox{\vspace{2mm}
+    \hbox to 6.28in { {\bf STAT7017 Big Data Statistics
+	\hfill Semester 2 2018} }
+       \vspace{4mm}
+       \hbox to 6.28in { {\Large \hfill Lecture #1: #2  \hfill} }
+       \vspace{2mm}
+       \hbox to 6.28in { {\it Lecturer: #3 \hfill Scribes: #4} }
+      \vspace{2mm}}
+   }
+   \end{center}
+   \markboth{Lecture #1: #2}{Lecture #1: #2}
+
+   {\bf Note}: {\it LaTeX template courtesy of UC Berkeley EECS dept.}
+
+   {\bf Disclaimer}: {\it These notes have not been subjected to the
+   usual scrutiny reserved for formal publications.  They may be distributed
+   outside this class only with the permission of the Instructor.}
+   \vspace*{4mm}
+}
+%
+% Convention for citations is authors' initials followed by the year.
+% For example, to cite a paper by Leighton and Maggs you would type
+% \cite{LM89}, and to cite a paper by Strassen you would type \cite{S69}.
+% (To avoid bibliography problems, for now we redefine the \cite command.)
+% Also commands that create a suitable format for the reference list.
+\renewcommand{\cite}[1]{[#1]}
+\def\beginrefs{\begin{list}%
+        {[\arabic{equation}]}{\usecounter{equation}
+         \setlength{\leftmargin}{2.0truecm}\setlength{\labelsep}{0.4truecm}%
+         \setlength{\labelwidth}{1.6truecm}}}
+\def\endrefs{\end{list}}
+\def\bibentry#1{\item[\hbox{[#1]}]}
+
+%Use this command for a figure; it puts a figure in wherever you want it.
+%usage: \fig{NUMBER}{SPACE-IN-INCHES}{CAPTION}
+\newcommand{\fig}[3]{
+			\vspace{#2}
+			\begin{center}
+			Figure \thelecnum.#1:~#3
+			\end{center}
+	}
+% Use these for theorems, lemmas, proofs, etc.
+\newtheorem{theorem}{Theorem}[lecnum]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newenvironment{proof}{{\bf Proof:}}{\hfill\rule{2mm}{2mm}}
+
+% **** IF YOU WANT TO DEFINE ADDITIONAL MACROS FOR YOURSELF, PUT THEM HERE:
+
+\newcommand\E{\mathbb{E}}
+
+\begin{document}
+%FILL IN THE RIGHT INFO.
+%\lecture{**LECTURE-NUMBER**}{**DATE**}{**LECTURER**}{**SCRIBE**}
+\lecture{3}{6 August}{Dr Dale Roberts}{Rui Qiu}
+%\footnotetext{These notes are partially based on those of Nigel Mansell.}
+
+% **** YOUR NOTES GO HERE:
+
+% Some general latex examples and examples making use of the
+% macros follow.  
+%**** IN GENERAL, BE BRIEF. LONG SCRIBE NOTES, NO MATTER HOW WELL WRITTEN,
+%**** ARE NEVER READ BY ANYBODY.
+
+\textbf{\underline{Limiting Spectral Distribution}}
+
+$\mathbf{x}_1,\mathbf{x}_2,\dots,\mathbf{x}_n$ $n$ random samples of dimension $p$ (vectors). Sample covariance matrix:
+
+$$S_n=\frac1{n-1}\sum^n_{i=1}(\mathbf{x}_i-\mean{\mathbf{x}})(\mathbf{x}_i-\mean{\mathbf{x}})^*$$ which gives you a $p\times p$ matrix.
+
+$\mean{\mathbf{x}}$ is sample mean given by $\mean{\mathbf{x}}:=\frac{1}{n}\sum^n_{i=1}\mathbf{x}_i$.
+
+Many traditional \underline{multivariate statistics} are functions of the eigenvalues $(\lambda_i$) of $S_n$.
+
+In the most basic form, $T_n=\frac{1}{p}\sum^p_{k=1}\phi(\lambda_k)$. This is just a generalized form, because we don't know what $\phi$ is. But it takes an eigenvalue and gives back a number. $\phi:\mathbb{C}\rightarrow\mathbb{R}.$\\
+
+\underline{\textbf{Example:}} The \underline{generalized variance} (last week) can be written
+
+$$T_n=\frac{1}{p}\log\lvert S_n\rvert=\frac{1}{p}\sum^p_{k=1}\log(\lambda_k)$$
+
+$T_n$ is a ``\underline{linear} spectral statistic of the sample covariance matrix $S_n$ with \underline{test function} $\phi(x)=\log(x)$".\\
+
+First order Random matrix limits are concerned with \underline{when} and \underline{how} shall $T_n\rightarrow c$ (converges to some constant $c$) as $p,n\rightarrow \infty$.
+
+It concerns the ``joint limit" of the $p$ eigenvalues. $(\lambda_k)^p_{k=1}$.\\
+
+\underline{\textbf{Empirical distributions and their limits}}
+
+Let $\mathbb{M}_p(\mathbb{C})$ be $p\times p$ matrices with $\mathbb{C}$-valued entries and let $(\lambda_k)^p_{k=1}$ be the eigenvalues of $A\in\mathbb{M}_p(\mathbb{C})$.
+
+Let $\delta_a(x)=\begin{cases}
+	1\ \text{if}\ x=a\\
+	0\ \text{otherwise}
+\end{cases}$
+
+The \underline{empirical spectral distribution} (ESD) of $A$ is given by
+
+$$F^A_{(x)}:=\frac{1}{p}\sum^p_{k=1}\delta_{\lambda_k}(x)$$
+
+Generally, $F^A$ takes $\mathbb{C}$ values. If $A\in\mathbb{H}_p$, then $F^A(x)\in\mathbb{R}.$\\
+
+\underline{\textbf{Example:}} $A=\begin{pmatrix}
+	0 & -1\\
+	1 & 0\\
+\end{pmatrix}$ eigenvalues are $-i, +i$.
+
+$$F^A=\frac{1}{2}(\delta_i+\delta_{-1})$$
+
+(empirical density ``histogram" vs limiting density)\\
+
+Take a sequence of matrices $\left(A_n\right)_{n\geq 1}\in\mathbb{M}_p(\mathbb{C})$, if the sequence of corresponding ESD $F^{A_n}$ \underline{vaguely converges} to a (possibly defective) measure $F$, we call $F$ the \underline{limiting spectral distribution} (LSD) of $\left(A_n\right)_{n\geq 1}.$\\
+
+\underline{\textbf{Vague convergence}} means that for \underline{any} continuous function that is compactly supported, called $\phi$,
+
+$$F^{A_n}(\phi)\rightarrow F(\phi)\text{ as } n\rightarrow\infty.$$
+
+Here, we use the notation
+
+$$F(\phi):=\int_{\mathbb{R}^p}\phi(x)F(dx).$$
+
+(\textbf{compact supported}: zero outside the range $[a,b]$.)
+
+If the distribution $F$ is \underline{\textbf{non-defective}} (i.e. $\int F(dx)=1$.) then vague convergence becomes \underline{\textbf{weak convergence}}, that is,
+
+$$F^{A_n}(\phi)\rightarrow F(\phi)\text{ as } n\rightarrow\infty$$
+
+for all $\phi$ continuous and \underline{\textbf{bounded}} (below value $a$, say).
+
+In our situation, we shall be dealing with sample covariance matrices ($S_n$). This means that:
+
+\begin{itemize}
+	\item support of $F^{S_n}$ is $\mathbb{R}_+$ since $S_n$ are Hermitian and non-negative definite.	
+	\item $F^{S_n}(x)=\frac{1}{p}\sum^p_{k=1}\mathbf{1}_{(\lambda_k\leq x)}\ \ \ \ \text{ ESD}.$
+	\item Eigenvalues are random variable and ESDs ($F^{S_n}$) are \underline{random} probability distributions on $\mathbb{R}_+$.
+\end{itemize}
+
+The \underline{fundamental question} is: Does the limit of $(F^{S_n})$ exist?\\
+
+How can we show this?\\
+
+The eigenvalues of a matrix are continuous functions of the entries of the matrix.
+
+There is no closed-form solution for eigenvalues when dimension of a square matrix is greater than 4.
+
+There are three main techniques used in RMT:
+
+\begin{itemize}
+	\item Method of moments.
+	\item Orthogonal polynomial decomposition.
+	\item Stieltjes transform. (ST)
+\end{itemize}
+
+We shall focus on the ST approach.\\
+
+\underline{\textbf{Stieltjes transfrom (ST)}}
+
+The ST plays nearly as useful role in RMT as the Moment generating function (MGF) or characteristic function (CF) in classic probability theory.
+
+It is defined for a measure $\mu$ as:
+
+$$S_\mu(z)=\int\frac{1}{x-z}\mu(dx),\ z\in\mathbb{C}^+$$
+
+where $\mathbb{C}^+=\{x+iy: y>0\}.$
+
+The following lemma allows us to reconstruct the distribution function from its Stieltjes transform.\\
+
+\begin{lemma}
+	(Inversion): Let $\mu$ be a probability measure on $\mathbb{R}$. If $a<b$ are points of continuity of the associated distribution, then
+	
+	$$\mu((a,b))=\lim_{\nu\rightarrow 0^+}\frac{1}{\pi}\int^b_a Im(S_\mu(x+i\nu))dx.$$
+\end{lemma}
+
+The following lemma gives a necessary and sufficient condition for a sequence of ST to be the ST of a probability measure.\\
+
+\begin{lemma}
+	(Geronimo and Hill, 2003): Suppose that $(\mu_n)$ is a sequence of probability measures on $\mathbb{R}$ with Stieltjes transforms $(S_{\mu_n})$. If $\lim_{n\to\infty}S_{\mu_n}(
+	z)=S_{\mu}(z)$ for all $z\in\mathbb{C}^+$, then there exists a probability measure $\mu$ with ST given by $S_\mu$ if and only if
+	
+	$$\lim_{\nu\to\infty}i\nu S_\mu(i\nu)=-1.$$
+	In which case, $\mu_n\to\mu$ in distribution.
+\end{lemma}
+
+There are some more technical results that I will now state without proof.
+
+First, we say that a function $f$ is \underline{\textbf{holomorphic}} if it is complex differentiable at every point of its domain, i.e.
+
+$$f'(z_0)=\lim_{z\to z_0}\frac{f(z)-f(z_0)}{z-z_0}\text{ exists}.$$
+
+Holomorphic functions are very nice:
+
+\begin{itemize}
+	\item Infinitely differentiable.
+	\item Equals to its Taylor series.
+\end{itemize}
+
+\begin{proposition}
+	The Stieltjes transform has the following properties:
+	\begin{itemize}
+		\item $S_\mu$ is holomorphic on $\mathbb{C}\backslash\Gamma_\mu$ where $\Gamma_\mu:=Supp(\mu)$.
+		\item $z\in\mathbb{C}^+\iff S_\mu(z)\in\mathbb{C}^+.$
+		\item If $\Gamma_\mu\subset \mathbb{R}_+$ and $z\in\mathbb{C}^+$, then $zS_\mu(z)\in\mathbb{C}^+$.
+		\item $\lvert S_\mu(z)\rvert \leq \frac{\mu(1)}{dist(z, \Gamma_\mu) \vee \lvert Im(z)\rvert}$ (Distance of $z$ to support and the maximum of imaginary part of $z$)
+	\end{itemize}
+\end{proposition}
+
+\begin{proposition}
+	The mass $\mu(1)$ can be recovered through the formula
+	
+	$$\mu(1)=\lim_{\nu\to\infty}-i\nu S_\mu(i\nu)$$
+	
+	Moreover, for all continuous and compactly supported $\phi:\mathbb{R}\to\mathbb{R}$
+	
+	$$\mu(\phi)=\int\phi(x)\mu(dx)=\lim_{\nu\to0}\frac1\pi\int\phi(x)Im[S_\mu(x+i\nu)]dx$$
+\end{proposition}
+
+\begin{proposition}
+	Assume that the following conditions hold for a complex-valued $g(z)$:
+	
+	\begin{itemize}
+		\item $g$ is holomorphic on $\mathbb{C}^+$.
+		\item $g(z)\in\mathbb{C}^+$ for all $z\in\mathbb{C}^+$.
+		\item $\lim_{\nu\to\infty}\sup\lvert i\nu g(i\nu)\rvert<\infty$.
+	\end{itemize}
+	
+	The $g$ is a ST of a bounded measure on $\mathbb{R}$.
+\end{proposition}
+
+\begin{theorem}
+	A sequence of measures $(\mu_n)$ converges vaguely to some positive measure $\mu\iff (S_{\mu_n})$ converges to $S_\mu$ on $\mathbb{C}^+$.
+\end{theorem}
+
+The idea is that we show $S_{\mu_n}\to S_\mu$ (vague convergence) and then show that $\mu$ is a probability measure by checking that $\mu(1)=1$.
+
+We have $A$ positive semidefinite and symmetric. Then ESD of $A$ is $F^A=\frac{1}{p}\sum^p_{j=1}\delta_{\lambda_j}$, where $A$ is $p\times p$.
+
+\begin{equation}
+	\begin{split}
+		S_A(z)&=\int\frac{1}{x-z}F^A(dx)\\
+		&=\frac{1}{p}\sum^p_{k=1}\int\frac{1}{x-z}\delta_{\lambda_k}(dx)\\
+		&=\frac{1}{p}\sum^p_{k=1}\frac{1}{\lambda_k-z}\\
+		&=\frac{1}{p}tr[(A-zI)^{-1}]
+	\end{split}
+\end{equation}
+
+Note: $tr(A+B)=tr(A)+tr(B), tr(A^k)=\sum^p_{i=1}\lambda_i^k.$\\
+
+\underline{\textbf{Trace of an inverse matrix:}} For $n\times n$ matrix $Q$, define $Q_k$ to be the submatrix obtained by deleting $k$-th row and column.
+
+\begin{theorem}
+	(Bai and Silvestein, Thm A.U.???): If $B$ and $B_k, k=1,\dots, n,$ are nonsingular and writing $B^{-1}=[b^{kl}]$, then
+	
+	$$tr(B^{-1})=\sum^n_{k=1}\frac{1}{b_{kk}-B'_kB^{-1}_kB_k}$$
+	
+	$b_{kk}$: $k$-th diagonal entry of $B$.\\
+	$B_k'$: vector obtained from $k$-th row of $B$ by deleting $k$-th entry.\\
+	$B_k$: vector obtained from $k$-th column of $B$ by deleting $k$-th entry.
+\end{theorem}
+
+Applying this theorem:
+
+\begin{equation}
+	S_A(z)=\frac{1}{p}\sum^p_{k=1}\frac{1}{\alpha_{kk}-z-\mathbf{\alpha}_k'(A_k-zI)^{-1}\mathbf{\alpha}_k}
+\end{equation}
+
+We would like to show that denominator is equal to
+
+$$g(z, S_A(z))+ o(1)$$
+
+Then we can solve for $S_A(z)=\frac{1}{g(z, S_A(z))}$ to obtain the ST of the ESD.\\
+
+\underline{\textbf{Marchenko-Pastur distributions}}
+
+The \underline{Marchenko-Pastur distribution} $F_{y,\sigma^2}$ with index $y$ and scale parameter $\sigma$ has density
+
+$$P_{y,\sigma^2}(x)=\begin{cases}
+	\frac{1}{2\pi xy\sigma^2}\sqrt{(b-x)(x-a)'},&\text{ if } a\leq x\leq b\\
+	0,&\text{ otherwise }
+\end{cases}$$
+
+Note $a=\sigma^2(1-\sqrt{y})^2,\ b=\sigma^2(1+\sqrt{y})^2$.
+
+If $\sigma^2=1$: \underline{standard MP distribution.}
+
+Special case: $y=1, \sigma^2=1$.
+
+$$P_1(x)=\begin{cases}
+	\frac{1}{2\pi x}\sqrt{x(4-x)},&\ 0<x\leq 4,\\
+	0,&\ \text{otherwise}.
+\end{cases}$$
+
+$\implies$ Hence density is unbounded in region.
+
+As $y\to 0, F_y\to \delta_1$.\\
+
+\underline{\textbf{MP distribution for independent vectors without cross-correlation}}
+
+\begin{equation}
+	\begin{split}
+		Sn=&=\frac{1}{n-1}\sum^n_{i=1}\mathbf{x}_i\mathbf{x}^*-\cdots\\
+		&\approx\frac{1}{n-1}\sum\mathbf{x}_i\mathbf{x}^*
+	\end{split}
+\end{equation}
+
+We shall sometimes write $n$ sample vectors as $p\times n$ random matrix
+
+$$\mathbf{X}=(\mathbf{x}_1,\mathbf{x}_2,\dots,\mathbf{x}_n)$$
+
+So
+
+$$\implies S_n=\frac{1}{n}\mathbf{X}\mathbf{X}^*$$
+
+Marchenko and Pastur found the LSD of the large sample covariance matrix $S_n$.\\
+
+\begin{theorem}
+	(MP) Suppose that the entries $[x_{ij}]$ of $\mathbf{X}$ are iid complex random variables with mean zero and variance $\sigma^2$, and $p/n\to y\in(0,\infty)$. Then, almost surely,
+	
+	$$F^{S_n}\to F_{y,\sigma^2}$$
+\end{theorem}
+
+This theorem was shown in a special case in 1960s but its influence in statistics was only recognized recently.\\
+
+\underline{How does the MP dist. appear in the limit?}
+
+$\sigma^2=1$.
+
+\begin{equation}
+	\begin{split}
+		P_y(x)&=\frac{1}{2\pi xy}\sqrt{(b-x)(x-a)}, a\leq x\leq b\\
+		a&=(1-\sqrt{{y}})^2, b=(1+\sqrt{y})^2
+	\end{split}
+\end{equation}
+
+The Stieltjes transform is
+
+\begin{equation}
+	\begin{split}
+		S(z)&=\int^b_a\frac{1}{x-z}P_y(x)dx\\
+		&=\frac{(1-y)-z+\sqrt{(z-1-y)^2-4y}}{2yz}
+	\end{split}
+\end{equation}
+
+rearranging notice that $s=S(z)$ satisfies the quadratic equation
+
+$$yzs^2+(z+y-1)s+1=0$$
+
+The ST of the ESD of $S_n$ is $S_n(z)=\frac{1}{p}tr[(S_n-zI_p)^{-1}]$.
+
+If we can show $S_n(z)\to S(z)$ as $n\to \infty$ for every $z\in\mathbb{C}^+$, then $F^{S_n}\to F_y$.
+
+By (3.2),
+
+$$S_n(z)=\frac{1}{p}\sum^p_{k=1}\frac{1}{\frac{1}{n}\alpha_k'\mean{\alpha}_k-z-\frac{1}{n^2}\alpha_k'\mathbf{X}_k^*\left(\frac1n\mathbf{X}_k\mathbf{X}_k^*-zI_{p-1}\right)^{-1}\mathbf{X}_k\mean{\alpha}_k}$$
+
+$\mathbf{X}_k=\mathbf{X}$ with $k$-th row removed.
+
+$\alpha_k'=$ $k$-th row of $\mathbf{X}$, size $n\times 1$.
+
+Assume $\mathbb{E}$[``denominator terms with rows removed"]$\to\mathbb{E}$[``terms with rows intact"],
+
+i.e. random error caused by approximation is small for large $p$ and $n$.
+
+$$\mathbb{E}\left[\frac{1}{n}\alpha_k'\mean{\alpha}_k\right]=\frac{1}{n}\sum^n_{j=1}\lvert x_{kj}\rvert ^2=1.$$ 
+
+\begin{lemma}
+	Let $u$ be a $n\times 1$ random vector with entries $u_i$ that are all independent with mean $0$ and unit variance. Let $\mathbf{Q}$ be a (non-random) $n\times n$ complex matrix. Then
+	
+	$$\mathbb{E}\left[u^*\mathbf{Q} u\right]=tr\mathbf{Q}.$$
+\end{lemma}
+
+Note $\mathbf{A},\mathbf{B}$ matrices, $(\mathbf{A}\mathbf{B})_{ik}=\sum^m_{j=1}a_{ij}b_{jk}.$
+
+\begin{proof}
+	As $u^*\mathbf{Q}u=\sum^n_{i=1}\sum^n_{j=1}\mean{u_i}\mathbf{Q}_{ij}u_j$.
+	
+	\begin{equation}
+		\begin{split}
+			\mathbb{E}\left[u^*\mathbf{Q}u\right] &=\sum^n_{i=1}\sum^n_{j=1}\mathbb{E}\left[\mathbf{Q}_{ij}\mean{u_i}u_j\right]\\
+			&=\sum^n_{i=1}\mathbf{Q}_{ii}\mathbb{E}\left[\mean{u_i}u_i\right]\\
+			&=tr\mathbf{Q}\text{ as } \mathbb{E}[\mean{u_i}u_i]=1.
+		\end{split}
+	\end{equation}
+\end{proof}
+
+\begin{corollary}
+	$\mathbb{E}\left[u^*u\right]=n.$
+\end{corollary}
+
+\begin{proof}
+	Take $\mathbf{Q}=\mathbf{I}_n$, then $tr\mathbf{Q}=tr\mathbf{I}_n=n$.
+\end{proof}
+
+\begin{equation}
+	\begin{split}
+		&\mathbb{E}\left[\frac1{n^2}\alpha'_k\mathbf{X}_k^*\left(\frac1n\mathbf{X}_k\mathbf{X}_k^*-z\mathbf{I}_{p-1}\right)^{-1}\mathbf{X}_k\mean{\alpha}_k\right]\\
+		&=\frac{1}{n^2}\mathbb{E}\left[tr\left\{\mathbf{X}_k^*\left(\frac1n\mathbf{X}_k\mathbf{X}_k^*-z\mathbf{I}_{p-1}\right)^{-1}\mathbf{X}_k\mean{\alpha}_k\alpha_k'\right\}\right]\\
+		&=\frac{1}{n^2}tr\left\{\mathbb{E}\left[\mathbf{X}_k^*\left(\frac1n\mathbf{X}_k\mathbf{X}_k^*-z\mathbf{I}_{p-1}\right)^{-1}\right]\mathbb{E}\left[\mean{\alpha}_k\alpha_k'\right]\right\}\\
+		&=\frac{1}{n^2}tr\left\{\mathbb{E}\left[\mathbf{X}_k^*\left(\frac1n\mathbf{X}_k\mathbf{X}_k^*-z\mathbf{I}_{p-1}\right)^{-1}\mathbf{X}_k\right]\right\}\\
+		&=\frac{1}{n^2}\mathbb{E}\left[tr\left\{\mathbf{X}_k^*\left(\frac1n\mathbf{X}_k\mathbf{X}_k^*-z\mathbf{I}_{p-1}\right)^{-1}\mathbf{X}_k\right\}\right]\\
+		&=\frac{1}{n^2}\mathbb{E}\left[tr\left\{\left(\frac1n\mathbf{X}_k\mathbf{X}_k^*-z\mathbf{I}_{p-1}\right)^{-1}\mathbf{X}_k\mathbf{X}^*_k\right\}\right]
+	\end{split}
+\end{equation}
+
+We note that $\frac{1}{n}\mathbf{X}_k\mathbf{X}^*_k\approx S_n$ (only 1 vector removed).
+
+So
+
+\begin{equation}
+	\begin{split}
+		&\frac{1}{n^2}\mathbb{E}\left[tr\left\{\left(\frac{1}{n}\mathbf{X}_k\mathbf{X}_k^*-z\mathbf{I}_{p-1}\right)^{-1}\mathbf{X}_k\mathbf{X}_k^*\right\}\right]\\
+		&\approx\frac{1}{n^2}\mathbb{E}\left[tr\left\{\left(\frac{1}{n}\mathbf{X}\mathbf{X}^*-z\mathbf{I}_{p}\right)^{-1}\mathbf{X}\mathbf{X}^*\right\}\right]\\
+		&=\frac{1}{n}\mathbb{E}\left[tr\left\{\mathbf{I}_p+z\left(\frac{1}{n}\mathbf{X}\mathbf{X}^*-z\mathbf{I}_p\right)^{-1}\right\}\right]\\
+		&=\frac{p}{n}+z\frac{p}{n}\mathbb{E}\left[S_n(z)\right].
+	\end{split}
+\end{equation}
+
+So denominator is roughly
+
+$$1-z-\left\{\frac{p}{n}+z\frac{p}{n}\mathbb{E}\left[S_n(z)\right]\right\}$$
+
+as $p\to\infty, n\to\infty$ and $p/n\to y> 0$.
+
+$$\mathbb{E}\left[S_n(z)\right]\to S(z)$$
+
+So denominator
+
+$$\to 1-z-(y+zyS(z))$$
+
+and
+
+$$S(z)=\frac{1}{1-z-(y+yzS(z))}$$
+
+This is ST of MP distribution $F_y$!
+
+% **** THIS ENDS THE EXAMPLES. DON'T DELETE THE FOLLOWING LINE:
+
+\end{document}
+
+
+
+
+

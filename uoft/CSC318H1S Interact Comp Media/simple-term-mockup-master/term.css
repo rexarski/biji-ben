@@ -1,0 +1,200 @@
+@-webkit-keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    -webkit-transform: translateY(20px); }
+
+  100% {
+    opacity: 1;
+    -webkit-transform: translateY(0); } }
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px); }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0); } }
+*, *:after, *:before {
+  box-sizing: border-box;
+  margin: 0; }
+
+html, body {
+  width: 100%;
+  height: 100%;
+  min-width: 320px; }
+
+.shaded {
+  -webkit-box-shadow: 0px 0px 31px 0px rgba(0, 0, 0, 0.2); }
+
+textarea {
+  border: none;
+  overflow: auto;
+  outline: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none; }
+
+a {
+  color: auto;
+  text-decoration: none; }
+
+#navbar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  bottom: auto;
+  height: 64px;
+  left: 224px;
+  position: absolute;
+  font-family: Ubuntu Mono, monospace;
+  line-height: 64px;
+  padding-left: 16px;
+  padding-right: 16px;
+  font-size: 16px;
+  background-color: #2980B9;
+  color: #FFFFFF;
+  z-index: 5; }
+
+#sidebar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 20;
+  right: auto;
+  width: 224px;
+  font-family: Ubuntu Mono, monospace;
+  padding: 16px;
+  background-color: #EEEEEE;
+  overflow-y: auto;
+  overflow-x: hidden; }
+  #sidebar h2 {
+    font-size: 1.2em;
+    font-weight: normal;
+    margin-bottom: 0.2em; }
+  #sidebar li {
+    overflow-x: ellipsis; }
+
+#message-buffer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  top: 64px;
+  bottom: 64px;
+  left: 224px;
+  overflow-y: scroll;
+  background-color: #F7F7F7; }
+  #message-buffer .message {
+    position: relative;
+    padding: 16px;
+    margin: 16px;
+    background-color: #EEEEEE;
+    -webkit-animation-duration: 0.2s;
+    animation-duration: 0.2s;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+    -webkit-animation-name: fadeInUp;
+    animation-name: fadeInUp;
+    font-family: Ubuntu Mono, monospace; }
+    #message-buffer .message:before {
+      content: attr(data-sender);
+      display: block;
+      margin-bottom: 0.5em;
+      opacity: 0.5; }
+    #message-buffer .message[data-sender='me@localhost'] {
+      padding-top: 8px;
+      padding-bottom: 8px;
+      font-size: 0.9em; }
+      #message-buffer .message[data-sender='me@localhost']:after {
+        content: " ";
+        transition: opacity 0.2s;
+        opacity: 0; }
+    #message-buffer .message[data-sender='helpbot'] {
+      background-color: #D8E7F7; }
+    #message-buffer .message:not([data-sender='me@localhost']) {
+      margin-left: 64px; }
+
+#ia-wrapper {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  top: auto;
+  left: 224px;
+  height: 64px; }
+
+#input-area {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color: #EEEEEE;
+  padding: 16px;
+  font-size: 0;
+  font-weight: 200;
+  font-size: 14px;
+  font-family: Ubuntu Mono, monospace;
+  background-color: #ffffff;
+  resize: none;
+  line-height: 32px;
+  padding: 16px;
+  padding-left: 32px;
+  position: absolute; }
+
+code {
+  font-family: inherit;
+  background-color: rgba(0, 0, 0, 0.1);
+  padding-left: 0.3em;
+  padding-right: 0.3em;
+  padding-top: 0.05em;
+  padding-bottom: 0.05em;
+  border-radius: 2px; }
+
+aside {
+  font-family: inherit;
+  color: rgba(0, 0, 0, 0.5);
+  display: block;
+  line-height: 1em;
+  font-size: 0.8em;
+  margin-top: 0.2em; }
+
+p, ul {
+  margin-bottom: 8px; }
+
+.lsout {
+  margin: 0;
+  padding-left: 16px;
+  display: inline-block;
+  min-width: 192px;
+  vertical-align: top; }
+  .lsout li {
+    display: block; }
+  .lsout li[data-filetype]:before {
+    font-family: "FontAwesome";
+    margin-right: 0.5em; }
+  .lsout li[data-filetype='folder']:before {
+    content: "\f07b"; }
+  .lsout li[data-filetype='dotfolder']:before {
+    content: "\f114"; }
+  .lsout li[data-filetype='textfile']:before {
+    content: "\f0f6"; }
+  .lsout li[data-filetype='photofile']:before {
+    content: "\f1c5"; }
+  .lsout li[data-filetype='wordfile']:before {
+    content: "\f1c2"; }
+  .lsout li[data-filetype='zipfile']:before {
+    content: "\f1c6"; }
+  .lsout li[data-filetype='soundfile']:before {
+    content: "\f1c7"; }
+  .lsout li[data-filetype='dotfile']:before {
+    content: "\f016"; }
+
+.help_desc {
+  margin-top: 0;
+  margin-bottom: 1em;
+  margin-left: 32px; }

@@ -1,0 +1,362 @@
+dat<-read.table("http://lib.stat.cmu.edu/aoas/107/data.txt",header=TRUE)
+####
+
+library(MCMCpack)
+yincc<-match(dat$INC,sort(unique(dat$INC)))
+ydegr<-dat$DEGREE+1
+yage<-dat$AGE
+ychild<-dat$CHILD
+ypdeg<-1*(dat$PDEG>2)
+
+ypchild<-dat$PCHILDREN
+ypincc<-match(dat$PINCOME,sort(unique(dat$PINCOME)))
+
+
+
+tmp<-lm(ydegr~ychild+ypdeg+ychild:ypdeg)
+
+
+#####
+pdf("Fig1.pdf",family="Times",height=3.5,width=7)
+par(mar=c(3,3,1,1),mgp=c(1.75,.75,0))
+par(mfrow=c(1,2))
+plot(table(dat$DEG+1)/sum(table(dat$DEG+1)),
+  lwd=2,type="h",xlab="DEG",ylab="probability")
+plot(table(dat$CHILD)/sum(table(dat$CHILD)),lwd=2,type="h",xlab="CHILD",ylab="probability" )
+dev.off()
+#####
+
+#####
+
+X<-cbind(ychild,ypdeg,ychild*ypdeg)
+y<-ydegr
+keep<- (1:length(y))[ !is.na( apply( cbind(X,y),1,mean) ) ]
+X<-X[keep,] ; y<-y[keep]
+ranks<-match(y,sort(unique(y))) ; uranks<-sort(unique(ranks))
+n<-dim(X)[1] ; p<-dim(X)[2]
+iXX<-solve(t(X)%*%X)  ; V<-iXX*(n/(n+1)) ; cholV<-chol(V)
+
+###starting values
+set.seed(1)
+beta<-rep(0,p) 
+z<-qnorm(rank(y,ties.method="random")/(n+1))
+g<-rep(NA,length(uranks)-1)
+K<-length(uranks)
+BETA<-matrix(NA,1000,p) ; Z<-matrix(NA,1000,n) ; ac<-0
+mu<-rep(0,K-1) ; sigma<-rep(100,K-1)
+S<-25000
+for(s in 1:S) 
+{
+
+  #update g 
+  for(k in 1:(K-1)) 
+  {
+  a<-max(z[y==k])
+  b<-min(z[y==k+1])
+  u<-runif(1, pnorm( (a-mu[k])/sigma[k] ),
+              pnorm( (b-mu[k])/sigma[k] ) )
+  g[k]<- mu[k] + sigma[k]*qnorm(u)
+  }
+
+  #update beta
+  E<- V%*%( t(X)%*%z )
+  beta<- cholV%*%rnorm(p) + E
+
+  #update z
+  ez<-X%*%beta
+  a<-c(-Inf,g)[ match( y-1, 0:K) ]
+  b<-c(g,Inf)[y]  
+  u<-runif(n, pnorm(a-ez),pnorm(b-ez) )
+  z<- ez + qnorm(u)
+
+
+  #help mixing
+  c<-rnorm(1,0,n^(-1/3))  
+  zp<-z+c ; gp<-g+c
+  lhr<-  sum(dnorm(zp,ez,1,log=T) - dnorm(z,ez,1,log=T) ) + 
+         sum(dnorm(gp,mu,sigma,log=T) - dnorm(g,mu,sigma,log=T) )
+  if(log(runif(1))<lhr) { z<-zp ; g<-gp ; ac<-ac+1 }
+
+  if(s%%(S/1000)==0) 
+  { 
+    cat(s/S,ac/s,"\n")
+    BETA[s/(S/1000),]<-  beta
+    Z[s/(S/1000),]<- z
+  }
+
+} 
+#####
+pdf("Fig2.pdf",family="Times",height=3.5,width=7)
+par(mar=c(3,3,1,1),mgp=c(1.75,.75,0))
+par(mfrow=c(1,2))
+plot(X[,1]+.25*(X[,2]),Z[1000,],
+ pch=15+X[,2],col=c("gray","black")[X[,2]+1],
+ xlab="number of children",ylab="z", ylim=range(c(-2.5,4,Z[1000,])),
+    xlim=c(0,9))
+
+beta.pm<-apply(BETA,2,mean)
+ZPM<-apply(Z,2,mean)
+abline(0,beta.pm[1],lwd=2 ,col="gray")
+abline(beta.pm[2],beta.pm[1]+beta.pm[3],col="black",lwd=2 )
+#legend(3.75,4.25,legend=c("parents without college","parents with college"),pch=c(15,16),col=c("gray","black"))
+legend(5,4,legend=c("PDEG=0","PDEG=1"),pch=c(15,16),col=c("gray","black"))
+
+
+plot(density(BETA[,3],adj=2),lwd=2,xlim=c(-.5,.5),main="",
+    xlab=expression(beta[3]),ylab="density")
+sd<-sqrt(  solve(t(X)%*%X/n)[3,3] )
+x<-seq(-.7,.7,length=100)
+lines(x,dnorm(x,0,sd),lwd=2,col="gray")
+legend(-.5,6.5,legend=c("prior","posterior"),lwd=c(2,2),col=c("gray","black"),bty="n")
+dev.off()
+#####
+
+beta.pm<-apply(BETA,2,mean)
+beta.pm[1]+beta.pm[3]
+apply(BETA,2,function(x) quantile(x,prob=c(.025,.5,.975))
+
+
+#######################
+deg.mcmc<-MCMCoprobit(y~X,mcmc=25000)
+summary(deg.mcmc)
+
+###################
+#MCMCmnl
+
+hsb<-read.table("hsb.txt",header=TRUE)
+attach(hsb)
+n<-nrow(hsb)
+
+g.m<-ifelse(gender=="male",1,0)
+r.aa<-ifelse(race=="african-amer",1,0)
+r.hisp<-ifelse(race=="hispanic",1,0)
+r.asian<-ifelse(race=="asian",1,0)
+ses.low<-ifelse(ses=="low",1,0)
+ses.high<-ifelse(ses=="high",1,0)
+schtyp.priv<-ifelse(schtyp=="private",1,0)
+
+X<-cbind(rep(1,n),g.m,r.aa,r.hisp,r.asian,ses.low,ses.high,schtyp.priv,read,write,math,science,socst)
+y.all<-model.matrix(~prog-1)
+y<-cbind(rep(0,n),y.all[,-1]) #make academic baseline level
+
+yy<-rep(0,n)
+yy[y[,2]==1]<-1
+yy[y[,3]==1]<-2
+
+K<-3 #3 response categories
+
+#Maximum likelihood estimation
+library(nnet)
+library(MCMCpack)
+library(mvtnorm)
+mmod<-multinom(prog~g.m+r.aa+r.hisp+r.asian+ses.low+ses.high+schtyp.priv+read+write+math+science+socst,Hess=TRUE)
+summary(mmod)
+p<-length(mmod$coef)*2
+
+#starting values and fit
+b2<-summary(mmod)$coefficients[1,]+rnorm(k,0,1)
+b3<-summary(mmod)$coefficients[2,]+rnorm(k,0,1)
+
+eta2<-X%*%b2
+eta3<-X%*%b3
+expeta2<-exp(eta2)
+expeta3<-exp(eta3)
+p1<-1/(1+expeta2+expeta3)
+p2<-p1*expeta2
+p3<-p1*expeta3
+
+p<-cbind(p1,p2,p3)
+k<-length(b2)
+# Priors
+mu0<-rep(0,k)
+Tau0<-diag(.01,k)
+Sigma0<-solve(Tau0)
+
+cov2<-cov3<-diag(0.8,k,k) #proposal covariance
+tune<-diag(0.004,k,k)
+cov2<-tune%*%solve(Tau0+solve(cov2))%*%tune
+cov3<-tune%*%solve(Tau0+solve(cov3))%*%tune
+# Additional Vectors 
+  lold<-lnew<-rep(0,n)
+
+nsim<-10000
+
+# Store results
+ Beta2<-Beta3<-matrix(0,nsim,k) 
+ A<-0
+
+
+
+for (i in 1:nsim) {
+ # Calculate Likelihood based on old value of b2 and b3
+  eta2<-X%*%b2
+  eta3<-X%*%b3
+  p1<-1/(1+exp(eta2)+exp(eta3))
+  p2<-p1*exp(eta2)
+  p3<-p1*exp(eta3)
+  lold<-sum(log(p1)*(yy==0)+log(p2)*(yy==1)+log(p3)*(yy==2))
+ 
+ # Draw Candidates
+  b2new<-b2 + rmvnorm(1,rep(0,k),cov2)  	
+  b3new<-b3 +rmvnorm(1,rep(0,k),cov3) 	
+    eta2new<-X%*%c(b2new)
+  eta3new<-X%*%c(b3new)
+  p1new<-1/(1+exp(eta2new)+exp(eta3new))
+  p2new<-p1new*exp(eta2new)
+  p3new<-p1new*exp(eta3new)
+  lnew<-sum(log(p1new)*(yy==0)+log(p2new)*(yy==1)+log(p3new)*(yy==2))
+
+ # Acceptance prob on log scale
+   r<-lnew+dmvnorm(b2new,mu0,Sigma0,log=T)+dmvnorm(b3new,mu0,Sigma0,log=T)-	
+	(lold+dmvnorm(b2,mu0,Sigma0,log=T)+dmvnorm(b3,mu0,Sigma0,log=T))
+   if(log(runif(1))<r){
+    b2<-c(b2new)
+    b3<-c(b3new)  
+  if (i>5000) A<-A+1
+    }
+
+ # Update Proposal Covs
+ #  if (i==2500) {
+  # cov2<-cov(Beta2[2501:5000,])	# Update Covariance after burn-in
+   #cov3<-cov(Beta3[2501:5000,])
+   #}
+ 
+ # Store Results
+   Beta2[i,]<-b2
+   Beta3[i,]<-b3
+  if (i%%100==0) print(c(i,lnew,lold))
+
+} # End MCMC
+
+
+beta2.mean<-apply(Beta2[5001:nsim,],2,mean)
+beta3.mean<-apply(Beta3[5001:nsim,],2,mean)
+names(beta2.mean)<-mmod$coef
+names(beta3.mean)<-mmod$coef
+A/(nsim-5000)
+
+pdf("Fig7.pdf")
+plot(5001:nsim,Beta2[5001:nsim,2],type="l",xlab="Iteration", ylab=expression(beta[2]),lty=1)
+abline(h=mean(Beta2[5001:nsim,2]),col="blue")
+dev.off()
+
+#MCMCmnl package
+
+
+mcmc.model<-MCMCmnl(prog~g.m+r.aa+r.hisp+r.asian+ses.low+ses.high+schtyp.priv+read+write+math+science+socst,baseline="academic",data=hsb,burnin=5000,mcmc=5000,
+ thin=1, tune=1)
+ summary(mcmc.model)
+beta2.mean
+
+library()
+
+
+#####
+
+# Simulated Data
+set.seed(041509)
+n<-500
+K<-3			# Number of Categories
+x<-rbinom(n,1,.5)
+X<-cbind(rep(1,n),x)
+
+b20<-1.5
+b21<--.75		# Subjects with x=1 more likely in cat 2 (than cat 1)	
+b30<--1			
+b31<-.5		# Subjects with x=1 less likely in cat 2
+b2<-c(b20,b21)
+b3<-c(b30,b31)
+
+eta2<-X%*%b2 
+eta3<-X%*%b3
+expeta2<-exp(eta2)
+expeta3<-exp(eta3)
+p1<-1/(1+expeta2+expeta3)
+p2<-p1*expeta2
+p3<-p1*expeta3
+ 
+p<-cbind(p1,p2,p3)
+
+# Response
+y<-rep(0,n)
+for (i in 1:n) y[i]<-(0:(K-1))[rmultinom(1,1,p[i,])==1]
+fit<-multinom(as.factor(y)~x)
+y<-y+1
+data<-cbind(y,x)
+
+# Priors
+mu0<-c(0,0)
+Tau0<-diag(.01,2)
+Sigma0<-solve(Tau0)
+
+# Inits
+  b2<-coef(fit)[1,]
+  b3<-coef(fit)[2,]
+  b2<-b3<-c(0,0)
+  cov2<-cov3<-diag(2) 	# Proposal covariance, will update after first run
+# Additional Vectors 
+  lold<-lnew<-rep(0,n)
+
+nsim<-10000
+
+# Store
+ Beta2<-Beta3<-matrix(0,nsim,2) 
+ A<-0
+
+# MCMC
+for (i in 2:nsim) {
+ # Calculate Likelihood based on old value of b2 and b3
+  eta2<-X%*%b2
+  eta3<-X%*%b3
+  p1<-1/(1+exp(eta2)+exp(eta3))
+  p2<-p1*exp(eta2)
+  p3<-p1*exp(eta3)
+  lold<-sum(log(p1)*(y==1)+log(p2)*(y==2)+log(p3)*(y==3))
+ 
+ # Draw Candidates
+  b2new<-b2 + rmvt(1,sigma=.5*cov2,3)  	# Draw from symmetric MV t-distv
+  b3new<-b3 + rmvt(1,sigma=.5*cov3,3)	# Cov2 and Cov3 are covs from running 
+							#  chain once, see below
+  eta2<-X%*%c(b2new)
+  eta3<-X%*%c(b3new)
+  p1<-1/(1+exp(eta2)+exp(eta3))
+  p2<-p1*exp(eta2)
+  p3<-p1*exp(eta3)
+  lnew<-sum(log(p1)*(y==1)+log(p2)*(y==2)+log(p3)*(y==3))
+
+ # Acceptance prob on log scale
+   r<-lnew+dmvnorm(b2new,mu0,Sigma0,log=T)+dmvnorm(b3new,mu0,Sigma0,log=T)-	
+	(lold+dmvnorm(b2,mu0,Sigma0,log=T)+dmvnorm(b3,mu0,Sigma0,log=T))
+   if(log(runif(1))<r){
+    b2<-c(b2new)
+    b3<-c(b3new)  
+    if (i>5000) A<-A+1
+    }
+
+ # Update Proposal Covs
+   if (i==5000) {
+   cov2<-cov(Beta2[2501:5000,])	# Update Covariance after burn-in
+   cov3<-cov(Beta3[2501:5000,])
+   }
+ 
+ # Store Results
+   Beta2[i,]<-b2
+   Beta3[i,]<-b3
+  if (i%%100==0) print(i)
+
+} # End MCMC
+coef(fit)
+c(apply(Beta2[5001:nsim,],2,mean),apply(Beta3[5001:nsim,],2,mean))
+A/(nsim-5000)
+
+plot(5001:nsim,Beta2[5001:nsim,2],type="l",xlab="Iteration", ylab="Beta2_2",
+main="Fig. 1: IP for Posterior of Beta2_2",col="lightgreen",lty=1)
+abline(h=mean(Beta2[5001:nsim,2]),col="blue")
+
+
+
+##Gaussian copula model
+
+X<-cbind(ychild,ypdeg,yincc,ypchild,ydegr,ypincc,yage)
+
+fit<-sbgcop.mcmc(X)

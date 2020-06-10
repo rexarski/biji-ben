@@ -1,0 +1,366 @@
+---
+title: "STAT6046 Assignment"
+author: "Rui Qiu"
+date: '2017-05-15'
+output:
+  html_document: default
+  pdf_document: default
+---
+
+<!-- # Note -->
+<!-- Although I set the significant digits to 10 as a default setting in R, I still round every value to 2 decimal places since in reality this is how we deal with money. In other words, for each month, the new expense, and correspondingly the new salary and new property price for each year, are always rounded to 2 decimal places. Therefore, for a long term cash flow simulation, some rounding errors are inevitable (comparing with theoretical calculation, i.e. "not rounded so aggressively"). -->
+
+# Question 1
+
+## (1)
+Before the calculation, we need to note that: 
+
+- The effective monthly interest rate of bank saving is $\frac{0.04}{12}$.
+- The salary is updated every year with $\texttt{salary}\cdot 1.04$.
+- The property price is updated every year with $\texttt{property}\cdot 1.05$.
+- The expense is updated every month with $\texttt{expense}\cdot 1.002$.
+- The bank balance is updated with interest compounding as $\texttt{balance}\cdot (1+\frac{0.04}{12})$, then plus the salary of current month, minus the expense of current month.
+- The stopping condition is that the bank balance is greater or equal to $20\%$ of the current property price.
+
+I created a data frame by month, with property price, the salary, expense and balance of that month in a row. The simulation loop will run until the stopping condition is satisfied.
+
+```{r, echo=FALSE}
+# --------------- Q1 ---------------
+# --------------- (1) ---------------
+
+options(digits=10)
+
+df <- data.frame()
+month <- 1
+year <- 1
+property <- 600000
+salary <- 5000
+expense <- 2500
+balance <- 0
+inv.rate <- 0.04/12
+
+while (balance < property * 0.2) {
+    if (month %% 12 == 1 && year != 1) {
+        salary <- salary * 1.04
+        property <- property * 1.05
+    }
+    if (month != 1) {
+        expense <- expense * 1.002
+    }
+    balance <- balance * (1 + inv.rate)
+    balance <- balance + salary - expense
+    df <- rbind(df, c(month, year, property, salary, expense, balance))
+    month <- month + 1
+    if (month %% 12 == 1) {
+        year <- year + 1
+    }
+}
+colnames(df) <- c('month', 'year', 'property', 
+                  'salary', 'expense', 'balance')
+end.month <- month - 1
+tail(df)
+cat("Duration:", end.month, "months.")
+```
+
+Therefore, **48 months** after the starting date (1/1/2018), which is now **31/12/2021**, I can purchse the home.
+
+
+## (2)
+### (i)
+The periods number of 30 years home loan is $n=12\times 30=360$.
+
+The amount of loan to pay is the $80\%$ percent of property price on 31/12/2021, which is
+
+```{r, echo=FALSE}
+# --------------- (2) ---------------
+(loan <- df[end.month,]$property * 0.8) # BIG L
+
+```
+
+The effective monthly interest rate for home loan is $i=\frac{0.045}{12}$:
+
+```{r, echo=FALSE}
+n <- 12 * 30 
+(i.loan.rate <-  0.045/12)
+```
+
+Correspondingly, $v=(1+i)^{-1}$ is equal to
+
+```{r, echo=FALSE}
+(v.loan.rate <- 1 / (1 + i.loan.rate))
+```
+
+Then by the formula: $L=Ka_{\overline{360}\mid}$, the **monthly level payment $K$** is  
+
+```{r, echo=FALSE}
+(K <- loan / ((1 - v.loan.rate ** n) / i.loan.rate))
+cat("The monthly level payment K is", round(K, 2))
+```
+
+### (ii)
+
+The **total interest** is calculated as \[K\cdot (n-a_{\overline{360}\mid})\]
+```{r, echo=FALSE}
+(total.interest <- K * (n - (1 - v.loan.rate ** n) / i.loan.rate))
+cat("The total interest we need to pay is", round(total.interest, 2))
+```
+
+And the **interest portion of the 15th payment** is calculated as \[K\cdot(1-v^{15-1})\]
+
+```{r, echo=FALSE}
+(interest15 <- K * (1 - v.loan.rate ** (n - (15-1))))
+cat("The interset portion of the 15th payment we need to pay is", round(interest15, 2))
+```
+
+### (iii)
+The basic rules of cash flows are similar to the ones we set in part (1). But we should notice that there are some other differences:
+
+- The starting date is now the end of month 48. The amount of downpayment has already been deducted from bank balance.
+- The cash flows affecting bank balance every month are salary, expense, bank interests and monthly level payment which is the $K$ we calculated in the previous question.
+
+\[\text{new balance} = \text{last balance}\times (1+\text{interest rate})+\text{salary}-\text{expense}-\text{level payment}\]
+
+```{r, echo=FALSE}
+df2 <- data.frame()
+month.new <- 1
+year.new <- 1
+payment <- K
+salary.new <- df[end.month,]$salary # starting salary in month 48
+expense.new <- df[end.month,]$expense # starting expense month 48
+balance.new <- df[end.month,]$balance - df[end.month,]$property * 0.2
+# starting balance in month 48
+
+while (month.new <= 360) {
+    if (month.new %% 12 == 1) {
+        salary.new <- salary.new * 1.04
+    }
+    expense.new <- expense.new * 1.002
+    balance.new <- balance.new * (1 + inv.rate)
+    balance.new <- balance.new + salary.new - expense.new - payment
+    df2 <- rbind(df2, c(month.new, year.new, salary.new, expense.new, balance.new))
+    month.new <- month.new + 1
+    if (month.new %% 12 == 1) {
+        year.new <- year.new + 1
+    }
+}
+colnames(df2) <- c('month.new', 'year.new', 'salary.new', 'expense.new', 'balance.new')
+tail(df2)
+
+cat("The balance after paying off is", round(df2[360,]$balance.new, 2))
+```
+
+## (3)
+
+### (i)
+The quickest way is to **not save any money in bank**, i.e. we just pay for the loan with all salary excluding monthly expense. Why is this? Because the nominal intereset rate of loan ($4.5\%$ p.a.) is greater than the nominal interest rate of investment ($4\%$ p.a.). In other words, if we save $\$1$ in bank for a month, the interest we gain can never cover the interest generated by loan.
+
+### (ii)
+We collect some information from the end of month 48 (31/12/2021), and we are paying for an outstanding balance which is equal to $80\%$ of property price at that time.
+
+Meanwhile, for each month, we don't pay the level payment $K$. Instead, we pay as much as we can. The amount we paid consists of two parts:
+
+- One part used to cover the interest of outstanding balance generated monthly.
+- One part as principle payment.
+
+The first part can be calculated by
+
+\[\text{outstanding balance from last month}\times \text{loan interest}\]
+
+The second part can be calculated as
+
+\[\text{salary}-\text{expense}+\text{bank balance from last month}-\text{loan interest}\]
+
+The stopping condition is when the outstanding balance hits zero, i.e. when we pay off.
+
+```{r, echo=FALSE}
+# --------------- (3) ---------------
+df3 <- data.frame()
+ob.loan <- loan
+month.quick <- 1
+year.quick <- 1
+salary.quick <- df[end.month,]$salary # salary in month 48
+expense.quick <- df[end.month,]$expense # expense in month 48
+balance.quick <- df[end.month,]$balance - df[end.month,]$property * 0.2 # balance in month 48
+payment.quick <- salary.quick - expense.quick + balance.quick
+
+while(ob.loan > 0) {
+    if (month.quick %% 12 == 1) {
+        salary.quick <- salary.quick * 1.04
+    }
+    expense.quick <- expense.quick * 1.002
+    balance.quick <- balance.quick * (1 + inv.rate)
+    payment.quick <- salary.quick - expense.quick + balance.quick
+    balance.quick <- 0
+    interest.payment <- i.loan.rate * ob.loan
+    principle.payment <- payment.quick - interest.payment
+    ob.loan <- ob.loan - principle.payment
+    df3 <- rbind(df3, c(month.quick, year.quick, salary.quick, expense.quick, 
+                        payment.quick, principle.payment, interest.payment, ob.loan))
+    month.quick <- month.quick + 1
+    if (month.quick %% 12 == 1){
+        year.quick <- year.quick + 1
+    }
+}
+colnames(df3) <- c('month.quick', 'year.quick', 'salary.quick', 'expense.quick',
+                   'payment.quick', 'principle.payment', 'interest.payment', 'ob.loan')
+tail(df3)
+cat("We pay off in month", tail(df3, 1)$month.quick)
+```
+
+Thus, **$178$ months** after we pay the downpayment, we can finally pay off the home loan. And the date will be **31/10/2036**.
+
+### (iii)
+
+Note that the **last payment** is the outstanding balance the one month ago compounded with loan interest for one month extra, i.e.
+
+\[\text{OB}_{177}\cdot (1+i_{\text{loan}})\]
+
+```{r, echo=FALSE}
+cat("The last payment is", round(df3[tail(df3,1)$month.quick-1,]$ob.loan*(1+i.loan.rate), 2))
+```
+
+# Question 2
+##(1)
+First we need to get the basic information at the time we invest (either) two bonds, which is 2 years after we purchased our home, i.e. 31/12/2023.
+
+```{r, echo=FALSE}
+# --------------- Q2 ---------------
+# --------------- (1) ---------------
+df2[24,]
+```
+
+The Bond price $P$ is the bank balance at that time.
+
+The **nominal amount of Bond A** is
+
+\[P\cdot (1 + 6\%)^{15}\]
+
+```{r, echo=FALSE}
+# No tax considered
+P <- df2[24, ]$balance.new
+(nominal.A <- P * ((1.06) ** 15))
+cat("The nominal amount of Bond A is", round(nominal.A, 2))
+```
+
+The half-yearly coupon rate is $\frac{0.04}{2}=0.02$.
+```{r, echo=FALSE}
+r <- 0.04 / 2 # half-yearly coupon rate
+```
+
+And the half-yearly redemption rate is $j=1.09^{1/2}-1$.
+
+```{r, echo=FALSE}
+(j <- 1.09 ** (1/2) - 1) # half-yearly 'redemption rate'
+v_j <- 1 / (1+j)
+a_30.j <- (1-v_j**30)/j
+```
+
+With the value of $j$, we can calculate **the nominal amount of Bond B**:
+
+\[\frac{P}{r\cdot a_{\overline{360}\mid j}+v_j^{30}}\]
+
+```{r, echo=FALSE}
+(nominal.B <- P / (r * a_30.j + v_j ** 30))
+cat("The nominal amount of Bond B is", round(nominal.B, 2))
+```
+
+##(2)
+This is the case when income tax and capital gain tax are considered. 
+
+```{r, echo=FALSE}
+# --------------- (2) ---------------
+coupon.tax <- 0.2
+capital.gain.tax <- 0.3
+```
+
+### Bond A
+
+For Bond A which matures in 15 years, on the date 31/12/2038, i.e. on that day, a large amount of mony is added to my balance. After that, we still have 13 years (30-2-15=13) of loans to pay (K). So now we set year 2024 as year 1, and we end the procedure by the end of year 2051 which is year 28.
+
+```{r, echo=FALSE}
+# --------------- Bond A ---------------
+
+df4 <- data.frame()
+month.A <- 1
+year.A <- 1
+# level payment is still K
+salary.A <- df2[24,]$salary.new # starting salary on 31/12/2023
+expense.A <- df2[24,]$expense.new # starting expense on 31/12/2023
+balance.A <- 0 # starting balance on 31/12/2023
+
+while (month.A <= 12 * 28) {
+    if (month.A %% 12 == 1) {
+        salary.A <- salary.A * 1.04
+    }
+    expense.A <- expense.A * 1.002
+    balance.A <- balance.A * (1 + inv.rate)
+    balance.A <- balance.A + salary.A - expense.A - K
+    if (month.A == 12 * 15) {
+        balance.A <- balance.A + nominal.A - (nominal.A - P) * (capital.gain.tax)
+        # NOTE: the an amount of capital gain tax charged
+    }
+    df4 <- rbind(df4, c(month.A, year.A, salary.A, expense.A, balance.A))
+    month.A <- month.A + 1
+    if (month.A %% 12 == 1) {
+        year.A <- year.A + 1
+    }
+}
+colnames(df4) <- c('month.A', 'year.A', 'salary.A', 'expense.A', 'balance.A')
+tail(df4)
+
+cat('If we buy Bond A, at the end of the 30-year loan, we have $',
+    round(df4[336,]$balance.A, 2), 'in our balance.')
+```
+
+### Bond B
+
+Bond B matures in 10-15 years, but we know that $P < C$ so there is capital gain. Thus the issuer would prefer a longer maturity. Therefore, the length of Bond B should also be 15 years, which are equivalent to 30 periods because it is compounded half-yearly).
+
+Also, we have to note that the gross yield of Bond B haven't changed, so the nominal amount of Bond B is the still the value we calculated without taxes.
+
+```{r, echo=FALSE}
+
+# --------------- Bond B ---------------
+
+df5 <- data.frame()
+month.B <- 1
+year.B <- 1
+# level payment is still K
+salary.B <- df2[24,]$salary.new # starting salary on 31/12/2023
+expense.B <- df2[24,]$expense.new # starting expense on 31/12/2023
+balance.B <- 0 # starting balance on 31/12/2023
+
+while (month.B <= 12 * 28) {
+    if (month.B %% 12 == 1) {
+        salary.B <- salary.B * 1.04
+    }
+    expense.B <- expense.B * 1.002
+    balance.B <- balance.B * (1 + inv.rate)
+    balance.B <- balance.B + salary.B - expense.B - K
+    if (month.B %% 6 == 0 && year.B <= 15) {
+        balance.B <- balance.B + nominal.B * r * (1-coupon.tax)
+        # NOTE: an amount of coupon tax charged
+    }
+    if (month.B == 12 * 15 && year.B == 15) {
+        balance.B <- balance.B + (nominal.B - (nominal.B - P) * capital.gain.tax)
+        # NOTE: an amount of capital gain tax charged
+    }
+    df5 <- rbind(df5, c(month.B, year.B, salary.B, expense.B, balance.B))
+    month.B <- month.B + 1
+    if (month.B %% 12 == 1) {
+        year.B <- year.B + 1
+    }
+}
+colnames(df5) <- c('month.B', 'year.B', 'salary.B', 'expense.B', 'balance.B')
+tail(df5)
+
+cat('If we buy Bond B, at the end of the 30-year loan, we have $',
+    round(df5[336,]$balance.B, 2), 'in our balance.')
+```
+
+So far, we have already calculated the balances after buying Bond A ($\$2206360.64$) and Bond B ($\$2214505.13$) and paying off all the loans. So our strategy would be choose Bond B.
+
+# Appendix
+## Code
+```{r, ref.label=knitr::all_labels(), echo=TRUE, eval=FALSE}
+```

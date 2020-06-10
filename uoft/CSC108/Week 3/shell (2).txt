@@ -1,0 +1,93 @@
+Python 2.7.2 (v2.7.2:8527427914a2, Jun 11 2011, 14:13:39) 
+[GCC 4.0.1 (Apple Inc. build 5493)]
+Type "help", "copyright", "credits" or "license" for more information.
+[evaluate calculations.py]
+3352.41
+367.361111111
+Your test average is: 79.65
+[evaluate our_math_improved.py]
+3352.41
+367.361111111
+[evaluate calculations.py]
+Your test average is: 79.65
+[evaluate our_math_improved.py]
+3352.41
+367.361111111
+>>> # if-statements
+>>> grade1 = 86.4
+>>> if grade1 > 80:
+   print 'A'
+
+A
+>>> grade1 = 60
+>>> if grade1 > 80:
+   print 'A'
+
+>>> if grade1 > 80:
+   print 'A'
+   print 'hello'
+
+>>> grade = 90
+>>> if grade1 > 80:
+   print 'A'
+   print 'hello'
+
+>>> grade1 = 90
+>>> if grade1 > 80:
+   print 'A'
+   print 'hello'
+
+A
+hello
+>>> if grade1 > 80:
+   print 'A'
+   print 'hello'
+else:
+   print 'hello there'
+
+A
+hello
+grade1 = 50
+>>> if grade1 > 80:
+   print 'A'
+   print 'hello'
+else:
+   print 'hello there'
+
+hello there
+>>> grade1 = 'hi'
+>>> grade1 > 80
+True
+int(grade1)  # We can't turn a str into an int!
+Traceback (most recent call last):
+  File "<string>", line 1, in <fragment>
+ValueError: invalid literal for int() with base 10: 'hi'
+>>> str(80)  #  But we can turn an int int a str.
+'80'
+>>> grade1 > str(80)  # We can also compare two strs.
+True
+>>> 'hi' > str(80)
+True
+>>> 'hi' > '80'  # Why is 'hi' > '80' True?
+True
+>>> 'h' > '8' # Python compares strings character by character.  
+True
+>>> help(ord)
+Help on built-in function ord in module __builtin__:
+
+ord(...)
+    ord(c) -> integer
+    
+    Return the integer ordinal of a one-character string.
+
+>>> ord('h')  # Find the int value of 'h'.
+104
+>>> ord('8')
+56
+>>> ord('i')
+105
+>>> ord('0')
+48
+>>> # We can also find the str value of an int.
+>>> chr(104)
+'h'

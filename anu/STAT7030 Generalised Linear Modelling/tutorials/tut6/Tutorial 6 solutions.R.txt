@@ -1,0 +1,115 @@
+# STAT3015/4030/STAT7030 GLMs
+# R command file for Tutorial 6
+
+# Question 1
+# (a)
+oring <- read.csv("oring.csv", header = TRUE)
+attach(oring)
+names(oring)
+
+contrasts(FAILURE)
+
+m1 <- glm(FAILURE ~ TEMP, family = binomial(link = "logit"))
+summary(m1)
+
+# (b)
+pnorm(-0.17132/0.08344) # this is an one-sided p-value
+# Alternatively we can use the "wald.test" command of library "aod"
+# (Detailed usage is contanined in the package manual.)
+# wald.test(b = coef(m1),Sigma = vcov(m1), Terms = 2)
+
+# (c)
+pchisq(summary(m1)$null.deviance - summary(m1)$deviance,
+    summary(m1)$df.null - summary(m1)$df.residual, lower.tail = FALSE)
+# this p-value corresponds to H_A: Temperature is not equal to 0.
+
+# (d)
+c(-0.17132-1.96*0.08344, -0.17132+1.96*0.08344)
+# Alternatively, we can use confint.default(m1)
+
+# (e)
+pred.31 <- as.numeric(c(1,31)%*%coef(m1))
+pred.31
+# Alternatively, we can use
+# pred.31 <- coef(m1)[1] + 31 * coef(m1)[2]
+
+# input the inverse logit function
+invlogit <- function(x){
+  1/(1+ exp(-x))
+}
+
+invlogit(pred.31)
+
+# use predict function in R to get predicted FAILURE rate with std. errors
+newdata = data.frame(TEMP = 31)
+pred.failure = predict(m1, newdata = newdata, type = "response", se.fit = TRUE)
+pred.failure
+
+# a 95% CI for predicted failure probability 
+c(pred.failure$fit - 1.96*pred.failure$se.fit, 
+  pred.failure$fit + 1.96*pred.failure$se.fit)
+
+# predicted logit of failure probability (i.e. odds)
+pred.logit = predict(m1, newdata = newdata, type = "link", se.fit = TRUE)
+pred.logit
+# check this result by taking inverse of logit function
+invlogit(pred.logit$fit)
+
+# a 95% CI for this predicted odds
+c(invlogit(pred.logit$fit - 1.96 * pred.logit$se.fit),
+  invlogit(pred.logit$fit + 1.96 * pred.logit$se.fit))
+
+# (f)
+range(TEMP)      #does not contain 31
+# Our prediction represent an extrapolation beyond the range of the available data.
+
+# Question2
+# (a)
+owl <- read.csv("owl.csv", header = TRUE)
+attach(owl)
+names(owl)
+
+# we are going to use "t.test()" function here. Since the alternative hypothesis is 
+# the percentage of mature forest is larger at nest sites than at random sites, we 
+# need to specify that 'alternative = "greater"' in the t.test() command.
+# By creating a function we save some typing efforts.
+owl.t.test<-function(){
+  for (i in 1:7){
+    p.value[i]<-t.test(owl[,i+1][SITE=="Nest"], 
+                       owl[,i+1][SITE=="Random"], 
+                       alternative="greater")$p.value
+  }
+  names(p.value) <- colnames(owl)[-1]
+  return(p.value)
+}
+
+p.value <- rep(0,7)
+owl.t.test()
+
+# (b)
+# Firstly, we need to create an indicator variable for "SITE"
+site.ind <- ifelse(SITE == "Nest", 1, 0)
+# Start off with the full model and use backward selection:
+m1 <- glm(site.ind ~ PCTRING1 + PCTRING2 + PCTRING3 + PCTRING4 + 
+            PCTRING5 + PCTRING6 + PCTRING7, family = binomial(link = "logit"))
+summary(m1)
+# We may use AIC as the selection criterion through "step(m1, direction = "backward")".
+# However, the result is different to the model we are building here.
+
+m2 <- glm(site.ind ~ PCTRING1 + PCTRING2 + PCTRING3, family = binomial(link = "logit"))
+summary(m2)
+
+# Drop in deviance test
+reduce = m2
+full = m1
+drop_in_dev = reduce$deviance - full$deviance
+dif_in_df = reduce$df.residual - full$df.residual
+pchisq(drop_in_dev, dif_in_df, lower.tail = FALSE)
+
+# If there is an additional 5% of mature forest in ring 3, what is the 
+# estimated increase in the odds that the centre is a nest nest?
+exp(summary(m2)$coefficients[4, 1]*5)
+# a corresponding 95% CI
+c(exp((summary(m2)$coefficients[4, 1] - 1.96*summary(m2)$coefficients[4, 2])*5),
+exp((summary(m2)$coefficients[4, 1] + 1.96*summary(m2)$coefficients[4, 2])*5))
+

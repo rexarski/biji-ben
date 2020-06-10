@@ -1,0 +1,118 @@
+# Generalised Linear Models (STAT3015/STAT7030)
+
+# Appendix of R commands to accompany the model solutions to Assignment 1 for 2015
+
+# Q1(a)
+
+ClothDye <- read.table("ClothDye.txt", header=T)
+attach(ClothDye)
+
+names(ClothDye)
+unique(ctime)
+unique(temp)
+unique(operator)
+
+length(score)
+tapply(score,list(ctime,temp,operator),length)
+
+# Q1(b)
+
+ctime.temp.means <- tapply(score,list(ctime,temp),mean)
+
+matplot(unique(ctime),ctime.temp.means,type="b",lty=c(3,4),pch="LH",xlab="Cycle Time (minutes)",ylab="Score",xlim=c(40,60),ylim=c(27,36),lab=c(3,10,2))
+abline(mean(score),0)
+legend(c(43.5,57.5),c(29,27.3),lty=c(4,3,1),pch="HL-",legend=c("Higher temperature (350 degrees Farenheit)", "Lower temperature (300 degrees Farenheit)", "Overall mean score indicated by horizontal line"))
+title("Mean Quality Scores by Cycle Time and Temperature")
+
+matplot(unique(temp),t(ctime.temp.means),type="b",lty=c(3,4,6),pch="456",xlab="Temperature (degrees Farenheit)",ylab="Score",xlim=c(300,350),ylim=c(27,36),lab=c(1,10,3))
+abline(mean(score),0)
+legend(c(310,340),c(34.5,32.5),lty=c(3,4,6,1),pch="456-",c("Cycle Time = 40 minutes", "Cycle Time = 50 minutes", "Cycle Time = 60 minutes", "Overall mean score"))
+title("Mean Quality Scores by Temperature and Cycle Time")
+
+# Q1(c)
+
+options(contrasts=c("contr.sum", "contr.poly"))
+
+operators <- factor(operator)
+cycle.times <- factor(ctime)
+temperatures <- factor(temp)
+
+ClothDye.lm <- lm(score ~ operators + cycle.times*temperatures)
+plot(ClothDye.lm)
+
+# Q1(d)
+
+anova(ClothDye.lm)
+round(summary(ClothDye.lm)$coef,5)
+
+lvl.mns <- as.vector(ctime.temp.means)
+ni <- as.vector(tapply(score,list(ctime,temp),length))
+rmse <- summary(ClothDye.lm)$sigma
+est <- rep(0,6)
+se <- rep(0,6)
+for (i in 1:6) {
+  h <- rep(-1/6,6)
+  h[i] <- 5/6
+  est[i] <- t(h)%*%lvl.mns
+  se[i] <- rmse*sqrt(sum((h^2)/ni))
+}
+tstat <- est/se
+pvalue <- 2*(1-pt(abs(tstat), ClothDye.lm$df.residual))
+means.tests <- as.data.frame(cbind(lvl.mns, est, se, tstat, pvalue))
+row.names(means.tests) <- c("(40 mins, 300 degF) ", "(50 mins, 300 degF) ", "(60 mins, 300 degF) ", "(40 mins, 350 degF) ", "(50 mins, 350 degF) ", "(60 mins, 350 degF) ")
+round(means.tests,5)
+
+h <- c(0,0,0,-1,1,0)
+est <- t(h)%*%lvl.mns
+se <- rmse*sqrt(sum((h^2)/ni))
+c(est + qt(0.025, ClothDye.lm$df.residual), est + qt(0.975, ClothDye.lm$d))              
+
+# Q1(e)
+
+ClothDye.lm2 <- lm(score ~ operators*cycle.times*temperatures)
+plot(ClothDye.lm2)
+
+anova(ClothDye.lm2)
+round(summary(ClothDye.lm2)$coef,5)
+
+par(mfrow=c(2,2))
+
+matplot(unique(ctime),ctime.temp.means,type="b",lty=c(3,4),pch="LH",xlab="Cycle Time (minutes)",ylab="Mean Quality Score",xlim=c(40,60),ylim=c(24,37),lab=c(3,7,2))
+abline(mean(score),0)
+legend(c(44,57),c(27,24),pch="HL",legend=c("350 degrees Farenheit", "300 degrees Farenheit"))
+title("All Operators")
+
+threeway.means <- tapply(score,list(ctime,temp,operator),mean)
+
+matplot(unique(ctime),threeway.means[,,1],type="b",lty=c(3,4),pch="LH",xlab="Cycle Time (minutes)",ylab="Mean Quality Score",xlim=c(40,60),ylim=c(24,37),lab=c(3,7,2))
+abline(mean(score),0)
+legend(c(44,57),c(27,24),pch="HL",legend=c("350 degrees Farenheit", "300 degrees Farenheit"))
+title("Operator 1")
+
+matplot(unique(ctime),threeway.means[,,2],type="b",lty=c(3,4),pch="LH",xlab="Cycle Time (minutes)",ylab="Mean Quality Score",xlim=c(40,60),ylim=c(24,37),lab=c(3,7,2))
+abline(mean(score),0)
+legend(c(44,57),c(27,24),pch="HL",legend=c("350 degrees Farenheit", "300 degrees Farenheit"))
+title("Operator 2")
+
+matplot(unique(ctime),threeway.means[,,3],type="b",lty=c(3,4),pch="LH",xlab="Cycle Time (minutes)",ylab="Mean Quality Score",xlim=c(40,60),ylim=c(24,37),lab=c(3,7,2))
+abline(mean(score),0)
+legend(c(44,57),c(27,24),pch="HL",legend=c("350 degrees Farenheit", "300 degrees Farenheit"))
+title("Operator 3")
+
+par(mfrow=c(1,1))
+
+qt(0.975,ClothDye.lm2$df.residual)*summary(ClothDye.lm2)$sigma*sqrt(1/3 + 1/3)
+
+# Q1(f)
+
+library(lme4)
+
+ClothDye.lmer <- lmer(score ~ (1|factor(operators)) + cycle.times*temperatures)
+
+# Q1(g)
+
+anova(ClothDye.lmer)
+
+# Q1 (h)
+
+summary(ClothDye.lmer)

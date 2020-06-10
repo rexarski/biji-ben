@@ -1,0 +1,27 @@
+# win loss data
+dt <- read.table("data/T1-1.DAT");
+names(dt) <- c("payroll","winloss");
+plot(dt$payroll/1e6,dt$winloss,pch=20);
+plot(dt$payroll/1e6,dt$winloss,pch=20,xlim=c(0,4),ylim=c(0,.7));
+
+# sample mean, standard deviation
+colMeans(dt);
+mean(dt[,1]);
+mean(dt[,2]);
+
+# unbiased sample standard deviation
+sd(dt[,1]);
+sd(dt[,2]);
+
+# unbiased variance-covariance matrix
+var(dt);
+
+# paper strength data 
+dt <- read.table("data/T1-2.DAT");
+names(dt) <- c("density","machine","cross");
+colMeans(dt);
+plot(dt,pch=20);
+plot(dt,pch=20,col=1+(dt$cross > 60));
+plot(dt,pch=20,col=1+1*(dt$density > .9));
+
+

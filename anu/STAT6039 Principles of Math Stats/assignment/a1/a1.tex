@@ -1,0 +1,371 @@
+\documentclass[a4paper, 11pt, twoside]{article}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{listings}
+\begin{document}
+\title{STAT6039 Assignment 1}
+\author{Rui Qiu}
+\date{2017-03-10}
+
+\maketitle
+
+\paragraph{Problem 1}
+
+A stack of  cards contains 4 Aces, 3 Kings, 2 Queens and 6 other cards. 7 cards are randomly drawn from the stack, without replacement.
+
+\paragraph{(a)} Find the probability that the drawn cards contain at least 1 Ace.
+
+\paragraph{Solution:}\ \\
+\[
+\begin{split}
+	P(\text{at least 1 Ace}) &= 1 - P(\text{No Aces})\\
+	&= 1 - \frac{\text{Number of combinations without Aces}}{\text{Number of all combinations}}\\
+	&= 1 - \frac{{(15-4) \choose 7}}{{15 \choose 7}}\\
+	&= 1 - \frac{330}{6435}\\
+	&= \frac{37}{39}.
+\end{split}
+\]
+
+So the probability of the drawn cards contain at least 1 Ace is $\frac{37}{39}$.
+
+\paragraph{(b)} Find the probability that the drawn cards contain exactly 2 Aces if it is known that they contain no Kings or Queens.
+
+\paragraph{Solution:}\ \\
+
+We can simply the problem by removing Kings and Queens so that the original stack contains only $4$ Aces and $6$ other cards. Now the probability we are looking for is the probability of drawing $2$ Aces and $5$ other cards. Therefore,
+
+\[P=\frac{{4 \choose 2}{6 \choose 5}}{{10 \choose 7}}=\frac{6\cdot 6}{120}=\frac3{10}.\]
+
+So the probability of the drawn cards contain exactly 2 Aces if it is known that they contain no Kings or Queens is $\frac3{10}.$\\
+
+\pagebreak
+
+\paragraph{Problem 2}
+
+Homer and Marge are about to play a game with the following rules. They take turns rolling a standard fair die, starting with Homer. The game ends when someone rolls a $5$ or $6$. That person wins the game.
+
+\paragraph{(a)} Find the probability that Homer will win the game.
+
+\paragraph{Solution:}\ \\
+
+The probability of Homer wins on the first roll is $\frac{2}{6}=\frac13$.
+
+The probability of Homer wins on the third roll is $\frac{4}{6}\cdot\frac{4}{6}\cdot\frac{2}{6}=\frac{4}{9}\frac{1}{3}=\frac{4}{27}.$
+
+The probability of Homer wins on the fifth roll is $\left(\frac{4}{6}\right)^4\cdot\frac{2}{6}=\frac{16}{243}.$
+
+$\cdots$
+
+The total probability of Homer winning this game is the sum of those probabilities above (i.e. a geometric series):
+
+\[
+\begin{split}
+	P(\text{Homer wins})&=\frac13 + \left(\frac23\right)^2\frac13 + \left(\frac23\right)^4\frac13 + \cdots\\
+	P(\text{Marge wins})&=\frac{2}{3}\left(\frac13 + \left(\frac23\right)^2\frac13 + \left(\frac23\right)^4\frac13 + \cdots\right)\\
+	P(\text{Marge wins}) &= \frac{2}{3}P(\text{Homer wins})\\
+	P(\text{Homer wins})&+P(\text{Marge wins}) = 1
+\end{split}
+\]
+
+Therefore, the probability that Homer will win the game is $\frac35.$
+
+\paragraph{(b)} Suppose that the game ends in a draw if ever two $1$s come up in a row. With this change to the rules, find the probability that Homer will win the game.
+
+\paragraph{Solution:}\ \\
+
+\textbf{Method I:}
+
+First we consider the probability of getting a draw, denoted as $P(d)$. Clearly, we have
+
+\[P(d) = \frac16\cdot\frac16 + \frac12\cdot P(d) +\frac16\cdot\frac12\cdot P(d)=\frac1{36}+\frac7{12}\cdot P(d)\]
+
+Then $P(d)=\frac{1}{15},$ i.e. the probability of getting a draw eventually is $\frac{1}{15}.$
+
+Now let's consider a bunch of mutually exclusive events:\\
+
+$A=$ Homer gets a 5 or 6 (Homer wins).
+
+$B=$ Homer gets 2, 3 or 4 in his 1st roll (the game 'begins' with Marge).
+
+$C=$ Homer gets a 1, and Marge gets a 1 (this is a draw).
+
+$D=$ Homer gets a 1, and Marge gets a 2, 3 or 4.
+
+$E=$ Homer gets a 1, and Marge gets a 5 or 6 (Marge wins).\\
+
+These five events are the basic scenarios we could have for the first 2 rolls of Homer and Marge. In other words, if the game continues with Marge, we can switch the names of Homer and Marge, then we again have these 5 possible scenarios.\\
+
+But we need to note that the sum of probability that Homer wins or Marge wins is not $1$ any more!\\
+
+\[
+\begin{split}
+	P(H)&=P(A)P(H|A)+P(B)P(H|B)+P(C)P(H|C)+P(D)P(H|D)+P(E)|P(H|E)\\
+	&=\frac{1}{3}\cdot 1 + \frac{1}{2}\cdot P(M) + \frac{1}{6}\cdot\frac{1}{6}\cdot 0 + \frac{1}{6}\cdot\frac{1}{2}\cdot P(H)+\frac{1}{6}\cdot\frac{1}{3}\cdot 0\\
+	&=\frac{1}{3} + \frac{1}{2}P(M)+\frac{1}{12}P(H)\\
+	&=\frac{1}{3} + \frac{1}{2}(\frac{14}{15}- P(H))+\frac{1}{12}P(H)\\
+	P(H)&=\frac{48}{85}
+\end{split}
+\]
+
+Hence the probability that Homer will win the game is $\frac{48}{85}.$\\
+
+\textbf{Method I:}\\
+
+Use Markov analysis, we consider the game as system which contains 4 states. As long as the game isn't over, then one of the 4 states is the current state.
+
+\begin{itemize}
+	\item State 1. (Homer just rolled a 1, now it's Marge's turn)
+	\begin{itemize}
+		\item $\frac{1}{6}$ of chance, ending in a draw.
+		\item $\frac{1}{3}$ of chance, Marge wins.
+		\item $\frac{1}{2}$ of chance, goes to State 3.
+	\end{itemize}
+	\item State 2. (Homer just rolled a 2, 3, 4, Marge's turn)
+	\begin{itemize}
+		\item $\frac{1}{6}$ of chance, goes to State 4.
+		\item $\frac{1}{3}$ of chance, Marge wins.
+		\item $\frac{1}{2}$ of chance, goes to State 3.
+	\end{itemize}
+	\item State 3. (Marge just rolled a 2, 3, 4, Homer's turn. Or the game just starts.)
+	\begin{itemize}
+		\item $\frac{1}{6}$ of chance, goes to State 1.
+		\item $\frac{1}{3}$ of chance, Homer wins.
+		\item $\frac{1}{2}$ of chance, goes to State 2.
+	\end{itemize}
+	\item State 4. (Marge just rolled a 1, Homer's turn)
+	\begin{itemize}
+		\item $\frac{1}{6}$ of chance, ending in a draw.
+		\item $\frac{1}{3}$ of chance, Homer wins.
+		\item $\frac{1}{2}$ of chance, goes to State 2.
+	\end{itemize}
+\end{itemize}
+
+Then we consider $x, y, m, n$ as the probability of Homer winning the game starting from State 1 to 4 correspondingly. We have
+
+\[
+\begin{split}
+x &= \frac{1}{6}\cdot 0 + \frac{1}{3}\cdot 0 +\frac{1}{2}m\\
+y &= \frac{1}{6}n + \frac{1}{3}\cdot 0 + \frac{1}{2}m\\
+m &= \frac{1}{6}x + \frac{1}{3}\cdot 1 + \frac{1}{2}y\\
+n &= \frac{1}{6}\cdot 0 + \frac{1}{3}\cdot 1 + \frac{1}{2}y	
+\end{split}
+\]
+
+We solve for $m$, and $m=\frac{48}{85},$ which is the probability of Homer winning the game.\\
+
+\textbf{Method II:}\\
+
+We can also run a simulation of this game with following R code:\\
+
+\begin{lstlisting}[language=R]
+des <- function(time) {
+        homer <- 0
+        marge <- 0
+        draw <- 0
+        i <- 1
+        round1 <- 0; round2 <- 0
+        while (i<= time) {
+                round1 <- sample(1:6, replace = T, 1)
+                if (round1 >= 5) {
+                        homer <- homer + 1
+                        i <- i + 1
+                        round1 <- 0; round2 <- 0
+                }
+                else if (round1 == 1 & round2 == 1) {
+                        draw <- draw + 1
+                        i <- i + 1
+                        round1 <- 0; round2 <- 0
+                }
+                else {
+                        round2 <- sample(1:6, replace = T, 1)
+                        if (round2 >= 5) {
+                                marge <- marge + 1
+                                i <- i + 1
+                                round1 <- 0; round2 <- 0
+                        }
+                        else if (round2 == 1 & round1 == 1) {
+                                draw <- draw + 1
+                                i <- i + 1
+                                round1 <- 0; round2 <- 0
+                        }
+                }
+        }
+        print(paste("Homer:", homer, " Marge:", marge, " Draw:", draw))
+}
+\end{lstlisting}
+
+The results of 1000000 simulations are shown below:
+
+\begin{lstlisting}[language=R]
+> des(1000000)
+[1] "Homer: 565779  Marge: 367522  Draw: 66699"\end{lstlisting}
+
+And this agrees with the results of Method I.
+
+\pagebreak
+
+\paragraph{Problem 3}
+
+A fair white die has $1,2,3,4,5,5$ printed on its $6$ faces, and a fair red die has $1,1,2,3,4,5$ printed on its $6$ faces.
+
+\paragraph{(a)} The two dice are rolled together once and the number coming up on each die is observed. Write down all the sample points for this experiment, and assign a reasonable probability to each one. Then use the sample point method to find the probability that the total of the two numbers coming up is less than $6$.
+
+\paragraph{Solution:}\ \\
+
+Suppose a sample point is of the form $(x,y)$, where $x$ is the observed value on white die, $y$ is the observed value on red die. Then, the all sample points can be listed as follows:
+
+$(1,1), (2,1), (3,1), (4,1), (5,1), (5,1),$
+
+$(1,1), (2,1), (3,1), (4,1), (5,1), (5,1),$
+
+$(1,2), (2,2), (3,2), (4,2), (5,2), (5,2),$
+
+$(1,3), (2,3), (3,3), (4,3), (5,3), (5,3),$
+
+$(1,4), (2,4), (3,4), (4,4), (5,4), (5,4),$
+
+$(1,5), (2,5), (3,5), (4,5), (5,5), (5,5).$
+
+So the probability of total of two numbers is less than $6$ is $\frac{14}{36}=\frac{7}{18}.$
+
+\paragraph{(b)} The white die is rolled once and the red die is rolled twice. Use the event composition method to find the (single) probability that the number coming up on the white die is less than $4$, or neither of the numbers coming up on the red die is $1$.
+
+\paragraph{Solution:}\ \\
+
+Let $A$ be the event that the number coming up on the white die is less than $4$.
+
+Let $B$ be the event that the number coming up on the red die is 1 on the first roll.
+
+Let $C$ be the event that the number coming up on the red die is 1 on the second roll.
+
+So the probability we are looking for can be represented as:
+
+\[P(A \cup (\overline{B} \cap \overline{C})) \text{ (in set symbols)}\]
+
+Since all three events are mutually independent, we can express the probability as:
+
+\[
+\begin{split}
+	P(A \cup (\overline{B} \cap \overline{C}) &= P(A) + (1-P(B))\cdot(1-P(C)-P(A\cap (\overline{B}\cap\overline{C}))\\
+	&= \frac{3}{6} + (1-\frac{2}{6})\cdot(1-\frac{2}{6})-\frac36\cdot(1-\frac26)^2\\
+	&= \frac{1}{2} + \frac{4}{9}-\frac4{18}\\
+	&= \frac{13}{18}\\
+\end{split}
+\]
+
+So the desired probability is $\frac{13}{18}.$
+
+\paragraph{(c)} The two dice are rolled together repeatedly until different numbers come up. Find the probability that the total of the numbers coming up on the final roll of the two dice is exactly $6$.\\
+
+\paragraph{Solution}\ \\
+
+The probability of two coming up numbers are the same is $\frac{7}{36}$. (The sample points could be $(1,1), (1,1), (2,2), (3,3), (4,4), (5,5), (5,5)$.)
+
+The probability of sum of two numbers is $6$ given the condition that it is a final roll is $\frac{7}{29}$. (The sample points could be $(5,1), (5,1),(5,1), (5,1),\\ (4,2), (2,4), (1,5)$.)
+
+Suppose $P(k)$ is the probability that $k$-th roll is a final roll, and the observed two numbers have a sum of $6$.
+
+\[
+\begin{split}
+	P(1)&=(1-\frac{7}{36})\cdot\frac{7}{29}=\frac{29}{36}\cdot\frac{7}{29}=\frac{7}{36}\\
+	P(2)&=\frac{7}{36}\cdot(1-\frac{7}{36})\cdot\frac{7}{29} = \left(\frac{7}{36}\right)^2\\
+	P(3)&=\frac{7}{36}\cdot\frac{7}{36}\cdot(1-\frac{7}{36})\cdot\frac{7}{29}=\left(\frac{7}{36}\right)^3\\
+	&\cdots
+\end{split}
+\]
+
+Therefore, the total probability the total of the numbers coming up on the final roll of the two dice is exactly $6$ is the sum of $P(1), P(2), P(3), \dots$ which can be solved by geometric series:
+
+\[P = \frac{7}{36} + \left(\frac{7}{36}\right)^2 + \left(\frac{7}{36}\right)^3 + \cdots = \frac{7}{36}\cdot\frac{1}{1-\frac{7}{36}}=\frac{7}{36}\cdot\frac{36}{29}=\frac{7}{29}\]\\
+
+\pagebreak
+
+\paragraph{Problem 4}
+
+A ballroom contains 4 married couples (4 men and their 4 wives). The gentlemen are to paired up randomly with the ladies, one man to each woman. After one dance, the 8 people are to be separated, except for the married couples that happen to be together by chance. The separated people will then be paired up again randomly for the second dance, again one man to each woman.
+
+\paragraph{(a)} Find the probability that exactly 2 couples will be dancing together on the 2nd dance.
+
+\paragraph{Solution:}\ \\
+
+Let's symbolize the 4 gentlemen as $A,B,C,D$ and their wives as $a,b,c,d$. And we call a pair of married dancers a "correct couple", and "incorrect couple" vice versa.
+
+For the first random selection, $A$ has $4$ options, $B$ has $4-1=3$ options, etc. Therefore, for 8 people, 4 pairs, there are $4!=24$ possible pairing situations.
+
+Then consider, how many possible situations that we have $k$ correct couples? 
+
+\begin{itemize}
+	\item $k=4$, this is obvious, only $1$ way to have this.
+	\item $k=3$, there is no way to have $3$ correct couples, the other one couple must be correct.
+	\item $k=2$, there are ${4 \choose 2}= \frac{24}{2\cdot 2} = 6$ ways.
+	\item $k=1$, only 1 couple is correct, so 4 ways to arrange the correct couple. And we have $2$ ways to arrange the wrong couples. (For example, if we have $Aa$, then we could have $(Bc, Cd, Db)$ or $(Bd, Cb, Dc)$. Therefore, in total we have $4\times 2=8$ ways.
+	\item $k=0$, $24-1-6-8=9$ ways that none of the pairs are correct couples.
+\end{itemize}
+
+Now we focus on the original problem. We have a restriction that \textit{the married couples that happen to be together by chance won't separate again}. So the number of correct couples in the first dance should be no more than $2$. Then, the probability we are interested in can be decomposed into three parts:
+
+\begin{enumerate}
+	\item 0 correct couple in the 1st dance, 2 more correct couples in the 2nd dance.\\
+	The probability of 0 correct couple in a randomization of 4 pairs is $\frac{9}{24}$.\\
+	The probability of 2 correct couples in a randomization of 4 pairs is $\frac{6}{24}=\frac{1}{4}.$
+	\item 1 correct couple in the 1st dance, 1 more couple in the 2nd dance.\\
+	The probability of 1 correct couples in a randomization of 4 pairs is $\frac{8}{24}.$\\
+	The probability of 1 correct couples in a randomization of 3 pairs is $\frac{3}{3!}=\frac{1}{2},$ since the first couple won't be randomized. 
+	\item 2 correct couples in the 1st dance, 0 more correct couples in the 2nd dance.\\
+	The probability of 2 correct couples in a randomization of 4 pairs is $\frac{6}{24}$.\\
+	The probability of 0 correct couples in a randomization of 2 pairs is $\frac{1}{2!}=\frac{1}{2},$ since the first 2 couples won't be randomized.
+\end{enumerate}
+
+Hence,
+
+\[P(\text{exactly 2 on the 2nd dance})=\frac{9}{24}\cdot\frac14+\frac{8}{24}\cdot\frac12+\frac{6}{24}\cdot\frac12=\frac{37}{96}.\]
+
+\paragraph{(b)} Suppose that exactly one married couple are dancing together on the 2nd dance. What is the probability that no man was dancing with his wife on the first dance?\\
+
+\paragraph{Solution:}\ \\
+
+Let $A$ be the event that exactly 1 pair of correct couple dancing in the 2nd dance.
+Let $B$ be the event that no pairs of correct couple dancing in the 1st dance.
+
+\[P(B) = \frac{9}{24}\]
+
+The calculation of $P(A)$ is similar to the one we have in Part (a). Exactly 1 correct couple in the 2nd dance can be partitioned into two cases:
+
+\begin{enumerate}
+	\item 1 correct in the 1st, no more correct in the 2nd.
+	\item No correct in the 1st, 1 more correct int he 2nd.
+\end{enumerate}
+
+\[P(A)=\frac{8}{24}\cdot\frac{2}{3!}+\frac{9}{24}\cdot\frac{8}{24}=\frac{17}{72}\]
+
+Then the probability that 1 correct pair in the 2nd, given 0 correct pair in the 1st is $P(A|B)$, which is equivalent to probability of 1 correct couple from a randomization of 4 couples, i.e.
+
+\[P(A|B)=\frac{8}{24}=\frac13.\]
+
+Now we can apply \textit{Bayes' Theorem} safely:
+
+\[P(B|A)=\frac{P(A|B)\cdot P(B)}{P(A)}=\frac{\frac13\cdot\frac9{24}}{\frac{17}{72}}=\frac{9}{17}.\]
+
+To conclude, the probability that no man was dancing with his wife on the 1st dance, given that exactly one married couple are dancing on the 2nd dance, is $\frac{9}{17}.$\\
+
+\pagebreak
+
+\paragraph{Problem 5}
+
+If 2 possible events are disjoint, is it possible that they are independent? Justify your answer. (Note: A possible event is one whose probability of occurring is not zero.)\\
+
+\paragraph{Solution:}\ \\
+
+Suppose $A, B$ be two disjoint events, then
+
+\[P(A\cap B)=0\]
+
+Suppose again that $A, B$ are two independent events, then
+
+\[P(A\cap B)=P(A)\cdot P(B)\]
+
+Hence $P(A)P(B)=0$, at least one of $P(A), P(B)$ is zero. And this contradicts the assumption that $A,B$ are two possible events with $P(A)>0, P(B)>0.$
+
+Therefore, there do not exist 2 disjoint possible events that are also independent.
+
+\end{document}

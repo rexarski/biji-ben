@@ -1,0 +1,62 @@
+#Last Updated: 07/08/2017
+rm(list=ls())
+setwd('~/Desktop/Research/AppliedStat2017/L3')
+
+#reading in the data
+oldfaith = read.table("oldfaithful.csv", header = T, sep = ",")
+#fitting the SLR
+oldfaith.reg=lm(oldfaith$INTERVAL~oldfaith$DURATION)  
+#Plotting the data
+plot(oldfaith$DUR,oldfaith$INT,xlab="Duration (mins)", ylab="Interval (mins)", main="Old Faithful SLR")
+#adding the fitted SLR
+abline(oldfaith.reg)
+
+#see what is contained in oldfaith.reg
+names(oldfaith.reg)
+plot(oldfaith.reg$fitted.values,oldfaith.reg$residuals,main="residuals vs fitted values",xlab="fitted values",ylab="residuals")
+abline(h=0)
+
+
+#looking at QQplot of the residuals
+qqnorm(oldfaith.reg$residuals)
+qqline(oldfaith.reg$residuals)
+
+#QQ plot 1
+rm(list=ls())
+beta0=2;beta1=1
+n=1000
+X=1:n
+set.seed(1)
+errors=rnorm(n) 
+Y=beta0+beta1*X+errors 
+SLRfit=lm(Y~X)
+qqnorm(SLRfit$residuals)
+qqline(SLRfit$residuals)
+
+
+#QQ plot 2
+Y[n]=990
+SLRfit=lm(Y~X)
+qqnorm(SLRfit$residuals)
+qqline(SLRfit$residuals)
+
+
+
+#QQ plot 3
+set.seed(1)
+errors=rt(n,3) 
+Y=beta0+beta1*X+errors 
+SLRfit=lm(Y~X)
+qqnorm(SLRfit$residuals)
+qqline(SLRfit$residuals)
+
+
+
+#QQ plot 4
+set.seed(1)
+errors=rf(n,2,46)
+errors=errors-mean(errors)
+Y=beta0+beta1*X+errors 
+SLRfit=lm(Y~X)
+qqnorm(SLRfit$residuals)
+qqline(SLRfit$residuals)

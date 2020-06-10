@@ -1,0 +1,33 @@
+trainx = read.table("train1x.txt",colClasses="numeric")
+attach(trainx)
+trainy = as.matrix(read.table("train1y.txt"))
+testy = as.matrix(read.table("testy.txt"))
+testx = as.matrix(read.table("testx.txt"))
+
+#####1
+m1 = lm(trainy~V1+V2+V3+V4+V5+V6+V7+V8,data = data.frame(trainx))
+summary(m1)
+y_predict_1 = predict(m1,newdata = data.frame(testx))
+se = sum((y_predict_1-testy)^2)/(2500-8)
+
+#####2
+C = function(d,j,k){
+100^2*sum(d[j,]*d[k,])
+}
+
+K = matrix(0,nrow = nrow(trainx),ncol = nrow(trainx))
+for (i in 1:nrow(trainx)){
+for (j in 1:nrow(trainx)){
+K[i,j] = 100^2*sum(trainx[i,]*trainx[j,]) +1*(i==j)
+}}
+
+
+
+y_predict_2=NULL
+for (j in 1:250){
+y_predict_2 = c(y_predict_2,(100^2*sum(trainx[j,]*testx[2,])) ) 
+}
+
+y_predict_2 %*%solve(K)%*%trainy
+
+summary(m1)

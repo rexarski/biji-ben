@@ -1,0 +1,20 @@
+{
+  "main": "index.html",
+  "name": "trsh",
+  "description": "fake shell",
+  "version": "0.0.0",
+  "keywords": [ "demo", "node-webkit" ],
+  "window": {
+    "title": "trsh - the training shell",
+    "toolbar": false,
+    "frame": false,
+    "width": 800,
+    "height": 500,
+    "position": "mouse",
+    "min_width": 400,
+    "min_height": 200
+  },
+  "webkit": {
+    "plugin": true
+  }
+}

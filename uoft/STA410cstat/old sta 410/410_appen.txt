@@ -1,0 +1,244 @@
+								Appendix D
+
+#############################
+#Loglikelyhood function     #  
+#############################
+
+loglik = function(x,y)
+{
+x[1] =  1/(1+exp(-x[1]))
+n = length(y)
+res = rep(0,n)
+for (i in 1:n){
+res[i] = log(sum(dpois(0:floor(y[i]),x[1]*abs(x[2]+x[3]*i))*dpois(seq(y[i],y[i]-2*floor(y[i]),-2),(1-x[1])*abs(x[2]+x[3]*i))))}
+sum(res)
+}
+
+#############################
+#MLE Function               #  
+#############################
+
+mle = function(y, initial, method)
+{
+res = NULL
+if (method == 'nlm') {ans = nlm(function(x) -loglik(x,y),p=initial,hessian=TRUE)
+				res$estimate = ans$estimate
+				}
+if (method == 'optim') {ans = optim(initial, function(x) -loglik(x,y),hessian =TRUE)
+				res$estimate = ans$par}
+
+res$logl = loglik(res$estimate,y)
+res$se = sqrt(diag(solve(ans$hessian)))
+res
+}
+
+#############################
+#Get Initial Value          #  
+#############################
+
+get_initial = function(y,p = 0){
+	n = length(y)
+	first_half = sum(y[1:(n/2)])/(1+p);
+	second_half = sum(y[(n/2 +1):n])/(1+p);
+	b = (second_half - first_half)/(sum((n/2 +1):n) - sum(1:(n/2)))
+	a = (first_half - b*sum(1:(n/2)))/ (n/2)
+	c(p,a,b)
+}
+
+
+#############################
+#Main function K=100        #  
+#############################
+set.seed(1)
+a <- 2.3; b <- 0.02; p <- 0.05
+n1 = 200
+n2 = 600
+
+
+y = matrix(, nrow = 600, ncol = 100)
+temp1 = matrix(, nrow = 7, ncol = 100)
+temp2 = matrix(, nrow = 7, ncol = 100)
+for (i in 1:100){
+	set.seed(i)
+	y[,i] <- rpois(n2,(1-p)*(a+b*(1:n2))) + 2*rpois(n2,p*(a+b*(1:n2)))
+	ini = get_initial(y[,i],0.5)
+	ans1 = try(mle(y[,i],ini,'nlm'),silent = T)
+	ans2 = try(mle(y[,i],ini,'optim'),silent = T)
+	if (typeof(ans1[1]) !=  "character"){
+	 	temp1[,i] = c(ans1$estimate,ans1$se,ans1$logl)}
+	if (typeof(ans2[1])!=  "character"){
+ 		temp2[,i] = c(ans2$estimate,ans2$se,ans2$logl)}
+ 	}
+
+
+write.table(temp1, file = "mydata_nlm.txt", sep="\t")
+write.table(temp2, file = "mydata_optim.txt", sep="\t")
+
+
+#temp1 = read.table("mydata_nlm.txt")
+#temp2 = read.table("mydata_optim.txt")
+
+
+
+
+#############################
+#Try out function           #  
+#############################
+
+a <- 2.3; b <- 0.02; p <- 0.05
+set.seed(1)
+y1 = rpois(n1,(1-p)*(a+b*(1:n1))) + 2*rpois(n1,p*(a+b*(1:n1)))
+set.seed(1)
+y2 = rpois(n2,(1-p)*(a+b*(1:n2))) + 2*rpois(n2,p*(a+b*(1:n2)))
+
+nlm_200 = matrix( ,nrow  = 5 ,ncol = 12)
+optim_200 = matrix(,nrow  = 5 ,ncol = 12
+nlm_600 = matrix(,nrow  = 5 ,ncol = 12)
+optim_600 = matrix(,nrow  = 5 ,ncol = 12)
+
+rownames(optim_200) = c('initial','time','w','a','b')
+rownames(optim_600) = c('initial','time','w','a','b')
+rownames(nlm_200) = c('initial','time','w','a','b')
+rownames(nlm_600) = c('initial','time','w','a','b')
+
+
+
+
+t = 1
+for (i in c(-5,-3,-1))
+	for (j in c(2.3,5))
+		for (k in c(0.02,0.5)){
+			nlm_200[1,t] = toString(c(i,j,k))
+			optim_200[1,t] = toString(c(i,j,k))
+			nlm_600[1,t] = toString(c(i,j,k))
+			optim_600[1,t] = toString(c(i,j,k))	
+			ans1 = try(mle(y1,c(i,j,k),'nlm'),silent = T)
+			ans2 = try(mle(y1,c(i,j,k),'optim'),silent = T)
+			ans3 = try(mle(y2,c(i,j,k),'nlm'),silent = T)
+			ans4 = try(mle(y2,c(i,j,k),'optim'),silent = T)
+			if(typeof(ans1[1]) != "character")		
+				{nlm_200[3:5,t] = ans1$estimate
+				nlm_200[2,t] = system.time(mle(y1,c(i,j,k),'nlm'))[1]}
+			if(typeof(ans2[1]) != "character")		
+				{optim_200[3:5,t] = ans2$estimate
+				optim_200[2,t] = system.time(mle(y1,c(i,j,k),'optim'))[1]}
+			if(typeof(ans3[1]) != "character")		
+				{nlm_600[3:5,t] = ans3$estimate
+				nlm_600[2,t] = system.time(mle(y2,c(i,j,k),'nlm'))[1]}
+			if(typeof(ans4[1]) != "character")		
+				{optim_600[3:5,t] = ans4$estimate
+				optim_600[2,t] = system.time(mle(y2,c(i,j,k),'optim'))[1]}
+			t = t+1}
+
+
+t_nlm_200= mean(as.numeric(nlm_200[2,]),na.rm = T)
+t_optim_200=mean(as.numeric(optim_200[2,]),na.rm = T)
+t_nlm_600=mean(as.numeric(nlm_600[2,]),na.rm = T)
+t_optim_600=mean(as.numeric(optim_600[2,]),na.rm = T)
+average_time = cbind(t_nlm_200,t_optim_200,t_nlm_600,t_optim_600)
+colnames(average_time)  = c('nlm_200','optim_200','nlm_600','optim_600')
+#############################
+#Plot function              #  
+#############################
+
+w = log(.05/0.95)
+par(mfrow=c(3,2))
+
+
+plot(temp1[4,],abs(temp1[1,]-w),xlim = range(0:5),ylim = range(0:5),
+xlab = "estimated standard error",abline(0,1,col = 'red'),
+ylab = "actual error",main = "Scatterplot of W \n method = nlm \n K = 100")
+abline(0,2,col = 'red')
+
+plot(temp2[4,],abs(temp2[1,]-w),xlim = range(0:5),
+xlab = "estimated standard error",
+ylab = "actual error",abline(0,1,col = 'red'),
+main = "Scatterplot of W \n method = Optim \n K = 100")
+abline(0,2,col = 'red')
+	
+plot(temp1[5,],abs(temp1[2,]-a),
+xlab = "estimated standard error",abline(0,1,col = 'red'),
+ylab = "actual error",main = "Scatterplot of a \n method = nlm \n K = 100")
+
+abline(0,2,col = 'red')
+
+plot(temp2[5,],abs(temp2[2,]-a),xlab = "estimated standard error",
+ylab = "actual error",abline(0,1,col = 'red'),
+main = "Scatterplot of a \n method = Optim \n K = 100")
+abline(0,2,col = 'red')
+
+plot(temp1[6,],abs(temp1[3,]-b),xlab = "estimated standard error",
+ylab = "actual error",abline(0,1,col = 'red'),
+main = "Scatterplot of b \n method = nlm \n K = 100")
+abline(0,2,col = 'red')
+
+
+plot(temp2[6,],abs(temp2[3,]-b),xlab = "estimated standard error",
+ylab = "actual error",abline(0,2,col = 'red'),
+main = "Scatterplot of b \n method = Optim \n K = 100")
+abline(0,1,col = 'red')
+
+
+#############################
+#Test Robustness            #  
+#############################
+set.seed(1)
+a <- 2.3; b <- 0.02; p <- 0.05
+n1 = 200
+n2 = 600
+
+
+y = matrix(, nrow = 600, ncol = 10)
+temp1 = matrix(, nrow = 7, ncol = 10)
+temp2 = matrix(, nrow = 7, ncol = 10)
+for (i in 1:10){
+	set.seed(i)
+	y[,i] <- rpois(n2,(1-p)*(a+b*(1:n2))) + 2*rpois(n2,p*(a+b*(1:n2)))
+	ini = get_initial(y[,i],0.5)
+	ans1 = try(mle(y[,i],ini,'nlm'),silent = T)
+	ans2 = try(mle(y[,i],ini,'optim'),silent = T)
+	if (typeof(ans1[1]) !=  "character"){
+	 	temp1[,i] = c(ans1$estimate,ans1$se,ans1$logl)}
+	if (typeof(ans2[1])!=  "character"){
+ 		temp2[,i] = c(ans2$estimate,ans2$se,ans2$logl)}
+ 	}
+a
+
+w = log(.05/0.95)
+par(mfrow=c(3,2),main = 'das')
+
+
+plot(temp1[4,],abs(temp1[1,]-w),xlim = range(0:5),ylim = range(0:5),
+xlab = "estimated standard error",abline(0,1,col = 'red'),
+ylab = "actual error",main = "Scatterplot of W \n method = nlm \n K = 10")
+abline(0,2,col = 'red')
+
+plot(temp2[4,],abs(temp2[1,]-w),xlim = range(0:5),
+xlab = "estimated standard error",
+ylab = "actual error",abline(0,1,col = 'red'),
+main = "Scatterplot of W \n method = Optim \n K = 10")
+abline(0,2,col = 'red')
+	
+plot(temp1[5,],abs(temp1[2,]-a),
+xlab = "estimated standard error",abline(0,1,col = 'red'),
+ylab = "actual error",main = "Scatterplot of a \n method = nlm \n K = 10")
+
+abline(0,2,col = 'red')
+
+plot(temp2[5,],abs(temp2[2,]-a),xlab = "estimated standard error",
+ylab = "actual error",abline(0,1,col = 'red'),
+main = "Scatterplot of a \n method = Optim \n K = 10")
+abline(0,2,col = 'red')
+
+plot(temp1[6,],abs(temp1[3,]-b),xlab = "estimated standard error",
+ylab = "actual error",abline(0,1,col = 'red'),
+main = "Scatterplot of b \n method = nlm \n K = 10")
+abline(0,2,col = 'red')
+
+
+plot(temp2[6,],abs(temp2[3,]-b),xlab = "estimated standard error",
+ylab = "actual error",abline(0,2,col = 'red'),
+main = "Scatterplot of b \n method = Optim \n K = 10")
+abline(0,1,col = 'red')
+
+

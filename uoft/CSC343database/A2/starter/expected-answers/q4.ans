@@ -1,0 +1,7 @@
+     artist    |  capacity  |     genres 
+---------------+------------+------------
+ Bryan Adams   | Musician   |          3
+ Steppenwolf   | Band       |          3
+ Kenny Chesney | Songwriter |          3
+(3 rows)
+

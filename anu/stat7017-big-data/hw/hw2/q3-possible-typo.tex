@@ -1,0 +1,79 @@
+\documentclass[a4paper]{article}
+
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{tikz-cd}
+\usepackage{mathrsfs}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{enumitem}
+\usepackage{yfonts}
+
+
+\date{\today}
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{lem}[thm]{Lemma}
+
+\newtheorem{defn}[thm]{Definition}
+\newtheorem{eg}[thm]{Example}
+\newtheorem{ex}[thm]{Exercise}
+\newtheorem{conj}[thm]{Conjecture}
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{claim}[thm]{Claim}
+\newtheorem{rmk}[thm]{Remark}
+
+\newcommand{\ie}{\emph{i.e.} }
+\newcommand{\cf}{\emph{cf.} }
+\newcommand{\into}{\hookrightarrow}
+\newcommand{\dirac}{\slashed{\partial}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\LieT}{\mathfrak{t}}
+\newcommand{\T}{\mathbb{T}}
+
+
+\begin{document}
+
+According to equation (11) in the paper.
+
+		$$P=\frac{G-\frac{1-\psi}{z}}{\psi/z}=\frac{zG-1+\psi}{\psi}=\frac{z}{\psi}G-\frac{1}{\psi}+1$$
+
+With $\zeta=0$, also WLOG set $\eta=1$, according to equation (12) \& (13) (plug in $t=\frac{1}{z\psi}$):
+
+$$P=1+\frac{1}{z\psi}[1+(P-1)\phi][1+(P-1)\psi]$$
+
+Let $Q=P-1:$
+
+$$Q=P-1 =\frac{z}{\psi} G -\frac{1}{\psi}$$
+
+Rearrange the previous equation:
+
+$$Q\cdot z\psi = (1+Q\phi)(1+Q\psi)=1+Q(\phi+\psi)+Q^2\phi\psi$$
+
+$$\phi\psi Q^2+(\phi+\psi-z\psi)Q+1=0$$
+
+Now plug in $Q$ with $z,\psi,G$:
+
+$$\phi\psi\left(\frac{z^2}{\psi^2}G^2-\frac{2z}{\psi^2}G+\frac1{\psi^2}\right)+\frac{z\phi}{\psi}G+zG-zG-\frac{\phi}{\psi}-1+z+1=0$$
+
+$$\left(\frac{\phi z^2}{\psi}\right)G^2+\left(\frac{z\phi}{\psi}+z-z^2-\frac{2z}{\psi^2}\right)\cdot\phi\psi G+\frac{\phi}{\psi}-\frac{\phi}{\psi}-1+1+z=0$$
+
+$$\frac{\phi z^2}{\psi}G^2+\left(z[1-\frac{\phi}{\psi}-z]\right)G+z=0\ \ \ (\star)$$
+
+$(\star)$ times $\frac{\psi}{\phi z}$ to generate our target equation:
+
+$$zG^2+\left(\frac{\psi}{\phi}-1-\frac{z\psi}{\phi}\right)G+\frac{\psi}{\phi} = 0$$
+
+$$zG^2+\left((1-z)\frac{\psi}{\phi}-1\right)G+\frac{\psi}{\phi} = 0$$
+
+Here we have something ``strange", as the our desired equation is
+
+$$zG^2+\left((1-\frac{\psi}{\phi})z-1\right)G+\frac{\psi}{\phi}=0$$
+
+Is it a possible typo?
+\end{document}

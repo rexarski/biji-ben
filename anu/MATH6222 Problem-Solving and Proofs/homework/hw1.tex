@@ -1,0 +1,336 @@
+\documentclass[12pt]{article}
+
+\usepackage{fancyhdr}
+\usepackage{extramarks}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{tikz}
+\usepackage[plain]{algorithm}
+\usepackage{algpseudocode}
+
+\usetikzlibrary{automata,positioning}
+
+%
+% Basic Document Settings
+%
+
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=6.5in
+\textheight=9.0in
+\headsep=0.25in
+
+\linespread{1.1}
+
+\pagestyle{fancy}
+\lhead{\hmwkAuthorName}
+\chead{\hmwkClass\ (\hmwkClassInstructor): \hmwkTitle}
+\rhead{\firstxmark}
+\lfoot{\lastxmark}
+\cfoot{\thepage}
+
+\renewcommand\headrulewidth{0.4pt}
+\renewcommand\footrulewidth{0.4pt}
+
+\setlength\parindent{0pt}
+
+%
+% Create Problem Sections
+%
+
+\newcommand{\enterProblemHeader}[1]{
+    \nobreak\extramarks{}{Problem \arabic{#1} continued on next page\ldots}\nobreak{}
+    \nobreak\extramarks{Problem \arabic{#1} (continued)}{Problem \arabic{#1} continued on next page\ldots}\nobreak{}
+}
+
+\newcommand{\exitProblemHeader}[1]{
+    \nobreak\extramarks{Problem \arabic{#1} (continued)}{Problem \arabic{#1} continued on next page\ldots}\nobreak{}
+    \stepcounter{#1}
+    \nobreak\extramarks{Problem \arabic{#1}}{}\nobreak{}
+}
+
+\setcounter{secnumdepth}{0}
+\newcounter{partCounter}
+\newcounter{homeworkProblemCounter}
+\setcounter{homeworkProblemCounter}{1}
+\nobreak\extramarks{Problem \arabic{homeworkProblemCounter}}{}\nobreak{}
+
+%
+% Homework Problem Environment
+%
+% This environment takes an optional argument. When given, it will adjust the
+% problem counter. This is useful for when the problems given for your
+% assignment aren't sequential. See the last 3 problems of this template for an
+% example.
+%
+\newenvironment{homeworkProblem}[1][-1]{
+    \ifnum#1>0
+        \setcounter{homeworkProblemCounter}{#1}
+    \fi
+    \section{Problem \arabic{homeworkProblemCounter}}
+    \setcounter{partCounter}{1}
+    \enterProblemHeader{homeworkProblemCounter}
+}{
+    \exitProblemHeader{homeworkProblemCounter}
+}
+
+%
+% Homework Details
+%   - Title
+%   - Date
+%   - Class
+%   - Instructor
+%   - Author
+%
+
+\newcommand{\hmwkTitle}{Homework\ \#1}
+\newcommand{\hmwkDate}{February 24, 2017}
+\newcommand{\hmwkClass}{MATH6222}
+\newcommand{\hmwkClassInstructor}{Dr. David Smyth}
+\newcommand{\hmwkAuthorName}{\textbf{Rui Qiu u6139152}}
+
+%
+% Title Page
+%
+
+\title{
+    \vspace{2in}
+    \textmd{\textbf{\hmwkClass:\ \hmwkTitle}}\\
+    \normalsize\vspace{0.1in}\small{\hmwkDate}\\
+    \vspace{0.1in}\large{\textit{\hmwkClassInstructor}}
+    \vspace{3in}
+}
+
+\author{\hmwkAuthorName}
+\date{}
+
+\renewcommand{\part}[1]{\textbf{\large Part \Alph{partCounter}}\stepcounter{partCounter}\\}
+
+%
+% Various Helper Commands
+%
+
+% Useful for algorithms
+\newcommand{\alg}[1]{\textsc{\bfseries \footnotesize #1}}
+
+% For derivatives
+\newcommand{\deriv}[1]{\frac{\mathrm{d}}{\mathrm{d}x} (#1)}
+
+% For partial derivatives
+\newcommand{\pderiv}[2]{\frac{\partial}{\partial #1} (#2)}
+
+% Integral dx
+\newcommand{\dx}{\mathrm{d}x}
+
+% Alias for the Solution section header
+\newcommand{\solution}{\textbf{\large Solution}}
+
+% Probability commands: Expectation, Variance, Covariance, Bias
+\newcommand{\E}{\mathrm{E}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\Bias}{\mathrm{Bias}}
+
+\begin{document}
+
+\maketitle
+
+\pagebreak
+
+\begin{homeworkProblem}
+	Prove that $\sqrt{11}$ is irrational. You may use the fact that every integer can be uniquely decomposed as a product of primes.
+	\\
+	
+    \textbf{Proof:}
+    
+    The idea is very similar to the one we used to prove the irrationality of $\sqrt{2}$ in class.
+    \\
+    
+    Suppose $\sqrt{11}$ is a rational number, i.e., for two co prime integers $p, q$, i.e.$p,q$ have no common factors, it can be written as
+    
+    \[
+        \sqrt{11} = \frac{p}{q}
+    \]
+    
+    Square the both sides and multiple by $q^2$ we have
+    
+    \[
+    	11q^2 = p^2
+    \]
+    
+    	
+    Now we recall that some fact proved in class:
+    
+    \begin{itemize}
+    	\item The product of two odd numbers is odd.
+    	\item The product of two even numbers is even.
+    	\item The product of an even and an odd is even.
+    \end{itemize}
+    
+    and consider this:
+    
+    \begin{itemize}
+    	\item If $p$ is odd, $q$ is even. Then the right hand side (RHS) is odd, the left hand side (LHS) is even. Contradiction.
+    	\item If $p$ is even, $q$ is odd. Then RHS is even, LHS is odd. Contradiction.
+    	\item If $p, q$ both even, contradicts the fact that $p, q$ are co primes.
+    \end{itemize}
+    
+    Therefore, $p, q$ can only be two odd co primes.
+    
+    \[
+    	\begin{split}
+    		p &= 2n + 1 \\
+    		q &= 2m + 1 \\ 
+    		11(2m+1)^2 &= (2n+1)^2 \\
+    		11(4m^2+4m+1) &= 4n^2+4n+1 \\
+    		44m^2+44m+11 &= 4n^2+4n+1 \\
+    		44m^2+44m+10 &= 4n^2+4n \\
+    		22m^2+22m+5 &=2n^2+2n\\
+    	\end{split}
+    \]
+    
+    $22m^2, 22m, 2n^2, 2n$ are even numbers. So the RHS is even. But an even number $22m^2+22m$ plus an odd number $5$ equals an odd number (LHS). So we have a contradiction here.
+    \\
+    
+    Hence, the original hypothesis that $\sqrt{11}$ is rational fails. So we proved that $\sqrt{11}$ is irrational.
+
+\end{homeworkProblem}
+
+\begin{homeworkProblem}
+    Let $S$ denote the set of all prime numbers of the form $4k+3$ with $k \in \mathbb{N}.$ (So $3 \in S, 7 \in S,$ but $5\not\in S$). Prove that $S$ is infinite.
+    \\
+    
+    \textbf{Proof}
+    
+    Suppose there are only finitely many primes $p_1, \dots p_k$ in the set $S$. Consider the number $N=4p_1\cdot p_2 \cdots p_k - 1 = 4(\Pi_{i=1}^{k}p_i-1)+3$ which is also of the form $4n+3$.
+    \\
+
+    Since it is greater than any $p_i$, so consider it not a prime. Then $N$ is divisible by a prime.
+    \\
+    
+    Note that all integers should be one of the form $4n, 4n+1, 4n+2, 4n+3$. The factors of $N$ cannot be of the form $4n, 4n+2$ since $N$ is odd. On the other hand, none of the elements of $S$ divides $N$. So the only possible form of factors of $N$ is $4n+1$.
+    \\
+    
+    However
+    
+    \[
+    	\forall a, b \in \mathbb{Z}, (4a+1)(4b+1)=16ab+4a+4b+1=4(4ab+a+b)+1.
+    \]
+
+    So the product of any two primes of the form $4n+1$ is still $4n+1$. It's like an infinite loop. But remember that $N$ itself is of the form $4n+3$ in the end. Contradiction!
+    \\
+    
+    Hence the original hypothesis is incorrect, i.e. $S$ is infinite.
+
+\end{homeworkProblem}
+
+%
+% Non sequential homework problems
+%
+
+% Jump to problem 18
+\begin{homeworkProblem}[4]
+    Let $f$ and $g$ denote functions from $\mathbb{R}$ to $\mathbb{R}$. Recall that such a function is \textit{bounded} if there exists a real number $M$ such that $|f(x)| < M$ for all $x \in \mathbb{R}$. Determine whether each of the following statements are true. If true, provide a proof. If false, provide a counterexample.
+    
+    \begin{itemize}
+    	\item If $f$ and $g$ are bounded, then $f+g$ is bounded.
+    	\item If $f$ and $g$ are bounded, then $fg$ is bounded.
+    	\item If $f+g$ is bounded, then $f$ and $g$ are bounded.
+    	\item If $fg$ is bounded, then $f$ and $g$ are bounded.
+    	\item If $f+g$ and $fg$ are bounded, then $f$ and $g$ are bounded.
+    \end{itemize}
+    
+    You may use the \textit{triangle inequality} which states that for all $x,y \in \mathbb{R}$,
+    
+    \[ |x+y| \leq |x| + |y|. \]
+    
+    
+    \textbf{Solution}
+    \\
+    
+    \textbf{Statement 1} 
+    \\
+    
+    True. According to the definition of \textit{boundedness}, $\forall x \in \mathbb{R}, \exists M_1, M_2 \in \mathbb{R}$ such that
+    
+    \[
+    	\begin{split}
+    		|f(x)| &< M_1 \\
+    		|g(x)| &< M_2 \\
+    		|(f+g)(x)| = |f(x)+g(x)| &\leq |f(X)| + |g(x)| < M_1+ M_2 = M
+    	\end{split}
+    \]
+    
+    Hence $f+g$ is bounded by $M=M_1+M_2$.
+    \\
+    
+    \textbf{Statement 2}
+    \\
+    
+    True. Similarly,
+    
+    \[
+    	|fg(x)| = |f(x)g(x)| = |f(x)||g(x)| < M_1\cdot M_2 = M'
+    \]
+    
+    Hence $fg$ is bounded by $M'=M_1\cdot M_2$.
+    \\
+    
+    \textbf{Statement 3}
+    \\
+    
+    False. Suppose $f(x) = \pi\cdot x, g(x) = -\pi\cdot x$, then $(fg)(x)=0$ which is bounded since $0 <= 0$ all the time. But neither of $f(x), g(x)$ is bounded.
+    \\
+    
+    \textbf{Statement 4}
+    \\
+    
+    False. The counterexample is similar to the one above. Suppose
+    
+    \[
+    	\begin{split}
+			f(x)&= 
+			\left\{ \
+			\begin{aligned}
+				\frac{1}{x},\ &\forall x \in \mathbb{R}-\{0\} \\
+				0,\ &x \in \{0\}
+			\end{aligned} \right.
+			\\
+			g(x) &= x,\ \forall x \in \mathbb{R}. 
+		\end{split} 
+    \]
+    
+    The product of them, $fg(x) = 1$ is bounded, but neither $f$ nor $g$ is bounded.
+    \\
+    
+    \textbf{Statement 5}
+    \\
+    
+    True. Since $f+g$ and $fg$ are bounded, $\exists M_1, M_2 \in \mathbb{R}$, such that 
+    
+    \[
+    	\begin{split}
+    		|f(x)+g(x)| &< M_1	 \\
+    		|f(x)\cdot g(x)| &< M_2 \\
+    		|f(x)^2 + g(x)^2| &= |\left(f(x)+g(x)\right)^2 - 2f(x)g(x)|\\
+    		&\leq |\left(f(x)+g(x)\right)^2|+2|f(x)g(x)|\\
+    		&< M_1^2 + 2M_2
+    	\end{split}
+    \]
+    
+    This is to say, the sum of two squares $f^2+g^2$ is bounded. As we know, the magic of a square number is that it is always nonnegative. So
+    
+    \[
+    	\begin{split}
+    		f(x)^2 &\leq f(x)^2 + g(x)^2 = M_1^2 + 2M_2 \\
+    		g(x)^2 &\leq f(x)^2 + g(x)^2 = M_1^2 + 2M_2 \\
+    	\end{split}
+	\]
+	
+	Hence $f(x) \leq \sqrt{M_1^2+2M_2},\ g(x) \leq \sqrt{M_1^2+2M_2},\ $i.e., $f$ and $g$ are both bounded.
+
+\end{homeworkProblem}
+
+\end{document}

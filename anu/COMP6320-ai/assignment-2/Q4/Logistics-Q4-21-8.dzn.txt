@@ -1,0 +1,31 @@
+C = 8;		% Number of customers (excludes depot).
+T = 21;		% Number of trucks.
+G = 2;		% Number of good types.
+MAXCAP = 6;	% Largest capacity of any truck.
+
+% Details of the truck types: capacities, refrigeration capabilities, and cost (cents per km).
+% e.g. truck 1 has a capacity of 2 units, no refrigeration capabilities, and a cost of 215 cts/km.
+cap        = [ 2,     3,     3,     3,     5,     5,     5,     5,     5,    5,    5,    4,     4,     4,     4,    4,    4,    4,    4,    6,     6     ];
+refrig     = [ false, false, false, false, false, false, false, false, true, true, true, false, false, false, true, true, true, true, true, false, false ];
+centsPerKm = [ 215,   244,   244,   244,   267,   267,   267,   267,   304,  304,  304,  259,   259,   259,   299,  299,  299,  299,  299,  286,   286   ];
+
+% Distances between places. Place 0 is the depot.
+% D[i][j] is the travel distance from place i to place j.
+% e.g. the travel distance from the depot to customer 2 is 914 km.
+D = array2d(customers,customers,
+    [   0,  611,  914,  700,  338,  632,  805,  581,  860,
+      609,    0, 1455,  229,  688, 1243,  482, 1077,  371,
+      908, 1453,    0, 1409, 1168,  372, 1371, 1046, 1753,  
+      701,  232, 1409,    0,  880, 1275,  263, 1246,  599,
+      338,  688, 1179,  881,    0,  818, 1072,  404,  757,
+      630, 1242,  372, 1275,  820,    0, 1291,  693, 1478,
+      805,  481, 1370,  263, 1072, 1292,    0, 1404,  859,
+      581, 1078, 1046, 1247,  404,  691, 1404,    0, 1152,
+      860,  372, 1753,  600,  757, 1478,  859, 1153,    0 ]);
+
+% Orders placed by the customers. Customer 0 is the depot.
+% order[i][j] is the number of units of good of type i that customer j ordered.
+% e.g. customer 1 ordered 4 units of chilled goods and 3 units of ambient goods.
+order = array2d(goods,customers,
+        [| 0, 4, 0, 9, 5, 6, 0, 0,  2,
+         | 0, 3, 3, 8, 4, 2, 3, 10, 2 |]);

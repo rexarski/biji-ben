@@ -1,0 +1,121 @@
+# STAT3015/STAT7030 GLMs
+
+# R command file for the Tutorial 2
+
+# set directory to your working folder (complete by yourself) before importing data
+
+#Q1
+prd <- read.csv("productivity.csv", header=T, sep="")
+attach(prd)
+names(prd)
+
+#a)
+pdf("Q1a.pdf", width=4, height=3) # this command starts the graphics device driver for producing PDF graphics
+par(mar=c(2, 2, 0.2, 0.2))
+plot(RandD, prodscre)
+dev.off()  # this command shuts down the specified (by default the current) device
+
+#b)
+m1 <- lm(prodscre~RandD, data=prd)
+anova(m1)
+pdf("Q1b.pdf", width=8, height=6)
+par(mfrow=c(2, 2))
+plot(m1)
+dev.off()
+
+#c)
+prd$RandD <- relevel(prd$RandD, ref="Low")
+m1 <- lm(prodscre~RandD, data=prd) 
+## in this model High is automatically selected (according to alphabetical order) as baseline 
+## To check this, we can use model.matrix(m1)
+
+#or
+p.high <- ifelse(RandD=="High", 1, 0)
+p.mod <- ifelse(RandD=="Mod", 1, 0)
+m1 <- lm(prodscre~p.high+p.mod)
+
+anova(m1)
+summary(m1)
+
+h <- c(0,1,-2) # scalers used to construct Beta_1 - 2*Beta_2
+est<-t(h)%*%coefficients(m1)
+est
+sigma<-summary(m1)$sigma
+Xmat <- cbind(1,p.high,p.mod)
+XtXi <- solve(t(Xmat)%*%Xmat)
+sd<-sigma*sqrt(t(h)%*%XtXi%*%h)
+sd
+qt(0.995, m1$df.residual)
+
+upper <- est + qt(0.995, m1$df.residual)*sd
+lower <- est - qt(0.995, m1$df.residual)*sd
+c(lower, est, upper)
+pval <- 2*(1-pt(abs(est/sd), m1$df.residual))
+pval
+
+m1 <- lm(prodscre~RandD, data=prd)
+anova(m1)
+summary(m1)
+Ybar <- mean(prodscre)
+ni <- tapply(prodscre, RandD, length)
+Ybari <- tapply(prodscre, RandD, mean)
+Ybari
+MSE <- summary(m1)$sigma^2  
+
+h <- c(1, 1, -2) 
+est <- as.vector(t(h)%*%Ybari)
+sd <- sqrt(MSE)*sqrt(sum((h^2)/ni))
+pval <- 2*(1-pt(abs(est/sd), 24))
+cbind(est, sd, pval)
+
+#Q2
+#type in data
+resp <- c(9, 11, 20, 19, 23, 19, 12, 10, 17, 18, 21, 20, 16, 24, 28, 25, 15, 25)
+btyp <- c(rep("O-", 2), rep("O+", 4), rep("A-", 2), rep("A+", 4), "B-", rep("B+", 3), "AB-", "AB+")
+#a)
+btyp.aov <- aov(resp~btyp)
+summary(btyp.aov)
+
+#b)
+ni <- tapply(resp, btyp, length)
+lvl.mns <- tapply(resp, btyp, mean)
+lvl.mns
+h <- c(1/4, 1/4, 1/4, 1/4, -1/4, -1/4, -1/4, -1/4) ##test A-antigen
+MSE <- sum((resp-fitted(btyp.aov))^2)/btyp.aov$df.residual
+est <- as.vector(t(h)%*%lvl.mns)
+sd <- sqrt(MSE)*sqrt(sum((h^2)/ni))
+pval <- 2*(1-pt(abs(est/sd),10))
+cbind(est,sd,pval)
+
+h <- c(-1/4, -1/4, 1/4, 1/4, 1/4, 1/4, -1/4, -1/4) ##test B-antigen
+est <- as.vector(t(h)%*%lvl.mns)
+sd <- sqrt(MSE)*sqrt(sum((h^2)/ni))
+pval <- 2*(1-pt(abs(est/sd), 10))
+cbind(est, sd, pval)
+
+h <- c(-1/4, 1/4, -1/4, 1/4, -1/4, 1/4, -1/4, 1/4) ##test Rh-factor
+est <- as.vector(t(h)%*%lvl.mns)
+sd <- sqrt(MSE)*sqrt(sum((h^2)/ni))
+pval <- 2*(1-pt(abs(est/sd), 10))
+cbind(est, sd, pval)
+
+#c)
+btyp1 <- btyp
+btyp1 <- ifelse(btyp1=="A-", "O-", btyp1)
+btyp1 <- ifelse(btyp1=="A+", "O+", btyp1)
+btyp1 <- ifelse(btyp1=="AB-", "B-", btyp1)
+btyp1 <- ifelse(btyp1=="AB+", "B+", btyp1)
+btyp1.aov <- lm(resp~btyp1)
+summary(btyp1.aov)
+
+ni <- tapply(resp, btyp1, length)
+lvl.mns <- tapply(resp, btyp1, mean)
+lvl.mns
+h <- c(1/2, 1/2, -1/2, -1/2)
+
+MSE <- sum((resp-fitted(btyp1.aov))^2)/btyp1.aov$df.residual
+h <- c(-1, 0, 0, 1) 					
+est <- as.vector(t(h)%*%lvl.mns)
+sd <- sqrt(MSE)*sqrt(sum((h^2)/ni))
+pval <- 2*(1-pt(abs(est/sd), 14))
+cbind(est, sd, pval)

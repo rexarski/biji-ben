@@ -1,0 +1,68 @@
+# Functions for computing the log likelihood and its derivatives for
+# a Poisson regression model, in which independent counts, y, have 
+# Poisson distributions with mean given by a+b*x, where x is a covariate.
+
+
+# Compute the log likelihood for parameters a and b, given a vector of
+# covariate values, x, and a vector of corresponding counts, y.  If a
+# and b result in any negative Poisson mean values, -Inf is returned.
+
+poireg_log_lik <- function (a, b, x, y)
+{
+    lambda <- a+b*x
+    
+    if (any(lambda<0)) -Inf else sum (dpois (y, a+b*x, log=TRUE))
+}
+
+
+# Compute the gradient vector for the log likelihood.
+
+poireg_log_lik_gradient <- function (a, b, x, y)
+{
+    lambda <- a + b*x
+
+    c (sum(y/lambda-1), sum(y*x/lambda-x))
+}
+
+
+# Compute the Hessian matrix for the log likelihood.
+
+poireg_log_lik_hessian <-  function (a, b, x, y)
+{
+    lambda <- a + b*x
+
+    matrix (c (sum(-y/lambda^2),   sum(-y*x/lambda^2),
+               sum(-y*x/lambda^2), sum(-y*x^2/lambda^2)), 2, 2)
+}
+
+# Compute the Fisher information matrix.
+
+poireg_fisher_inf <-  function (a, b, x)
+{
+  lambda <- a + b*x
+  
+  matrix (c (sum(-1/lambda),   sum(-x/lambda),
+             sum(-x/lambda), sum(-x^2/lambda)), 2, 2)
+}
+
+
+# Compute the log likelihood with gradient and Hessian attached as
+# attributes, as needed for use by nlm.
+
+poireg_log_lik_with_derivs <- function (a, b, x, y)
+{
+    lambda <- a+b*x
+    
+    if (any(lambda<0)) {
+        r <- -Inf 
+        attrib(r,"gradient") <- c(0,0)
+        attrib(r,"hessian") <- matrix(0,2,2)
+    }
+    else {
+        r <- sum (dpois (y, a+b*x, log=TRUE))
+        attr(r,"gradient") <- - poireg_log_lik_gradient(a,b,x,y)
+        attr(r,"hessian") <- - poireg_log_lik_hessian(a,b,x,y)
+    }
+
+    r
+}

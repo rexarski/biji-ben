@@ -1,0 +1,74 @@
+Python 2.7.2 (v2.7.2:8527427914a2, Jun 11 2011, 14:13:39) 
+[GCC 4.0.1 (Apple Inc. build 5493)]
+Type "help", "copyright", "credits" or "license" for more information.
+>>> # while(condition):
+>>> #     body
+[evaluate while_termination.py]
+3
+4
+-99
+[evaluate yes_no.py]
+Are you having fun? yep
+Are you having fun? nah
+Are you having fun? maybe
+Are you having fun? huh
+Are you having fun? yes
+Great! Me too!
+[evaluate yes_no.py]
+Are you having fun? no
+That's a shame.
+>>> s = 'Yes'
+>>> s.lower()
+'yes'
+[evaluate mystery.py]
+6
+[evaluate mystery.py]
+6
+Traceback (most recent call last):
+  File "/Users/campbell/courses/108/course-10812s/website/lectures/L0101/w5/mystery.py", line 14, in <module>
+NameError: name 'myster' is not defined
+[evaluate mystery.py]
+6
+0
+[evaluate mystery.py]
+6
+0
+1
+[evaluate mystery.py]
+6
+0
+1
+2
+[evaluate mystery.py]
+6
+0
+1
+2
+1
+0
+0
+>>> 3 / 0
+Traceback (most recent call last):
+  File "<string>", line 1, in <fragment>
+ZeroDivisionError: integer division or modulo by zero
+>>> if (3 > 5) and (3 / 0 == 1):
+	print "See!"
+
+>>> if ("a" in "happy") or ("hello"[99] == 'x'):
+	print "I told you!"
+
+I told you!
+>>> s = 'hello'
+>>> s[99]
+Traceback (most recent call last):
+  File "<string>", line 1, in <fragment>
+IndexError: string index out of range
+>>> s[0]
+'h'
+>>> '9' in '1234567890'
+True
+>>> '9' not in '1234567890'
+False
+>>> s = '911'
+>>> s[0]
+'9'

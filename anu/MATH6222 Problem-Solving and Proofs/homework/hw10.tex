@@ -1,0 +1,258 @@
+\documentclass[12pt]{article}
+
+\usepackage{fancyhdr}
+\usepackage{extramarks}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{tikz}
+\usepackage[plain]{algorithm}
+\usepackage{algpseudocode}
+\usepackage{graphicx}
+
+\usetikzlibrary{automata,positioning}
+
+%
+% Basic Document Settings
+%
+
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=6.5in
+\textheight=9.0in
+\headsep=0.25in
+
+\linespread{1.1}
+
+\pagestyle{fancy}
+\lhead{\hmwkAuthorName}
+\chead{\hmwkClass\ \hmwkTitle}
+\rhead{\firstxmark}
+\lfoot{\lastxmark}
+\cfoot{\thepage}
+
+\renewcommand\headrulewidth{0.4pt}
+\renewcommand\footrulewidth{0.4pt}
+
+\setlength\parindent{0pt}
+
+%
+% Create Problem Sections
+%
+
+\newcommand{\enterProblemHeader}[1]{
+    \nobreak\extramarks{}{Problem \arabic{#1} continued on next page\ldots}\nobreak{}
+    \nobreak\extramarks{Problem \arabic{#1} (continued)}{Problem \arabic{#1} continued on next page\ldots}\nobreak{}
+}
+
+\newcommand{\exitProblemHeader}[1]{
+    \nobreak\extramarks{Problem \arabic{#1} (continued)}{Problem \arabic{#1} continued on next page\ldots}\nobreak{}
+    \stepcounter{#1}
+    \nobreak\extramarks{Problem \arabic{#1}}{}\nobreak{}
+}
+
+\setcounter{secnumdepth}{0}
+\newcounter{partCounter}
+\newcounter{homeworkProblemCounter}
+\setcounter{homeworkProblemCounter}{1}
+\nobreak\extramarks{Problem \arabic{homeworkProblemCounter}}{}\nobreak{}
+
+%
+% Homework Problem Environment
+%
+% This environment takes an optional argument. When given, it will adjust the
+% problem counter. This is useful for when the problems given for your
+% assignment aren't sequential. See the last 3 problems of this template for an
+% example.
+%
+\newenvironment{homeworkProblem}[1][-1]{
+    \ifnum#1>0
+        \setcounter{homeworkProblemCounter}{#1}
+    \fi
+    \section{Problem \arabic{homeworkProblemCounter}}
+    \setcounter{partCounter}{1}
+    \enterProblemHeader{homeworkProblemCounter}
+}{
+    \exitProblemHeader{homeworkProblemCounter}
+}
+
+%
+% Homework Details
+%   - Title
+%   - Date
+%   - Class
+%   - Instructor
+%   - Author
+%
+
+\newcommand{\hmwkTitle}{Homework\ \#10}
+\newcommand{\hmwkDate}{2017-05-13}
+\newcommand{\hmwkClass}{MATH6222}
+\newcommand{\hmwkClassInstructor}{Instructor: Dr. David Smyth}
+\newcommand{\hmwkTutor}{Tutor: Mark Bugden (Wednesday 1-2pm)}
+\newcommand{\hmwkAuthorName}{\textbf{Rui Qiu u6139152}}
+
+%
+% Title Page
+%
+
+\title{
+    \vspace{2in}
+    \textmd{\textbf{\hmwkClass:\ \hmwkTitle}}\\
+    \normalsize\vspace{0.1in}\small{\hmwkDate}\\
+    \vspace{0.1in}\large{\textit{\hmwkClassInstructor}}\\
+    \vspace{0.1in}
+    	\large{\textit{\hmwkTutor}}
+    \vspace{3in}
+}
+
+\author{\hmwkAuthorName}
+\date{}
+
+\renewcommand{\part}[1]{\textbf{\large Part \Alph{partCounter}}\stepcounter{partCounter}\\}
+
+%
+% Various Helper Commands
+%
+
+% New QED symbol
+\renewcommand{\qedsymbol}{$\blacksquare$}
+
+% Useful for algorithms
+\newcommand{\alg}[1]{\textsc{\bfseries \footnotesize #1}}
+
+% For derivatives
+\newcommand{\deriv}[1]{\frac{\mathrm{d}}{\mathrm{d}x} (#1)}
+
+% For partial derivatives
+\newcommand{\pderiv}[2]{\frac{\partial}{\partial #1} (#2)}
+
+% Integral dx
+\newcommand{\dx}{\mathrm{d}x}
+
+% Alias for the Solution section header
+\newcommand{\solution}{\textbf{\large Solution}}
+
+% Probability commands: Expectation, Variance, Covariance, Bias
+\newcommand{\E}{\mathrm{E}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\Bias}{\mathrm{Bias}}
+
+\begin{document}
+
+\maketitle
+
+\pagebreak
+
+\begin{homeworkProblem}
+Prove that every set of five points in the square of area $1$ has two points separated by distance at most $\frac{\sqrt{2}}{2}$. Prove that this is the best possible by exhibiting five points with no pair less than $\frac{\sqrt{2}}{2}$ apart.\\
+
+\textbf{Proof:} Consider we divide unit square into $4$ smaller squares (with $2\times 2$ layout). For any two points in the same smaller square, the maximum distance between the two is $\frac{\sqrt{2}}{2}$, which is the length of the diagonal line. Also, we define that any points on the boundary of that square is ``in'' that square. Then, by Pigeonhole Principle, for $5$ points and $4$ pigeonholes (smaller squares), there must be at least $2$ points in the same square. And thus their distance is $\frac{\sqrt{2}}{2}$ at most. Now the best possible scenario is 4 points at the corner of larger square and 1 point at the center. In this case, the upper bound of minimum distance is $\frac{\sqrt{2}}{2}$, or in other words, no point with distances greater than $\frac{\sqrt{2}}{2}$ from all other points exists in this set.
+\qed
+\end{homeworkProblem}
+
+\begin{homeworkProblem}
+A private club has $90$ rooms and $100$ members. Keys must be given to members such that each set of $90$ members can be assigned $90$ distinct rooms whose doors they can open. Each key opens one door. The management wants to minimize the total number of keys. Prove that the minimum number of keys is $990$. (Hint: Consider the scheme where $90$ of the members have one key, and the remaining $10$ members have keys to all $90$ rooms. Prove that this works, and that no scheme with fewer keys works.)\\
+
+\textbf{Proof:}
+
+\textbf{The scheme where $90$ of the members have one key, and the remaining $10$ members have keys to all $90$ rooms works.} Suppose we randomly select $90$ members out of $100$, then $x$ out of $90$ have one key, the rest $90-x$ have keys to all $90$ rooms. Then  $x$ people can go to their only possible rooms, and the rest $90-x$ have access to all other rooms left. Then we assign one room to each of those $90-x$ members. We are done.\\
+
+\textbf{No scheme with fewer keys works.} If the total number of keys is less than $990$, then by Pigeonhole Principle, for each room there are fewer than $990/90=11$ keys to open it, i.e. at most $10$ keys to open it. Let's make an very unfortunate assumption, that all these $\leq 10$ keys are assigned to those $10$ people left out of selection, i.e. we select $90$ out of $100$ members, but none of these $90$ people have those $\leq 10$ keys! In this way, some room can never be opened. Thus, a scheme with fewer than $990$ keys won't work.
+\qed
+\end{homeworkProblem}
+
+\begin{homeworkProblem}[4]
+Given five types of coins (5 cent, 10 cent, 20 cent, 50 cent, 1 dollar), give a formula for the number of possible collections of $n$ coins which contain no more than four coins of any one type.\\
+
+\textbf{Solution:} We want to select $n$ objects from $5$ types with repetition. The total number of ways to do this is
+
+\[{n+5-1 \choose 5-1}\]
+
+(Like having $n+4$ total slots, need to select $4$ separations to divide $n$ coins into $5$ types.)\\
+
+Let $U$ be the universal set, $A_i$ be the set of ${\textit{i}}^{\ \text{th}}$ type coin selected more than $4$ times (i.e. at least $5$ times). 
+
+If we have only one type of coin selected more than $4$ times, we total number of coins we need to select from is reduced by $5$, i.e.
+
+\[|A_i|={n-5+5-1\choose 5-1}={n-5+4\choose 4}\]
+
+Similarly, for $k$ types of coins selected more than $4$ times,
+
+\[\bigg|\bigcap_i^k A_i\bigg|={n-5k+4\choose 4}, k\in\{0,1,2,3,4,5\}\]
+
+Note that for each fixed $k$, there are ${5 \choose k}$ ways to select the types of coins with more than 4 repetitions.
+
+Then we apply Inclusion-Exclusion Principle:
+
+\[\sum^5_{k=0}(-1)^k{5\choose k}{n-5k+4\choose 4}\]
+
+\end{homeworkProblem}
+
+\begin{homeworkProblem}
+	Consider a set of $2n$ insects, $n$ male and $n$ female. In each situation below, derive formulas for the number of ways to partition them into pairs so that the ${\textit{i}}^{\ \text{th}}$ largest male is not paired with the ${\textit{i}}^{\ \text{th}}$ largest female. (Leave answers as summations)
+	
+	(a) Same sex pairs are allowed.
+	
+	(b) Each pair has one insect of each sex.\\
+		
+	\textbf{Solution:}
+	
+	(a) Recall Problem 4 in Homework 5:
+	
+	Imagine that $2n$ people standing in a line, we always pair 1st and 2nd people, 3rd and 4th people, etc. This randomization has total number of $(2n)!$ possible ways. But we basically counted two scenarios multiple times:
+
+\begin{itemize}
+	\item For the 1st and 2nd people, if we switch the position of them, they are still the same pair. This happens for $2^n$ times.
+	\item For the 1st and 2nd people, we call them the 1st pair. If we switch the position of this pair with other pair, both pairs stay the same. But we still counted them excessively. The randomization of $n$ pairs has a total number of $n!$ ways.
+\end{itemize}
+
+In fact, the over-count problems are due to permutations, we are actually doing combinations here (so order does not matter).\\
+
+Therefore, the total number of ways to group $2n$ people into $n$ distinct pairs is
+
+\[\frac{(2n)!}{2^n\cdot n!}.\]\\
+
+\textbf{Back to our problem:}\\
+
+The size of the universe set of pairing $2n$ insects is $\frac{(2n)!}{2^n\cdot n!}$, then we need to eliminate the overcounting in intersections of $A_1, A_2,\dots, A_n$, where $A_i$ is the set of pairings with the $\textit{i}$th largest male is matched to the $\textit{i}$th largest female.\\
+
+For $A_i$, we have $2\times 1$ insects fewer to pair, so the ways to pair them becomes
+
+\[\frac{(2n-2)!}{2^{n-1}\cdot (n-1)!}\]
+
+Similarly,
+
+\[\bigg|\bigcap_i^kA_i\bigg|=\frac{(2(n-k))!}{2^{n-k}\cdot (n-k)!}\]
+
+Therefore, by Inclusion-Exclusion Principle, the total number of ways to pair those insects when same sex pair is allowed is (while not violating the rule):
+
+\[\sum^n_{k=0}(-1)^k{n\choose k}\frac{(2(n-k))!}{2^{n-k}\cdot (n-k)!}\]\\
+
+(b) The only difference here is for each $A_i$. Recall $A_i$ is the set of pairings that against the rule. So there are $n!$ such pairings. However, we overcount $n$ of them, as pairing of $a$ and $b$ is the same as the $b$ and $a$, so we divide it by $n$, thus in total $(n-1)!$ ways.
+
+\[|A_i|=(n-1)!\]
+
+And similarly,
+
+\[\bigg|\bigcap_i^kA_i\bigg|=(n-k)!\]
+
+So by Inclusion-Exclusion Principle, the total number of ways to pair those insects when same sex pair is not allowed is (while not violating the rule):
+
+\[\sum^n_{k=0}(-1)^k{n\choose k}(n-k)!\]
+	
+\end{homeworkProblem}
+
+%
+% Non sequential homework problems
+%
+
+% Jump
+%\begin{homeworkProblem}[5]
+
+%\end{homeworkProblem}
+
+\end{document}

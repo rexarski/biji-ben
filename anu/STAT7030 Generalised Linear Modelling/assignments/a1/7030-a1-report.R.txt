@@ -1,0 +1,11 @@
+knitr::opts_chunk$set(fig.path='Figs/', dev = 'pdf', out.width='750px', dpi=200,
+                      echo=FALSE, warning=FALSE, message=FALSE, cache=T)
+library(lme4)
+library(nlme)
+library(arm)
+
+qcolour <- read.csv("qcolour.csv",header=T)
+attach(qcolour)
+
+colours <- as.factor(colour)
+weeks <- as.factor(week)

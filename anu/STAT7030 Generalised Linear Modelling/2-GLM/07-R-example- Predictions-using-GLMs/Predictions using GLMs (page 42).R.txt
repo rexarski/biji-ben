@@ -1,0 +1,170 @@
+# This example does NOT work exactly the same in both S-Plus and R, because the predict() 
+# function works differently in the two languages. The main difference is that for lm() models,
+# the predict() function in R uses a different approach to produce confidence intervals than the
+# S-Plus version and for glm() models, the R version simply does not have the options for 
+# producing confidence intervals or prediction intervals at all. To see the differences, 
+# you will need to examine the following help functions in both R and in S-Plus. 
+# These commands will give you the R versions:
+
+help(predict)
+help(predict.lm)
+help(predict.glm)
+
+# So, in this R example, I will show you how to use R to do the calculations shown on 
+# pages 42 and 43 of the brick (which were originally written in S-Plus).
+
+# This example again uses the anaesthetic data, from earlier in the brick: 
+
+ansth <- read.table("AnsthcSum.txt", header=T)
+attach(ansth)
+ansth.lgt <- glm(prptn ~ conc, family=binomial, weights=ssize)
+
+# Note this will be a logit model, as the S-Plus (and R) default for the binomial family is the
+# logit link, which is the canonical link shown in the table on page 33 of the brick. S-Plus and
+# R also assume that the dispersion parameter will be a constant = 1 whenever it is dealing with
+# the binomial family of distributions, so as we are working with binomial proportions 
+# calculated from grouped or aggregate data, we need to specify the sample sizes as additional
+# weights, so that the dispersion parameter becomes 1, rather than the 1/n shown in the table
+# on page 33 of the brick. 
+
+# To predict for a concentration of 1.5, we set up the appropriate contrast vector and multiply
+# this by the coefficients from the model:
+x0 <- c(1, 1.5)
+t(x0) %*% coef(ansth.lgt)
+
+# This prediction is on the logit transformed scale - to find the equivalent prediction on the
+# orginal or "back-transformed" scale, we need to apply the inverse of the logit transformation:
+invlogit <- function(x){exp(x)/(1 + exp(x))}
+invlogit(t(x0) %*% coef(ansth.lgt))
+
+# We could use the predict() function to produce both the "link-transformed" and the 
+# "back-transformed" predictions:
+predict(ansth.lgt, newdata=list(conc=1.5), type="link")
+predict(ansth.lgt, newdata=list(conc=1.5), type="response")
+
+# We can also use the predict() function to find the variances shown on pages 42 and 43. 
+# Firstly, the variance of the  prediction on the original scale (the scale of the "response"
+# variable shown on page 42, is found as follows:
+temp <- predict(ansth.lgt, newdata=list(conc=1.5), type="response", se.fit=T)
+temp$se.fit^2
+
+# The variance for the prediction on the "link" scale, shown at the top of page 43, is:
+temp <- predict(ansth.lgt, newdata=list(conc=1.5), type="link", se.fit=T)
+temp$se.fit^2
+
+# The confidence interval on the original or "response" scale can be found using the 
+# predict() function by either "back-transforming" a prediction made on the "link" scale:
+
+# (S-Plus command that doesn't work in R):
+# temp <- predict(ansth.lgt, newdata=list(conc=1.5), type="link", ci.fit=T)
+
+# A version that will work in R to produce a CI or PI based on the t distribution:
+
+temp <- predict(ansth.lgt, newdata=list(conc=1.5), type="link", se.fit=T)
+
+add.ci <- function(object, fit.se, conf.level=0.95){
+  fit <- fit.se$fit
+  se.fit <- fit.se$se.fit
+  residual.scale <- fit.se$residual.scale
+  pi.se <- sqrt(residual.scale^2 + se.fit^2) 
+  tquantile <- qt(1 - (1 - conf.level)/2, object$df.residual)
+  ci.fit <- cbind(lower = fit - tquantile*se.fit, upper = fit + tquantile*se.fit)
+  pi.fit <- cbind(lower = fit - tquantile*pi.se, upper = fit + tquantile*pi.se)
+  list(fit = fit, se.fit = se.fit, residual.scale = residual.scale, ci.fit = ci.fit, pi.fit = pi.fit)
+}
+
+temp <- add.ci(ansth.lgt, temp)
+invlogit(temp$ci.fit)
+
+# (Some more S-Plus commands that don't work in R - you will need to use the above approach)
+# or more directly on the "response" scale (i.e. S-Plus will perform the "back-transforming" 
+# for us):
+# predict(ansth.lgt, newdata=list(conc=1.5), type="response", ci.fit=T)
+
+# Note that this is a confidence interval for the expected or mean value of the response
+# variable (prptn), given a concentration equal to 1.5.  We could also get a slightly wider
+# prediction interval for an individual (one-off) prediction for this value of concentration
+# using:
+
+# (Another S-Plus command that doesn't work in R):
+# predict(ansth.lgt, newdata=list(conc=1.5), type="response", pi.fit=T)
+
+# A version that will work in R:
+temp <- predict(ansth.lgt, newdata=list(conc=1.5), type="link", se.fit=T)
+temp <- add.ci(ansth.lgt, temp)
+invlogit(temp$pi.fit)
+
+# Finally, we could produce confidence intervals for the full range of the data and plot them
+# on the same plot as the  original data, together with the fitted values (with non working
+# S-Plus commands replaced by working R versions):
+concs <- 3*(0:100)/100
+probs <- 0:100/100
+plot(concs, probs, type="n", xlab="Concentration", ylab="Proportion Responding")
+points(conc, prptn)
+lines(concs,invlogit(coef(ansth.lgt)[1] + coef(ansth.lgt)[2]*concs))
+# temp <- predict(ansth.lgt, newdata=list(conc=concs), type="response", ci.fit=T)
+temp <- predict(ansth.lgt, newdata=list(conc=concs), type="link", se.fit=T)
+temp <- add.ci(ansth.lgt, temp)
+# lines(concs, temp$ci.fit[,"lower"], lty=2)
+# lines(concs, temp$ci.fit[,"upper"], lty=2)
+lines(concs, invlogit(temp$ci.fit[,"lower"]), lty=2)
+lines(concs, invlogit(temp$ci.fit[,"upper"]), lty=2)
+
+# Note how wide these point-wise confidence intervals are - which is not very surprising 
+# given that this model was fitted to a fairly small set of data.  You may wish to examine
+# the help file for the predict.glm method to see how to adjust these point-wise confidence
+# intervals for the fact that we are predicting for a range of values (similar to a Bonferroni
+# correction), to produce slightly wider simultaneous confidence intervals 
+# (use the additional option conf.type="s" in the predict function).
+
+# Note the conf.type="s" doesn't work in predict.glm() in R, though it could easily be copied
+# from the S-Plus version, which is where I got most of the contents of the add.ci() function
+# created above.
+
+# Also note that once we understand the table on page 33 of the brick, we can use the "raw" data
+# (i.e. the ungrouped or individual level version of the data) and a slightly different approach
+# to fit a very similar model:
+
+ansthc <- read.table("Ansthc.txt",header=T)
+attach(ansthc)
+ansthc.lgt <- glm(Responded ~ Conc, family=binomial)
+
+# Note that as each row can be seen as a sample of 1 individual, the Responded values can be 
+# interpreted as a binomial count of the number of individuals who responded in a sample of 
+# size 1, so we no longer need to specify additional weights.
+
+summary(ansthc.lgt)
+summary(ansth.lgt)
+
+# These models are almost identical, however, the difference in the degrees of freedom 
+# associated with the residual deviance does make a difference when using these models
+# to make predictions:
+
+# predict(ansth.lgt, newdata=list(conc=1.5), type="response", se.fit=T, ci.fit=T)
+temp <- predict(ansth.lgt, newdata=list(conc=1.5), type="link", se.fit=T)
+temp <- add.ci(ansth.lgt, temp)
+invlogit(temp$ci.fit)
+# predict(ansthc.lgt, newdata=list(Conc=1.5), type="response", se.fit=T, ci.fit=T)
+temp <- predict(ansthc.lgt, newdata=list(Conc=1.5), type="link", se.fit=T)
+temp <- add.ci(ansthc.lgt, temp)
+invlogit(temp$ci.fit)
+
+# Page 42 of the brick argues that the first of these two confidence intervals is the more
+# appropriate in this instance. 
+
+# Note for R users - R avoids this apparent contradiction by refusing to calculate either 
+# ci.fit or pi.fit, these options are simply not available in the R version of predict.glm().
+# However, in the summary for a binomial glm, R also gives Z (Normal) statistics for the 
+# coefficients, rather than t statistics. The argument is that, at least for binomial and 
+# Poisson GLMs, the key dispersion parameter is "known" to be 1 (rather than estimated from
+# the data) and so the Normal distribution is more approriate than Student's t distribution
+# (the brick appears to argue the other way). Following this approach, a third way of 
+# calculating the above confidence interval in either S-Plus or R would be as follows:
+
+temp <- predict(ansth.lgt, newdata=list(conc=1.5), type="link", se.fit=T)
+invlogit(c(temp$fit - qnorm(0.975)*temp$se.fit, temp$fit + qnorm(0.975)*temp$se.fit))
+
+# Finally note that the Faraway text and a number of other sources argue that Profile 
+# Likelihood Confidence Intervals (try a internet search with those keywords) are probably
+# more appropropriate for GLMs and perform  better for small sample sizes. These can be
+# implemented in R, but require the additional package MASS - see help(confint) for details.

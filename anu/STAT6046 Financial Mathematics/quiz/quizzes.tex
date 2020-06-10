@@ -1,0 +1,499 @@
+\documentclass[a4paper, 11pt, twoside]{article}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{stix}
+\begin{document}
+\title{STAT6046 Online Quizzes}
+\author{Rui Qiu}
+
+\maketitle
+
+\part{Quiz 1}
+
+\paragraph{Q1} The nominal annual rate of interest is $13.4\%$ convertible $7$ times per year. What does $\$125$ accumulate to over $3$ years?\\
+
+\paragraph{Solution:} \[125\left(1+\frac{0.132}{7}\right)^{7\times 3}.\]\\
+
+\paragraph{Q2} $(1+i)=(1+\frac{i^{(m)}}{m})^m.$ This means that:\\
+
+\paragraph{Solution:} If $m=1,$ then $i=i^{(m)}.$ And for all values of $m$, $i$ is always greater than or equal to $i^{(m)}.$\\
+
+\paragraph{Q3} The force of interest $\delta_t$ is constant with respect to time and equals $6.5\%$. This is equivalent to an annual nominal rate of discount convertible quarterly of:\\
+
+\paragraph{Solution:}
+
+\[
+\begin{split}
+	i = e^{0.065}-1 &= 0.06716\\
+	\left(1-\frac{d^{(4)}}{4}\right)^4 &= \frac1{1+i}\\
+	d^{(4)} &= 0.06447\\
+\end{split}
+\]
+
+\paragraph{Q4} Brian and Jennifer each take out a loan of $X$. Jennifer will repay her loan by making one payment of $800$ at the end of year 10. Brian will repay his loan by making one payment of $1120$ at the end of year 10. The nominal semiannual rate being charged to Jennifer is exactly one-half the nominal semiannual rate being charged to Brian. Calculate $X$.\\
+
+\paragraph{Solution:}
+
+\[
+\begin{split}
+	X(1+\frac{r}{2})^{20} &= 800\\
+	X(1+\frac{2r}{2})^{20} &= 1120\\
+	\frac{2+r}{2+2r} &= \sqrt[20]{\frac{80}{112}} \\
+	r &= 0.0345 \\
+	X = \frac{800}{(1+\frac{r}{2})^{20}} &= 568.24\\
+\end{split}
+\]
+
+\paragraph{Q5} The present value today, of $\$120$ due in 5 years time is $\$81.67$. The effective annual rate of return is therefore best described as:\\
+
+\paragraph{Solution:} 
+
+\[120\left(1-\frac{d^{(12)}}{12}\right)^{12\times 5}=81.67\]
+
+So $d^{(12)}=0.0767.$\\
+
+\paragraph{Q6} $\$64$ invested at $t_1=3$ grows to $\$67.25$ at $t_2=5$. For this investment, the equivalent nominal annual rate of discount convertible monthly is equal to:\\
+
+\paragraph{Solution:} 
+
+\[
+\begin{split}
+	64(1+i)^2 &= 67.25 \\
+	64(1+\frac{i^{(12)}}{12})^{12\times 2} &= 67.25\\
+	i^{(12)}&=0.02479\\
+\end{split}
+\]
+
+\paragraph{Q7} Because interest rates are expected to decrease in the near future, the force of interest $\delta_t$ is modelled by the equation $\delta_t=0.05-0.01t.$ As such, what will an investment of $\$150$ accumulate to in four years time?\\
+
+\paragraph{Solution:}
+
+\[
+\begin{split}
+	S(4) &= S(0)\cdot \exp\left(\int^4_0\delta_t dt\right)\\
+	&= 150\exp\left(\int^4_0(0.05-0.01t)dt\right)\\
+	&=150\exp\left(0.05t-\frac12\cdot0.01t^2\right)\bigg\vert^4_0\\
+	&=150\exp\left(0.05\times 4-\frac12 0.01\times 16\right)\\
+	&=150\exp(0.12)\\
+	&=169.125\\
+\end{split}
+\]
+
+\paragraph{Q8} At time $t=0$, $1$ is deposited into each of Fund $X$ and Fund $Y$. Fund $X$ accumulated at a force of interest $\delta_t=t^2/k$. Fund $Y$ accumulates at a nominal rate of discount of $8\%$ per annum convertible semiannually. At time $t=5$, the accumulated value of Fund $X$ equals the accumulated value of Fund $Y$. Determine $k$.\\
+
+\paragraph{Solution:}
+
+\[
+\begin{split}
+	1\times \exp\left(\int^5_0\frac{t^2}{k} dt\right) &= 1 \times (1 -\frac{8\%}{2})^{-2\times 5}\\
+	\exp\bigg[\frac13 t^3 \frac1{k}\bigg\vert^5_0\bigg] &= (0.96)^{-10}\\
+	\exp\left(\frac{125}3\cdot \frac1k\right) &= \ln{0.96}^{-10}\\
+	&= -10\ln{0.96}\\
+	k&=\frac{125}3\cdot\frac1{-10\ln{0.96}}=102.07\\
+\end{split}
+\]
+
+\part{Quiz 2}
+
+\paragraph{Q1} Which of the following gives rise to the highest accumulated value at time $t=10$? (assume an effective rate of interest of 10\% per annum for all years). Please round these values down to the nearest whole dollar amount.
+
+\begin{itemize}
+	\item A level annuity of 10 payments of \$100 payable in arrears.
+	\item A level annuity of 10 payments of \$90.91 payable in advance.
+	\item A perpetuity of \$50 per annum payable continuously, plus an investment at $t=0$ of \$292.12.
+	\item \$1317 invested at $t=8$.
+	\item An initial payment at $t=1$ of \$21.16, plus a payment of 42.32 at $t=2$, and so on up to a final payment of \$211.60 at $t=10$ (that is, an increasing annuity of 10 annual payments with each payment increasing by \$21.16 per year)\\
+\end{itemize}
+
+\paragraph{Solution:}
+
+\begin{itemize}
+	\item $100s_{\annuity{10\ \ }0.1}=100\left(\frac{1.1^{10}-1}{0.1}\right)=\$1594$
+	\item $90.91\ddot{s}_{\annuity{10\ \ }0.1}=90.91\left(\frac{1.1^{10}-1}{\frac{0.1}{1.1}}\right)=\$1594$
+	\item $292.12\times 1.1^{10}+50\bar{s}_{\annuity{10\ \ }0.1} =757.684+50\left(\frac{1.1^{10}-1}{\ln{(1.1)}}\right)=\$1594$
+	\item $1317\times 1.1^2 = \$1594$
+	\item $21.16(Is)_{\annuity{10\ \ }0.1}=21.16\left(\frac{\ddot{s}_{\annuity{10\ \ }0.1}-10}{0.1}\right)=\$1594$
+\end{itemize}
+
+So they are the same.\\
+
+\paragraph{Q2} A person age 40 wishes to accumulate a fund for depositing an amount $X$ at the end of each year into an account paying 4\% effective interest rate per annum. At age 65, the person will use the entire account balance to purchase a 15-year immediate annuity with annual payments of \$10,000 at an effective annual interest rate of 5\%. Find $X$.\\
+
+\paragraph{Solution:}
+
+\[Xs_{\annuity{25\ \ }0.04} = 10000a_{\annuity{15\ \ }0.05}, X = 2492.\]\\
+
+\paragraph{Q3} A company will receive a perpetuity of \$50000 per annum. The first payment under this agreement is due at $t=10$. What is the present value of this agreement at $t=0$, assuming an annual interest rate of $i=3.5\%$?\\
+
+\paragraph{Solution:} First let's consider this as a perpetuity in arrears, that is the first payment is received at the end of the 10th year. $50000\times a_{\annuity{\infty\ }0.035}$ is the present value at $t=9$. That is, there is a deferral period of 9 years. To get the present value at $t=0$, we need to discount apply the discount factor $v^9$.
+
+\[PV = 50000v^9a_{\annuity{\infty\ }0.035}=50000(1.035)^{-9}\times\frac{1}{0.035}=\$1048187\]\\
+
+OR if we consider the stream of payments as a perpetuity in advance, then $50000\times\ddot{a}_{\annuity{\infty \ }0.035}$ is the present value at $t=10$, that is, the time of the first payment. We need to apply a discount factor of $v^{10}$ to get back to $t=0.$
+
+\[PV=50000v^{10}\ddot{a}_{\annuity{\infty \ }}0.035 = 50000(1.035)^{-10}\times \frac{1}{0.033816}=\$1048187\]
+
+where $d=0.033816=\frac{0.035}{1.035}.$\\
+
+\paragraph{Q4} Payments are made to an account at a continuous rate of $(8k+tk)$ where $0\leq t\leq 10$. Interest is credited at a force of interest $\delta_t=\frac{1}{8+t}$. After 10 years, the account is worth 20,000. Calculate $k$.\\
+
+\paragraph{Solution:} The accumulated value at time $t$ is denoted by $a(t)$, then we have
+
+\[a(t)=e^{\int^t_0\frac{1}{8+r}dr}=e^{\ln(8+r)\big]^t_0}=\frac{8+t}{8}\]
+
+Accumulated value at time 10 of 1 invested at time $t$ $=\frac{a(10)}{a(t)}=\frac{18}{8+t}$
+
+AV of continuous payments at annual rate of $k(8+t)$ at the given force of interest
+
+\[=\int^{10}_0k(8+t)\left(\frac{18}{8+t}\right)dt=\int^{10}_0 18kdt=180k=20000\]
+
+So $k=111.11$.\\
+
+\paragraph{Q5} An annuity provides for 30 annual payments. The first payment of 100 is made immediately and the remaining payments increase by 8\% per annum. Interest is calculated at 13.4\% per annum. Calculate the present value of this annuity at the time of the first payment.\\
+
+\paragraph{Solution:}
+
+\[\begin{split}
+PV &= 100\big[1+\frac{1.08}{1.134} + \left(\frac{1.08}{1.134}\right)^2+\left(\frac{1.08}{1.134}\right)^3+\cdots+\left(\frac{1.08}{1.134}\right)^{29}\big]\\
+\frac{1.08}{1.134}&=\frac{1}{1.05}\\
+PV&= 100\ddot{a}_{\annuity{30\ \ }0.05}=1614\\
+\end{split}
+\]
+
+\paragraph{Q6} You want to save \$1200 over the next 40 weeks for a holiday. In order to save this amount of money you put \$25 at the end of each week, for each of the next 40 weeks, into a saving account which quotes an effective rate of (compound) interest of 4\% per annum, but interest is paid weekly. At the end of 40 weeks, what description best describes your financial status with regards to the goal of saving \$1200?\\
+
+\paragraph{Solution:} First find the effective weekly rate, where $(1+i)^{52}=1.04$. Therefore, $i=0.07545\%$. The accumulated value at the end of 40 weeks is $25s_{\annuity{40\ \ }0.07545\%}=25\left(\frac{1.0007545^{40}-1}{0.0007545}\right)=\$1014.85$. So short of your goal by \$185.15.\\
+
+\paragraph{Q7} You receive \$30 on the first day of each month, from 1 Jan 2014 to 1 Nov 2014 inclusive. Assuming a nominal interest rate of 15\% p.a. convertible monthly, what answer below best describes the present value of this series of payments as at 1 July 2013.\\
+
+\paragraph{Solution:}\ \\
+
+There are 11 payments from 1 Jan 2014 to 1 Nov 2014. $\ddot{a}_{\annuity{11\ \ }1.25\%}$ is the value of this annuity at 1 Jan 2014, and we can discount for 6 months back to 1 July 2013, so $30\times _6\big\vert\ddot{a}_{\annuity{11\ \ }1.25\%}$ is correct.
+
+$a_{\annuity{11\ \ }1.25\%}$ is the value of this annuity on 1 Dec 2013, and we can discount 5 months back to 1 July 2013, so $30\times _5\big\vert a_{\annuity{11\ \ }1.25\%}$ is correct.
+
+The term of the annuity $30a_{\annuity{10\ \ }1.25\%}\times v^5_{1.25\%}$ is incorrect, there are 11 payments not 10.
+
+The term $30a_{\annuity{16\ \ }1.25\%} - a_{\annuity{5\ \ }1.25\%}$ is also incorrect, should be $30(a_{\annuity{16\ \ }1.25\%} - a_{\annuity{5\ \ }1.25\%)}$ instead.\\
+
+\paragraph{Q8} Over the next 2 years you receive eight quarterly payments of \$150 each, with the first payment due on 31 March 2013. The nominal interest rate applicable throughout 2013 is 8\% p.a. and throughout 2014 it is 6\% p.a. Both of these interest rates are compounded four times per year. What is the present value of these payments as at 31 December 2012?\\
+
+\paragraph{Solution:} There are two approaches we can use to answer this question. One approach is to evaluate the annuity as a standard immediate annuity, that is, find the present value of each cashflow at the effective quarterly rate of interest.
+
+For 2013, the effective quarterly interest rate is $\frac{8\%}{4}=2\%$, and for 2014 the effective quarterly interest rate if $\frac{6\%}{4}=1.5\%$.
+
+Note that because the interest rate changes, we can find the present value of two separate annuities, and then sum the present values. That is,
+
+\[\begin{split}
+PV &= 150(a_{\annuity{4\ \ }2\%}+v^4_{2\%}a_{\annuity{4\ \ }1.5\%})\\
+&=150\left(\frac{1-(1.02)^{-4}}{0.02}+(1.02)^{-4}\left(\frac{1-(1.015)^{-4}}{0.015}\right)\right)\\
+&=150(3.8077+3.5609)\\
+&=\$1105
+\end{split}
+\]
+
+Alternatively, let's work with the nominal interest rates. The total amount paid per annum is $\$150\times 4=\$600$, and so
+
+\[PV = 600(a^{(4)}_{\annuity{1\ \ }i^{(4)=8\%}}+ v_{i_1}a^{(4)}_{\annuity{1\ \ }i^{(4)}=6\%}\]
+
+Now $i^{(4)}=8\%$ is equivalent to an annual effective interest rate of $i_1 = 8.2432\%$ and $i^{(4)}=6\%$ is equivalent to an annual effective rate of interest $i_2=6.1364\%$
+
+Therefore
+
+\[PV = 600\left(\frac{1-(1.082432)^{-1}}{0.08}+\frac1{1.082432}\left(\frac{1-(1.061364)^{-1}}{0.06}\right)\right)=\$1105\]
+
+\part{Quiz 3}
+
+\paragraph{Q1} At what interest rate convertible semiannually would \$500 accumulate to \$800 in 4 years?\\
+
+\paragraph{Solution:} Let $j=\frac{i^{(2)}}{2}$ be the effective rate per six months. We are given that $500(1+j)^8=800$. Solving for $j$ and $j\approx 0.06051$. Thus, $i^{(2)}=2j=0.121=12.1\%$.\\
+
+\paragraph{Q2} Carl puts 10,000 into a bank account that pays an annual effective interest rate of 4\% for ten years. If a withdrawal is made during the first five and one-half years, a penalty of 5\% of the withdrawal amount is made.
+
+Carl withdraws $K$ at the end of each of years 4,5,6 and 7. The balance in the account at the end of year 10 is 10,000.
+
+Calculate $K$.\\
+
+\paragraph{Solution:} With penalties, the withdrawals are $1.05K, 1.05K, K$ and $K$ at times 4,5,6 and 7, respectively. The equation of value is (comparison date time 10):
+
+\[10000(1.04)^{10}=1.05K(1.04^6+1.04^5) + K(1.04^4+1.04^3)+10000\]
+
+\[K=\frac{10000(1.04^{10}-1)}{1.05(1.04^6+1.04^5)+1.04^4+1.04^3}=\frac{4802.44}{4.900794}=979.93\]\\
+
+\paragraph{Q3} Investor A deposits 1000 into an account paying 4\% compounded quarterly. At the end of three years, he deposits an additional 1000. Investor B deposits $X$ into an account with force of interest $\delta_t=\frac{1}{6+t}$. After five years, investors A and B have the same amount of money. Find $X$.\\
+
+\paragraph{Solution:} Consider investor A's account first. The initial 1000 accumulates at 4\% compounded quarterly for five years; the accumulated amount of this piece is
+
+\[1000\left(1+\frac{0.04}{4}\right)^{4\times5}=1000(1.01)^{20}.\]
+
+The second 1000 accumulates at 4\% compounded quarterly for two years, accumulating to
+
+\[1000\left(1+\frac{0.04}{4}\right)^{4\times2} =1000(1.01)^8.\]
+
+The value in investor A's account after five years is
+
+\[A=1000(1.01)^{20}+1000(1.01)^8.\]
+
+The accumulated amount of investor B's account after five years is given by
+
+\[B=Xe^{\int^5_0\frac{dt}{6+t}}=Xe^{\ln\left(\frac{11}{6}\right)}=\frac{11}{6}X.\]
+
+The equation of value at time $t=5$ is
+
+\[\frac{11}{6}X=1000(1.01)^{20}+1000(1.01)^8.\]
+
+Solving for $X$ we find $X\approx\$1256.21.$
+
+\paragraph{Q4} A loan is being amortized by means of level monthly payments at an annual effective interest rate of $8\%$. The amount of principal repaid in the 12th payment is 1000 and the amount of principal repaid in the t$^{th}$ payment is $3700$. Calculate $t$.
+
+\paragraph{Solution:} First find the equivalent monthly rate $j:(1+j)^{12}=1.08, j=.643403\%$. The principal repayments form a geometric progression with common ratio $(1+j)$. The t$^{th}$ payment is $(t-12)$ months after the $12$th payments. Thus $(1+j)^{t-12}=\frac{3700}{1000}=3.7, t-12=204$ and $t=216$.
+
+\paragraph{Q5} A loan of $1000$ is made at an interest rate of $12\%$ compounded quarterly. The loan is to be repaid with three payments: $400$ at the end of the first year, $800$ at the end of the fifth year, and the balance at the end of the tenth year. Calculate the amount of final payment.
+
+\paragraph{Solution:}
+
+\[1000=400v^4+800v^{20}+Rv^{40}\] where the quarterly effective interest rate is $\frac{12\%}{4}=3\%$.
+
+\[R=\frac{1000-400(.8885)-800(.5537)}{.3066}=657.66\]
+
+\paragraph{Q6} A single payment of $\$3938.31$ will pay off a debt whose original repayment plan was $\$1000$ due on January 1 of each of the next four years, beginning January 1, 2006. If the effective annual rate is $8\%$, on what date must the payment of $\$3938.31$ be paid?
+
+\paragraph{Solution:} The equation of value with comparison date January 1, 2006 is 
+
+\[1000[1+(1+0.08)^{-1}+(1+0.08)^{-2}+ (1+0.08)^{-3}]=3938.31(1+0.08)^{-t}\]
+
+Solving this equation for $t$ we find
+
+\[t=\frac{\ln\{1000(3938.31)^{-1}[1+(1+0.08)^{-1}+(1+0.08)^{-2}+(1+0.08)^{-3}]\}}{\ln{1.08}}\approx 1.25\]
+
+Therefore, the single payment of $3938.31$ must be paid $1.25$ years after January 1, 2006, or on March 31, 2007.
+
+\paragraph{Q7} For a price of $\$100$, you receive monthly interest payments of $\$1$ in arrears for $5$ years and a lump sum payment of $\$X$ at the end of $5$ years. Assuming an effective annual rate of interest of $5\%$, what is $X$?
+
+\paragraph{Solution:} Let $X$ be the unknown amount at $t=5$. Select a reference time point, say $t=0$. Set up your equation of value at the reference time point.
+
+\[100=a_{\annuity{60\ }j}+\frac{X}{1.05^5}\]
+
+where $j=1.05^{1/12}-1=0.407\%$ effective per month. Solve for the unknown $X$:
+
+\[X=\left(100-\left(\frac{1-(1+j)^{-60}}{j}\right)\right)\times 1.05^5\]
+
+$X=\$59.81$.
+
+\paragraph{Q8} Kevin takes out a 10-year loan of $L$, which he repays by the amortization method at an annual effective interest rate of $i$. Kevin makes payments of $1000$ at the end of each year. The total amount of interest repaid during the life of the loan is also equal to $L$. Calculate the amount of interest repaid during the first year of the loan.
+
+\paragraph{Solution:}\ \\
+$L=1000a_{\annuity{10\ }i}$
+
+Total interest = sum of the payments minus amount of loan = $(10)(1000)-1000a_{\annuity{10\ }i} =1000a_{\annuity{10\ }i}$
+
+So $a_{\annuity{10\ }i}=5, i=15.1\%$
+
+Interest in first year = $1000(1-v^{10})=754.95$
+
+\part{Quiz 4}
+
+\paragraph{Q1} In return for an investment at $t=0$ of $\$500$, you are to receive payments of $\$100$, annually in arrears, for each of the next 10 years. The applicable interest rate over the rest 5 years is 8\% per annum, and over the last 5 years it is 12\% per annum. Calculate the NPV of this investment.
+
+\paragraph{Solution:} To calculate the NPV, we need to value the cashflows at $t=0$. That is NPV=PV inflows - PV outflows.
+
+\[NPV = -500 + 100a_{\annuity{5\ }0.08} + v_{0.08}^5 100a_{\annuity{5\ }0.12}\]
+
+NPV = \$145.
+
+\paragraph{Q2} Consider the following scenario: You invest \$1 on 1 January 2013; At 30 June 2013 it is worth \$2. You then invest \$2 billion on 1 July 2013. At 31 December 2013 the overall investment is then worth \$1 billion. For this scenario, calculate the MWRR and the TWRR.
+
+\paragraph{Solution:} Clearly the MWRR and TWRR are very different. The MWRR ignores any investment return in the first half of the year. The huge negative MWRR suggests the \$2 billion investment was made just after a market boom, after which returns dropped significantly. The MWRR does not give us an accurate picture of the investment return over the year. In contrast, the TWRR explicitly incorporates the return in  both the first and the second half of the year, and is not sensitive to the  amounts or timing of the net cashflows. Even though net cashflows in the second half were $10^9$ times greater than the net cashflows in the first half, using the TWRR, the doubling in investment value during the first half is offset by the halving in investment value in the second half, hence the 0\% return over the year.
+
+The MWRR is $i$ such that
+
+\[1(1+i)+2\text{bn}(1+MWRR)^{0.5}=1\text{bn}\]
+
+The \$1 investment is negligible, so ignoring this term to solve:
+
+\[\begin{split}
+(1+MWRR)^{0.5}&=\frac{1}{2}=0.5\\
+MWRR&=0.5^2-1=-75\%
+\end{split}
+\]
+
+Note, if solved for the MWRR exactly, we would get the same answer.
+
+For TWRR,
+
+\[TWRR = \frac{2}{1}\times\frac{1000000000}{2000000002}-1=1-1=0\%\]
+
+\paragraph{Q3} A 20 year bond with annual coupons and redeemable at maturity at 1050is purchased for $P$ to yield an annual effective rate of $8.25\%$. The first coupon is 75. Each subsequent coupon is $3\%$ greater than the preceding coupon. Determine $P$.
+
+\paragraph{Solution:} The coupon payments constitute an annuity that  is varying in geometric progression. The PV of this annuity is
+
+\[75\left(\frac{1-\left(\frac{1.03}{1.0825}\right)^{20}}{0.0825-0.03}\right)=900.02\]
+
+The PV of the redemption value is
+
+\[1050(1.0825)^{-20}=215.90\]
+
+Thus, the price of the bond is
+
+\[900.02+215.90=1115.11\]
+
+\paragraph{Q4} Tom borrows 19800 from Bank A. Tom repays the loan by making 36 equal payments of principal at the end of each month. he also pays interest on the unpaid balance each month at a nominal rate of 12\%, compounded monthly. Immediately after the 16th payment is made, Bank A sells the rights to future payments to Bank B. Bank B wishes to yield a nominal rate of 14\%, compounded semiannually, on its investment. What price does Bank A receive?
+
+\paragraph{Solution:} Monthly principal repayments = $\frac{19800}{36}=550.$ Monthly interest payments are $.01(19800), .01(19800-550),\dots$. As of the end of 16 months the PV of the future monthly payments = $550a_{\annuity{20\ }j} + 5.50(Da)_{\annuity{20\ }j}$ where $(1+j)^{12} = 1.07^2$, or $j=1.134026\%$. So the price Bank A receives is such PV = $10857$.
+
+\paragraph{Q5} Bill buys a 10-year 1000 par value 6\% bond with semiannual coupons. The price assumes a nominal yield of 6\%, compounded semiannually. As Bill receives each coupon payment, he immediately puts the money into an account earning interest at an annual effective rate of $i$. At the end of 10 years, immediately after Bill receives the final coupon payment and the redemption value of the bond, Bill has earned an annual effective yield of $7\%$ on his investment in the bond. Calculate $i$. 
+
+\paragraph{Solution:} Bill's AV at the end of 10 years is the AV of the coupons plus 1000:
+
+\[AV = 30s_{\annuity{20\ }j}+1000\]
+
+where $j=(1+i)^{0.5}-1$ (the effective semiannual rate).
+
+Since the price assumes 6\% compounded semiannually and the coupon rate is also 6\% semiannually, Bill pays 1000 for the bond.
+
+\[\begin{split}
+	1000(1.07)^{10}&=30s_{\annuity{20\ }j}+1000\\
+	s_{\annuity{20\ }j}&=32.2384 \text{ and } j = 4.7597\%\\
+	i&=(1+j)^2-1=9.75\%
+\end{split}\]
+
+\paragraph{Q6} An $n$-year zero coupon bond with par value of 1000 was purchased for 600. An $n$-year par value bond with semiannual coupons of $X$ was purchased for 850. A $3n$-year 1000 par value bond with semiannual coupons of $X$ was purchased for $P$. All three bonds have the same yield rate. Calculate $P$.
+
+\paragraph{Solution:} $600=1000v^n, v^n=0.6$
+
+Let $Y=$ equivalent annual coupon of the other 2 bonds.
+
+\[
+\begin{split}
+	850&=Ya_{\annuity{n\ }i}+1000v^n\\
+	&=Y\left(\frac{1-.6}{i}\right)+1000(.6)\\
+	&=\frac{Y}{i}(.4)+600\\
+	\frac{Y}{i}&=625\\
+	P&=Ya_{\annuity{3n\ }}+ 1000v^{3n}\\
+	&=\frac{Y}{i}(1-v^{3n})+1000v^{3n}\\
+	&=625(1-.6^3)+1000(.6^3)\\
+	&=490+216=706
+	\end{split}
+\]
+
+\paragraph{Q7} A 1000 par value 5-year bond with semiannual coupons of 60 is purchased to yield 8\% convertible semiannually. Two years and two months after purchase, the bond is sold at a price which maintains the same yield for the buyer. Calculate this price.
+
+\paragraph{Solution:} The book value just after the 4th coupon payment (i.e. the PV of future payments) at the original yield rate = $60a_{\annuity{6}}+1000v^6$ at 4\% = $1104.84$. The price to maintain the same yield rate = $1104.84(1.04)^{\frac{1}{3}}=1119.38$ (2 months after the end of the 2nd year is $\frac{2}{6}=\frac{1}{3}$ of a semiannual interest period.)
+
+\paragraph{Q8} Matt purchases a 20-year par value bond with 8\% semiannual coupons at a price of 1722.25. The bond can be called at par value $X$ on any coupon date starting at the end of year 15. The price guarantees that Matt will receive a nominal semiannual yield of at least 6\%. Bert purchases a 20-year par value bond identical to the one purchased by Matt except it is not callable. Assuming a nominal semiannual yield of 6\%, the cost of the bond purchased by Bert is $P$. Calculate $P$.
+
+\paragraph{Solution:} The bond that Matt buys is sold at a premium, since $g > i\ (.04>.03)$. Thus, the price that guarantees an effective rate of 3\% per half year period is based on assuming the earliest possible redemption date. This is 15-years, or 30 coupons, after purchase:
+
+\[\begin{split}
+	1722.25&=.04Xa_{\annuity{30\ }.03} + Xv^{30}\\
+	&=(.7840+.4120)X=1.1960X\\
+	X&=1440\\
+	P&=(.04)(1440)a_{\annuity{40\ }.03}+1440v^{40}=1772.85
+\end{split}\]
+
+\part{Quiz 5}
+
+\paragraph{Q1} The yield rate on a one-year zero-coupon bond is currently 7\% and the yield rate on a two-year zero-coupon bond is currently 8\%. The Treasury plans to issue a two-year bond with 9\% annual coupons maturing at \$100 par value. Determine the yield-to-maturity of the two-year coupon bond.
+
+\paragraph{Solution:} The one-year and two-year spot rates are 7\% and 8\%, respectively. The price of the two-year coupon bond is
+
+\[\frac{9}{1.07}+\frac{109}{1.08^2}=101.86\]
+
+$i=7.96\%$.
+
+\paragraph{Q2} A perpetuity-immediate has annual payments of $1.05, 1.05^2, 1.05^3,\dots$ Determine the duration of this perpetuity at an effective rate of $10\%$.
+
+\paragraph{Solution:} Numerator of duration = $(1)(1.05)v+(2)(1.05v)^2+(3)(1.05v)^3+\cdots$. This is the PV of an increasing perpetuity with payments of $1,2,3, \dots$, evaluated at an interest rate $j$, where $1+j=1.10/1.05$ and $j=.05/1.05=1/21$. The PV of an increasing perpetuity at rate $j$ is $1/j+1/j^2=21+21^2=462$.
+
+Denominator of duration = PV of payments = $1.05v+ (1.05v)^2+(1.05v)^3+\cdots = 21$
+
+Duration = $462/21=22$.
+
+\paragraph{Q3} An annuity-immediate has payments of \$1000, \$3000, and \$7000 at the end of one two and three years, respectively. Determine the convexity of the payments evaluated at $i=10\%$.
+
+\paragraph{Solution:} Convexity is the 2nd derivative of the PV of the payments divided by the PV, i.e., convexity = $P''(i)/P(i)$. Using \$1000 units, we have:
+
+\[\begin{split}
+	P(i)&=v+3v^2+7v^3=8.648\ \text{at}\ i=10\%\\
+	P'(i)&=-v^2-6v^3-21v^4\\
+	P''(i)&=2v^3+18v^4+84v^5=65.954\ \text{at}\ i=10\%\\
+	\text{convexity}&=65.954/8.648=7.63
+\end{split}
+\]
+
+\paragraph{Q4} A company must pay a benefit of \$1000 to a customer in two years. To provide for this benefit, the company will buy one-year and three-year zero coupon bonds. The one-year and three-year spot rates are 8\% and 10\% respectively. The company wants to immunize itself from small changes in interest rates on either side of 10\% (Redington immunization). What amount should it invest in the one-year bonds?
+
+\paragraph{Solution:} Let $X=$ amount invested in the one-year bond and $Y=$ amount invested in the three-year bond. The one-year bond will mature for $1.08X$ in one year and the three-year bond will mature for $1.1^3Y$ in three years. The net PV of the assets and liabilities is:
+
+\[P(i)=1.08vX + 1.1^3v^3Y - 1000v^2\]
+
+Set this equal to $0$ at $i=10\%$:
+
+\[P(.10)=1.08vX + Y -1000v^2=0, Y=826.45- .9818X\]
+
+For a relative minimum at $i=10\%$, set $P'(.10)=0$:
+
+\[P'(i)=-1.08(v^2)X-(3)(1.1^3)(v^4)Y+2000v^3\]
+
+$P'(.10)=-.8926X-2.7273Y+1502.63$. Set $P'(.10)=0$ and substitute $Y=826.45 - .9818X$. Solving for $X$ we get $X=421.$
+
+Theoretically, we should check that the 2nd derivative is positive at $i=10\%$ to make sure that we have a relative minimum. But since the question assumes that immunization can be accomplished, we would trust the examiners and not bother to do this.
+
+\paragraph{Q5} The current price of a stock is \$84. A one-year forward contract is entered into. It is expected that 4 quarterly dividends of \$5 each will be paid on the stock starting 3 months from now. The 4th dividend will be paid one day before the expiration of the forward contract. The risk-free interest rate is 6\% compounded quarterly. What is the price of a prepaid forward contract?
+
+\paragraph{Solution:} The prepaid price is the current price minus the PV of the expected dividends at 1.5\% per quarter. The PV of the 4 \$5 dividends is \$19.27, so the prepaid price is \$64.73.
+
+\paragraph{Q6} Suppose the following interest rates apply:
+
+\begin{itemize}
+	\item In year 1 the interest rate is 10\%
+	\item In year 2 there is a 20\% chance that the interest rate will be 2\% higher than that in year 1, and an 80\% chance that it will be 1\% higher than that in year 1
+	\item In year 3 there is a 30\% chance that the interest rate will be 1\% higher than that in year 2, and a 70\% chance that it will be 1\% lower than that in year 2.
+\end{itemize}
+
+Note: the interest rates are NOT independent. Calculate $E[S(3)]$.
+
+\paragraph{Solution:}
+
+\[\begin{split}
+	E[S(3)] &= (1.1)(1.12)(1.13)(0.2)(0.3)+(1.1)(1.12)(1.11)(0.2)(0.7)\\&+(1.1)(1.11)(1.12)(0.8)(0.3)+(1.1)(1.11)(1.1)(0.8)(0.7)\\&=1.3553232	
+\end{split}
+\]
+
+\paragraph{Q7} The fund currently has \$100 dollars invested. The investment return in any year is independent of returns in all other years. Next year the investment return will be 7\% with probability 0.5 and 3\% with probability 0.5. In the second and subsequent years, annual investment returns will be 2\%, 4\%, or 6\% with probability 0.3, 0.4 and 0.3 respectively.
+
+Calculate the variance of the accumulated value of fund after 10 years.
+
+\paragraph{Solution:}
+
+$E[i_1]=0.05$
+
+$E[i_t]=0.04, t\not=1$
+
+$E[100S(10)]=100(1.05)(1.04)^9=149.45$
+
+$E[S(10)^2]=E[(1+i_1)^2(1+i_2)^2\cdots (1+i_{10})^2]$
+
+$E[(1+i_1)^2]=0.5\cdot 1.07^2+0.5\cdot 1.03^2=1.1029$
+
+$E[(1+i_{k\not=1})^2]=0.3\cdot 1.02^2+0.4\cdot 1.04^2+0.3\cdot 1.06^2 = 1.08184$
+
+$E[S(10)^2]=1.1029\cdot 1.08184^9=2.2387$
+
+$Var[100S(10)]=100^2(2.2387-1.4945^2)=52.08$
+
+\paragraph{Q8} For the volatility of a stock that pays annual dividends. The first dividend is \$2 payable 12 months from now, and subsequent dividends will grow at an annual rate of 4\%. Assume that the effective annual interest rate is 9\%.
+
+\paragraph{Solution:} The price per unit stock is the PV of future dividend payments. We assume dividend payments continue in perpetuity. That is,
+
+\[P(i)=\frac{2}{(i-g)}\ \text{where}\ g=4\%\]
+
+Take the first derivative of $P(i)$ we have:
+
+\[P'(i)=-2(i-g)^{-2}\]
+
+Hence, the volatility is:
+
+\[\nu = \frac{1}{i-g}=\frac{1}{0.09-0.04}=20\]
+
+\end{document}

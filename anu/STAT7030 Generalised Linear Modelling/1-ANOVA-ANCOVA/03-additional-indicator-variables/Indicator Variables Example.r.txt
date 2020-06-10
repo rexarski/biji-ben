@@ -1,0 +1,163 @@
+# The first part of the "brick" of lecture notes for this course is about including categorical
+# variables as explanatory (X) variables on the right hand side of a linear model. This is an 
+# additional example of using the simplest form of categorical variable (a Yes/No or 0/1 coded 
+# variable, often frequently referred to as a "dummy" variable).
+
+# This example is taken from exercise 3.7 on page 80 of Lattin J, Carroll JD and Green, PE (2003)
+# Analyzing Mutivariate Data, published by Thomson Brooks/Cole, which was a text for another 
+# statistics unit (STAT8020 Multivariate Analysis).
+
+# In this example, data was collected in March 1977 on 116 bank employees (of Harry's Trust and
+# Savings Bank) hired during 1969 to 1971 as general office trainees. The following variables
+# were collected for each employee:
+#   EmpID - employee ID number (a three or four digit identifying number)
+#   Sex - sex of employee (0 = Male, 1 = Female)
+#   Age - age at hire (in months)
+#   EducYrs - years of education
+#   EducLvl - level of education (1 = Graduate school, 2 = College graduate, 3 = Some college, 
+#                                 4 = High school graduate, 5 = None of the above)
+#   WorkExp - prior work experience (in months)
+#   Start - starting salary (in $)
+#   Senior - seniority (total number of months of employment)
+#   Salary - current salary (in $)
+
+# The data are available in "Bankwages.txt" and can be read into R using any of the methods
+# demonstrated in lectures.
+
+# For example, the following approach will work if you downloaded both this example R file 
+# and the data file to the same directory on your computer and then started RStudio by 
+# opening the R file with RStudio (with ANU computers, you need to right-click and go
+# "Open With" RStudio - if you double-click, then "really helpful: default association is to
+# try and open the file with the package Statistica, which is no longer available on the ANU
+# computer network):
+
+bankwages <- read.table("BankWages.txt", header=T)
+
+# First examine the data by simply typing the name (or if you are using RStudio, you can
+# double-click on the object in the Environment window, which opens the Viewer):
+
+bankwages
+names(bankwages)
+
+# Attach the data for the remainder of this session, so that the variables are available using
+# the above column names:
+
+attach(bankwages)
+
+# The question of interest when collecting the data was "is there evidence of any gender (sex)
+# discrimination in the employee compensation offered by this bank to general office trainees?"
+
+# We have two measures of compensation in these data - starting and current salary levels
+# (Start and Salary) and Sex is a 0/1 variable which indicates the employees gender.
+# Firstly, are there apparent differences between the current salaries for males and females:
+
+mean(Salary)
+mean(Salary[Sex==0])
+mean(Salary[Sex==1])
+
+# As Sex is already coded as 0/1 indicator variable, we can decide whether these apparent
+# differences in mean current salaries are significant by fitting a simple linear regression
+# model:
+
+Salary.lm <- lm(Salary ~ Sex)
+plot(Salary.lm)
+
+# The plots indicate a definite problem with this model caused by an apparent outlier - 
+# observation #9, but ignoring this for the moment and looking at the rest of the model output:
+
+anova(Salary.lm)
+summary(Salary.lm)
+
+# What are the estimated coefficients of this model? The intercept turns out to be the mean
+# salary for males and the slope is the difference between the mean salary for males and the
+# mean salary for females:
+
+mean(Salary[Sex==0])
+mean(Salary[Sex==1]) - mean(Salary[Sex==0])
+
+# Note the t-test on the slope using this parameterisation turns out to be identical to the
+# two sample t-test (assuming equal variances), that is typically included in a first year
+# introductory statistics course:
+
+t.test(Salary[Sex==1], Salary[Sex==0], var.equal=TRUE)
+
+# Note the above "treatment" coding (using 0/1) is not the only way we could have coded sex as
+# an indicator variable. Here is an alternative parameterisation of Sex (usually called "sum"
+# coding in an experimental design context):
+
+Sex2 <- ifelse(Sex==0,-1,1)
+Sex2
+cbind(Sex, Sex2)
+
+# However, the model using this new variable gives output that is almost identical to the
+# original model:
+
+Salary.lm2 <- lm(Salary ~ Sex2)
+plot(Salary.lm2)
+
+anova(Salary.lm2)
+summary(Salary.lm2)
+
+# The only difference is in the estimated coefficients of the model (the model parameters). 
+# The new intercept turns out to be, not the overall mean salary (which is what would have 
+# happened had if we had the same number of males and females - called a balanced design),
+# but instead it is the simple (rather than weighted) average of the mean salary for males 
+# and the mean salary for females:
+
+mean(Salary)
+(mean(Salary[Sex==0]) + mean(Salary[Sex==1]))/2
+coef(Salary.lm2)
+
+# If we add the slope coefficient to from this new intercept (i.e. when Sex2 = +1), 
+# we arrive at the mean salary for males:
+
+coef(Salary.lm2)[1] - coef(Salary.lm2)[2]
+mean(Salary[Sex==0])
+
+# And if we subtract the slope coefficient from the intercept (i.e. when Sex2 = +1), 
+# we get the mean salary for females:
+
+coef(Salary.lm2)[1] + coef(Salary.lm2)[2]
+mean(Salary[Sex==1])
+
+# We will discuss these alternative ways of parameterising a model later in this part of the
+# course, but before we leave this example, let's examine the models that Lattin, Carroll and 
+# Green fit in their solutions to this exercise. First a model for examining the differences
+# in starting salaries, controlling for the effects of work experience and years of education,
+# which they do by including these additional variables in the model:
+
+Start.lm <- lm(Start ~ Sex + WorkExp + EducYrs)
+plot(Start.lm)
+
+anova(Start.lm)
+summary(Start.lm)
+
+# There are problems with this model, notably that observation #81, a female who turns out to 
+# be the only college graduate out of all 116 employees, appears to have a large negative 
+# residual - i.e. she has a much lower starting salary than her additional education would 
+# suggest. We could treat her as a special case and exclude her from the analysis (one way of
+# dealing with potential outliers, but not necessarily the best way in this instance):
+
+Start.lm2 <- lm(Start[-81] ~ Sex[-81] + WorkExp[-81] + EducYrs[-81])
+plot(Start.lm2)
+
+anova(Start.lm2)
+summary(Start.lm2)
+
+# Compare the ANOVA tables and estimated coefficients of Start.lm and Start.lm2 - both models
+# suggest there is significant discrimination against females in starting salaries, controlling
+# for work experience and years of education, but the size of the mean difference in starting 
+# salaries, b(Sex) = -$683 in Start.lm compared to b(Sex) = -$481 in Start.lm2, suggests that
+# observation 81 has had a significant effect on this difference!
+
+# Finally, Lattin, Carroll and Green proposed this model for current salaries:
+
+Salary.lm3 <- lm(Salary ~ Sex + Start + WorkExp + EducYrs + Senior)
+plot(Salary.lm3)
+
+anova(Salary.lm3)
+summary(Salary.lm3)
+
+# This model also has problems with two potential outliers: observations #9 (a male with a very
+# large current salary) and #81 (again). We will discuss how to deal with outliers (again),
+# later in the course.

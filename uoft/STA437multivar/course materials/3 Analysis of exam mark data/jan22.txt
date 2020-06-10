@@ -1,0 +1,47 @@
+# R code to generate plots
+
+x <- scan("marks.txt",what=list(0,0,0,0,0))
+MEC <- x[[1]]
+VEC <- x[[2]]
+ALG <- x[[3]]
+ANA <- x[[4]]
+STA <- x[[5]]
+
+# pairwise scatteplots
+pairs(cbind(MEC,VEC,ALG,ANA,STA),main="Pairwise scatterplots")
+x <- cbind(MEC,VEC,ALG,ANA,STA)
+x <- scale(x,center=T,scale=F)
+
+# compute chi-square distances for each point
+chis <- NULL
+vv <- var(x)  # variance-covariance matrix
+for (i in 1:88) {
+   a <- as.vector(xx[i,])
+   chis <- c(chis,t(a)%*%solve(vv,a))
+}
+
+par(mfrow=c(2,1)) # two plots per page
+
+# Chi-square plot with observation indices as labels
+number <- as.character(c(1:88))
+plot(qchisq((c(1:88)-0.5)/88,5),sort(chis),type="n",
+xlab="chi-square (5) quantiles",ylab="ordered data")
+text(qchisq((c(1:88)-0.5)/88,5),sort(chis),labels=number[order(chis)],cex=0.7)
+abline(0,1) # line with slope 1 and intercept 0
+
+# abest1 and abest2 were computed before
+abest1 <- c(0.17974031,0.76303276,-0.61336094,-0.09450526,-0.01820833)
+abest2 <- c(0.3980449,-0.1734805,0.0171431,-0.8246582,0.3620908)
+
+# normal qq plot of maximum kurtosis projection
+qq <- qqnorm(x%*%abest1,ylab="ordered data",main=
+"Projection with maximum kurtosis",type="n")
+text(qq,label=number,cex=0.7)
+
+# plot of two orthogonal maximum kurtosis projections
+plot(x%*%abest1,x%*%abest2,xlab="Maximum kurtosis projection",
+ylab="Second projection", type="n")
+text(x%*%abest1,x%*%abest2,label=number,cex=0.7)
+
+
+

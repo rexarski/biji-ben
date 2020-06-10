@@ -1,0 +1,69 @@
+# TESTS OF FUNCTIONS FOR NEAREST NEIGHBOR CLASSIFICATION.
+
+source("ex12funs.r")
+
+
+# Test the 'distance' function.
+
+cat("Testing 'distance'\n")
+
+stopifnot (5 == 
+           print (distance (list(-2), list(3))))
+stopifnot (7 == 
+           print (distance (list(3,4), list(8,2))))
+stopifnot (2 ==
+           print (distance (list("abc","xy","q"), list("def","xyz","q"))))
+stopifnot (11 ==
+           print (distance (list("abc","xyz","q",10), list("def","xyz","q",0))))
+
+cat("OK\n\n")
+
+
+# Test the 'nearest' function.
+
+cat("Testing 'nearest'\n")
+
+cases <- data.frame (list (a = c(8,  9,   9, -2), 
+                           b = c(44, 11, 11, 22), 
+                           c = c("x","y","z","x")),
+                     stringsAsFactors=FALSE)
+
+stopifnot (4 == 
+           print (nearest (cases, list (-3, 22, "q"))))
+stopifnot (4 == 
+           print (nearest (cases, list (0,  32, "x"))))
+stopifnot (1 == 
+           print (nearest (cases, list (8,  34, "x"))))
+stopifnot (2 == 
+           print (nearest (cases, list (9,  11, "y"))))
+stopifnot (3 == 
+           print (nearest (cases, list (9,  11, "z"))))
+
+cat("---\n")
+
+stopifnot (1 == print (nearest (data.frame(list(a=3)), list(3))))
+stopifnot (1 == print (nearest (data.frame(list(a="xx")), list("yy"))))
+
+cat("OK\n\n")
+
+
+# Test the 'classify' function.
+
+cat("Testing 'classify'\n")
+
+trainx <- data.frame (list (a = c(8,  9,   9, -2), 
+                            b = c(44, 11, 11, 22), 
+                            c = c("x","y","z","x")),
+                      stringsAsFactors=FALSE)
+
+trainy <- c(2,1,2,1)
+
+testx <-  data.frame (list (a = c(-3, 0,   8,  9,  9),
+                            b = c(22, 32, 34, 11, 11),
+                            c = c("q","x","x","y","z")),
+                      stringsAsFactors=FALSE)
+
+stopifnot (all (c(1,1,2,1,2) ==
+                print (classify (trainx, trainy, testx))))
+
+cat("OK\n\n")

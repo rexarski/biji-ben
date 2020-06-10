@@ -1,0 +1,39 @@
+- Q1
+    - check @QUESTION: rule of thumb (1 or formula?)
+    - check @QUESTION: real problem seems to be an overdispersion, but in fact if we investigate further, it is because of a zero-inflation problem.
+        - so, should we do the zero-inflation test and fit in a zero-inflation possion model?
+    - @QUESTION: for overlapped scatterplots, can we use jittered scatterplot?
+
+- Q2
+    - @QUESTION: 2b, are we doing a rigorous model selection step or just a trial-and-error here.
+    - @TODO: comments on diagnostics
+
+
+ti.glm3
+                train      test
+sensitivity 0.6900585 0.6455696
+specificity 0.9125683 0.8615385
+accuracy    0.8271605 0.7799043
+
+ti.glm4
+                train      test
+sensitivity 0.6812865 0.6582278
+specificity 0.9071038 0.8653846
+accuracy    0.8204265 0.7870813
+
+cao.glm
+                train      test
+sensitivity 0.6929825 0.6582278
+specificity 0.9107468 0.8653846
+accuracy    0.8271605 0.7870813
+
+cao2.glm
+                train      test
+sensitivity 0.6959064 0.6582278
+specificity 0.9034608 0.8461538
+accuracy    0.8237935 0.7751196
+
+
+
+##########################################################
+

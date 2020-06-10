@@ -1,0 +1,85 @@
+\documentclass[a4paper, 11pt, twoside]{article}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\begin{document}
+2017-02-20-lec01
+\\
+
+We basically talk about some fields of the beautiful mathematics in the first lecture as an introduction.
+\\
+
+\textbf{I. Number Theory}
+\\
+
+primes.
+\\
+
+\textbf{FACT:} Any integer $n$ can be decomposed uniquely as a product of primes.
+\\
+
+So Euclid asked, \textbf{are there infinitely many primes?}
+\\
+
+\textbf{Proof:}
+\\
+
+Suppose $2, 3, 5, 7$ were all primes we know of.
+
+Can we come up a number that is not divisible by $2, 3, 5, 7$?
+
+Yep, $2\times3\times5\times7+1=211$ which is a new prime. 
+
+Proof by contradiction.
+
+Suppose there are finitely many primes $p_1, \dots p_k + 1$
+
+Consider the integer $N = p_1\cdot p_2 \cdots p_k + 1$
+
+Two cases:
+
+\begin{itemize}
+	\item If $N$ is prime, then done.
+	\item If $N$ is not prime, then let $q$ be any prime divisor of $N$. Then $q$ must be distinct from $p_1, \dots, p_k$ (based on the fact above). Contradiction done.
+\end{itemize}
+
+\textbf{Twin Prime Conjecture (which is still unproved yet!):} Progess, in 2013 Zhang had proved that $\exists \infty $ many pairs of primes $(p_i, p_j)$ such that $|p_i- p_j| < 7 \times 10^8$.... ($346$ currently!) 
+\\
+
+\textbf{Geometry}
+\\
+
+Pythagorean Theorem
+\\
+
+\textbf{Analysis}
+
+\[ l^2 = 2\ (l = \sqrt{2}) \]
+
+For Pythagoreans, the only numbers they had were rationals $\frac{q}{p}$.
+\\
+
+\textbf{Theorem:} There does not exist a rational number $\frac{q}{p}$ such that $\left(\frac{q}{p}\right)^2 = 2$
+\\
+
+\[ \left(\frac{7}{5}\right)^2 = \frac{49}{25} \not = 2\]
+
+\[ \left(\frac{99}{70}\right)^2 = \frac{9801}{4900} \not = 2\]
+\\
+
+\textbf{Proof:}
+
+Recall that if $a$ is even, then $a^2$ is even. ($2=2k$ for some integer $k$, $a^2=4k^2 = 2(2k^2)$, $a^2$ is even)
+
+Claim $a$ is odd, then $a^2$ is also odd. ($a=2k+1, a^2=4k^2+4k+1$, $a^2$ is odd.)
+
+So suppose there exists integers $a, b$ such that $\left(\frac{a}{b}\right)^2 = 2 \iff a^2=2b^2$
+
+WLOG: Assume at least one of $a, b$ is odd.
+
+\begin{enumerate}
+	\item Suppose $a, b$ both odd, $a^2$ odd, $b^2$ odd, $2b^2$ even, contradiction.
+	\item Suppose $a$ odd, $b$ even, $a^2$ odd, $2b^2$ even, contradiction.
+	\item Suppose $a$ even, $b$ odd, $a^2$ even, $b^2$ odd, $2b^2$ even, $a^2=(2k)^2=4k^2=2b^2$. Then $2k^2=b^2$, $2k^2$ is even but $b^2$ is odd, contradiction.
+\end{enumerate}
+
+\end{document}

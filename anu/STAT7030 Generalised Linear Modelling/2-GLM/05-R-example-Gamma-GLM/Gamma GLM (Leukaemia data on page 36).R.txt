@@ -1,0 +1,87 @@
+# The following example, which is described on page 36 of the brick, uses a subset of a dataset 
+# on leukaemia patients - just the ones were positive on the "ag" factor - the full data are in 
+# Leuk.txt and the subset of the 17 positive patients are in LeukPos.txt 
+
+leuk.pos <- read.table("LeukPos.txt", header=T)
+leuk.pos
+attach(leuk.pos)
+names(leuk.pos)
+
+# The obvious response variable here is continuous, but is it normally distributed?
+
+hist(surv)
+
+qqnorm(surv)
+qqline(surv)
+
+# As shown in the brick, we could try various transformations:
+
+plot(wbc, surv, xlab="White Blood Cell Count", ylab="Survival Time (in weeks)")
+title("(a) - Plot of Raw Data")
+
+plot(log(wbc), log(surv), xlab="ln(White Blood Cell Count)", ylab="ln(Survival Time)")
+title("(b) - Plot of Log Transformed Data")
+
+plot(log(wbc), log(1/surv))
+
+# The following R code fits the models and produces the graphs shown on page 37 and 38 of 
+# the lecture notes:
+
+leuk.slr <- lm(log(surv) ~ log(wbc))
+leuk.glm <- glm(surv ~ log(wbc), family=Gamma(link=log))
+leuk.glm1 <- glm(surv ~ wbc, family=Gamma)
+
+# Note the default (canonical) link for the Gamma is actually the negative inverse, but 
+# R uses the simple inverse - this reverses the order of the data, which does really
+# matter, so long as we use the same transformation to back-transform any predictions
+# from the model.
+
+# Plot on the original scale
+wbcs <- 1000*0:100
+times <- 1.6*0:100
+plot(wbcs,times,type="n",xlab="White Blood Cell Count",ylab="Survival Time (weeks)")
+points(wbc,surv)
+fitted.slr <- as.vector(coef(leuk.slr) %*% rbind(1,log(wbcs)))
+lines(wbcs,exp(fitted.slr))
+fitted.glm <- as.vector(coef(leuk.glm) %*% rbind(1,log(wbcs)))
+lines(wbcs,exp(fitted.glm),lty=2)
+fitted.glm1 <- as.vector(coef(leuk.glm1) %*% rbind(1,wbcs))
+lines(wbcs,1/fitted.glm1,lty=3)
+legend(25000, 150, lty=1:3, c("Normal Linear Model", "Gamma GLM (log link)", "Gamma GLM (inverse link)"))
+title("(c) - Fitted Curves on Original Scale")
+
+# Plot on the log scale
+plot(c(6.6,log(wbcs)),c(0,log(times)),type="n",xlab="ln(White Blood Cell Count)",ylab="ln(Survival Time)")
+points(log(wbc),log(surv))
+lines(log(wbcs),fitted.slr)
+lines(log(wbcs),fitted.glm,lty=2)
+lines(log(wbcs),log(1/fitted.glm1),lty=3)
+legend(7,1, lty=1:3, c("Normal Linear Model", "Gamma GLM (log link)", "Gamma GLM (inverse link)"))
+title("(d) - Fitted Curves on Logarithmic Scale")
+
+# Plot on the inverse scale
+plot(c(wbcs,100000),c(1/times,1),type="n",xlab="White Blood Cell Count",ylab="1/Survival Time")
+points(wbc, 1/surv)
+lines(wbcs, 1/exp(fitted.slr))
+lines(wbcs, 1/exp(fitted.glm),lty=2)
+lines(wbcs,fitted.glm1,lty=3)
+legend(0,1, lty=1:3, c("Normal Linear Model", "Gamma GLM (log link)", "Gamma GLM (inverse link)"))
+title("(e) - Fitted Curves on Inverse Scale")
+
+# We will revisit this example later in the course. Just to leave you with a few things to think 
+# about in the meantime, here are the default residual plots for each of these models:
+
+plot(leuk.slr)
+
+plot(leuk.glm)
+
+plot(leuk.glm1)
+
+# Also for later reference, we can also see what has been estimated as our dispersion parameter
+# for both of the two Gamma family GLMs (if we are dealing with an exponential distribution
+# then alpha should be 1 and this CV estimate of the dispersion parameter should be 1/alpha = 1):
+
+summary(leuk.glm)$dispersion
+
+summary(leuk.glm1)$dispersion
+

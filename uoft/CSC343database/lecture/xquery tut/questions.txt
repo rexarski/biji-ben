@@ -1,0 +1,170 @@
+1. find all songs that are on no playlist. for each, report the song id.
+
+<noplaylist>
+{
+let $userdoc := doc("users.xml")
+let $musicdoc := doc("music.xml")
+let $songsonplaylists := $musicdoc//playlist/track/@sid
+for $song in $musicdoc//song
+where not($song/@sid = $songsonplaylists)
+return
+   <song> {$song/@sid} </song>
+}
+</noplaylist>
+
+
+2. find all users with fewer than 4 followers. for each, report user id, and the user id of each of their followers
+
+WANT users with <4 follower
+     count # followers of each user
+NOTE: $follower is equal to <follower uid="...">
+
+<fewfollowers>
+{
+let $userdoc := doc("users.xml")
+let $musicdoc := doc("music.xml")
+(: Construct an XML structure to record the followers of each user.
+   <f>
+      <user uid="u20">
+         <follower uid="u45"/>
+         <follower uid="u9"/>
+      </user>
+   </f>
+:)
+let $followers :=
+   <f>
+   {
+      for $u1 in $userdoc//user
+      let $u1followers :=
+         (for $u2 in $userdoc//user
+         where contains($u2//follows/@who, $u1/@uid)
+         return <follower uid="{$u2/@uid}"/>)
+      return <user uid="{$u1/@uid}">
+               {$u1followers}
+             </user>
+   }
+   </f>
+for $userelement in $userdoc//user
+where count($followers//user[@uid=$userelement/@uid]/follower) < 4
+return
+   <who>
+      {$userelement/@uid}
+      {$followers//user[@uid=$userelement/@uid]/follower}
+   </who>
+}
+</fewfollowers>
+
+3. for each user, find which of their playlists has the highest playcount (ties, report all). for each, report user id, playlist id, playcount. if the user has no playlists, report uid
+
+(: Tricky to get the ties to all come out as individual xml elements :)
+
+<favourites>
+{
+   let $userdoc := doc("users.xml")
+   for $user in $userdoc//user
+   (: The highest playcount for $user, or -1 if they have no playlists :)
+   let $highestplaycount :=
+      if ($user//playlists) then
+         max($user//playlist/@playcount)
+      else
+         -1
+   (: The playlists with the highest playcount for $user,
+      or the empty sequence if they have no playlists. :)
+   let $mostplayed :=
+      if ($highestplaycount = -1) then
+         ()
+      else
+         for $item in $user//playlist
+         where $item/@playcount = $highestplaycount
+         return $item
+   return
+      if ($mostplayed) then
+         (: $user has playlists, so return their most popular one(s). :)
+         for $x in $mostplayed
+         return
+            <user>
+               {$user/@uid}
+               {$x/@pid}
+               {$x/@playcount}
+            </user>
+      else
+         (: $user has no playlists, so just return their uid. :)
+         <user>
+            {$user/@uid}
+         </user>
+}
+</favourites>
+
+
+4. find pairs of users such that the two users have the exactly the same set of playlists and that set has at least 5 playlists in it. for each pair, report two user ids. report each pair only once.
+
+<pairs>
+{
+let $userdoc := doc("users.xml")
+for $u1 in $userdoc//user
+for $u2 in $userdoc//user
+where $u1 < $u2 and
+   every $x in $u1//playlist/@pid satisfies $x = $u2//playlist/@pid and
+   every $y in $u2//playlist/@pid satisfies $x = $u1//playlist/@pid and
+   count($u1//playlist) >= 5
+return
+   <pair uid1="{$u1/@uid}" uid2="{$u2/@uid}"/>
+}
+</pairs>
+
+
+5. for each playlist, report the number of users who have that playlist with a playcount less than 5, the number who have it with a playcount between 5 and 49 inclusive, and the number who have it with a playcount of 50 or higher
+
+<popularity>
+{
+let $userdoc := doc("users.xml")
+let $musicdoc := doc("music.xml")
+for $p in $musicdoc//playlist
+let $lowcount := count($userdoc//playlist[@pid = $p/@pid][@playcount < 5])
+let $medcount := count($userdoc//playlist[@pid = $p/@pid]
+			[@playcount >= 5 and @playcount < 50])
+let $highcount := count($userdoc//playlist[@pid = $p/@pid][@playcount >= 50])
+return
+   <histogram>
+      {$p/@pid}
+      <low count="{$lowcount}"/>
+      <medium count="{$medcount}"/>
+      <high count="{$highcount}"/>
+   </histogram>
+}
+</popularity>
+
+
+6. a playlist has a playcount for every user that has that playlist. let's call the sum of all these playcounts for a particular playlist its overall playcount. let's say the playcount of a song is the overall playcount of every playlist that the song appears on. find the playcount of every song. report the song id, title and playcount.
+
+<songcounts>
+{
+let $userdoc := doc("users.xml")
+let $musicdoc := doc("music.xml")
+for $song in $musicdoc//song
+(: Make a sequence of elements like this: <count n="71">
+   Each one is a playcount for some user of some playlist that
+   includes this song. :)
+let $counts :=
+      (: The playlists that this song is on. :)
+      let $playlistsOn :=
+	      for $p in $musicdoc//playlist
+	      where $p/track/@sid = $song/@sid
+	      return $p
+      for $p in $playlistsOn
+      (: The user playlists with that pid. :)
+      let $userplaylists :=
+	      for $up in $userdoc//playlist
+	      where $up/@pid = $p/@pid
+	      return $up
+      for $userplaylist in $userplaylists
+      return
+	      <count n="{$userplaylist/@playcount}"/>
+(: Total playcount for that song. :)
+let $total := sum($counts/@n)
+let $title := normalize-space($song/title)
+return
+	<song sid="{$song/@sid}" title="{$title}" playcount="{$total}">
+	</song>
+}
+</songcounts>

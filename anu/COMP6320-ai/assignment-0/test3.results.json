@@ -1,0 +1,11 @@
+{
+    "average_score": 0.41881999999999997,
+    "runs": [
+        {
+            "final_disease": 58118.0,
+            "last_step": 99,
+            "score": 0.41881999999999997
+        }
+    ],
+    "runtime": 9.650212
+}

@@ -1,0 +1,39 @@
+# Maximum likelihood estimation for censored data from an exponential 
+# distribution using EM.
+#
+# Arguments:
+#
+#   x       Vector of observations, with observations above 1 set to 1
+#   iters   Number of iterations of EM to do
+#   debug   TRUE if debug information should be printed
+#
+# Value returned:
+#
+#   MLE for the mean of the exponential distribution.
+
+censored_exp_em <- function (x, iters, debug=FALSE)
+{
+    if (any(x>1)) stop("Data appears to not be censored at 1 as expected")
+
+    n <- length(x)
+    n_censored = sum(x==1)
+
+    # Initial estimate, ignoring censoring.
+
+    m <- mean(x)
+
+    for (t in 1:iters) {
+
+        # E Step:
+
+        extra <- n_censored * m
+
+        # M Step:
+
+        m <- (sum(x) + extra) / n
+
+        if (debug) cat("Iteration",t,"  extra =",extra,"  m =",m,"\n")
+    }
+
+    m
+}

@@ -1,0 +1,184 @@
+# Revision of simple linear regression (SLR)
+
+# We will revise simple linear regression by analyzing the data on brain
+# and body weights of various species of mammals - in STAT2008 this was 
+# the brains data, used in one of the tutorials and as an example in
+# lectures.
+
+# The data are stored (and documented) in the R library that accompanies
+# the Faraway texts:
+
+# Note on machines where you don't have administrator privileges, such
+# as the ANU InfoCommons machines, you will need to specify some area 
+# where you can create new files to hold any new libraries you create.
+# To do this create the area, e.g. a folder called R on your H: drive
+# and then use the following command to set that area as the place for
+# R to create new libraries:
+# .libPaths("H:/R")
+
+install.packages("faraway")
+search()
+library(faraway)
+search()
+
+ls(pos=2)
+mammalsleep
+View(mammalsleep)
+names(mammalsleep)
+attributes(mammalsleep)
+help(mammalsleep)
+
+# This help file references the original article in Science (1976)
+# which you download from the ANU library website vifand read.
+
+# Now we attach the data, so that we can access the variables in the data:
+
+attach(mammalsleep)
+search()
+
+ls()
+
+# lists the contents of area [1] on the search path, i.e. the top level, 
+# note that objects higher in the search path can mask objects lower down, 
+# so it is not a good idea to create objects  with the same names as common
+# functions and you can get some strange error message when you do this
+# by accident!
+
+ls(pos=2)
+
+# lists the contents of area [2] in the search path, which is probably the
+# mammalsleep object you just attached.
+
+# search() lists the search path - note that attaching mammals has made
+# this object part of the search path, but it has also had some unintended
+# consequences of masking other objects:
+
+detach(mammalsleep)
+search()
+ls(pos="package:datasets")
+sleep
+
+# It is probably not an big issue that we are masking this other data object. 
+# It is data from some other study, rather than some crucial R function.
+
+attach(mammalsleep)
+search()
+
+# Suppose we would like to try and model the brain weights of these mammals
+# in terms of their body weights. We could start with some exploratory data 
+# analysis and try a plot of these two variables:
+
+plot(body, brain)
+identify(body, brain)
+mammalsleep[c(1,5,34),]
+
+# Not a very promising plot if we are hoping to fit a linear model.
+# We could try changing the scale of the body weights:
+
+plot(log(body), brain)
+
+# A little better, but still not really a linear relationship, so we could
+# try also rescaling the brain weights:
+
+plot(log(body), log(brain))
+
+# This looks a lot more promising and we could now try fitting a simple 
+# linear regression model to the data. Note that in doing so, we are 
+# assuming that there is a linear relationship, not between the original 
+# variables body and brain, but between the transformed variables
+# log(body) and log(brain):
+
+mammals.lm <- lm(log(brain) ~ log(body))
+abline(mammals.lm)
+
+# To check the assumptions underlying this simple linear regression model,
+# plotting the model object will produce a number of the usual regression 
+# diagnostic plots:
+
+plot(mammals.lm) 
+
+# The diagnostic plots look okay (with a couple of caveats, which I will 
+# discuss later), and  are certainly better than the results we would
+# have got trying to fit a simple linear regression model to the raw 
+# (untransformed) data:
+
+mammals.nonloglm <- lm(brain ~ body)
+plot(mammals.nonloglm)
+
+# Now let's have a closer look at the plots for the transformed model:
+
+plot(mammals.lm) 
+
+# The three key plots are still there, but the R graphics device only 
+# allows you to see one plot at a time (again, you can do things to change
+# this, once you know what you are doing). For a  linear model object, 
+# the plot() function in R produces 4 plots by default:
+# (Plot 1) a residuals vs fitted values plot with an added smoother shown
+#          as a red line - if this red line is close to the horizontal axis,
+#          it suggests no real problems with the independence assumption;
+# (Plot 2) a normal quantile plot of the residuals;
+# (Plot 3) a transformed version of the residual plot, which is trying to
+#          diagnose departures from the assumption of constant variance
+#          (i.e. when the smoother is not a horizontal line). I am not 
+#          really convinced that this plot really helps to find problems
+#          that would not be fairly obvious in plot 1.           
+# (Plot 5) this is radically different approach to detecting potential
+#          outliers. It graphs the standardised residuals against the
+#          leverage values (a measure of how influential each observation 
+#          was in determining the fit of the model). Cook's D is a summary
+#          function of the measures on the two axes (the standardised
+#          residuals and the leverage values), and so a cut-off value for
+#          Cook's D can be shown as a limit on this graph. However, this 
+#          means that R is making an assumption about what is an 
+#          appropriate maximum value for Cook's D - as with most uses
+#          of summary measures, rather than significance tests, I 
+#          personally feel this is a little arbitrary. I prefer to start
+#          with a simple bar chart of Cook's D and examine any observation
+#          which has value of Cook's D that is large relative to the other 
+#          observations - with R you could use this plot and examine
+#          observations which appeared to be outlying, i.e. points which 
+#          were away from the rest, rather than just assuming points are OK
+#          if they are within the arbutrary Cook's D limits and not okay 
+#          if lies outside these limits.
+
+# The observations that appear to stand out on this plot are observations
+# 34 and 61:
+
+mammalsleep[34, ]
+mammalsleep[61, ]
+
+# So the mammals that stands out as being different are humans (brains too
+# big for our bodies) and water opossums (brains too small). Are either of 
+# these animals a genuine special case?
+
+# As we will see later in the course after we have considered the use of 
+# indicator variables, a useful test is to include an indicator variable 
+# for the suspected special case in the model and see if it turns out to
+# be significant. 
+
+# I have included the code for checking the humans (Man) below:
+
+Man <- rep(0, length(body))
+Man[34] <- 1
+Man
+
+mammals.newlm <- lm(log(brain) ~ log(body) + Man)
+plot(mammals.newlm)
+
+summary(mammals.lm)
+summary(mammals.newlm)
+
+# Compare the t statistic for the Man indicator variable with the externally 
+# studentised residual from the original model
+
+rstudent(mammals.lm)[34]
+
+plot(log(body), log(brain))
+abline(mammals.lm)
+abline(mammals.newlm, lty=2)
+identify(log(body), log(brain))
+
+# Whilst humans do appear to be a vertical outlier, they do not appear to 
+# have been really influential in the fit of the model.
+
+

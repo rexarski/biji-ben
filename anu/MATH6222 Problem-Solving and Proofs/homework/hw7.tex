@@ -1,0 +1,278 @@
+\documentclass[12pt]{article}
+
+\usepackage{fancyhdr}
+\usepackage{extramarks}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{tikz}
+\usepackage[plain]{algorithm}
+\usepackage{algpseudocode}
+\usepackage{graphicx}
+
+\usetikzlibrary{automata,positioning}
+
+%
+% Basic Document Settings
+%
+
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=6.5in
+\textheight=9.0in
+\headsep=0.25in
+
+\linespread{1.1}
+
+\pagestyle{fancy}
+\lhead{\hmwkAuthorName}
+\chead{\hmwkClass\ \hmwkTitle}
+\rhead{\firstxmark}
+\lfoot{\lastxmark}
+\cfoot{\thepage}
+
+\renewcommand\headrulewidth{0.4pt}
+\renewcommand\footrulewidth{0.4pt}
+
+\setlength\parindent{0pt}
+
+%
+% Create Problem Sections
+%
+
+\newcommand{\enterProblemHeader}[1]{
+    \nobreak\extramarks{}{Problem \arabic{#1} continued on next page\ldots}\nobreak{}
+    \nobreak\extramarks{Problem \arabic{#1} (continued)}{Problem \arabic{#1} continued on next page\ldots}\nobreak{}
+}
+
+\newcommand{\exitProblemHeader}[1]{
+    \nobreak\extramarks{Problem \arabic{#1} (continued)}{Problem \arabic{#1} continued on next page\ldots}\nobreak{}
+    \stepcounter{#1}
+    \nobreak\extramarks{Problem \arabic{#1}}{}\nobreak{}
+}
+
+\setcounter{secnumdepth}{0}
+\newcounter{partCounter}
+\newcounter{homeworkProblemCounter}
+\setcounter{homeworkProblemCounter}{1}
+\nobreak\extramarks{Problem \arabic{homeworkProblemCounter}}{}\nobreak{}
+
+%
+% Homework Problem Environment
+%
+% This environment takes an optional argument. When given, it will adjust the
+% problem counter. This is useful for when the problems given for your
+% assignment aren't sequential. See the last 3 problems of this template for an
+% example.
+%
+\newenvironment{homeworkProblem}[1][-1]{
+    \ifnum#1>0
+        \setcounter{homeworkProblemCounter}{#1}
+    \fi
+    \section{Problem \arabic{homeworkProblemCounter}}
+    \setcounter{partCounter}{1}
+    \enterProblemHeader{homeworkProblemCounter}
+}{
+    \exitProblemHeader{homeworkProblemCounter}
+}
+
+%
+% Homework Details
+%   - Title
+%   - Date
+%   - Class
+%   - Instructor
+%   - Author
+%
+
+\newcommand{\hmwkTitle}{Homework\ \#7}
+\newcommand{\hmwkDate}{2017-04-24}
+\newcommand{\hmwkClass}{MATH6222}
+\newcommand{\hmwkClassInstructor}{Instructor: Dr. David Smyth}
+\newcommand{\hmwkTutor}{Tutor: Mark Bugden (Wednesday 1-2pm)}
+\newcommand{\hmwkAuthorName}{\textbf{Rui Qiu u6139152}}
+
+%
+% Title Page
+%
+
+\title{
+    \vspace{2in}
+    \textmd{\textbf{\hmwkClass:\ \hmwkTitle}}\\
+    \normalsize\vspace{0.1in}\small{\hmwkDate}\\
+    \vspace{0.1in}\large{\textit{\hmwkClassInstructor}}\\
+    \vspace{0.1in}
+    	\large{\textit{\hmwkTutor}}
+    \vspace{3in}
+}
+
+\author{\hmwkAuthorName}
+\date{}
+
+\renewcommand{\part}[1]{\textbf{\large Part \Alph{partCounter}}\stepcounter{partCounter}\\}
+
+%
+% Various Helper Commands
+%
+
+% New QED symbol
+\renewcommand{\qedsymbol}{$\blacksquare$}
+
+% Useful for algorithms
+\newcommand{\alg}[1]{\textsc{\bfseries \footnotesize #1}}
+
+% For derivatives
+\newcommand{\deriv}[1]{\frac{\mathrm{d}}{\mathrm{d}x} (#1)}
+
+% For partial derivatives
+\newcommand{\pderiv}[2]{\frac{\partial}{\partial #1} (#2)}
+
+% Integral dx
+\newcommand{\dx}{\mathrm{d}x}
+
+% Alias for the Solution section header
+\newcommand{\solution}{\textbf{\large Solution}}
+
+% Probability commands: Expectation, Variance, Covariance, Bias
+\newcommand{\E}{\mathrm{E}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\Bias}{\mathrm{Bias}}
+
+\begin{document}
+
+\maketitle
+
+\pagebreak
+
+\begin{homeworkProblem}
+(a) Reduce $2^{100} \mod 13$.
+
+\textbf{Solution:}
+
+\[
+\begin{split}
+	2^{100}\mod 13&=(2^4)^{25}\mod 13\\
+	&\equiv3^{25}\mod 13\\
+	&\equiv (3^3)^8\cdot 3 \mod 13\\
+	&\equiv 1^8\cdot3\mod 13\\
+	&\equiv 3\mod 13
+\end{split}
+\]
+
+(b) Reduce $11^{1000}\mod 8$.
+
+\textbf{Solution:}
+
+\[
+\begin{split}
+	11^{1000}\mod 8 &\equiv 121^{500}\mod 8\\
+	&\equiv 1^{500}\mod 8\\
+	&\equiv 1\mod 8
+\end{split}
+\]
+\end{homeworkProblem}
+
+\begin{homeworkProblem}
+Let $a,b,c\in\mathbb{Z}$, and suppose that $5$ divides $a^2+b^2+c^2$. Prove that $5$ divides at least one of $a,b,$ or $c$.\\
+
+\textbf{Proof:} As we know from the problem $a^2+b^2+c^2\equiv 0 \mod 5$. Then we can prove by contradiction.
+
+Suppose $5$ divides none of the $a, b, c$, i.e. $a\not\equiv 0\mod 5$, in fact $a$ is in one of the congruence classes $\overline{1},\overline{2},\overline{3},\overline{4}$. Similarly for $b$ and $c$.
+
+Then $a^2$ is among the congruence classes $\overline{1}, \overline{4}, \overline{9}, \overline{16}$, i.e. either $\overline{1}, \overline{4}$. Similarly, for $b^2$ and $c^2$.
+
+Then the sum $a^2+b^2+c^2$ is of congruence classes:
+
+\[
+\begin{split}
+	1+1+1&\equiv 3\mod 5\\
+	1+1+4&\equiv 1\mod 5\\
+	1+4+1&\equiv 1\mod 5\\
+	1+4+4&\equiv 4\mod 5\\
+	4+1+1&\equiv 1\mod 5\\
+	4+1+4&\equiv 4\mod 5\\
+	4+4+1&\equiv 4\mod 5\\
+	4+4+4&\equiv 2\mod 5\\
+\end{split}
+\]
+
+So none of it is in $\overline{0}$, contradicting the fact that $5|(a^2+b^2+c^2)$.
+
+Hence $5$ divides at least one of $a,b,$ or $c$.
+
+\qed
+\end{homeworkProblem}
+
+\begin{homeworkProblem}
+Prove that every year (including leap years) has at least one Friday the 13th. What is the maximum number of Friday the 13ths in a year?\\
+
+\textbf{Proof:} First we claim that a month has a Friday the 13th if and only if it begins with a Sunday. The proof of this claim is very direct, we can write down every day from the 1st to the 13th.
+
+Now we index every day from Sunday to Saturday with integers $0$ to $6$, i.e. Sunday is represented by number $0$. Then we will have the following:
+
+\begin{itemize}
+	\item January begins on day $x \mod 7$,
+	\item February begins on day $x+31 \equiv x+3 \mod 7$,
+	\item March begins on day $x+3+28 \equiv x+3\mod 7$,
+	\item April begins on day $x+3+31 \equiv x+6\mod 7$,
+	\item May begins on day $x+6+30 \equiv x+1\mod 7$,
+	\item June begins on day $x+1+31 \equiv x+4\mod 7$,
+	\item July begins on day $x+4+30 \equiv x+6\mod 7$,
+	\item August begins on day $x+6+31 \equiv x+2\mod 7$,
+	\item September begins on day $x+2+31\equiv x+5\mod 7$.
+\end{itemize}
+
+So far, up to September, we already have all congruence classes of modulo $7$. That means, no matter what day this year starts on, i.e. no matter what value $x$ is (from $0$ to $6$), there must be at least one value that is of modulo $0$ congruence class of $7$. So that month starts on a Sunday, therefore, it contains a Friday the 13th. 
+
+But we continue our process for the second question:
+
+\begin{itemize}
+	\item October begins on day $x+5+30\equiv x\mod 7$,
+	\item November begins on day $x+31\equiv x+3\mod 7$,
+	\item December begins on day $x+3+30\equiv x+5\mod 7$.
+\end{itemize}
+
+Similarly, for a leap year:
+
+\begin{itemize}
+	\item January begins on day $x \mod 7$,
+	\item February begins on day $x+31 \equiv x+3\mod 7$,
+	\item March begins on day $x+3+29 \equiv x+4\mod 7$,
+	\item April begins on day $x+4+31\equiv x\mod 7$,
+	\item May begins on day $x+30\equiv x+2\mod 7$,
+	\item June begins on day $x+2+31\equiv x+5\mod 7$,
+	\item July begins on day $x+5+30\equiv x\mod 7$,
+	\item August begins on day $x+31\equiv x+3\mod 7$,
+	\item September begins on day $x+3+31\equiv x+6\mod 7$,
+	\item October begins on day $x+6+30\equiv x+1\mod 7$,
+	\item November begins on day $x+1+31\equiv x+4\mod 7$,
+	\item December begins on day $x+4+30\equiv x+ 6\mod 7$.
+\end{itemize}
+
+As we can see, the starting days of a leap year also every congruence classes of modulo $7$. So at least one starts with Sunday, therefore, at least we have a Friday the 13th.\\
+
+For the question about maximum number of Friday the 13ths in a year,
+
+\begin{itemize}
+	\item In a non-leap year, $x+3\mod 7$ appears 3 times, which is the most frequent congruence class. So we set it to be $0\mod 7$, i.e. $x=4$, that year begins with a January the 1st on Thurday.
+	\item In a leap year, $x\mod 7 $ appears 3 times, which is the most in this case. So we set $x=0$, i.e. the first day of that year is a Sunday.
+\end{itemize}
+
+Hence, generally speaking, the maximum number of Friday the 13ths in a year is $3$.
+
+\qed
+\end{homeworkProblem}
+
+%
+% Non sequential homework problems
+%
+
+% Jump
+%\begin{homeworkProblem}[5]
+
+%\end{homeworkProblem}
+
+\end{document}

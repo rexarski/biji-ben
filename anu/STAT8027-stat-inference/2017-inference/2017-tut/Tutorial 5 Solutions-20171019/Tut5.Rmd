@@ -1,0 +1,12 @@
+---
+title: Tutorial 5  
+author: STAT 3013/8027
+output: pdf_document
+---
+
+---
+\large
+
+1. Rice Chapter 8, Questions 13, 17 (a, b, c), 25, 43 (a,b,c) [use a Newton-Raphson (or Fisher Scoring) routine to determine the MLEs].    
+
+

@@ -1,0 +1,67 @@
+RESEARCH SCHOOL OF FINANCE, ACTUARIAL STUDIES AND APPLIED STATISTICS
+GRAPHICAL DATA ANALYSIS
+Tutorial 1
+Sample Solution
+
+This tutorial was designed for you to do some exploring in R. 
+
+First, create the data matrix z:
+  
+  z <- cbind(evap.y,evap.x)
+
+To see the scatterplot matrix, type
+
+pairs(z[,5:7])
+
+and to create histograms of the three variables, use
+
+par(mfrow=c(3,1))
+hist(z[,5])
+hist(z[,6])
+hist(z[,7])
+
+(Here we have made no attempt to make the plots presentable by titling them
+ or their axes: you should make your plots look nicer by properly titling them
+ and so on. We will discuss histograms in more detail later in the course.)
+
+To create the individual scatterplots:
+  
+plot(z[,5],z[,6])
+plot(z[,5],z[,7])
+plot(z[,6],z[,7])
+
+(Again, no attempt has been made to make the plots presentable). The point here
+is that the information in the three individual plots is already available from
+the pairs plot.
+
+To see a spinning display of the data, try:
+# spinning requires either the rgl library or the Rcmdr library:
+# Remember, if you need to install a library, first use (once only) 
+# install.package("rgl") (for example)
+library(rgl)
+library(Rcmdr)
+
+plot3d(z[,5:7])
+
+scatter3d(z[,5],z[,6],z[,7])
+
+
+To see a brushing display, try:
+
+# you can brush by loading rggobi (you'll need to install GGobi first)
+
+library(rggobi)
+ggobi(z[,5:7])
+
+You can repeat the above commands with the columns z[,8:10], using the
+above commands. 
+
+To summarise the data, it is enough to note at this stage that in each case 
+there appears to be a strong correlation among all the variables in each 
+triple. This is hardly surprising as they are all measurements on essentially
+the same quantity. You should be able to spin the display to see that rather
+than looking like a random point cloud in 3-d space, the data arranges itself
+into a cigar-shaped cloud (more or less). This means that the data might be
+well-modelled by a plane in 3-space, or, even by a line in 3-space. The main
+idea here is dimension reduction --- instead of considering three variables,
+is it possible to think in terms of a single variable.

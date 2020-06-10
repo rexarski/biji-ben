@@ -1,0 +1,20 @@
+---
+title: "Untitled"
+author: "Rui Qiu"
+date: '2017-10-26'
+header-includes:
+   - \usepackage{amsmath}
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+\[
+\begin{split}
+\sqrt{\text{rRej}}=\underset{(1.120)}{1.230}+\underset{(0.003)}{0.012}\text{Fire}-\underset{(0.001)}{0.003}\text{Theft}-\underset{(0.116)}{0.139}\text{LogIncome}+\underset{(0.001)}{0.004}\text{Race}+\underset{(0.001)}{0.003}\text{Age}
+\end{split}
+\]

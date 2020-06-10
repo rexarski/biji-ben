@@ -1,0 +1,16 @@
+<!ELEMENT users (user+)>
+<!ATTLIST user
+    uid ID #REQUIRED
+    dob CDATA #IMPLIED
+    email CDATA #REQUIRED>
+<!ELEMENT user (surname, givennames, follows, playlists?)>
+<!ELEMENT surname (#PCDATA)>
+<!ELEMENT givennames (#PCDATA)>
+<!ELEMENT follows EMPTY>
+<!ATTLIST follows who IDREFS #IMPLIED>
+<!ELEMENT playlists (playlist+)>
+<!ELEMENT playlist EMPTY>
+<!ATTLIST playlist
+    pid CDATA #REQUIRED
+    created CDATA #REQUIRED
+    playcount CDATA #REQUIRED>

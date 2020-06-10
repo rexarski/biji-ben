@@ -1,0 +1,9 @@
+class Person:
+
+    def __init__(self, name, age): #self refers to the current object
+                                #if we mess up the name and age, python won't complain about it at all!
+        self.name = name
+        self.age = age
+
+    def change_name(self, new_name):
+        self.name = new_name

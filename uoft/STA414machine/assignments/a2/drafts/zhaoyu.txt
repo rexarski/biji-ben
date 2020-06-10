@@ -1,0 +1,327 @@
+train = read.table('http://www.cs.toronto.edu/~rsalakhu/STA414_2015/digitstrain.txt',sep=",")
+N = nrow(train)
+test = read.table('http://www.cs.toronto.edu/~rsalakhu/STA414_2015/digitstest.txt',sep=",")
+M = nrow(test)
+
+#Warm Up Question
+#entry1
+line1 = as.numeric(train[1,1:8])
+line2 = as.numeric(train[1,9:16])
+line3 = as.numeric(train[1,17:24])
+line4 = as.numeric(train[1,25:32])
+line5 = as.numeric(train[1,33:40])
+line6 = as.numeric(train[1,41:48])
+line7 = as.numeric(train[1,49:56])
+line8 = as.numeric(train[1,57:64])
+graphrow = rbind(line1,line2,line3,line4,line5,line6,line7,line8)
+image(graphrow,col = grey(seq(0, 1, length = 256))) 
+graphcol = cbind(line1,line2,line3,line4,line5,line6,line7,line8)
+image(graphrow,col = grey(seq(0, 1, length = 256))) 
+graphcol = cbind(line8,line7,line6,line5,line4,line3,line2,line1)
+image(graphcol,col = grey(seq(0, 1, length = 256))) 
+#entry21
+line1 = as.numeric(train[21,1:8])
+line2 = as.numeric(train[21,9:16])
+line3 = as.numeric(train[21,17:24])
+line4 = as.numeric(train[21,25:32])
+line5 = as.numeric(train[21,33:40])
+line6 = as.numeric(train[21,41:48])
+line7 = as.numeric(train[21,49:56])
+line8 = as.numeric(train[21,57:64])
+graphrow = rbind(line1,line2,line3,line4,line5,line6,line7,line8)
+image(graphrow,col = grey(seq(0, 1, length = 256))) 
+graphcol = cbind(line1,line2,line3,line4,line5,line6,line7,line8)
+image(graphrow,col = grey(seq(0, 1, length = 256))) 
+graphcol = cbind(line8,line7,line6,line5,line4,line3,line2,line1)
+image(graphcol,col = grey(seq(0, 1, length = 256))) 
+#entry401
+line1 = as.numeric(train[401,1:8])
+line2 = as.numeric(train[401,9:16])
+line3 = as.numeric(train[401,17:24])
+line4 = as.numeric(train[401,25:32])
+line5 = as.numeric(train[401,33:40])
+line6 = as.numeric(train[401,41:48])
+line7 = as.numeric(train[401,49:56])
+line8 = as.numeric(train[401,57:64])
+graphrow = rbind(line1,line2,line3,line4,line5,line6,line7,line8)
+image(graphrow,col = grey(seq(0, 1, length = 256))) 
+graphcol = cbind(line1,line2,line3,line4,line5,line6,line7,line8)
+image(graphrow,col = grey(seq(0, 1, length = 256))) 
+graphcol = cbind(line8,line7,line6,line5,line4,line3,line2,line1)
+image(graphcol,col = grey(seq(0, 1, length = 256)))
+
+#Logistic Regression
+logsig = function(ww,xx){
+	a = 1/(1+exp(-ww%*%xx))
+	return(a)
+}
+
+sum_learn = function(data, w){
+  sumlearning = c(rep(0,64))
+  for(i in 1:800){
+    x = as.numeric(data[i,1:64])
+    sumlearning = sumlearning + (as.numeric(logsig(w,x))-data[i,65])*x
+  }
+  return(sumlearning)
+}
+
+w_initial = c(rep(0,64))
+
+ite_opt = function(data, iters){
+  w_update = w_initial
+  for (i in 1:iters){
+    w_update = w_update - 0.01*sum_learn(data,w_update)
+    #print(sum_learn(data,w_update))
+  }
+  return(w_update)
+}
+w_final <- ite_opt(train,600)
+w_final
+
+#Conditional Gaussian Classifier Training
+C0 = train[which(train[,65] == 0),]
+C1 = train[which(train[,65] == 1),]
+N0 = nrow(C0)
+N1 = nrow(C1)
+p0 = N0/N
+p0
+p1 = N1/N
+p1
+mu0 = sapply(C0[,1:64],mean)
+round(mu0,digits=2)
+mu1 = sapply(C1[,1:64],mean)
+round(mu1,digits=2)
+s0 = var(C0[,1:64])*(N0-1)/N0
+round(s0,digits=2)
+s1 = var(C1[,1:64])*(N1-1)/N1
+round(s1,digits=2)
+
+#Regularized Conditional Gaussian Classifier Training
+s10 = s0 + 0.01*diag(64)
+s11 = s1 + 0.01*diag(64)
+
+#Performance Evaluation
+#(1)
+#Logistic
+
+logplogireg = function(tt,xx){
+	if(tt == 0){
+		temp = log(1 - logsig(w_final,xx))
+	}
+	else{temp = log(logsig(w_final,xx))}
+	return(temp)
+}
+
+logplogitrain = matrix(nrow = N, ncol = 2)
+colnames(logplogitrain) = c("logp(0)","logp(1)")
+for(i in 1:2){
+	for(j in 1:N){
+		logplogitrain[j,i] = logplogireg(i-1,as.numeric(train[j,1:64]))
+	}
+}
+logplogitrain
+logplogitest = matrix(nrow = M, ncol = 2)
+colnames(logplogitest) = c("logp(0)","logp(1)")
+for(i in 1:2){
+	for(j in 1:M){
+		logplogitest[j,i] = logplogireg(i-1,as.numeric(test[j,1:64]))
+	}
+}
+logplogitest
+#Conditional Gaussian
+lognorm = function(x, mu, sigma){
+  d = length(mu)
+  lp = -(d/2)*log(2*pi) - 0.5*log(det(sigma)) - 0.5*t(x-mu)%*%solve(sigma)%*%(x-mu)
+  return(lp)
+}
+logpgauscond = function(tt, xx){
+  a = lognorm(xx,mu0,s0) + log(p0) - lognorm(xx,mu1,s1) - log(p1)
+  if(tt == 0){
+    lp = -log((1+exp(-a)))
+  }
+  else{lp = -log((1+exp(a)))}
+  return(lp)
+}
+
+logpgaustrain = matrix(nrow = N, ncol = 2)
+colnames(logpgaustrain) = c("logp(0)","logp(1)")
+for(i in 1:2){
+	for(j in 1:N ){
+		logpgaustrain[j,i] = logpgauscond(i-1,as.numeric(train[j,1:64]))
+	}
+}
+logpgaustrain
+logpgaustest = matrix(nrow = M, ncol = 2)
+colnames(logpgaustrain) = c("logp(0)","logp(1)")
+for(i in 1:2){
+	for(j in 1:M ){
+		logpgaustest[j,i] = logpgauscond(i-1,as.numeric(test[j,1:64]))
+	}
+}
+logpgaustest
+#Regularized Conditional Gaussian
+logpgauscond1 = function(tt, xx){
+  a = lognorm(xx,mu0,s10) + log(p0) - lognorm(xx,mu1,s11) - log(p1)
+  if(tt == 0){
+    lp = -log((1+exp(-a)))
+  }
+  else{lp = -log((1+exp(a)))}
+  return(lp)
+}
+
+logpgaustrain1 = matrix(nrow = N, ncol = 2)
+colnames(logpgaustrain1) = c("logp(0)","logp(1)")
+for(i in 1:2){
+	for(j in 1:N ){
+		logpgaustrain1[j,i] = logpgauscond1(i-1,as.numeric(train[j,1:64]))
+	}
+}
+logpgaustrain1
+logpgaustest1 = matrix(nrow = M, ncol = 2)
+colnames(logpgaustrain1) = c("logp(0)","logp(1)")
+for(i in 1:2){
+	for(j in 1:M ){
+		logpgaustest1[j,i] = logpgauscond1(i-1,as.numeric(test[j,1:64]))
+	}
+}
+logpgaustest1
+#(2)
+avelogitrain00 = mean(logplogitrain[1:400,1])
+avelogitrain00
+avelogitrain01 = mean(logplogitrain[401:800,2])
+avelogitrain01
+avelogitrain = mean(c(avelogitrain00,avelogitrain01))
+avelogitrain
+avelogitest00 = mean(logplogitest[1:200,1])
+avelogitest00
+avelogitest01 = mean(logplogitest[201:400,2])
+avelogitest01
+avelogitest = mean(c(avelogitest00,avelogitest01))
+avelogitest
+avegaustrain00 = mean(logpgaustrain[1:400,1])
+avegaustrain00
+avegaustrain01 = mean(logpgaustrain[401:800,2])
+avegaustrain01
+avegaustrain = mean(c(avegaustrain00,avegaustrain01))
+avegaustrain
+avegaustest00 = mean(logpgaustest[1:200,1])
+avegaustest00
+avegaustest01 = mean(logpgaustest[201:400,2])
+avegaustest01
+avegaustest = mean(c(avegaustest00,avegaustest01))
+avegaustest
+avegaustrain10 = mean(logpgaustrain1[1:400,1])
+avegaustrain10
+avegaustrain11 = mean(logpgaustrain1[401:800,2])
+avegaustrain11
+avegaustrain1 = mean(c(avegaustrain10,avegaustrain11))
+avegaustrain1
+avegaustest10 = mean(logpgaustest1[1:200,1])
+avegaustest10
+avegaustest11 = mean(logpgaustest1[201:400,2])
+avegaustest11
+avegaustest1 = mean(c(avegaustest10,avegaustest11))
+avegaustest1
+
+avematrix = matrix(nrow=3,ncol=6)
+rownames(avematrix) = c("Logistic Regression", "Conditional Gaussian", "Regularized Conditional Gaussian")
+colnames(avematrix) = c("Train C0","Train C1","Train all","Test C0","Test C1","Test All")
+avematrix[1,1]= avelogitrain00
+avematrix[1,2]= avelogitrain01
+avematrix[1,3]= avelogitrain
+avematrix[1,4]= avelogitest00
+avematrix[1,5]= avelogitest01
+avematrix[1,6]= avelogitest
+avematrix[2,1]= avegaustrain00
+avematrix[2,2]= avegaustrain01
+avematrix[2,3]= avegaustrain
+avematrix[2,4]= avegaustest00
+avematrix[2,5]= avegaustest01
+avematrix[2,6]= avegaustest
+avematrix[3,1]= avegaustrain10
+avematrix[3,2]= avegaustrain11
+avematrix[3,3]= avegaustrain1
+avematrix[3,4]= avegaustest10
+avematrix[3,5]= avegaustest11
+avematrix[3,6]= avegaustest1
+round(avematrix,digits=2)
+
+#(3)
+classlogitrain = c(1:N)
+for(i in 1:N){
+	if(logplogitrain[i,1]>logplogitrain[i,2]){
+		classlogitrain[i] = 0
+	}
+	else{classlogitrain[i] = 1}
+}
+classlogitrain
+classlogitest = c(1:M)
+for(i in 1:M){
+	if(logplogitest[i,1]>logplogitest[i,2]){
+		classlogitest[i] = 0
+	}
+	else{classlogitest[i] = 1}
+}
+classlogitest
+classgaustrain = c(1:N)
+for(i in 1:N){
+	if(logpgaustrain[i,1]> logpgaustrain[i,2]){
+		classgaustrain[i] = 0
+	}
+	else{classgaustrain[i] = 1}
+}
+classgaustrain
+classgaustest = c(1:M)
+for(i in 1:M){
+	if(logpgaustest[i,1]> logpgaustest[i,2]){
+		classgaustest[i] = 0
+	}
+	else{classgaustest[i] = 1}
+}
+classgaustest
+classgaustrain1 = c(1:N)
+for(i in 1:N){
+	if(logpgaustrain1[i,1]> logpgaustrain1[i,2]){
+		classgaustrain1[i] = 0
+	}
+	else{classgaustrain1[i] = 1}
+}
+classgaustrain1
+classgaustest1 = c(1:M)
+for(i in 1:M){
+	if(logpgaustest1[i,1]> logpgaustest1[i,2]){
+		classgaustest1[i] = 0
+	}
+	else{classgaustest1[i] = 1}
+}
+classgaustest1
+
+#(4)
+errortrain = matrix(nrow=3,ncol=3)
+errortrain[1,1] = sum(abs(train[1:400,65]-classlogitrain[1:400]))
+errortrain[1,2] = sum(abs(train[401:800,65]-classlogitrain[401:800]))
+errortrain[1,3] = (errortrain[1,1] + errortrain[1,2])/N
+errortrain[2,1] = sum(abs(train[1:400,65]-classgaustrain[1:400]))
+errortrain[2,2] = sum(abs(train[401:800,65]-classgaustrain[401:800]))
+errortrain[2,3] = (errortrain[2,1] + errortrain[2,2])/N
+errortrain[3,1] = sum(abs(train[1:400,65]-classgaustrain1[1:400]))
+errortrain[3,2] = sum(abs(train[401:800,65]-classgaustrain1[401:800]))
+errortrain[3,3] = (errortrain[3,1] + errortrain[3,2])/N
+colnames(errortrain) = c("Error in Class 0","Error in Class 1","Error Rate")
+rownames(errortrain) = c("Logistic Regression", "Conditional Gaussian", "Regularized Conditional Gaussian")
+errortrain
+
+#(5)
+errortest = matrix(nrow=3,ncol=3)
+errortest[1,1] = sum(abs(test[1:200,65]-classlogitest[1:200]))
+errortest[1,2] = sum(abs(test[201:400,65]-classlogitest[201:400]))
+errortest[1,3] = (errortest[1,1] + errortest[1,2])/M
+errortest[2,1] = sum(abs(test[1:200,65]-classgaustest[1:200]))
+errortest[2,2] = sum(abs(test[201:400,65]-classgaustest[201:400]))
+errortest[2,3] = (errortest[2,1] + errortest[2,2])/M
+errortest[3,1] = sum(abs(test[1:200,65]-classgaustest1[1:200]))
+errortest[3,2] = sum(abs(test[201:400,65]-classgaustest1[201:400]))
+errortest[3,3] = (errortest[3,1] + errortest[3,2])/M
+colnames(errortest) = c("Error in Class 0","Error in Class 1","Error Rate")
+rownames(errortest) = c("Logistic Regression", "Conditional Gaussian", "Regularized Conditional Gaussian")
+errortest

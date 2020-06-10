@@ -1,0 +1,194 @@
+Assignment 2 - Feedback
+
+PLEASE NOTE: THE ASSIGNMENT IS OUT OF 27 - with 12 the nominal maximum
+for write up, 12 for analysis and 3 for graphics, totalling to a
+nominal maximum mark of 27. The maximum mark for each category is a
+nominal maximum only - a "perfect" assignment could have got as many as
+27 marks. The huge number of combinations of choices in the modelling
+made it hard to make marks "add up to 10" in a simple way, so there were
+extra marks here and there for good choices and better explanations of
+choices, particularly in the analysis component. The graphics for time
+series are pretty straightforward which is why it's only 3 for graphics,
+though the most common mark was 2.5 (which meant you put all the standard
+graphics in - the extra half mark was for interesting and informative
+extras that a few people put in. Marks for write up are a single mark
+based on my judgement of how well you discussed the data, explained
+what you did and made conclusions (including writing the model down
+properly); marks for graphics are for choice and execution; and marks
+for analysis include how you handled the various time series components
+(trend, seasonal, irregular, etc.), including whether I felt whether the
+rationales presented for choices made were reasonable. Also note that if
+GradeBook says things are out of 100, ignore it. It likes 100 for some
+reason. And if there are four bits, it will say 400. I tried to tell it
+the right maximum, but then it wouldn't read in the grades properly. But
+the assignment is definitely out of 27, not some integer multiple of 100.
+
+Most people handled the assignment reasonably well. There was a relatively
+wide variety of answers, most essentially OK, but a few people being a bit
+overenthusiastic in overfitting the data through the use of complex trend
+and seasonal models. While these approaches are not wrong, they do lead
+to models with rather more terms than is desirable given the length of
+data we have, and smaller models might have been pursued. The other "rule"
+to remember here is the famous quote of the statistician George Box (yes,
+he of the Box-Jenkins identification): "All models are wrong, but some
+are useful." This is a comment to always keep in mind when modelling...
+
+Here, I will discuss the main features of what would be a reasonable
+answer.
+
+1. Most everyone discussed the usual breakdown of the series into trend,
+seasonal and irregular components. The general consensus was that neither
+the trend or the seasonal effect was strong, and many people chose to
+ignore both effects. I broadly agree with this decision.
+
+In general, the first thing to consider is the appropriateness of
+transformation to regularize the data (stabilize the variance, etc.)
+Transforming the data to either the log scale or the square root scale
+has little effect (the variance looks fairly stable on the original scale
+anyway, so the need for transformation in the first place is doubtful but
+it doesn't hurt to check). Therefore, it seems reasonable to proceed with
+the data on the original scale. Again, it isn't *wrong* to transform the
+data, but the evidence is that this just needlessly complicates the model.
+
+2. Next, we consider the existence of any potential trend. A cursory look
+at the data (perhaps using a lowess smoother) shows a gently undulating
+trend (it looks like it could be part of a long-period cyclical effect,
+so the use of the term trend here is purely descriptive and may not
+represent reality in any sense - of course, we don't have anywhere
+near enough data to go fishing for a cyclical effect). There seem to
+be two possibly valid approaches here: either fit no trend at all (the
+lowess smoother is fairly flat), or attempt to model the undulation that
+we noticed, perhaps through the use of a cubic or quartic trend. The
+first approach essentially amounts to the decision to try to explain
+the structure in the data either through autoregressive modelling or
+through the fitting of a periodic effect - more on that in a moment,
+but suffice to say that we don't have much data. The second approach
+seems to promise a relatively faithful fit to the data, but may be
+detrimental to later attempts at prediction where a polynomial trend
+may not be a sustainable assumption as soon as we move from the range
+of the data. The issue here is the ultimate proposed use of the data,
+and so both approaches might be acceptable depending on what the data
+is to be used for. Nonetheless, since both models seem to fit the data
+pretty well, the principle of parsimony dictates that the "no trend"
+model is preferable, whatever the ultimate use of the data. People who
+fit a cubic or quartic trend, therefore, tended to get lower scores
+than those who fit no trend. The cubic fit didn’t really follow
+the data well at all, which was a problem. A few people fit quadratic
+trends. These approaches are less defensible than a quartic trend or
+no trend: the quadratic trend does not capture enough of the curvature
+in the original data. Points were awarded on the basis of most for no
+trend, fewer for linear or quartic and least for quadratic and cubic,
+with adjustments up or down depending on how well the decision was
+explained/defended. In the end, my judgement is that the quartic trend
+"looks” right in that it follows the series up and down, but it is
+unlikely to be a good, utilitarian description, particularly as it builds
+in strong directional effects outside the data window. Also, we *know*
+that this series is strongly influenced by historical events like the
+Great Depression and World War II, and this kind of structure is not
+likely to be well-modelled by polynomial effects. All of this thinking
+adds up to my judgement that high-order polynomials are not great models
+despite their allure - in other words, like all models they are "wrong",
+but I also don't think that in this case they are particularly useful.
+
+One other point: "no trend" means a flat, constant fit about the mean
+of the series. Therefore the final model has to be written as
+
+bicoal.tons = mean(bicoal.tons) + irregular,
+
+plus whatever model for the irregular component you want to come up
+with. Other ways of writing the model (either by leaving out the initial
+constant term, or by including the irregular model on the same line as
+the overall model) are incorrect.
+
+3. Many people dismissed seasonal or periodic effects because of stl's
+refusal to fit such an effect from annual data. A reasonable alternative
+approach to fitting a high-order polynomial trend might be to try to find
+periodicities in the data and fit a constant "seasonal" effect to capture
+that periodicity. Unfortunately, the series we have is not really long
+enough to make this approach tenable. A few people pursued this idea,
+some in combination with a cubic/quartic trend (this certainly overfits
+the data). A couple of people fit long-period cycles (variously 9-11
+observations per cycle). Unfortunately, I couldn't see any evidence in
+the data for ANY of these cycles - there are no obvious short cycles,
+and while I can see (imagine) long cycles, the length of the data is
+too short to really justify such a choice (and the resultant models are
+disastrously over-fit). It seems reasonable in the interests of parsimony
+to ignore both seasonal and trend effects (neither seems particularly
+strong) and to focus solely on the dependence structure in the data.
+On the basis of these considerations it seems perfectly reasonable to
+go ahead and ignore both trend and periodic effects and analyse the
+raw series as purely irregular. Fitting "no seasonal" was worth most,
+with no marks awarded for long-period cycles. Again, marks varied up and
+down according to how well choices were justified. Some people nodded
+to history and tried to deal with the Depression and World War II as
+individual effects - this is OK in one sense and not in another. It is
+OK in the sense that we have a pretty good idea what *caused* some of
+the effects we see; it is not good at all for prediction since as near
+as we can tell, Great Depressions and World Wars are thankfully both
+rare and very difficult to predict. Finally, it is good to remember that
+periodic means just that: the shape has to repeat reliably, and there
+just is not evidence here that this is what is going on with this data.
+
+4. As many people guessed quite early, the irregular effect is the
+primary focus in the data set. Most people pulled out the full set
+of tools to try to model the irregular component. The first things
+to look at are the ACF and PACF: these suggest that an AR(4) model
+might be appropriate. (The ACF seems to decay to zero VERY slowly,
+which indicates a problem with the stationarity assumption, although
+this seems to be resolved by the modelling process). To my mind, AR(1)
+is not quite enough (the residuals from an AR(1) fit still have a spike
+at lag 3), but it is marginal and quite a few people went with the AR(1)
+and ignored the spike at lag 3 - this is reasonable in the quest for
+parsimony, but it needs to be accompanied by a careful explanation. Many
+people went with AR(4), though, and the diagnostics (QQ plots, residual
+plots) look good for this fit so this model looks reasonable. "Correct"
+reading of the Box-Jenkins identification was worth most marks, and marks
+were awarded for discussing the problem with stationarity. Additionally,
+some people were concerned about the slow decay of the ACF, and proceeded
+with an analysis of first-differenced data. This was a very good tactic,
+as it turns out, resulting in a small, well-fitting model. (Basically
+fitting an AR(2) to the mean-corrected first differences).
+
+In terms of picking the order of the autoregressive model, the idea is
+to use the PACF to find the order - quite a few people reasoned that the
+spike at lag 4 (for the non-differenced case) was spurious, went ahead and
+fit an AR(1) and noted that the residual process produced a PACF with a
+spike at lag 3 which was reasoned away as spurious as well. Of course,
+it is a judgement call, but the practice of ignoring everything that
+is inconvenient may not be the best choice even when you really want
+the model to be smaller. It turns out that if you difference the data,
+you get a nice small model anyway - this would have been a better choice.
+
+Differencing seems to "unlock" this data - suddenly the problem with
+stationarity is gone, and the irregular component yields an AR(2)
+with little effort. The point here is that differencing does several
+things: it removes a problem in the diagnostics of the initial analysis
+(stationarity) AND it produces a smaller model. So, even though the AR(4)
+for the original data seems like a reasonable model, the differenced
+analysis produces a smaller model.
+
+5. I was happy that most people went ahead and explicitly fit the
+final model and wrote down the final model. This is an important part
+of presenting the results. Discussions that were long-winded, or which
+pursued futile approaches needlessly were penalised.
+
+6. As for Assignment 1, marks were awarded for writeup as well - I decided
+not to mess around with half marks here and so marks tend to clump around
+4, 6, and 7 with the odd 9 for a few really lovely writeups. Low marks
+were not for poor English (though the English had to be good enough for
+the writing to be readable) but rather for poor, incomplete or muddled
+explanations. It can be hard to defend modelling choices, but some of
+the explanations given were really hard to follow.
+
+As for Assignment 1, marks are somewhat subjective, particularly on the
+writeup and to a lesser extent on the analysis and graphics. Your mark
+is based on the model you fit and the extent to which you were able
+to explain or defend your modelling choices - so two people who fit
+exactly the same model will generally have different marks because they
+explained what they did differently. And, as before, PLEASE don't panic
+and think that because marks might look "low" that you have failed -
+this is not the way it works, and marks get scaled at the end. In this
+course (like in life, I guess) it is hard to get perfect marks - partly
+this is because statistical modelling is an uncertain science (literally)
+and judgement plays a significant role in producing useful models. And
+always remember that *every* model is wrong, but some of them are useful.

@@ -1,0 +1,44 @@
+CRC: 0xDE308B96	 File: actors.list	Date: Fri Aug 12 00:00:00 2011
+
+Copyright 1990-2007 The Internet Movie Database, Inc.  All rights reserved.
+
+COPYING POLICY: Internet Movie Database (IMDb)
+==============================================
+
+CUTTING COPYRIGHT NOTICE
+
+THE ACTORS LIST
+===============
+
+Name					Titles
+----					------
+ActA, A					m1 (2011)
+						m2 (2011)
+						
+ActB, B					m1 (2011)
+						m2 (2011)
+						m3 (2001)
+						
+ActC, C					m1 (2011)
+
+ActD, D					m3 (2003)
+						m6 (2006)
+
+ActE, E					m6 (2006)
+
+ActF, F					m4 (2004)
+
+ActG, G					m4 (2004)
+
+ActH, H					m5 (2005)
+
+Bacon, Kevin			m2 (2011)
+						m5 (2005)
+
+-----------------------------------------------------------------------------
+SUBMITTING UPDATES
+==================
+
+CUTTING UPDATES
+
+For further info visit http://www.imdb.com/licensing/contact

@@ -1,0 +1,27 @@
+---
+title: "Some Bayesian Notes"
+author: Rui Qiu
+date: 2017-10-31 22:39:00
+output: html_notebook
+---
+
+- Bayes' rule:
+
+\[\begin{split}
+\text{Pr}(H_j\mid E)&=\frac{\text{Pr}(E\mid H_j)\text{Pr}(H_j)}{\sum^K_{k=1}\text{Pr}(E\mid H_k)\text{Pr}(H_k)}
+\end{split}\]
+
+- The main idea of introducing exchangeability before real Bayesian analysis can be summarized as
+
+1. $Y_1,\dots, Y_n\mid\theta$ are i.i.d.
+2. $\theta\sim p(\theta)$
+3. $\iff Y_1,\dots,Y_n$ are exchangeable for all $n$.
+
+- If $\theta\sim\text{beta}(a,b), Y\sim\text{binomial}(n,\theta)$, then $\{\theta\mid Y=y\}\sim\text{beta}(a+y,b+n-y).$
+- A class $\mathcal{P}$ of prior distribution for $\theta$ is called **conjugate** for a sampling model $p(y\mid\theta)$ if
+
+\[p(\theta)\in\mathcal{P}\implies p(\theta\mid y)\in\mathcal{P}.\]
+
+- If $\theta\mid\{Y=y\}\sim\text{beta}(a+y,b+n-y),$ then
+
+\[E[\theta\mid y]=\frac{a+y}{a+b+n},\text{mode}[\theta\mid y]=\frac{a+y-1}{a+b+n-2},\text{Var}[\theta\mid y]=\frac{\text{E}[\theta\mid y]\text{E}[1-\theta\mid y]}{a+b+n+1}\]

@@ -1,0 +1,87 @@
+# ---------------------------------------------------------------------------
+
+# One way of writing the multipy_above_diagonal function.  
+#
+# Note that the check for n > 1 is needed because for (i in 1:(n-1))
+# will not do nothing when n is 0 or 1, because of the design flaw 
+# in R noted in the week 10 lecture slides.
+
+multiply_above_diagonal <- function (M) {
+    n <- nrow(M)
+    product <- 1
+    if (n > 1) {
+        for (i in 1:(n-1)) {
+            for (j in (i+1):n) {
+                product <- product * M[i,j]
+            }
+        }
+    }
+    product
+}
+
+# ---------------------------------------------------------------------------
+
+# Extending the object-oriented programming example from the Week 11 lecture.
+
+# Change the representation of a box.
+
+new_box <- function (x, y, sx, sy) {
+    w <- list (x=x, y=y, sx=sx, sy=sy)
+    class(w) <- "box"
+    w
+}
+draw.box <- function (w) {
+    lines (c(w$x-w$sx,w$x-w$sx,w$x+w$sx,w$x+w$sx,w$x-w$sx),
+           c(w$y-w$sy,w$y+w$sy,w$y+w$sy,w$y-w$sy,w$y-w$sy))
+}
+rescale.box <- function (w,s) { 
+    w$sx <- w$sx * s
+    w$sy <- w$sy * s
+    w
+}
+translate.box <- function (w,tx,ty) {
+    w$x <- w$x + tx
+    w$y <- w$y + ty
+    w
+}
+
+
+# Add a "plus" object.
+
+new_plus <- function (x, y, s) {
+    w <- list (centre_x=x, centre_y=y, size=s)
+    class(w) <- "plus"
+    w
+}
+
+draw.plus <- function (w) {
+    lines (c(w$centre_x,w$centre_x), c(w$centre_y-w$size,w$centre_y+w$size))
+    lines (c(w$centre_x-w$size,w$centre_x+w$size), c(w$centre_y,w$centre_y))
+}
+
+rescale.plus <- function (w,s) {
+    w$size <- w$size * s;
+    w
+}
+
+translate.plus <- function (w,tx,ty) {
+    w$centre_x <- w$centre_x + tx; w$centre_y <- w$centre_y + ty
+    w
+}
+
+# Add a rotate90 method.  Note that the default does nothing, which is
+# the right thing for objects that have 90 degree rotational symmetry.
+# The special version for rotating a box, rotate90.box, is witten
+# assuming the new representation of a box defined above is used.
+# (How would you do it for the original representation?)
+
+rotate90 <- function (w) UseMethod("rotate90")
+
+rotate90.default <- function (w) w
+
+rotate90.box <- function (w) {
+    n <- w
+    n$sx <- w$sy
+    n$sy <- w$sx
+    n
+}

@@ -1,0 +1,54 @@
+#Tutorial 9
+
+#Q1 
+#b)
+setwd("C:/Users/u5708538/Desktop")
+DMD=read.table("DMD.csv",header=T,sep=",")
+CK=DMD$CK
+H=DMD$H
+group=DMD$GROUP
+
+DMD.logit1=glm(group~CK+I(CK^2),family=binomial(link=logit))
+summary(DMD.logit1)
+#CK^2 is insignificant (z-score = 1.540)
+
+logCKsqr=(log(CK))^2
+DMD.logit2=glm(group~log(CK)+logCKsqr,family=binomial(link=logit))
+summary(DMD.logit2)
+
+#log(CK)^2 is insignificant (z-score = -1.365)
+#The model with the transformed variables is preferred because of its smaller deviance for same number of variables (84.98 vs 85.435). 
+#Also note that AIC is lower too (90.98 vs 91.435).
+
+#c)
+DMD.logit3=glm(group~log(CK)+H,family=binomial(link=logit))
+anova(DMD.logit3)
+#Deviance_Full - Devanican_reduced = 149.84 - 61.992 = 87.84
+#compare this to chi-quare 
+1-pchisq(67.848,2)
+#value is approximately zero therefore at least one of the variables is important.
+
+
+#Q1 
+setwd("C:/Users/u5708538/Desktop")
+space=read.table("shuttle.csv",header=T,sep=",")
+temp=space$TEMP
+failure=space$FAILURE
+
+indFAIL<-ifelse(failure=="Yes",1,0)
+indSucc<-ifelse(failure=="No",1,0)
+
+space.logit1=glm(indFAIL~temp,family=binomial(link=logit))
+space.logit2=glm(indSucc~temp,family=binomial(link=logit))
+
+summary(space.logit1)
+#coefficient = -0.17132
+
+summary(space.logit2)
+#coefficient = 0.17132
+
+#the estimates of the coefficients have their signs switched.
+
+
+
+

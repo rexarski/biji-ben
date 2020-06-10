@@ -1,0 +1,95 @@
+#set working directory as Desktop
+
+setwd("C:/Users/u5708538/Desktop")
+
+#QUESTION 1
+
+#load data into R
+hubble <- read.table("ex0727.csv",header=TRUE,sep=",")
+
+#Two ways of referencing the same column
+dist <- hubble$DISTANCE
+# or dist <- hubble[,1]
+velocity <- hubble$VELOCITY
+plot(velocity,dist)
+
+
+#Model fit without intercept
+mod2 <- lm(dist ~ velocity - 1)
+
+summary(mod2)
+
+#estimated age of the universe is the B i.e. 0.0017 oe 1.7 Billion years.
+
+#QUESTION 2
+
+wheatears<- read.table("ex0729.csv",header=TRUE,sep=",")
+
+#referencing
+attach(wheatears)
+plot(mass,tcell)
+mod1 <- lm(tcell ~ mass)
+summary(mod1)
+
+# The fitted regression line is µˆ (T-cell|mass) = 0.0875+0.0328*mass. Put in mass=2 and T-cell response = 0.1531
+# The minimum explanatory variable value in our sample is 3.33. It is dangerous to make statements outside of the range of our explanatory variable (extrapolation). The straight line model is not necessarily valid over a wider range of explanatory variable values.
+
+
+#QUESTION 3
+
+#3a
+
+chern <- read.table("ex0818.csv",header=T,sep=",")
+attach(chern)
+plot(SOIL,MUSHROOM, ylab="conc in mushrooms", xlab="conc in soil", main="conc mushrooms conc soil")
+
+#outlier on top-right.
+# You can also identify the outlier using the command identify(SOIL,MUSHROOM) and then clicking the outlier. 
+
+#3b
+#fit the model first
+
+mod1 <- lm(MUSHROOM ~ SOIL)
+summary(mod1)
+
+#Draw the model line.
+abline(mod1)
+
+#3c
+
+mod2 <- lm(MUSHROOM[-17] ~ SOIL[-17]) #"[-17]" indicates the removing of point 17.
+summary(mod2)
+
+#Draws second model line
+abline(mod2,col='red')
+#The regression is highly sensitive to point 17. 
+#It is probably better to do the regression with point 17 removed.
+
+
+######ANOTHER WAY#######
+
+par(mfrow=c(2,1))
+plot(SOIL,MUSHROOM, ylab="conc in mushrooms", xlab="conc in soil", main="conc mushrooms vs conc soil")
+abline(lm(MUSHROOM~SOIL))
+plot(SOIL[-17],MUSHROOM[-17], ylab="conc in mushrooms", xlab="conc in soil", main="conc mushrooms v conc soil (point 17 removed)")
+abline(lm(MUSHROOM[-17]~SOIL[-17]))
+
+#QUESTION 4
+
+X=1:100
+n=length(X)
+Y=rep(0,n)
+numsamp=1000
+MeanResponse=rep(0,numsamp)
+Xnew=2.5
+set.seed(1)
+for(i in 1:numsamp){
+  errors=rnorm(n, 0, 1)
+  Y=1+0*X+errors
+  SLRfit=lm(Y~X)
+  MeanResponse[i]=SLRfit$coef[1]+SLRfit$coef[2]*Xnew
+}
+hist(MeanResponse)
+mean(MeanResponse)
+sd(MeanResponse)
+

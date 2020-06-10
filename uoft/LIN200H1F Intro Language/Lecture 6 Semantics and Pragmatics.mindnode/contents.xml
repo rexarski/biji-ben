@@ -1,0 +1,3019 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>author</key>
+	<string></string>
+	<key>comments</key>
+	<string></string>
+	<key>isUsingConstrainedLayout</key>
+	<false/>
+	<key>keywords</key>
+	<string></string>
+	<key>mindMap</key>
+	<dict>
+		<key>associations</key>
+		<array/>
+		<key>color</key>
+		<string>{1.000, 1.000, 1.000, 1.000}</string>
+		<key>mainNodes</key>
+		<array>
+			<dict>
+				<key>contentAlignment</key>
+				<integer>1</integer>
+				<key>fillColor</key>
+				<string>{1.000, 1.000, 1.000, 1.000}</string>
+				<key>isDecreasingBranchThickness</key>
+				<true/>
+				<key>isDrawingFill</key>
+				<true/>
+				<key>isLeftAligned</key>
+				<false/>
+				<key>location</key>
+				<string>{0, 0}</string>
+				<key>nodeID</key>
+				<string>168D9E01-3883-4A93-921D-42F721BAF109</string>
+				<key>strokeColor</key>
+				<string>{0.500, 0.500, 0.500, 1.000}</string>
+				<key>strokeStyle</key>
+				<integer>0</integer>
+				<key>strokeWidth</key>
+				<real>2</real>
+				<key>subnodes</key>
+				<array>
+					<dict>
+						<key>contentAlignment</key>
+						<integer>1</integer>
+						<key>fillColor</key>
+						<string>{1.000, 1.000, 1.000, 1.000}</string>
+						<key>isDecreasingBranchThickness</key>
+						<true/>
+						<key>isDrawingFill</key>
+						<false/>
+						<key>isLeftAligned</key>
+						<false/>
+						<key>location</key>
+						<string>{435.13048152875683, -574.48328492239557}</string>
+						<key>nodeID</key>
+						<string>5F07F916-E2BD-432E-A38B-DE4540796B22</string>
+						<key>strokeColor</key>
+						<string>{1.000, 0.800, 0.400, 1.000}</string>
+						<key>strokeStyle</key>
+						<integer>0</integer>
+						<key>strokeWidth</key>
+						<real>6</real>
+						<key>subnodes</key>
+						<array>
+							<dict>
+								<key>contentAlignment</key>
+								<integer>1</integer>
+								<key>fillColor</key>
+								<string>{1.000, 1.000, 1.000, 1.000}</string>
+								<key>isDecreasingBranchThickness</key>
+								<true/>
+								<key>isDrawingFill</key>
+								<false/>
+								<key>isLeftAligned</key>
+								<false/>
+								<key>location</key>
+								<string>{604.06407527875683, -1626.5614099223953}</string>
+								<key>nodeID</key>
+								<string>7BB9B963-5582-4BE2-9377-1C1A0BE3B174</string>
+								<key>strokeColor</key>
+								<string>{1.000, 0.800, 0.400, 1.000}</string>
+								<key>strokeStyle</key>
+								<integer>0</integer>
+								<key>strokeWidth</key>
+								<real>5</real>
+								<key>subnodes</key>
+								<array>
+									<dict>
+										<key>contentAlignment</key>
+										<integer>1</integer>
+										<key>fillColor</key>
+										<string>{1.000, 1.000, 1.000, 1.000}</string>
+										<key>isDecreasingBranchThickness</key>
+										<true/>
+										<key>isDrawingFill</key>
+										<false/>
+										<key>isLeftAligned</key>
+										<false/>
+										<key>location</key>
+										<string>{902.06407527875683, -1626.5614099223953}</string>
+										<key>nodeID</key>
+										<string>F1738646-F427-4204-99FD-42C786BE65CA</string>
+										<key>strokeColor</key>
+										<string>{1.000, 0.800, 0.400, 1.000}</string>
+										<key>strokeStyle</key>
+										<integer>0</integer>
+										<key>strokeWidth</key>
+										<real>4</real>
+										<key>subnodes</key>
+										<array/>
+										<key>title</key>
+										<dict>
+											<key>constrainedWidth</key>
+											<integer>300</integer>
+											<key>htmlText</key>
+											<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;words are &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;pointers&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;.&lt;/span&gt;&lt;/p&gt;</string>
+											<key>shrinkToFitContent</key>
+											<integer>1</integer>
+											<key>text</key>
+											<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 words are 
+\b pointers
+\b0 .}</string>
+										</dict>
+									</dict>
+									<dict>
+										<key>contentAlignment</key>
+										<integer>1</integer>
+										<key>fillColor</key>
+										<string>{1.000, 1.000, 1.000, 1.000}</string>
+										<key>isDecreasingBranchThickness</key>
+										<true/>
+										<key>isDrawingFill</key>
+										<false/>
+										<key>isLeftAligned</key>
+										<false/>
+										<key>location</key>
+										<string>{902.06407527875683, -1575.8947438915116}</string>
+										<key>nodeID</key>
+										<string>FB7AA82D-7D44-4D31-9735-80CFB9B90D4F</string>
+										<key>strokeColor</key>
+										<string>{1.000, 0.800, 0.400, 1.000}</string>
+										<key>strokeStyle</key>
+										<integer>0</integer>
+										<key>strokeWidth</key>
+										<real>4</real>
+										<key>subnodes</key>
+										<array/>
+										<key>title</key>
+										<dict>
+											<key>constrainedWidth</key>
+											<integer>300</integer>
+											<key>htmlText</key>
+											<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;we can&amp;apos;t describe &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;every word&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt; by using other words.&lt;/span&gt;&lt;/p&gt;</string>
+											<key>shrinkToFitContent</key>
+											<integer>1</integer>
+											<key>text</key>
+											<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 we can't describe 
+\b every word
+\b0  by using other words.}</string>
+										</dict>
+									</dict>
+									<dict>
+										<key>contentAlignment</key>
+										<integer>1</integer>
+										<key>fillColor</key>
+										<string>{1.000, 1.000, 1.000, 1.000}</string>
+										<key>isDecreasingBranchThickness</key>
+										<true/>
+										<key>isDrawingFill</key>
+										<false/>
+										<key>isLeftAligned</key>
+										<false/>
+										<key>location</key>
+										<string>{902.06407527875683, -1510.2280778606278}</string>
+										<key>nodeID</key>
+										<string>D589B839-999A-4BC6-8291-BDB1ACD8AF0A</string>
+										<key>strokeColor</key>
+										<string>{1.000, 0.800, 0.400, 1.000}</string>
+										<key>strokeStyle</key>
+										<integer>0</integer>
+										<key>strokeWidth</key>
+										<real>4</real>
+										<key>subnodes</key>
+										<array/>
+										<key>title</key>
+										<dict>
+											<key>constrainedWidth</key>
+											<integer>300</integer>
+											<key>htmlText</key>
+											<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;meaning must involve a connection between language and something other than language.&lt;/p&gt;</string>
+											<key>shrinkToFitContent</key>
+											<integer>1</integer>
+											<key>text</key>
+											<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\b\fs24 \cf0 meaning must involve a connection between language and something other than language.}</string>
+										</dict>
+									</dict>
+									<dict>
+										<key>contentAlignment</key>
+										<integer>1</integer>
+										<key>fillColor</key>
+										<string>{1.000, 1.000, 1.000, 1.000}</string>
+										<key>isDecreasingBranchThickness</key>
+										<true/>
+										<key>isDrawingFill</key>
+										<false/>
+										<key>isLeftAligned</key>
+										<false/>
+										<key>location</key>
+										<string>{902.06407527875683, -1444.561411829744}</string>
+										<key>nodeID</key>
+										<string>61F8FAB2-123E-4060-8423-E524EE5D3E2C</string>
+										<key>strokeColor</key>
+										<string>{1.000, 0.800, 0.400, 1.000}</string>
+										<key>strokeStyle</key>
+										<integer>0</integer>
+										<key>strokeWidth</key>
+										<real>4</real>
+										<key>subnodes</key>
+										<array>
+											<dict>
+												<key>contentAlignment</key>
+												<integer>1</integer>
+												<key>fillColor</key>
+												<string>{1.000, 1.000, 1.000, 1.000}</string>
+												<key>isDecreasingBranchThickness</key>
+												<true/>
+												<key>isDrawingFill</key>
+												<false/>
+												<key>isLeftAligned</key>
+												<false/>
+												<key>location</key>
+												<string>{1250.0640752787576, -1444.561411829744}</string>
+												<key>nodeID</key>
+												<string>BCE6D2D4-ABE4-4230-9916-D2BCEA37123A</string>
+												<key>strokeColor</key>
+												<string>{1.000, 0.800, 0.400, 1.000}</string>
+												<key>strokeStyle</key>
+												<integer>0</integer>
+												<key>strokeWidth</key>
+												<real>3</real>
+												<key>subnodes</key>
+												<array/>
+												<key>title</key>
+												<dict>
+													<key>constrainedWidth</key>
+													<integer>300</integer>
+													<key>htmlText</key>
+													<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;the &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;cognitive approach&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt; to meaning&lt;/span&gt;&lt;/p&gt;</string>
+													<key>shrinkToFitContent</key>
+													<integer>1</integer>
+													<key>text</key>
+													<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 the 
+\b cognitive approach
+\b0  to meaning}</string>
+												</dict>
+											</dict>
+											<dict>
+												<key>contentAlignment</key>
+												<integer>1</integer>
+												<key>fillColor</key>
+												<string>{1.000, 1.000, 1.000, 1.000}</string>
+												<key>isDecreasingBranchThickness</key>
+												<true/>
+												<key>isDrawingFill</key>
+												<false/>
+												<key>isLeftAligned</key>
+												<false/>
+												<key>location</key>
+												<string>{1250.0640752787576, -1398.061411829744}</string>
+												<key>nodeID</key>
+												<string>8A86856B-13E7-46FA-890E-B3CA1D9A79E4</string>
+												<key>strokeColor</key>
+												<string>{1.000, 0.800, 0.400, 1.000}</string>
+												<key>strokeStyle</key>
+												<integer>0</integer>
+												<key>strokeWidth</key>
+												<real>3</real>
+												<key>subnodes</key>
+												<array>
+													<dict>
+														<key>contentAlignment</key>
+														<integer>1</integer>
+														<key>fillColor</key>
+														<string>{1.000, 1.000, 1.000, 1.000}</string>
+														<key>isDecreasingBranchThickness</key>
+														<true/>
+														<key>isDrawingFill</key>
+														<false/>
+														<key>isLeftAligned</key>
+														<false/>
+														<key>location</key>
+														<string>{1545.0640752787576, -1398.061411829744}</string>
+														<key>nodeID</key>
+														<string>2367956C-793D-47B4-A2EB-3B6602CBF906</string>
+														<key>strokeColor</key>
+														<string>{1.000, 0.800, 0.400, 1.000}</string>
+														<key>strokeStyle</key>
+														<integer>0</integer>
+														<key>strokeWidth</key>
+														<real>2</real>
+														<key>subnodes</key>
+														<array/>
+														<key>title</key>
+														<dict>
+															<key>constrainedWidth</key>
+															<integer>300</integer>
+															<key>htmlText</key>
+															<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;the meaning of the word &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;cat &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;for individuals is their &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;prototypical mental representation of a cat&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;.&lt;/span&gt;&lt;/p&gt;</string>
+															<key>shrinkToFitContent</key>
+															<integer>1</integer>
+															<key>text</key>
+															<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 the meaning of the word 
+\b cat 
+\b0 for individuals is their 
+\b prototypical mental representation of a cat
+\b0 .}</string>
+														</dict>
+													</dict>
+												</array>
+												<key>title</key>
+												<dict>
+													<key>constrainedWidth</key>
+													<integer>300</integer>
+													<key>htmlText</key>
+													<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;meanings are associated with &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;mental representations&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;.&lt;/span&gt;&lt;/p&gt;</string>
+													<key>shrinkToFitContent</key>
+													<integer>1</integer>
+													<key>text</key>
+													<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 meanings are associated with 
+\b mental representations
+\b0 .}</string>
+												</dict>
+											</dict>
+										</array>
+										<key>title</key>
+										<dict>
+											<key>constrainedWidth</key>
+											<integer>300</integer>
+											<key>htmlText</key>
+											<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;option1: language connects with concepts and ideas in the mind.&lt;/p&gt;</string>
+											<key>shrinkToFitContent</key>
+											<integer>1</integer>
+											<key>text</key>
+											<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 option1: language connects with concepts and ideas in the mind.}</string>
+										</dict>
+									</dict>
+									<dict>
+										<key>contentAlignment</key>
+										<integer>1</integer>
+										<key>fillColor</key>
+										<string>{1.000, 1.000, 1.000, 1.000}</string>
+										<key>isDecreasingBranchThickness</key>
+										<true/>
+										<key>isDrawingFill</key>
+										<false/>
+										<key>isLeftAligned</key>
+										<false/>
+										<key>location</key>
+										<string>{908.06407527875683, -1314.8947457988602}</string>
+										<key>nodeID</key>
+										<string>BC60A4BA-C783-4E42-8852-08F43BFB8A01</string>
+										<key>strokeColor</key>
+										<string>{1.000, 0.800, 0.400, 1.000}</string>
+										<key>strokeStyle</key>
+										<integer>0</integer>
+										<key>strokeWidth</key>
+										<real>4</real>
+										<key>subnodes</key>
+										<array>
+											<dict>
+												<key>contentAlignment</key>
+												<integer>1</integer>
+												<key>fillColor</key>
+												<string>{1.000, 1.000, 1.000, 1.000}</string>
+												<key>isDecreasingBranchThickness</key>
+												<true/>
+												<key>isDrawingFill</key>
+												<false/>
+												<key>isLeftAligned</key>
+												<false/>
+												<key>location</key>
+												<string>{1237.0640752787576, -1314.8947457988602}</string>
+												<key>nodeID</key>
+												<string>CE5E02DC-2B7A-4324-A803-DD2BFE39C0C4</string>
+												<key>strokeColor</key>
+												<string>{1.000, 0.800, 0.400, 1.000}</string>
+												<key>strokeStyle</key>
+												<integer>0</integer>
+												<key>strokeWidth</key>
+												<real>3</real>
+												<key>subnodes</key>
+												<array/>
+												<key>title</key>
+												<dict>
+													<key>constrainedWidth</key>
+													<integer>300</integer>
+													<key>htmlText</key>
+													<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;the &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;referential approach&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt; to meaning&lt;/span&gt;&lt;/p&gt;</string>
+													<key>shrinkToFitContent</key>
+													<integer>1</integer>
+													<key>text</key>
+													<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 the 
+\b referential approach
+\b0  to meaning}</string>
+												</dict>
+											</dict>
+											<dict>
+												<key>contentAlignment</key>
+												<integer>1</integer>
+												<key>fillColor</key>
+												<string>{1.000, 1.000, 1.000, 1.000}</string>
+												<key>isDecreasingBranchThickness</key>
+												<true/>
+												<key>isDrawingFill</key>
+												<false/>
+												<key>isLeftAligned</key>
+												<false/>
+												<key>location</key>
+												<string>{1237.0640752787576, -1268.3947457988602}</string>
+												<key>nodeID</key>
+												<string>D3ABFC5E-AAE9-4781-A169-FEFE5138C19D</string>
+												<key>strokeColor</key>
+												<string>{1.000, 0.800, 0.400, 1.000}</string>
+												<key>strokeStyle</key>
+												<integer>0</integer>
+												<key>strokeWidth</key>
+												<real>3</real>
+												<key>subnodes</key>
+												<array>
+													<dict>
+														<key>contentAlignment</key>
+														<integer>1</integer>
+														<key>fillColor</key>
+														<string>{1.000, 1.000, 1.000, 1.000}</string>
+														<key>isDecreasingBranchThickness</key>
+														<true/>
+														<key>isDrawingFill</key>
+														<false/>
+														<key>isLeftAligned</key>
+														<false/>
+														<key>location</key>
+														<string>{1511.0640752787576, -1268.3947457988602}</string>
+														<key>nodeID</key>
+														<string>2AC9302A-86B3-4041-A153-892EC0B7B168</string>
+														<key>strokeColor</key>
+														<string>{1.000, 0.800, 0.400, 1.000}</string>
+														<key>strokeStyle</key>
+														<integer>0</integer>
+														<key>strokeWidth</key>
+														<real>2</real>
+														<key>subnodes</key>
+														<array/>
+														<key>title</key>
+														<dict>
+															<key>constrainedWidth</key>
+															<integer>300</integer>
+															<key>htmlText</key>
+															<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;the meaning of the word &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;cat&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt; is the &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;set of all cats in the world&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;.&lt;/span&gt;&lt;/p&gt;</string>
+															<key>shrinkToFitContent</key>
+															<integer>1</integer>
+															<key>text</key>
+															<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 the meaning of the word 
+\b cat
+\b0  is the 
+\b set of all cats in the world
+\b0 .}</string>
+														</dict>
+													</dict>
+												</array>
+												<key>title</key>
+												<dict>
+													<key>constrainedWidth</key>
+													<integer>300</integer>
+													<key>htmlText</key>
+													<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;a word points to real world things.&lt;/p&gt;</string>
+													<key>shrinkToFitContent</key>
+													<integer>1</integer>
+													<key>text</key>
+													<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 a word points to real world things.}</string>
+												</dict>
+											</dict>
+										</array>
+										<key>title</key>
+										<dict>
+											<key>constrainedWidth</key>
+											<integer>300</integer>
+											<key>htmlText</key>
+											<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;option 2: language connects with the world.&lt;/p&gt;</string>
+											<key>shrinkToFitContent</key>
+											<integer>1</integer>
+											<key>text</key>
+											<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 option 2: language connects with the world.}</string>
+										</dict>
+									</dict>
+								</array>
+								<key>title</key>
+								<dict>
+									<key>constrainedWidth</key>
+									<integer>300</integer>
+									<key>htmlText</key>
+									<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;what does it mean for a word to mean something?&lt;/p&gt;</string>
+									<key>shrinkToFitContent</key>
+									<integer>1</integer>
+									<key>text</key>
+									<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 what does it mean for a word to mean something?}</string>
+								</dict>
+							</dict>
+							<dict>
+								<key>contentAlignment</key>
+								<integer>1</integer>
+								<key>fillColor</key>
+								<string>{1.000, 1.000, 1.000, 1.000}</string>
+								<key>isDecreasingBranchThickness</key>
+								<true/>
+								<key>isDrawingFill</key>
+								<false/>
+								<key>isLeftAligned</key>
+								<false/>
+								<key>location</key>
+								<string>{637.02110652875683, -1084.3660974223953}</string>
+								<key>nodeID</key>
+								<string>C4310960-8743-4D0B-AF7B-FEA2DCA35483</string>
+								<key>strokeColor</key>
+								<string>{1.000, 0.800, 0.400, 1.000}</string>
+								<key>strokeStyle</key>
+								<integer>0</integer>
+								<key>strokeWidth</key>
+								<real>5</real>
+								<key>subnodes</key>
+								<array>
+									<dict>
+										<key>contentAlignment</key>
+										<integer>1</integer>
+										<key>fillColor</key>
+										<string>{1.000, 1.000, 1.000, 1.000}</string>
+										<key>isDecreasingBranchThickness</key>
+										<true/>
+										<key>isDrawingFill</key>
+										<false/>
+										<key>isLeftAligned</key>
+										<false/>
+										<key>location</key>
+										<string>{819.02110652875683, -1084.3660974223953}</string>
+										<key>nodeID</key>
+										<string>E2643C24-9B47-49BF-BE32-FF750DF8C0E5</string>
+										<key>strokeColor</key>
+										<string>{1.000, 0.800, 0.400, 1.000}</string>
+										<key>strokeStyle</key>
+										<integer>0</integer>
+										<key>strokeWidth</key>
+										<real>4</real>
+										<key>subnodes</key>
+										<array>
+											<dict>
+												<key>contentAlignment</key>
+												<integer>1</integer>
+												<key>fillColor</key>
+												<string>{1.000, 1.000, 1.000, 1.000}</string>
+												<key>isDecreasingBranchThickness</key>
+												<true/>
+												<key>isDrawingFill</key>
+												<false/>
+												<key>isLeftAligned</key>
+												<false/>
+												<key>location</key>
+												<string>{1175.0211065287572, -1084.3660974223953}</string>
+												<key>nodeID</key>
+												<string>582CEFC6-4824-445E-8AEA-858CF1FB080B</string>
+												<key>strokeColor</key>
+												<string>{1.000, 0.800, 0.400, 1.000}</string>
+												<key>strokeStyle</key>
+												<integer>0</integer>
+												<key>strokeWidth</key>
+												<real>3</real>
+												<key>subnodes</key>
+												<array>
+													<dict>
+														<key>contentAlignment</key>
+														<integer>1</integer>
+														<key>fillColor</key>
+														<string>{1.000, 1.000, 1.000, 1.000}</string>
+														<key>isDecreasingBranchThickness</key>
+														<true/>
+														<key>isDrawingFill</key>
+														<false/>
+														<key>isLeftAligned</key>
+														<false/>
+														<key>location</key>
+														<string>{1536.0211065287576, -1085.3660974223953}</string>
+														<key>nodeID</key>
+														<string>DB12F110-BACC-496F-8ED8-A17BA14AC2E6</string>
+														<key>strokeColor</key>
+														<string>{1.000, 0.800, 0.400, 1.000}</string>
+														<key>strokeStyle</key>
+														<integer>0</integer>
+														<key>strokeWidth</key>
+														<real>2</real>
+														<key>subnodes</key>
+														<array/>
+														<key>title</key>
+														<dict>
+															<key>constrainedWidth</key>
+															<integer>300</integer>
+															<key>htmlText</key>
+															<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;referential approach works better than cognitive approach&lt;/p&gt;</string>
+															<key>shrinkToFitContent</key>
+															<integer>1</integer>
+															<key>text</key>
+															<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 referential approach works better than cognitive approach}</string>
+														</dict>
+													</dict>
+													<dict>
+														<key>contentAlignment</key>
+														<integer>1</integer>
+														<key>fillColor</key>
+														<string>{1.000, 1.000, 1.000, 1.000}</string>
+														<key>isDecreasingBranchThickness</key>
+														<true/>
+														<key>isDrawingFill</key>
+														<false/>
+														<key>isLeftAligned</key>
+														<false/>
+														<key>location</key>
+														<string>{1536.0211065287576, -1026.3660974223958}</string>
+														<key>nodeID</key>
+														<string>5198BC95-FC94-4F8D-A505-BDFE94ABD796</string>
+														<key>strokeColor</key>
+														<string>{1.000, 0.800, 0.400, 1.000}</string>
+														<key>strokeStyle</key>
+														<integer>0</integer>
+														<key>strokeWidth</key>
+														<real>2</real>
+														<key>subnodes</key>
+														<array/>
+														<key>title</key>
+														<dict>
+															<key>constrainedWidth</key>
+															<integer>300</integer>
+															<key>htmlText</key>
+															<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;compositionally&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt; is important in syntax: may get &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;structurally ambiguous&lt;/span&gt;&lt;/p&gt;</string>
+															<key>shrinkToFitContent</key>
+															<integer>1</integer>
+															<key>text</key>
+															<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\b\fs24 \cf0 compositionally
+\b0  is important in syntax: may get 
+\b structurally ambiguous}</string>
+														</dict>
+													</dict>
+												</array>
+												<key>title</key>
+												<dict>
+													<key>constrainedWidth</key>
+													<integer>300</integer>
+													<key>htmlText</key>
+													<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;in how words combine together into sentences to create meanings.&lt;/p&gt;</string>
+													<key>shrinkToFitContent</key>
+													<integer>1</integer>
+													<key>text</key>
+													<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 in how words combine together into sentences to create meanings.}</string>
+												</dict>
+											</dict>
+										</array>
+										<key>title</key>
+										<dict>
+											<key>constrainedWidth</key>
+											<integer>300</integer>
+											<key>htmlText</key>
+											<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;formal semantics is interested in more than just the meaning of individuals words.&lt;/p&gt;</string>
+											<key>shrinkToFitContent</key>
+											<integer>1</integer>
+											<key>text</key>
+											<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 formal semantics is interested in more than just the meaning of individuals words.}</string>
+										</dict>
+									</dict>
+									<dict>
+										<key>contentAlignment</key>
+										<integer>1</integer>
+										<key>fillColor</key>
+										<string>{1.000, 1.000, 1.000, 1.000}</string>
+										<key>isDecreasingBranchThickness</key>
+										<true/>
+										<key>isDrawingFill</key>
+										<false/>
+										<key>isLeftAligned</key>
+										<false/>
+										<key>location</key>
+										<string>{819.02110652875683, -1018.6994313915119}</string>
+										<key>nodeID</key>
+										<string>F803AABF-D2AC-47CE-B9B0-0DB4C780CC0B</string>
+										<key>strokeColor</key>
+										<string>{1.000, 0.800, 0.400, 1.000}</string>
+										<key>strokeStyle</key>
+										<integer>0</integer>
+										<key>strokeWidth</key>
+										<real>4</real>
+										<key>subnodes</key>
+										<array>
+											<dict>
+												<key>contentAlignment</key>
+												<integer>1</integer>
+												<key>fillColor</key>
+												<string>{1.000, 1.000, 1.000, 1.000}</string>
+												<key>isDecreasingBranchThickness</key>
+												<true/>
+												<key>isDrawingFill</key>
+												<false/>
+												<key>isLeftAligned</key>
+												<false/>
+												<key>location</key>
+												<string>{1180.3293079682594, -921.68494238758092}</string>
+												<key>nodeID</key>
+												<string>D2925216-2703-4CAA-A6BA-F4529B9750C0</string>
+												<key>strokeColor</key>
+												<string>{1.000, 0.800, 0.400, 1.000}</string>
+												<key>strokeStyle</key>
+												<integer>0</integer>
+												<key>strokeWidth</key>
+												<real>3</real>
+												<key>subnodes</key>
+												<array>
+													<dict>
+														<key>contentAlignment</key>
+														<integer>1</integer>
+														<key>fillColor</key>
+														<string>{1.000, 1.000, 1.000, 1.000}</string>
+														<key>isDecreasingBranchThickness</key>
+														<true/>
+														<key>isDrawingFill</key>
+														<false/>
+														<key>isLeftAligned</key>
+														<false/>
+														<key>location</key>
+														<string>{1409.3293079682599, -921.68494238758092}</string>
+														<key>nodeID</key>
+														<string>B4690902-489B-49CD-AF7B-031EFF289650</string>
+														<key>strokeColor</key>
+														<string>{1.000, 0.800, 0.400, 1.000}</string>
+														<key>strokeStyle</key>
+														<integer>0</integer>
+														<key>strokeWidth</key>
+														<real>2</real>
+														<key>subnodes</key>
+														<array/>
+														<key>title</key>
+														<dict>
+															<key>constrainedWidth</key>
+															<integer>300</integer>
+															<key>htmlText</key>
+															<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;1. what individual words mean&lt;/p&gt;</string>
+															<key>shrinkToFitContent</key>
+															<integer>1</integer>
+															<key>text</key>
+															<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 1. what individual words mean}</string>
+														</dict>
+													</dict>
+													<dict>
+														<key>contentAlignment</key>
+														<integer>1</integer>
+														<key>fillColor</key>
+														<string>{1.000, 1.000, 1.000, 1.000}</string>
+														<key>isDecreasingBranchThickness</key>
+														<true/>
+														<key>isDrawingFill</key>
+														<false/>
+														<key>isLeftAligned</key>
+														<false/>
+														<key>location</key>
+														<string>{1409.3293079682599, -876.72082324220025}</string>
+														<key>nodeID</key>
+														<string>90B4949E-4884-4D84-83A8-4FB6814602BE</string>
+														<key>strokeColor</key>
+														<string>{1.000, 0.800, 0.400, 1.000}</string>
+														<key>strokeStyle</key>
+														<integer>0</integer>
+														<key>strokeWidth</key>
+														<real>2</real>
+														<key>subnodes</key>
+														<array>
+															<dict>
+																<key>contentAlignment</key>
+																<integer>1</integer>
+																<key>fillColor</key>
+																<string>{1.000, 1.000, 1.000, 1.000}</string>
+																<key>isDecreasingBranchThickness</key>
+																<true/>
+																<key>isDrawingFill</key>
+																<false/>
+																<key>isLeftAligned</key>
+																<false/>
+																<key>location</key>
+																<string>{1757.3293079682599, -876.72082324220025}</string>
+																<key>nodeID</key>
+																<string>007EAF10-5161-4C92-A0A4-2516C4304BFA</string>
+																<key>strokeColor</key>
+																<string>{1.000, 0.800, 0.400, 1.000}</string>
+																<key>strokeStyle</key>
+																<integer>0</integer>
+																<key>strokeWidth</key>
+																<real>1</real>
+																<key>subnodes</key>
+																<array/>
+																<key>title</key>
+																<dict>
+																	<key>constrainedWidth</key>
+																	<integer>300</integer>
+																	<key>htmlText</key>
+																	<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;what are the principles of semantic composition?&lt;/p&gt;</string>
+																	<key>shrinkToFitContent</key>
+																	<integer>1</integer>
+																	<key>text</key>
+																	<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 what are the principles of semantic composition?}</string>
+																</dict>
+															</dict>
+														</array>
+														<key>title</key>
+														<dict>
+															<key>constrainedWidth</key>
+															<integer>300</integer>
+															<key>htmlText</key>
+															<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;2. how words combine to create new, complex meanings&lt;/p&gt;</string>
+															<key>shrinkToFitContent</key>
+															<integer>1</integer>
+															<key>text</key>
+															<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 2. how words combine to create new, complex meanings}</string>
+														</dict>
+													</dict>
+													<dict>
+														<key>contentAlignment</key>
+														<integer>1</integer>
+														<key>fillColor</key>
+														<string>{1.000, 1.000, 1.000, 1.000}</string>
+														<key>isDecreasingBranchThickness</key>
+														<true/>
+														<key>isDrawingFill</key>
+														<false/>
+														<key>isLeftAligned</key>
+														<false/>
+														<key>location</key>
+														<string>{1409.3293079682599, -817.72082324220025}</string>
+														<key>nodeID</key>
+														<string>A3AFFD85-B5AC-4B95-A1FE-23C389DE511E</string>
+														<key>strokeColor</key>
+														<string>{1.000, 0.800, 0.400, 1.000}</string>
+														<key>strokeStyle</key>
+														<integer>0</integer>
+														<key>strokeWidth</key>
+														<real>2</real>
+														<key>subnodes</key>
+														<array>
+															<dict>
+																<key>contentAlignment</key>
+																<integer>1</integer>
+																<key>fillColor</key>
+																<string>{1.000, 1.000, 1.000, 1.000}</string>
+																<key>isDecreasingBranchThickness</key>
+																<true/>
+																<key>isDrawingFill</key>
+																<false/>
+																<key>isLeftAligned</key>
+																<false/>
+																<key>location</key>
+																<string>{1764.3293079682599, -817.72082324220025}</string>
+																<key>nodeID</key>
+																<string>0CE6801C-EF8A-4756-B9C2-03760D9001EB</string>
+																<key>strokeColor</key>
+																<string>{1.000, 0.800, 0.400, 1.000}</string>
+																<key>strokeStyle</key>
+																<integer>0</integer>
+																<key>strokeWidth</key>
+																<real>1</real>
+																<key>subnodes</key>
+																<array/>
+																<key>title</key>
+																<dict>
+																	<key>constrainedWidth</key>
+																	<integer>300</integer>
+																	<key>htmlText</key>
+																	<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;formal semanticists believe that &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;knowing what a sentence means, means knowing the conditions under which the sentence is true or false.&lt;/span&gt;&lt;/p&gt;</string>
+																	<key>shrinkToFitContent</key>
+																	<integer>1</integer>
+																	<key>text</key>
+																	<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 formal semanticists believe that 
+\b knowing what a sentence means, means knowing the conditions under which the sentence is true or false.}</string>
+																</dict>
+															</dict>
+															<dict>
+																<key>contentAlignment</key>
+																<integer>1</integer>
+																<key>fillColor</key>
+																<string>{1.000, 1.000, 1.000, 1.000}</string>
+																<key>isDecreasingBranchThickness</key>
+																<true/>
+																<key>isDrawingFill</key>
+																<false/>
+																<key>isLeftAligned</key>
+																<false/>
+																<key>location</key>
+																<string>{1765.2934271136405, -730.38749022675836}</string>
+																<key>nodeID</key>
+																<string>B86B9F3B-B849-4738-BBF8-E990B383797B</string>
+																<key>strokeColor</key>
+																<string>{1.000, 0.800, 0.400, 1.000}</string>
+																<key>strokeStyle</key>
+																<integer>0</integer>
+																<key>strokeWidth</key>
+																<real>1</real>
+																<key>subnodes</key>
+																<array>
+																	<dict>
+																		<key>contentAlignment</key>
+																		<integer>1</integer>
+																		<key>fillColor</key>
+																		<string>{1.000, 1.000, 1.000, 1.000}</string>
+																		<key>isDecreasingBranchThickness</key>
+																		<true/>
+																		<key>isDrawingFill</key>
+																		<false/>
+																		<key>isLeftAligned</key>
+																		<false/>
+																		<key>location</key>
+																		<string>{2103.2934271136396, -730.38749022675836}</string>
+																		<key>nodeID</key>
+																		<string>8EAC0ECA-FFAC-4696-AC2E-359619BB0FEB</string>
+																		<key>strokeColor</key>
+																		<string>{1.000, 0.800, 0.400, 1.000}</string>
+																		<key>strokeStyle</key>
+																		<integer>0</integer>
+																		<key>strokeWidth</key>
+																		<real>1</real>
+																		<key>subnodes</key>
+																		<array/>
+																		<key>title</key>
+																		<dict>
+																			<key>constrainedWidth</key>
+																			<integer>300</integer>
+																			<key>htmlText</key>
+																			<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;semantics is &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;truth&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt; &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;conditional &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;in this sense.&lt;/span&gt;&lt;/p&gt;</string>
+																			<key>shrinkToFitContent</key>
+																			<integer>1</integer>
+																			<key>text</key>
+																			<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 semantics is 
+\b truth
+\b0  
+\b conditional 
+\b0 in this sense.}</string>
+																		</dict>
+																	</dict>
+																</array>
+																<key>title</key>
+																<dict>
+																	<key>constrainedWidth</key>
+																	<integer>300</integer>
+																	<key>htmlText</key>
+																	<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;we are looking for steps to predict whether a statement is true or not, under certain conditions, just from the individual word meanings and principles of composition.&lt;/p&gt;</string>
+																	<key>shrinkToFitContent</key>
+																	<integer>1</integer>
+																	<key>text</key>
+																	<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 we are looking for steps to predict whether a statement is true or not, under certain conditions, just from the individual word meanings and principles of composition.}</string>
+																</dict>
+															</dict>
+														</array>
+														<key>title</key>
+														<dict>
+															<key>constrainedWidth</key>
+															<integer>300</integer>
+															<key>htmlText</key>
+															<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;3. how the truth of a statement logically follows from the principles of composition. &lt;/p&gt;</string>
+															<key>shrinkToFitContent</key>
+															<integer>1</integer>
+															<key>text</key>
+															<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 3. how the truth of a statement logically follows from the principles of composition. }</string>
+														</dict>
+													</dict>
+												</array>
+												<key>title</key>
+												<dict>
+													<key>constrainedWidth</key>
+													<integer>300</integer>
+													<key>htmlText</key>
+													<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;3 things need to be known&lt;/p&gt;</string>
+													<key>shrinkToFitContent</key>
+													<integer>1</integer>
+													<key>text</key>
+													<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 3 things need to be known}</string>
+												</dict>
+											</dict>
+										</array>
+										<key>title</key>
+										<dict>
+											<key>constrainedWidth</key>
+											<integer>300</integer>
+											<key>htmlText</key>
+											<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;how do the meaning of words combine to make new meanings?&lt;/p&gt;</string>
+											<key>shrinkToFitContent</key>
+											<integer>1</integer>
+											<key>text</key>
+											<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 how do the meaning of words combine to make new meanings?}</string>
+										</dict>
+									</dict>
+								</array>
+								<key>title</key>
+								<dict>
+									<key>constrainedWidth</key>
+									<integer>300</integer>
+									<key>htmlText</key>
+									<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;words and phrases&lt;/p&gt;</string>
+									<key>shrinkToFitContent</key>
+									<integer>1</integer>
+									<key>text</key>
+									<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 words and phrases}</string>
+								</dict>
+							</dict>
+							<dict>
+								<key>contentAlignment</key>
+								<integer>1</integer>
+								<key>fillColor</key>
+								<string>{1.000, 1.000, 1.000, 1.000}</string>
+								<key>isDecreasingBranchThickness</key>
+								<true/>
+								<key>isDrawingFill</key>
+								<false/>
+								<key>isLeftAligned</key>
+								<false/>
+								<key>location</key>
+								<string>{633.96680720491418, -722.59125877833424}</string>
+								<key>nodeID</key>
+								<string>336C0DB7-2C66-4BD6-B944-C0FAFDB56BCD</string>
+								<key>strokeColor</key>
+								<string>{1.000, 0.800, 0.400, 1.000}</string>
+								<key>strokeStyle</key>
+								<integer>0</integer>
+								<key>strokeWidth</key>
+								<real>5</real>
+								<key>subnodes</key>
+								<array>
+									<dict>
+										<key>contentAlignment</key>
+										<integer>1</integer>
+										<key>fillColor</key>
+										<string>{1.000, 1.000, 1.000, 1.000}</string>
+										<key>isDecreasingBranchThickness</key>
+										<true/>
+										<key>isDrawingFill</key>
+										<false/>
+										<key>isLeftAligned</key>
+										<false/>
+										<key>location</key>
+										<string>{895.96680720491418, -722.59125877833424}</string>
+										<key>nodeID</key>
+										<string>0ADB89DB-16BF-4E77-B175-164FE596730C</string>
+										<key>strokeColor</key>
+										<string>{1.000, 0.800, 0.400, 1.000}</string>
+										<key>strokeStyle</key>
+										<integer>0</integer>
+										<key>strokeWidth</key>
+										<real>4</real>
+										<key>subnodes</key>
+										<array>
+											<dict>
+												<key>contentAlignment</key>
+												<integer>1</integer>
+												<key>fillColor</key>
+												<string>{1.000, 1.000, 1.000, 1.000}</string>
+												<key>isDecreasingBranchThickness</key>
+												<true/>
+												<key>isDrawingFill</key>
+												<false/>
+												<key>isLeftAligned</key>
+												<false/>
+												<key>location</key>
+												<string>{1249.9668072049149, -722.59125877833424}</string>
+												<key>nodeID</key>
+												<string>9773F8A2-880C-460C-A3C9-C43EC8A43467</string>
+												<key>strokeColor</key>
+												<string>{1.000, 0.800, 0.400, 1.000}</string>
+												<key>strokeStyle</key>
+												<integer>0</integer>
+												<key>strokeWidth</key>
+												<real>3</real>
+												<key>subnodes</key>
+												<array/>
+												<key>title</key>
+												<dict>
+													<key>constrainedWidth</key>
+													<integer>300</integer>
+													<key>htmlText</key>
+													<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;to analyze semantic compositions (i.e., sentence meanings), often start with imagined and simplified &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;worlds, &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;called &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;models&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;.&lt;/span&gt;&lt;/p&gt;</string>
+													<key>shrinkToFitContent</key>
+													<integer>1</integer>
+													<key>text</key>
+													<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 to analyze semantic compositions (i.e., sentence meanings), often start with imagined and simplified 
+\b worlds, 
+\b0 called 
+\b models
+\b0 .}</string>
+												</dict>
+											</dict>
+											<dict>
+												<key>contentAlignment</key>
+												<integer>1</integer>
+												<key>fillColor</key>
+												<string>{1.000, 1.000, 1.000, 1.000}</string>
+												<key>isDecreasingBranchThickness</key>
+												<true/>
+												<key>isDrawingFill</key>
+												<false/>
+												<key>isLeftAligned</key>
+												<false/>
+												<key>location</key>
+												<string>{1249.9668072049149, -646.09125877833424}</string>
+												<key>nodeID</key>
+												<string>1BD2E0A2-4116-4B8C-A1D9-19283DB6C0DC</string>
+												<key>strokeColor</key>
+												<string>{1.000, 0.800, 0.400, 1.000}</string>
+												<key>strokeStyle</key>
+												<integer>0</integer>
+												<key>strokeWidth</key>
+												<real>3</real>
+												<key>subnodes</key>
+												<array>
+													<dict>
+														<key>contentAlignment</key>
+														<integer>1</integer>
+														<key>fillColor</key>
+														<string>{1.000, 1.000, 1.000, 1.000}</string>
+														<key>isDecreasingBranchThickness</key>
+														<true/>
+														<key>isDrawingFill</key>
+														<false/>
+														<key>isLeftAligned</key>
+														<false/>
+														<key>location</key>
+														<string>{1588.9668072049149, -646.09125877833424}</string>
+														<key>nodeID</key>
+														<string>758CAA55-E951-47E0-A620-BA950BB2B59E</string>
+														<key>strokeColor</key>
+														<string>{1.000, 0.800, 0.400, 1.000}</string>
+														<key>strokeStyle</key>
+														<integer>0</integer>
+														<key>strokeWidth</key>
+														<real>2</real>
+														<key>subnodes</key>
+														<array/>
+														<key>title</key>
+														<dict>
+															<key>constrainedWidth</key>
+															<integer>300</integer>
+															<key>htmlText</key>
+															<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;a few &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;individuals &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;(like Arnold, Beth, Chris, Denise)&lt;/span&gt;&lt;/p&gt;</string>
+															<key>shrinkToFitContent</key>
+															<integer>1</integer>
+															<key>text</key>
+															<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 a few 
+\b individuals 
+\b0 (like Arnold, Beth, Chris, Denise)}</string>
+														</dict>
+													</dict>
+													<dict>
+														<key>contentAlignment</key>
+														<integer>1</integer>
+														<key>fillColor</key>
+														<string>{1.000, 1.000, 1.000, 1.000}</string>
+														<key>isDecreasingBranchThickness</key>
+														<true/>
+														<key>isDrawingFill</key>
+														<false/>
+														<key>isLeftAligned</key>
+														<false/>
+														<key>location</key>
+														<string>{1588.9668072049149, -587.09125877833424}</string>
+														<key>nodeID</key>
+														<string>843BB326-A5F6-49FC-80ED-8B0EC21FEA5B</string>
+														<key>strokeColor</key>
+														<string>{1.000, 0.800, 0.400, 1.000}</string>
+														<key>strokeStyle</key>
+														<integer>0</integer>
+														<key>strokeWidth</key>
+														<real>2</real>
+														<key>subnodes</key>
+														<array/>
+														<key>title</key>
+														<dict>
+															<key>constrainedWidth</key>
+															<integer>300</integer>
+															<key>htmlText</key>
+															<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;a few &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;properties &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;that these individuals can have.&lt;/span&gt;&lt;/p&gt;</string>
+															<key>shrinkToFitContent</key>
+															<integer>1</integer>
+															<key>text</key>
+															<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 a few 
+\b properties 
+\b0 that these individuals can have.}</string>
+														</dict>
+													</dict>
+												</array>
+												<key>title</key>
+												<dict>
+													<key>constrainedWidth</key>
+													<integer>300</integer>
+													<key>htmlText</key>
+													<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;models:&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt; a model is a simplified sketch of the world and contains:&lt;/span&gt;&lt;/p&gt;</string>
+													<key>shrinkToFitContent</key>
+													<integer>1</integer>
+													<key>text</key>
+													<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\b\fs24 \cf0 models:
+\b0  a model is a simplified sketch of the world and contains:}</string>
+												</dict>
+											</dict>
+										</array>
+										<key>title</key>
+										<dict>
+											<key>constrainedWidth</key>
+											<integer>300</integer>
+											<key>htmlText</key>
+											<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;the referential approach to meaning treats the meaning of a world is a pointer to something in the world.&lt;/p&gt;</string>
+											<key>shrinkToFitContent</key>
+											<integer>1</integer>
+											<key>text</key>
+											<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 the referential approach to meaning treats the meaning of a world is a pointer to something in the world.}</string>
+										</dict>
+									</dict>
+									<dict>
+										<key>contentAlignment</key>
+										<integer>1</integer>
+										<key>fillColor</key>
+										<string>{1.000, 1.000, 1.000, 1.000}</string>
+										<key>isDecreasingBranchThickness</key>
+										<true/>
+										<key>isDrawingFill</key>
+										<false/>
+										<key>isLeftAligned</key>
+										<false/>
+										<key>location</key>
+										<string>{895.96680720491418, -641.92459274745045}</string>
+										<key>nodeID</key>
+										<string>040767AB-E6A1-4105-86C6-37B9ADAE7D86</string>
+										<key>strokeColor</key>
+										<string>{1.000, 0.800, 0.400, 1.000}</string>
+										<key>strokeStyle</key>
+										<integer>0</integer>
+										<key>strokeWidth</key>
+										<real>4</real>
+										<key>subnodes</key>
+										<array/>
+										<key>title</key>
+										<dict>
+											<key>constrainedWidth</key>
+											<integer>300</integer>
+											<key>htmlText</key>
+											<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;Proper nouns refer to individuals in the world.&lt;/p&gt;</string>
+											<key>shrinkToFitContent</key>
+											<integer>1</integer>
+											<key>text</key>
+											<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 Proper nouns refer to individuals in the world.}</string>
+										</dict>
+									</dict>
+									<dict>
+										<key>contentAlignment</key>
+										<integer>1</integer>
+										<key>fillColor</key>
+										<string>{1.000, 1.000, 1.000, 1.000}</string>
+										<key>isDecreasingBranchThickness</key>
+										<true/>
+										<key>isDrawingFill</key>
+										<false/>
+										<key>isLeftAligned</key>
+										<false/>
+										<key>location</key>
+										<string>{895.96680720491418, -591.25792671656666}</string>
+										<key>nodeID</key>
+										<string>0BCF5E96-C5EE-4189-9300-E12B34BDD47C</string>
+										<key>strokeColor</key>
+										<string>{1.000, 0.800, 0.400, 1.000}</string>
+										<key>strokeStyle</key>
+										<integer>0</integer>
+										<key>strokeWidth</key>
+										<real>4</real>
+										<key>subnodes</key>
+										<array/>
+										<key>title</key>
+										<dict>
+											<key>constrainedWidth</key>
+											<integer>300</integer>
+											<key>htmlText</key>
+											<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;a property is something that holds of an individual or doesn&amp;apos;t. thus verb &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;point&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt; to all the individuals who have a specific property.&lt;/span&gt;&lt;/p&gt;</string>
+											<key>shrinkToFitContent</key>
+											<integer>1</integer>
+											<key>text</key>
+											<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 a property is something that holds of an individual or doesn't. thus verb 
+\b point
+\b0  to all the individuals who have a specific property.}</string>
+										</dict>
+									</dict>
+									<dict>
+										<key>contentAlignment</key>
+										<integer>1</integer>
+										<key>fillColor</key>
+										<string>{1.000, 1.000, 1.000, 1.000}</string>
+										<key>isDecreasingBranchThickness</key>
+										<true/>
+										<key>isDrawingFill</key>
+										<false/>
+										<key>isLeftAligned</key>
+										<false/>
+										<key>location</key>
+										<string>{895.96680720491418, -510.59126068568287}</string>
+										<key>nodeID</key>
+										<string>C72EB05F-3C19-46C6-A3AA-20E3B4E7BA02</string>
+										<key>strokeColor</key>
+										<string>{1.000, 0.800, 0.400, 1.000}</string>
+										<key>strokeStyle</key>
+										<integer>0</integer>
+										<key>strokeWidth</key>
+										<real>4</real>
+										<key>subnodes</key>
+										<array/>
+										<key>title</key>
+										<dict>
+											<key>constrainedWidth</key>
+											<integer>300</integer>
+											<key>htmlText</key>
+											<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;the meaning of a verb is the set of individuals which share the property associated with the verb.&lt;/p&gt;</string>
+											<key>shrinkToFitContent</key>
+											<integer>1</integer>
+											<key>text</key>
+											<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 the meaning of a verb is the set of individuals which share the property associated with the verb.}</string>
+										</dict>
+									</dict>
+									<dict>
+										<key>contentAlignment</key>
+										<integer>1</integer>
+										<key>fillColor</key>
+										<string>{1.000, 1.000, 1.000, 1.000}</string>
+										<key>isDecreasingBranchThickness</key>
+										<true/>
+										<key>isDrawingFill</key>
+										<false/>
+										<key>isLeftAligned</key>
+										<false/>
+										<key>location</key>
+										<string>{895.96680720491418, -429.92459465479908}</string>
+										<key>nodeID</key>
+										<string>5EDB6D77-A79C-4EA1-9C50-B8C4460A979E</string>
+										<key>strokeColor</key>
+										<string>{1.000, 0.800, 0.400, 1.000}</string>
+										<key>strokeStyle</key>
+										<integer>0</integer>
+										<key>strokeWidth</key>
+										<real>4</real>
+										<key>subnodes</key>
+										<array>
+											<dict>
+												<key>contentAlignment</key>
+												<integer>1</integer>
+												<key>fillColor</key>
+												<string>{1.000, 1.000, 1.000, 1.000}</string>
+												<key>isDecreasingBranchThickness</key>
+												<true/>
+												<key>isDrawingFill</key>
+												<false/>
+												<key>isLeftAligned</key>
+												<false/>
+												<key>location</key>
+												<string>{1120.9668072049144, -429.92459465479908}</string>
+												<key>nodeID</key>
+												<string>059FD207-8131-4C9A-92BE-D05E62EBDF4F</string>
+												<key>strokeColor</key>
+												<string>{1.000, 0.800, 0.400, 1.000}</string>
+												<key>strokeStyle</key>
+												<integer>0</integer>
+												<key>strokeWidth</key>
+												<real>3</real>
+												<key>subnodes</key>
+												<array/>
+												<key>title</key>
+												<dict>
+													<key>constrainedWidth</key>
+													<integer>300</integer>
+													<key>htmlText</key>
+													<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;using a compositional rule that can take &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;the meaning of a noun&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt; and &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;the meaning of a verb &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;and  get us &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;the meaning of a sentence.&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt; (where a sentence consists of the elements [Noun Verb], the meaning of the sentence is true only if the Noun refers to one of the individuals with the property described by the Verb in our model.)&lt;/span&gt;&lt;/p&gt;</string>
+													<key>shrinkToFitContent</key>
+													<integer>1</integer>
+													<key>text</key>
+													<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 using a compositional rule that can take 
+\b the meaning of a noun
+\b0  and 
+\b the meaning of a verb 
+\b0 and  get us 
+\b the meaning of a sentence.
+\b0  (where a sentence consists of the elements [Noun Verb], the meaning of the sentence is true only if the Noun refers to one of the individuals with the property described by the Verb in our model.)}</string>
+												</dict>
+											</dict>
+											<dict>
+												<key>contentAlignment</key>
+												<integer>1</integer>
+												<key>fillColor</key>
+												<string>{1.000, 1.000, 1.000, 1.000}</string>
+												<key>isDecreasingBranchThickness</key>
+												<true/>
+												<key>isDrawingFill</key>
+												<false/>
+												<key>isLeftAligned</key>
+												<false/>
+												<key>location</key>
+												<string>{1120.9668072049144, -293.42459465479908}</string>
+												<key>nodeID</key>
+												<string>2613C395-1C2B-4A14-B5CC-978C7CC1AD1E</string>
+												<key>strokeColor</key>
+												<string>{1.000, 0.800, 0.400, 1.000}</string>
+												<key>strokeStyle</key>
+												<integer>0</integer>
+												<key>strokeWidth</key>
+												<real>3</real>
+												<key>subnodes</key>
+												<array>
+													<dict>
+														<key>contentAlignment</key>
+														<integer>1</integer>
+														<key>fillColor</key>
+														<string>{1.000, 1.000, 1.000, 1.000}</string>
+														<key>isDecreasingBranchThickness</key>
+														<true/>
+														<key>isDrawingFill</key>
+														<false/>
+														<key>isLeftAligned</key>
+														<false/>
+														<key>location</key>
+														<string>{1480.9668072049149, -293.42459465479908}</string>
+														<key>nodeID</key>
+														<string>5929862E-311E-4AC7-BFBD-F0B86BEDB8AA</string>
+														<key>strokeColor</key>
+														<string>{1.000, 0.800, 0.400, 1.000}</string>
+														<key>strokeStyle</key>
+														<integer>0</integer>
+														<key>strokeWidth</key>
+														<real>2</real>
+														<key>subnodes</key>
+														<array/>
+														<key>title</key>
+														<dict>
+															<key>constrainedWidth</key>
+															<integer>300</integer>
+															<key>htmlText</key>
+															<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;simple and intuitive!&lt;/p&gt;</string>
+															<key>shrinkToFitContent</key>
+															<integer>1</integer>
+															<key>text</key>
+															<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 simple and intuitive!}</string>
+														</dict>
+													</dict>
+												</array>
+												<key>title</key>
+												<dict>
+													<key>constrainedWidth</key>
+													<integer>300</integer>
+													<key>htmlText</key>
+													<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;this compositional rule provides a meaning for our sentence now: the meaning is either TRUE or FALSE depending on what&amp;apos;s going on in our model.&lt;/p&gt;</string>
+													<key>shrinkToFitContent</key>
+													<integer>1</integer>
+													<key>text</key>
+													<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 this compositional rule provides a meaning for our sentence now: the meaning is either TRUE or FALSE depending on what's going on in our model.}</string>
+												</dict>
+											</dict>
+										</array>
+										<key>title</key>
+										<dict>
+											<key>constrainedWidth</key>
+											<integer>300</integer>
+											<key>htmlText</key>
+											<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;a principle of composition&lt;/p&gt;</string>
+											<key>shrinkToFitContent</key>
+											<integer>1</integer>
+											<key>text</key>
+											<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 a principle of composition}</string>
+										</dict>
+									</dict>
+									<dict>
+										<key>contentAlignment</key>
+										<integer>1</integer>
+										<key>fillColor</key>
+										<string>{1.000, 1.000, 1.000, 1.000}</string>
+										<key>isDecreasingBranchThickness</key>
+										<true/>
+										<key>isDrawingFill</key>
+										<false/>
+										<key>isLeftAligned</key>
+										<false/>
+										<key>location</key>
+										<string>{898.21139709025351, -174.83077498950649}</string>
+										<key>nodeID</key>
+										<string>D42B22AD-FC96-4C3B-B6D3-F08C55860A91</string>
+										<key>strokeColor</key>
+										<string>{1.000, 0.800, 0.400, 1.000}</string>
+										<key>strokeStyle</key>
+										<integer>0</integer>
+										<key>strokeWidth</key>
+										<real>4</real>
+										<key>subnodes</key>
+										<array/>
+										<key>title</key>
+										<dict>
+											<key>constrainedWidth</key>
+											<integer>300</integer>
+											<key>htmlText</key>
+											<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;conjunctures and quantifiers&lt;/p&gt;</string>
+											<key>shrinkToFitContent</key>
+											<integer>1</integer>
+											<key>text</key>
+											<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\b\fs24 \cf0 conjunctures and quantifiers}</string>
+										</dict>
+									</dict>
+								</array>
+								<key>title</key>
+								<dict>
+									<key>constrainedWidth</key>
+									<integer>300</integer>
+									<key>htmlText</key>
+									<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;a simplified semantic framework&lt;/p&gt;</string>
+									<key>shrinkToFitContent</key>
+									<integer>1</integer>
+									<key>text</key>
+									<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 a simplified semantic framework}</string>
+								</dict>
+							</dict>
+						</array>
+						<key>title</key>
+						<dict>
+							<key>constrainedWidth</key>
+							<integer>300</integer>
+							<key>htmlText</key>
+							<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;SEMANTICS&lt;/p&gt;</string>
+							<key>shrinkToFitContent</key>
+							<integer>1</integer>
+							<key>text</key>
+							<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\b\fs24 \cf0 SEMANTICS}</string>
+						</dict>
+					</dict>
+					<dict>
+						<key>contentAlignment</key>
+						<integer>1</integer>
+						<key>fillColor</key>
+						<string>{1.000, 1.000, 1.000, 1.000}</string>
+						<key>isDecreasingBranchThickness</key>
+						<true/>
+						<key>isDrawingFill</key>
+						<false/>
+						<key>isLeftAligned</key>
+						<false/>
+						<key>location</key>
+						<string>{255, 91}</string>
+						<key>nodeID</key>
+						<string>E61E2789-F37F-49DB-A7A1-5C7F8A92FE1B</string>
+						<key>strokeColor</key>
+						<string>{0.800, 1.000, 0.400, 1.000}</string>
+						<key>strokeStyle</key>
+						<integer>0</integer>
+						<key>strokeWidth</key>
+						<real>6</real>
+						<key>subnodes</key>
+						<array>
+							<dict>
+								<key>contentAlignment</key>
+								<integer>1</integer>
+								<key>fillColor</key>
+								<string>{1.000, 1.000, 1.000, 1.000}</string>
+								<key>isDecreasingBranchThickness</key>
+								<true/>
+								<key>isDrawingFill</key>
+								<false/>
+								<key>isLeftAligned</key>
+								<false/>
+								<key>location</key>
+								<string>{408, 89.890217217499412}</string>
+								<key>nodeID</key>
+								<string>6BB6D1AF-097F-4C33-8821-42536DB3A592</string>
+								<key>strokeColor</key>
+								<string>{0.800, 1.000, 0.400, 1.000}</string>
+								<key>strokeStyle</key>
+								<integer>0</integer>
+								<key>strokeWidth</key>
+								<real>5</real>
+								<key>subnodes</key>
+								<array>
+									<dict>
+										<key>contentAlignment</key>
+										<integer>1</integer>
+										<key>fillColor</key>
+										<string>{1.000, 1.000, 1.000, 1.000}</string>
+										<key>isDecreasingBranchThickness</key>
+										<true/>
+										<key>isDrawingFill</key>
+										<false/>
+										<key>isLeftAligned</key>
+										<false/>
+										<key>location</key>
+										<string>{770, 89.890217217499412}</string>
+										<key>nodeID</key>
+										<string>0EA8E338-9220-4A74-97EA-4DEFA3C3E0ED</string>
+										<key>strokeColor</key>
+										<string>{0.800, 1.000, 0.400, 1.000}</string>
+										<key>strokeStyle</key>
+										<integer>0</integer>
+										<key>strokeWidth</key>
+										<real>4</real>
+										<key>subnodes</key>
+										<array/>
+										<key>title</key>
+										<dict>
+											<key>constrainedWidth</key>
+											<integer>300</integer>
+											<key>htmlText</key>
+											<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;utterances: &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;things we actually say.&lt;/span&gt;&lt;/p&gt;</string>
+											<key>shrinkToFitContent</key>
+											<integer>1</integer>
+											<key>text</key>
+											<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\b\fs24 \cf0 utterances: 
+\b0 things we actually say.}</string>
+										</dict>
+									</dict>
+									<dict>
+										<key>contentAlignment</key>
+										<integer>1</integer>
+										<key>fillColor</key>
+										<string>{1.000, 1.000, 1.000, 1.000}</string>
+										<key>isDecreasingBranchThickness</key>
+										<true/>
+										<key>isDrawingFill</key>
+										<false/>
+										<key>isLeftAligned</key>
+										<false/>
+										<key>location</key>
+										<string>{770, 140.5568832483832}</string>
+										<key>nodeID</key>
+										<string>65B50971-D4DC-43FA-86D7-F865E920EAE7</string>
+										<key>strokeColor</key>
+										<string>{0.800, 1.000, 0.400, 1.000}</string>
+										<key>strokeStyle</key>
+										<integer>0</integer>
+										<key>strokeWidth</key>
+										<real>4</real>
+										<key>subnodes</key>
+										<array/>
+										<key>title</key>
+										<dict>
+											<key>constrainedWidth</key>
+											<integer>300</integer>
+											<key>htmlText</key>
+											<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;every time we speak, we are in a certain &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;context:&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt; a time, a place, who we are with.&lt;/span&gt;&lt;/p&gt;</string>
+											<key>shrinkToFitContent</key>
+											<integer>1</integer>
+											<key>text</key>
+											<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 every time we speak, we are in a certain 
+\b context:
+\b0  a time, a place, who we are with.}</string>
+										</dict>
+									</dict>
+									<dict>
+										<key>contentAlignment</key>
+										<integer>1</integer>
+										<key>fillColor</key>
+										<string>{1.000, 1.000, 1.000, 1.000}</string>
+										<key>isDecreasingBranchThickness</key>
+										<true/>
+										<key>isDrawingFill</key>
+										<false/>
+										<key>isLeftAligned</key>
+										<false/>
+										<key>location</key>
+										<string>{770, 206.22354927926699}</string>
+										<key>nodeID</key>
+										<string>892307CE-55CC-40BC-AB60-B0BB0B97DE8E</string>
+										<key>strokeColor</key>
+										<string>{0.800, 1.000, 0.400, 1.000}</string>
+										<key>strokeStyle</key>
+										<integer>0</integer>
+										<key>strokeWidth</key>
+										<real>4</real>
+										<key>subnodes</key>
+										<array/>
+										<key>title</key>
+										<dict>
+											<key>constrainedWidth</key>
+											<integer>300</integer>
+											<key>htmlText</key>
+											<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;utterance can be &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;shaped by context&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt; and utterances can &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;shape the context.&lt;/span&gt;&lt;/p&gt;</string>
+											<key>shrinkToFitContent</key>
+											<integer>1</integer>
+											<key>text</key>
+											<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 utterance can be 
+\b shaped by context
+\b0  and utterances can 
+\b shape the context.}</string>
+										</dict>
+									</dict>
+								</array>
+								<key>title</key>
+								<dict>
+									<key>constrainedWidth</key>
+									<integer>300</integer>
+									<key>htmlText</key>
+									<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;Pragmatics is the study meaning in context… the meaning of things we actually say in conversation.&lt;/p&gt;</string>
+									<key>shrinkToFitContent</key>
+									<integer>1</integer>
+									<key>text</key>
+									<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 Pragmatics is the study meaning in context\'85 the meaning of things we actually say in conversation.}</string>
+								</dict>
+							</dict>
+							<dict>
+								<key>contentAlignment</key>
+								<integer>1</integer>
+								<key>fillColor</key>
+								<string>{1.000, 1.000, 1.000, 1.000}</string>
+								<key>isDecreasingBranchThickness</key>
+								<true/>
+								<key>isDrawingFill</key>
+								<false/>
+								<key>isLeftAligned</key>
+								<false/>
+								<key>location</key>
+								<string>{418.92008917624821, 297.54593807620813}</string>
+								<key>nodeID</key>
+								<string>DA487A10-78C1-4B9E-89D6-D995F81F7F00</string>
+								<key>strokeColor</key>
+								<string>{0.800, 1.000, 0.400, 1.000}</string>
+								<key>strokeStyle</key>
+								<integer>0</integer>
+								<key>strokeWidth</key>
+								<real>5</real>
+								<key>subnodes</key>
+								<array>
+									<dict>
+										<key>contentAlignment</key>
+										<integer>1</integer>
+										<key>fillColor</key>
+										<string>{1.000, 1.000, 1.000, 1.000}</string>
+										<key>isDecreasingBranchThickness</key>
+										<true/>
+										<key>isDrawingFill</key>
+										<false/>
+										<key>isLeftAligned</key>
+										<false/>
+										<key>location</key>
+										<string>{615.92008917624821, 297.54593807620813}</string>
+										<key>nodeID</key>
+										<string>73E2A5E7-770E-49FD-8080-D3157577051D</string>
+										<key>strokeColor</key>
+										<string>{0.800, 1.000, 0.400, 1.000}</string>
+										<key>strokeStyle</key>
+										<integer>0</integer>
+										<key>strokeWidth</key>
+										<real>4</real>
+										<key>subnodes</key>
+										<array>
+											<dict>
+												<key>contentAlignment</key>
+												<integer>1</integer>
+												<key>fillColor</key>
+												<string>{1.000, 1.000, 1.000, 1.000}</string>
+												<key>isDecreasingBranchThickness</key>
+												<true/>
+												<key>isDrawingFill</key>
+												<false/>
+												<key>isLeftAligned</key>
+												<false/>
+												<key>location</key>
+												<string>{1270.1105757610906, 122.1352321061695}</string>
+												<key>nodeID</key>
+												<string>45F5204F-4569-4FF7-98F9-00EBC4FF1EA4</string>
+												<key>strokeColor</key>
+												<string>{0.800, 1.000, 0.400, 1.000}</string>
+												<key>strokeStyle</key>
+												<integer>0</integer>
+												<key>strokeWidth</key>
+												<real>3</real>
+												<key>subnodes</key>
+												<array>
+													<dict>
+														<key>contentAlignment</key>
+														<integer>1</integer>
+														<key>fillColor</key>
+														<string>{1.000, 1.000, 1.000, 1.000}</string>
+														<key>isDecreasingBranchThickness</key>
+														<true/>
+														<key>isDrawingFill</key>
+														<false/>
+														<key>isLeftAligned</key>
+														<false/>
+														<key>location</key>
+														<string>{1615.1105757610906, 122.1352321061695}</string>
+														<key>nodeID</key>
+														<string>45EBBDC4-4B2B-4320-BB5B-47F6EFCB0B28</string>
+														<key>strokeColor</key>
+														<string>{0.800, 1.000, 0.400, 1.000}</string>
+														<key>strokeStyle</key>
+														<integer>0</integer>
+														<key>strokeWidth</key>
+														<real>2</real>
+														<key>subnodes</key>
+														<array/>
+														<key>title</key>
+														<dict>
+															<key>constrainedWidth</key>
+															<integer>300</integer>
+															<key>htmlText</key>
+															<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;indexicals: &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;refer to speaker (I), hearer (you), the utterance location (here) and the utterance time (now).&lt;/span&gt;&lt;/p&gt;</string>
+															<key>shrinkToFitContent</key>
+															<integer>1</integer>
+															<key>text</key>
+															<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\b\fs24 \cf0 indexicals: 
+\b0 refer to speaker (I), hearer (you), the utterance location (here) and the utterance time (now).}</string>
+														</dict>
+													</dict>
+													<dict>
+														<key>contentAlignment</key>
+														<integer>1</integer>
+														<key>fillColor</key>
+														<string>{1.000, 1.000, 1.000, 1.000}</string>
+														<key>isDecreasingBranchThickness</key>
+														<true/>
+														<key>isDrawingFill</key>
+														<false/>
+														<key>isLeftAligned</key>
+														<false/>
+														<key>location</key>
+														<string>{1615.1105757610906, 196.1352321061695}</string>
+														<key>nodeID</key>
+														<string>BF7710D1-B120-4B72-998D-DC68FB59ACD7</string>
+														<key>strokeColor</key>
+														<string>{0.800, 1.000, 0.400, 1.000}</string>
+														<key>strokeStyle</key>
+														<integer>0</integer>
+														<key>strokeWidth</key>
+														<real>2</real>
+														<key>subnodes</key>
+														<array/>
+														<key>title</key>
+														<dict>
+															<key>constrainedWidth</key>
+															<integer>300</integer>
+															<key>htmlText</key>
+															<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;demonstratives: &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;point to things in the context (that, this, these, those)&lt;/span&gt;&lt;/p&gt;</string>
+															<key>shrinkToFitContent</key>
+															<integer>1</integer>
+															<key>text</key>
+															<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\b\fs24 \cf0 demonstratives: 
+\b0 point to things in the context (that, this, these, those)}</string>
+														</dict>
+													</dict>
+													<dict>
+														<key>contentAlignment</key>
+														<integer>1</integer>
+														<key>fillColor</key>
+														<string>{1.000, 1.000, 1.000, 1.000}</string>
+														<key>isDecreasingBranchThickness</key>
+														<true/>
+														<key>isDrawingFill</key>
+														<false/>
+														<key>isLeftAligned</key>
+														<false/>
+														<key>location</key>
+														<string>{1615.1105757610906, 255.1352321061695}</string>
+														<key>nodeID</key>
+														<string>068C97B0-D9C8-45CA-8441-187C28082A8F</string>
+														<key>strokeColor</key>
+														<string>{0.800, 1.000, 0.400, 1.000}</string>
+														<key>strokeStyle</key>
+														<integer>0</integer>
+														<key>strokeWidth</key>
+														<real>2</real>
+														<key>subnodes</key>
+														<array/>
+														<key>title</key>
+														<dict>
+															<key>constrainedWidth</key>
+															<integer>300</integer>
+															<key>htmlText</key>
+															<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;third person pronouns &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;point to people/things in the context or previous utterances.&lt;/span&gt;&lt;/p&gt;</string>
+															<key>shrinkToFitContent</key>
+															<integer>1</integer>
+															<key>text</key>
+															<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\b\fs24 \cf0 third person pronouns 
+\b0 point to people/things in the context or previous utterances.}</string>
+														</dict>
+													</dict>
+												</array>
+												<key>title</key>
+												<dict>
+													<key>constrainedWidth</key>
+													<integer>300</integer>
+													<key>htmlText</key>
+													<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;certain words in languages depend on the external context of the conversation to have a meaning:&lt;/p&gt;</string>
+													<key>shrinkToFitContent</key>
+													<integer>1</integer>
+													<key>text</key>
+													<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 certain words in languages depend on the external context of the conversation to have a meaning:}</string>
+												</dict>
+											</dict>
+										</array>
+										<key>title</key>
+										<dict>
+											<key>constrainedWidth</key>
+											<integer>300</integer>
+											<key>htmlText</key>
+											<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;context shapes the meaning of utterances&lt;/p&gt;</string>
+											<key>shrinkToFitContent</key>
+											<integer>1</integer>
+											<key>text</key>
+											<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 context shapes the meaning of utterances}</string>
+										</dict>
+									</dict>
+									<dict>
+										<key>contentAlignment</key>
+										<integer>1</integer>
+										<key>fillColor</key>
+										<string>{1.000, 1.000, 1.000, 1.000}</string>
+										<key>isDecreasingBranchThickness</key>
+										<true/>
+										<key>isDrawingFill</key>
+										<false/>
+										<key>isLeftAligned</key>
+										<false/>
+										<key>location</key>
+										<string>{615.92008917624821, 348.21260410709192}</string>
+										<key>nodeID</key>
+										<string>7A593FB8-51C3-40CD-BC22-43E157EA2C9C</string>
+										<key>strokeColor</key>
+										<string>{0.800, 1.000, 0.400, 1.000}</string>
+										<key>strokeStyle</key>
+										<integer>0</integer>
+										<key>strokeWidth</key>
+										<real>4</real>
+										<key>subnodes</key>
+										<array>
+											<dict>
+												<key>contentAlignment</key>
+												<integer>1</integer>
+												<key>fillColor</key>
+												<string>{1.000, 1.000, 1.000, 1.000}</string>
+												<key>isDecreasingBranchThickness</key>
+												<true/>
+												<key>isDrawingFill</key>
+												<false/>
+												<key>isLeftAligned</key>
+												<false/>
+												<key>location</key>
+												<string>{972.9349119251558, 322.63991413063786}</string>
+												<key>nodeID</key>
+												<string>A05DE705-C524-40A4-B06F-111F9F3A6D19</string>
+												<key>strokeColor</key>
+												<string>{0.800, 1.000, 0.400, 1.000}</string>
+												<key>strokeStyle</key>
+												<integer>0</integer>
+												<key>strokeWidth</key>
+												<real>3</real>
+												<key>subnodes</key>
+												<array>
+													<dict>
+														<key>contentAlignment</key>
+														<integer>1</integer>
+														<key>fillColor</key>
+														<string>{1.000, 1.000, 1.000, 1.000}</string>
+														<key>isDecreasingBranchThickness</key>
+														<true/>
+														<key>isDrawingFill</key>
+														<false/>
+														<key>isLeftAligned</key>
+														<false/>
+														<key>location</key>
+														<string>{1319.9349119251558, 322.63991413063786}</string>
+														<key>nodeID</key>
+														<string>20454A8D-B15C-405C-AB04-7B11DC444C5F</string>
+														<key>strokeColor</key>
+														<string>{0.800, 1.000, 0.400, 1.000}</string>
+														<key>strokeStyle</key>
+														<integer>0</integer>
+														<key>strokeWidth</key>
+														<real>2</real>
+														<key>subnodes</key>
+														<array/>
+														<key>title</key>
+														<dict>
+															<key>constrainedWidth</key>
+															<integer>300</integer>
+															<key>htmlText</key>
+															<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;assertive speech act &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;(commit to the truth): i affirm that…&lt;/span&gt;&lt;/p&gt;</string>
+															<key>shrinkToFitContent</key>
+															<integer>1</integer>
+															<key>text</key>
+															<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\b\fs24 \cf0 assertive speech act 
+\b0 (commit to the truth): i affirm that\'85}</string>
+														</dict>
+													</dict>
+													<dict>
+														<key>contentAlignment</key>
+														<integer>1</integer>
+														<key>fillColor</key>
+														<string>{1.000, 1.000, 1.000, 1.000}</string>
+														<key>isDecreasingBranchThickness</key>
+														<true/>
+														<key>isDrawingFill</key>
+														<false/>
+														<key>isLeftAligned</key>
+														<false/>
+														<key>location</key>
+														<string>{1319.9349119251558, 381.63991413063786}</string>
+														<key>nodeID</key>
+														<string>7354E8A7-796B-4658-8EA8-FB9EF1104B82</string>
+														<key>strokeColor</key>
+														<string>{0.800, 1.000, 0.400, 1.000}</string>
+														<key>strokeStyle</key>
+														<integer>0</integer>
+														<key>strokeWidth</key>
+														<real>2</real>
+														<key>subnodes</key>
+														<array/>
+														<key>title</key>
+														<dict>
+															<key>constrainedWidth</key>
+															<integer>300</integer>
+															<key>htmlText</key>
+															<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;expressive speech act &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;(expresses attitude): i regret that…&lt;/span&gt;&lt;/p&gt;</string>
+															<key>shrinkToFitContent</key>
+															<integer>1</integer>
+															<key>text</key>
+															<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\b\fs24 \cf0 expressive speech act 
+\b0 (expresses attitude): i regret that\'85}</string>
+														</dict>
+													</dict>
+													<dict>
+														<key>contentAlignment</key>
+														<integer>1</integer>
+														<key>fillColor</key>
+														<string>{1.000, 1.000, 1.000, 1.000}</string>
+														<key>isDecreasingBranchThickness</key>
+														<true/>
+														<key>isDrawingFill</key>
+														<false/>
+														<key>isLeftAligned</key>
+														<false/>
+														<key>location</key>
+														<string>{1319.9349119251558, 440.63991413063786}</string>
+														<key>nodeID</key>
+														<string>CE650635-D89B-4929-97B5-AC08568463C4</string>
+														<key>strokeColor</key>
+														<string>{0.800, 1.000, 0.400, 1.000}</string>
+														<key>strokeStyle</key>
+														<integer>0</integer>
+														<key>strokeWidth</key>
+														<real>2</real>
+														<key>subnodes</key>
+														<array/>
+														<key>title</key>
+														<dict>
+															<key>constrainedWidth</key>
+															<integer>300</integer>
+															<key>htmlText</key>
+															<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;declarative speech act &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;(alters external context): i now pronounce you man and wife. i declare you innocent of all charges.&lt;/span&gt;&lt;/p&gt;</string>
+															<key>shrinkToFitContent</key>
+															<integer>1</integer>
+															<key>text</key>
+															<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\b\fs24 \cf0 declarative speech act 
+\b0 (alters external context): i now pronounce you man and wife. i declare you innocent of all charges.}</string>
+														</dict>
+													</dict>
+												</array>
+												<key>title</key>
+												<dict>
+													<key>constrainedWidth</key>
+													<integer>300</integer>
+													<key>htmlText</key>
+													<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;certain words/phrases in languages can shape the context and perform actions. we call these &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;speech acts.&lt;/span&gt;&lt;/p&gt;</string>
+													<key>shrinkToFitContent</key>
+													<integer>1</integer>
+													<key>text</key>
+													<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 certain words/phrases in languages can shape the context and perform actions. we call these 
+\b speech acts.}</string>
+												</dict>
+											</dict>
+										</array>
+										<key>title</key>
+										<dict>
+											<key>constrainedWidth</key>
+											<integer>300</integer>
+											<key>htmlText</key>
+											<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;utterances shape context&lt;/p&gt;</string>
+											<key>shrinkToFitContent</key>
+											<integer>1</integer>
+											<key>text</key>
+											<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 utterances shape context}</string>
+										</dict>
+									</dict>
+									<dict>
+										<key>contentAlignment</key>
+										<integer>1</integer>
+										<key>fillColor</key>
+										<string>{1.000, 1.000, 1.000, 1.000}</string>
+										<key>isDecreasingBranchThickness</key>
+										<true/>
+										<key>isDrawingFill</key>
+										<false/>
+										<key>isLeftAligned</key>
+										<false/>
+										<key>location</key>
+										<string>{615.92008917624821, 398.87927013797571}</string>
+										<key>nodeID</key>
+										<string>C5AD4CB9-D187-48BE-B48F-620797949154</string>
+										<key>strokeColor</key>
+										<string>{0.800, 1.000, 0.400, 1.000}</string>
+										<key>strokeStyle</key>
+										<integer>0</integer>
+										<key>strokeWidth</key>
+										<real>4</real>
+										<key>subnodes</key>
+										<array>
+											<dict>
+												<key>contentAlignment</key>
+												<integer>1</integer>
+												<key>fillColor</key>
+												<string>{1.000, 1.000, 1.000, 1.000}</string>
+												<key>isDecreasingBranchThickness</key>
+												<true/>
+												<key>isDrawingFill</key>
+												<false/>
+												<key>isLeftAligned</key>
+												<false/>
+												<key>location</key>
+												<string>{897.92008917624821, 398.87927013797571}</string>
+												<key>nodeID</key>
+												<string>2CD3CAFC-8F01-4B31-B547-E4AC1926C90A</string>
+												<key>strokeColor</key>
+												<string>{0.800, 1.000, 0.400, 1.000}</string>
+												<key>strokeStyle</key>
+												<integer>0</integer>
+												<key>strokeWidth</key>
+												<real>3</real>
+												<key>subnodes</key>
+												<array/>
+												<key>title</key>
+												<dict>
+													<key>constrainedWidth</key>
+													<integer>300</integer>
+													<key>htmlText</key>
+													<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;conversational participants: at least two, a speaker and a listener&lt;/p&gt;</string>
+													<key>shrinkToFitContent</key>
+													<integer>1</integer>
+													<key>text</key>
+													<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 conversational participants: at least two, a speaker and a listener}</string>
+												</dict>
+											</dict>
+											<dict>
+												<key>contentAlignment</key>
+												<integer>1</integer>
+												<key>fillColor</key>
+												<string>{1.000, 1.000, 1.000, 1.000}</string>
+												<key>isDecreasingBranchThickness</key>
+												<true/>
+												<key>isDrawingFill</key>
+												<false/>
+												<key>isLeftAligned</key>
+												<false/>
+												<key>location</key>
+												<string>{897.92008917624821, 460.37927013797571}</string>
+												<key>nodeID</key>
+												<string>A5E6EEC4-3C65-4584-B10D-0374077082D3</string>
+												<key>strokeColor</key>
+												<string>{0.800, 1.000, 0.400, 1.000}</string>
+												<key>strokeStyle</key>
+												<integer>0</integer>
+												<key>strokeWidth</key>
+												<real>3</real>
+												<key>subnodes</key>
+												<array/>
+												<key>title</key>
+												<dict>
+													<key>constrainedWidth</key>
+													<integer>300</integer>
+													<key>htmlText</key>
+													<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;conversational topic: two broad categories, person-centred and world-centred.&lt;/p&gt;</string>
+													<key>shrinkToFitContent</key>
+													<integer>1</integer>
+													<key>text</key>
+													<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 conversational topic: two broad categories, person-centred and world-centred.}</string>
+												</dict>
+											</dict>
+											<dict>
+												<key>contentAlignment</key>
+												<integer>1</integer>
+												<key>fillColor</key>
+												<string>{1.000, 1.000, 1.000, 1.000}</string>
+												<key>isDecreasingBranchThickness</key>
+												<true/>
+												<key>isDrawingFill</key>
+												<false/>
+												<key>isLeftAligned</key>
+												<false/>
+												<key>location</key>
+												<string>{897.92008917624821, 521.87927013797571}</string>
+												<key>nodeID</key>
+												<string>DBC75F09-0BCB-4899-ADDC-76B425D547F5</string>
+												<key>strokeColor</key>
+												<string>{0.800, 1.000, 0.400, 1.000}</string>
+												<key>strokeStyle</key>
+												<integer>0</integer>
+												<key>strokeWidth</key>
+												<real>3</real>
+												<key>subnodes</key>
+												<array/>
+												<key>title</key>
+												<dict>
+													<key>constrainedWidth</key>
+													<integer>300</integer>
+													<key>htmlText</key>
+													<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;conversational goal: two main goals, exchange information or establish/maintain social bonds.&lt;/p&gt;</string>
+													<key>shrinkToFitContent</key>
+													<integer>1</integer>
+													<key>text</key>
+													<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 conversational goal: two main goals, exchange information or establish/maintain social bonds.}</string>
+												</dict>
+											</dict>
+											<dict>
+												<key>contentAlignment</key>
+												<integer>1</integer>
+												<key>fillColor</key>
+												<string>{1.000, 1.000, 1.000, 1.000}</string>
+												<key>isDecreasingBranchThickness</key>
+												<true/>
+												<key>isDrawingFill</key>
+												<false/>
+												<key>isLeftAligned</key>
+												<false/>
+												<key>location</key>
+												<string>{897.92008917624821, 583.37927013797571}</string>
+												<key>nodeID</key>
+												<string>3C8079E7-86F8-46F1-B48F-85014E5FA73D</string>
+												<key>strokeColor</key>
+												<string>{0.800, 1.000, 0.400, 1.000}</string>
+												<key>strokeStyle</key>
+												<integer>0</integer>
+												<key>strokeWidth</key>
+												<real>3</real>
+												<key>subnodes</key>
+												<array>
+													<dict>
+														<key>contentAlignment</key>
+														<integer>1</integer>
+														<key>fillColor</key>
+														<string>{1.000, 1.000, 1.000, 1.000}</string>
+														<key>isDecreasingBranchThickness</key>
+														<true/>
+														<key>isDrawingFill</key>
+														<false/>
+														<key>isLeftAligned</key>
+														<false/>
+														<key>location</key>
+														<string>{1240.9200891762482, 583.37927013797571}</string>
+														<key>nodeID</key>
+														<string>A6DB723E-4C27-4C39-8279-BDE64D1A5C21</string>
+														<key>strokeColor</key>
+														<string>{0.800, 1.000, 0.400, 1.000}</string>
+														<key>strokeStyle</key>
+														<integer>0</integer>
+														<key>strokeWidth</key>
+														<real>2</real>
+														<key>subnodes</key>
+														<array>
+															<dict>
+																<key>contentAlignment</key>
+																<integer>1</integer>
+																<key>fillColor</key>
+																<string>{1.000, 1.000, 1.000, 1.000}</string>
+																<key>isDecreasingBranchThickness</key>
+																<true/>
+																<key>isDrawingFill</key>
+																<false/>
+																<key>isLeftAligned</key>
+																<false/>
+																<key>location</key>
+																<string>{1592.9200891762482, 583.37927013797571}</string>
+																<key>nodeID</key>
+																<string>38C83872-8396-4028-9862-16A369950A58</string>
+																<key>strokeColor</key>
+																<string>{0.800, 1.000, 0.400, 1.000}</string>
+																<key>strokeStyle</key>
+																<integer>0</integer>
+																<key>strokeWidth</key>
+																<real>1</real>
+																<key>subnodes</key>
+																<array/>
+																<key>title</key>
+																<dict>
+																	<key>constrainedWidth</key>
+																	<integer>300</integer>
+																	<key>htmlText</key>
+																	<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;cooperative principle: &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;we assume the person we are speaking with is making the best contribution possible.&lt;/span&gt;&lt;/p&gt;</string>
+																	<key>shrinkToFitContent</key>
+																	<integer>1</integer>
+																	<key>text</key>
+																	<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\b\fs24 \cf0 cooperative principle: 
+\b0 we assume the person we are speaking with is making the best contribution possible.}</string>
+																</dict>
+															</dict>
+															<dict>
+																<key>contentAlignment</key>
+																<integer>1</integer>
+																<key>fillColor</key>
+																<string>{1.000, 1.000, 1.000, 1.000}</string>
+																<key>isDecreasingBranchThickness</key>
+																<true/>
+																<key>isDrawingFill</key>
+																<false/>
+																<key>isLeftAligned</key>
+																<false/>
+																<key>location</key>
+																<string>{1592.9200891762482, 655.7126031534176}</string>
+																<key>nodeID</key>
+																<string>363B4289-99A7-4679-9C57-B36D1BB229DF</string>
+																<key>strokeColor</key>
+																<string>{0.800, 1.000, 0.400, 1.000}</string>
+																<key>strokeStyle</key>
+																<integer>0</integer>
+																<key>strokeWidth</key>
+																<real>1</real>
+																<key>subnodes</key>
+																<array>
+																	<dict>
+																		<key>contentAlignment</key>
+																		<integer>1</integer>
+																		<key>fillColor</key>
+																		<string>{1.000, 1.000, 1.000, 1.000}</string>
+																		<key>isDecreasingBranchThickness</key>
+																		<true/>
+																		<key>isDrawingFill</key>
+																		<false/>
+																		<key>isLeftAligned</key>
+																		<false/>
+																		<key>location</key>
+																		<string>{1871.9200891762482, 655.7126031534176}</string>
+																		<key>nodeID</key>
+																		<string>E3E460D8-3840-4850-AF5C-FAD6142B6269</string>
+																		<key>strokeColor</key>
+																		<string>{0.800, 1.000, 0.400, 1.000}</string>
+																		<key>strokeStyle</key>
+																		<integer>0</integer>
+																		<key>strokeWidth</key>
+																		<real>1</real>
+																		<key>subnodes</key>
+																		<array>
+																			<dict>
+																				<key>contentAlignment</key>
+																				<integer>1</integer>
+																				<key>fillColor</key>
+																				<string>{1.000, 1.000, 1.000, 1.000}</string>
+																				<key>isDecreasingBranchThickness</key>
+																				<true/>
+																				<key>isDrawingFill</key>
+																				<false/>
+																				<key>isLeftAligned</key>
+																				<false/>
+																				<key>location</key>
+																				<string>{2106.9200891762484, 655.7126031534176}</string>
+																				<key>nodeID</key>
+																				<string>B5FEE9A2-2910-47FA-8B06-1B5218CB713E</string>
+																				<key>strokeColor</key>
+																				<string>{0.800, 1.000, 0.400, 1.000}</string>
+																				<key>strokeStyle</key>
+																				<integer>0</integer>
+																				<key>strokeWidth</key>
+																				<real>1</real>
+																				<key>subnodes</key>
+																				<array/>
+																				<key>title</key>
+																				<dict>
+																					<key>constrainedWidth</key>
+																					<integer>300</integer>
+																					<key>htmlText</key>
+																					<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;1. the maxim of quality: be truthful&lt;/p&gt;</string>
+																					<key>shrinkToFitContent</key>
+																					<integer>1</integer>
+																					<key>text</key>
+																					<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 1. the maxim of quality: be truthful}</string>
+																				</dict>
+																			</dict>
+																			<dict>
+																				<key>contentAlignment</key>
+																				<integer>1</integer>
+																				<key>fillColor</key>
+																				<string>{1.000, 1.000, 1.000, 1.000}</string>
+																				<key>isDecreasingBranchThickness</key>
+																				<true/>
+																				<key>isDrawingFill</key>
+																				<false/>
+																				<key>isLeftAligned</key>
+																				<false/>
+																				<key>location</key>
+																				<string>{2106.9200891762484, 695.9626031534176}</string>
+																				<key>nodeID</key>
+																				<string>22116DAD-4FB5-445F-B5CF-D26560A0509E</string>
+																				<key>strokeColor</key>
+																				<string>{0.800, 1.000, 0.400, 1.000}</string>
+																				<key>strokeStyle</key>
+																				<integer>0</integer>
+																				<key>strokeWidth</key>
+																				<real>1</real>
+																				<key>subnodes</key>
+																				<array/>
+																				<key>title</key>
+																				<dict>
+																					<key>constrainedWidth</key>
+																					<integer>300</integer>
+																					<key>htmlText</key>
+																					<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;2. the maxim of quantity: be informative&lt;/p&gt;</string>
+																					<key>shrinkToFitContent</key>
+																					<integer>1</integer>
+																					<key>text</key>
+																					<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 2. the maxim of quantity: be informative}</string>
+																				</dict>
+																			</dict>
+																			<dict>
+																				<key>contentAlignment</key>
+																				<integer>1</integer>
+																				<key>fillColor</key>
+																				<string>{1.000, 1.000, 1.000, 1.000}</string>
+																				<key>isDecreasingBranchThickness</key>
+																				<true/>
+																				<key>isDrawingFill</key>
+																				<false/>
+																				<key>isLeftAligned</key>
+																				<false/>
+																				<key>location</key>
+																				<string>{2106.9200891762484, 736.2126031534176}</string>
+																				<key>nodeID</key>
+																				<string>6F46BA4C-AC93-42BE-876A-C31602B9250B</string>
+																				<key>strokeColor</key>
+																				<string>{0.800, 1.000, 0.400, 1.000}</string>
+																				<key>strokeStyle</key>
+																				<integer>0</integer>
+																				<key>strokeWidth</key>
+																				<real>1</real>
+																				<key>subnodes</key>
+																				<array/>
+																				<key>title</key>
+																				<dict>
+																					<key>constrainedWidth</key>
+																					<integer>300</integer>
+																					<key>htmlText</key>
+																					<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;3. the maxim of relevance: be relevant &lt;/p&gt;</string>
+																					<key>shrinkToFitContent</key>
+																					<integer>1</integer>
+																					<key>text</key>
+																					<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 3. the maxim of relevance: be relevant }</string>
+																				</dict>
+																			</dict>
+																			<dict>
+																				<key>contentAlignment</key>
+																				<integer>1</integer>
+																				<key>fillColor</key>
+																				<string>{1.000, 1.000, 1.000, 1.000}</string>
+																				<key>isDecreasingBranchThickness</key>
+																				<true/>
+																				<key>isDrawingFill</key>
+																				<false/>
+																				<key>isLeftAligned</key>
+																				<false/>
+																				<key>location</key>
+																				<string>{2106.9200891762484, 776.4626031534176}</string>
+																				<key>nodeID</key>
+																				<string>6E10CF11-4AB8-463F-83CB-2042DB8E1FC7</string>
+																				<key>strokeColor</key>
+																				<string>{0.800, 1.000, 0.400, 1.000}</string>
+																				<key>strokeStyle</key>
+																				<integer>0</integer>
+																				<key>strokeWidth</key>
+																				<real>1</real>
+																				<key>subnodes</key>
+																				<array/>
+																				<key>title</key>
+																				<dict>
+																					<key>constrainedWidth</key>
+																					<integer>300</integer>
+																					<key>htmlText</key>
+																					<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;4. the maxim of manner: be clear&lt;/p&gt;</string>
+																					<key>shrinkToFitContent</key>
+																					<integer>1</integer>
+																					<key>text</key>
+																					<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 4. the maxim of manner: be clear}</string>
+																				</dict>
+																			</dict>
+																			<dict>
+																				<key>contentAlignment</key>
+																				<integer>1</integer>
+																				<key>fillColor</key>
+																				<string>{1.000, 1.000, 1.000, 1.000}</string>
+																				<key>isDecreasingBranchThickness</key>
+																				<true/>
+																				<key>isDrawingFill</key>
+																				<false/>
+																				<key>isLeftAligned</key>
+																				<false/>
+																				<key>location</key>
+																				<string>{2106.9200891762484, 816.7126031534176}</string>
+																				<key>nodeID</key>
+																				<string>037D6549-171A-41D0-A904-4F929A5246E1</string>
+																				<key>strokeColor</key>
+																				<string>{0.800, 1.000, 0.400, 1.000}</string>
+																				<key>strokeStyle</key>
+																				<integer>0</integer>
+																				<key>strokeWidth</key>
+																				<real>1</real>
+																				<key>subnodes</key>
+																				<array/>
+																				<key>title</key>
+																				<dict>
+																					<key>constrainedWidth</key>
+																					<integer>300</integer>
+																					<key>htmlText</key>
+																					<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;these maxims should not be interpreted as advice for having a good conversation. we assume that these maxims are the &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;default&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt; setting. following the maxims is what leads to saying one thing, but &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;implying&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt; something else. leas to &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;conversational implicatures.&lt;/span&gt;&lt;/p&gt;</string>
+																					<key>shrinkToFitContent</key>
+																					<integer>1</integer>
+																					<key>text</key>
+																					<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 these maxims should not be interpreted as advice for having a good conversation. we assume that these maxims are the 
+\b default
+\b0  setting. following the maxims is what leads to saying one thing, but 
+\b implying
+\b0  something else. leas to 
+\b conversational implicatures.}</string>
+																				</dict>
+																			</dict>
+																		</array>
+																		<key>title</key>
+																		<dict>
+																			<key>constrainedWidth</key>
+																			<integer>300</integer>
+																			<key>htmlText</key>
+																			<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;four &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;conventional maxims:&lt;/span&gt;&lt;/p&gt;</string>
+																			<key>shrinkToFitContent</key>
+																			<integer>1</integer>
+																			<key>text</key>
+																			<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 four 
+\b conventional maxims:}</string>
+																		</dict>
+																	</dict>
+																</array>
+																<key>title</key>
+																<dict>
+																	<key>constrainedWidth</key>
+																	<integer>300</integer>
+																	<key>htmlText</key>
+																	<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;how to make the best contribution?&lt;/p&gt;</string>
+																	<key>shrinkToFitContent</key>
+																	<integer>1</integer>
+																	<key>text</key>
+																	<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 how to make the best contribution?}</string>
+																</dict>
+															</dict>
+														</array>
+														<key>title</key>
+														<dict>
+															<key>constrainedWidth</key>
+															<integer>300</integer>
+															<key>htmlText</key>
+															<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;conversation is a &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;social interaction &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;and like all social interactions it follows certain&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt; social conventions.&lt;/span&gt;&lt;/p&gt;</string>
+															<key>shrinkToFitContent</key>
+															<integer>1</integer>
+															<key>text</key>
+															<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 conversation is a 
+\b social interaction 
+\b0 and like all social interactions it follows certain
+\b  social conventions.}</string>
+														</dict>
+													</dict>
+												</array>
+												<key>title</key>
+												<dict>
+													<key>constrainedWidth</key>
+													<integer>300</integer>
+													<key>htmlText</key>
+													<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;conversational strategy: &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;make the best contribution you can&lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt; and make it at the best time.&lt;/span&gt;&lt;/p&gt;</string>
+													<key>shrinkToFitContent</key>
+													<integer>1</integer>
+													<key>text</key>
+													<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 conversational strategy: 
+\b make the best contribution you can
+\b0  and make it at the best time.}</string>
+												</dict>
+											</dict>
+										</array>
+										<key>title</key>
+										<dict>
+											<key>constrainedWidth</key>
+											<integer>300</integer>
+											<key>htmlText</key>
+											<string>&lt;p&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;we speak most of our utterances in &lt;/span&gt;&lt;span style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;conversation.&lt;/span&gt;&lt;/p&gt;</string>
+											<key>shrinkToFitContent</key>
+											<integer>1</integer>
+											<key>text</key>
+											<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 we speak most of our utterances in 
+\b conversation.}</string>
+										</dict>
+									</dict>
+								</array>
+								<key>title</key>
+								<dict>
+									<key>constrainedWidth</key>
+									<integer>300</integer>
+									<key>htmlText</key>
+									<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;Utterances in context&lt;/p&gt;</string>
+									<key>shrinkToFitContent</key>
+									<integer>1</integer>
+									<key>text</key>
+									<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf0 Utterances in context}</string>
+								</dict>
+							</dict>
+						</array>
+						<key>title</key>
+						<dict>
+							<key>constrainedWidth</key>
+							<integer>300</integer>
+							<key>htmlText</key>
+							<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: bold 12px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande-Bold"; '&gt;PRAGMATICS&lt;/p&gt;</string>
+							<key>shrinkToFitContent</key>
+							<integer>1</integer>
+							<key>text</key>
+							<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\b\fs24 \cf0 PRAGMATICS}</string>
+						</dict>
+					</dict>
+				</array>
+				<key>title</key>
+				<dict>
+					<key>constrainedWidth</key>
+					<integer>300</integer>
+					<key>htmlText</key>
+					<string>&lt;p style='color: rgba(0, 0, 0, 1.000000); font: 13px "Lucida Grande"; -cocoa-font-postscriptname: "LucidaGrande"; '&gt;Semantics and Pragmatics&lt;/p&gt;</string>
+					<key>shrinkToFitContent</key>
+					<integer>1</integer>
+					<key>text</key>
+					<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs26 \cf0 Semantics and Pragmatics}</string>
+				</dict>
+			</dict>
+		</array>
+	</dict>
+	<key>printInfo</key>
+	<data>
+	BAtzdHJlYW10eXBlZIHoA4QBQISEhAtOU1ByaW50SW5mbwGEhAhOU09iamVjdACFkoSE
+	hBNOU011dGFibGVEaWN0aW9uYXJ5AISEDE5TRGljdGlvbmFyeQCUhAFpCJKEhIQITlNT
+	dHJpbmcBlIQBKxZOU0hvcml6b250YWxseUNlbnRlcmVkhpKEhIQITlNOdW1iZXIAhIQH
+	TlNWYWx1ZQCUhAEqhIQBY50BhpKEmZkNTlNSaWdodE1hcmdpboaShJuchIQBZp5IhpKE
+	mZkMTlNMZWZ0TWFyZ2luhpKEm5ygnkiGkoSZmRVOU0hvcml6b25hbFBhZ2luYXRpb26G
+	koSbnISXlwKGkoSZmRROU1ZlcnRpY2FsUGFnaW5hdGlvboaShJucpZcAhpKEmZkUTlNW
+	ZXJ0aWNhbGx5Q2VudGVyZWSGkpqShJmZC05TVG9wTWFyZ2luhpKEm5ygnlqGkoSZmQ5O
+	U0JvdHRvbU1hcmdpboaShJucoJ5ahoaG
+	</data>
+	<key>title</key>
+	<string>Semantics and Pragmatics</string>
+	<key>version</key>
+	<integer>4</integer>
+</dict>
+</plist>

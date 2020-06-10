@@ -1,0 +1,11 @@
+---
+title: Tutorial 9  
+author: STAT 3013/4027/8027
+output: pdf_document
+---
+
+---
+\large
+
+1. Answer the following questions in Rice Chapter 8: 55, 56, 60 (for (f) also find an intrval for $\tau^2$), 68. 
+

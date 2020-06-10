@@ -1,0 +1,41 @@
+#+ setup,include=FALSE
+source("http://www.cs.utoronto.ca/~radford/csc120/options.r")
+#+
+
+#' Read the function defintions.
+
+source("http://www.cs.utoronto.ca/~radford/csc120/ex12funs.r")
+
+#' Read the inputs and classes for the training cases.
+
+train_x <- read.table ("http://www.cs.utoronto.ca/~radford/csc120/ex12trainx1",
+                        head=TRUE)
+train_y <- scan ("http://www.cs.utoronto.ca/~radford/csc120/ex12trainy1")
+
+#' Plot the training data, with variables x1 and x2 for horizontal and
+#' vertical coordinates, variable x3 for plot symbol, and class for 
+#' colour (0=green, 1=red).
+
+plot (train_x$x1, train_x$x2, pch=as.character(train_x$x3), 
+                              col=c("green","red")[train_y+1])
+
+#' Read the inputs for test cases.
+
+test_x <- read.table ("http://www.cs.utoronto.ca/~radford/csc120/ex12testx1", 
+                       head=TRUE)
+
+#' Classify the test cases, putting the guessed classes in 'cl'.
+
+cl <- classify (train_x, train_y, test_x)
+
+#' Read the actual classes for the test cases.
+
+test_y <- scan("http://www.cs.utoronto.ca/~radford/csc120/ex12testy1")
+
+#' Print the guesses for the test classes and the actual classes, and
+#' the classification accuracy.
+
+print(cl)
+print(test_y)
+
+cat ("Classification accuracy:", mean (cl == test_y), "\n")

@@ -1,0 +1,116 @@
+# Extra example for one-way ANOVA - as referred to in Bronwyn Loong's slides
+
+# Might need to reset the library location to access the faraway library
+# .libPaths("H:/R")
+library(faraway)
+data(package="faraway")
+
+coagulation
+help(coagulation)
+attach(coagulation)
+
+plot(coag ~ diet, ylab="coagulation time")
+
+lvl.mns <- tapply(coag, diet, mean)
+lvl.mns
+
+# Fit default model - baseline (treatment) constraints (variety of Model II in slides):
+
+g <- lm(coag ~ diet, coagulation)
+plot(g)
+
+summary(g)
+anova(g)
+
+model.matrix(g) 
+
+coag.aov <- aov(coag~diet)
+summary(coag.aov)
+
+# Using custom made dummy-variables:
+
+diet1 <- with(coagulation,ifelse(diet=="B",1,0))
+diet2 <- with(coagulation,ifelse(diet=="C",1,0))
+diet3 <- with(coagulation,ifelse(diet=="D",1,0))
+diets <- cbind(diet1,diet2,diet3)
+diets
+
+coag.lm <- lm(coag~diets,coagulation)
+anova(coag.lm)
+
+# Fit Model I (also known as zero-intercept constraint)
+
+gi <- lm(coag ~ diet-1) 
+summary(gi)
+
+plot(gi)
+
+# This model gives same plots as before, but not the same ANOVA table and not the same 
+# overall F statistic:
+
+anova(gi)
+
+model.matrix(gi)
+
+# Fit Model II - sum contrasts constraint - by resetting the default constraints:
+
+options(contrasts=c("contr.sum","contr.poly"))
+
+gs <- lm(coag ~ diet)
+summary(gs)
+
+#diagnostic checks
+qqnorm(residuals(g))
+
+# This command used to store the following picture to a file for later use in the slides:
+# pdf("Pic3.pdf")
+
+with(coagulation,plot(jitter(fitted(g)),residuals(g),xlab="Fitted",ylab="Residuals",pch=as.character(diet)))
+abline(h=0)
+
+# Note if you use pdf("Pic3.pdf"), plot does not appear in R, but is stored in the pdf file
+# instead - you then need to switch the device off to finishing writing to the external file:
+# dev.off()
+
+with(coagulation, var(coag[diet=="A"]))
+with(coagulation, var(coag[diet=="B"]))
+with(coagulation, var(coag[diet=="C"]))
+with(coagulation, var(coag[diet=="D"]))
+
+# Pairwise comparisons:
+
+h1 <- c(-1,1,0,0)
+h2 <- c(-1,0,1,0)
+h3 <- c(-1,0,0,1)
+h4 <- c(0,1,-1,0)
+h5 <- c(0,1,0,-1)
+h6 <- c(0,0,-1,1)
+MSE<-summary(g)$sigma^2
+ni<-with(coagulation,tapply(coag,diet,length))
+sd1 <- sqrt(MSE)*sqrt(sum((h1^2)/ni))
+sd2 <- sqrt(MSE)*sqrt(sum((h2^2)/ni))
+sd3 <- sqrt(MSE)*sqrt(sum((h3^2)/ni))
+sd4 <- sqrt(MSE)*sqrt(sum((h4^2)/ni))
+sd5 <- sqrt(MSE)*sqrt(sum((h5^2)/ni))
+sd6 <- sqrt(MSE)*sqrt(sum((h6^2)/ni))
+t1hat <- t(h1)%*%lvl.mns
+t2hat <- t(h2)%*%lvl.mns
+t3hat <- t(h3)%*%lvl.mns
+t4hat <- t(h4)%*%lvl.mns
+t5hat <- t(h5)%*%lvl.mns
+t6hat <- t(h6)%*%lvl.mns
+ests <- c(t1hat,t2hat,t3hat,t4hat,t5hat,t6hat)
+sds <- c(sd1,sd2,sd3,sd4,sd6,sd6)
+uppers <- ests+qt(1-0.05/12,coag.aov$df.residual)*sds
+lowers <- ests-qt(1-0.05/12,coag.aov$df.residual)*sds
+ints <- cbind(uppers,ests,lowers)
+ints
+
+# Special protein test:
+
+h <- c(0.5,-0.5,-0.5,0.5)
+sd <- sqrt(MSE)*sqrt(sum((h^2)/ni))
+est <- t(h)%*%lvl.mns
+upper<-est+qt(0.975,coag.aov$df.residual)*sd
+lower<-est-qt(0.975,coag.aov$df.residual)*sd
+c(lower,est,upper)

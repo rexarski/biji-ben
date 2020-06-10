@@ -1,0 +1,227 @@
+library(coda)
+#Problem 1
+
+
+a_theta<-2
+b_theta<-1
+a_gamma<-c(8,16,32,64,128)
+
+yA <- read.table("menchild30bach.txt", header = F)
+yA<-yA[,1]
+nA<-length(yA)
+ybarA<-mean(yA)
+yB <- read.table("menchild30nobach.txt", header = F)
+yB<-yB[,1]
+nB<-length(yB)
+ybarB<-mean(yB)
+#Gibbs sampler code
+###
+
+S<-5000
+PHI<-matrix(nrow=S,ncol=2)
+PHI[1,]<-phi<-c( ybarA ,ybarB/ybarA)
+
+
+
+### Gibbs sampling
+
+mean.B.M.A<-NULL
+for (i in 1:5){
+b_gamma<-a_gamma[i]
+for(s in 2:S) {
+
+# generate a new theta value from its full conditional
+
+phi[1]<-rgamma(1,nA*ybarA+nB * ybarB+a_theta,nA+nB*phi[2]+b_theta)
+
+# generate a new gamma value from its full conditional
+
+phi[2]<- rgamma(1, nB*ybarB+a_gamma[i], nB*phi[1]+b_gamma)
+
+PHI[s,]<-phi         }
+###
+
+mean.B.M.A<-c(mean.B.M.A,mean(PHI[,2]*PHI[,1]-PHI[,1]))
+}
+mean.B.M.A
+
+#example of diagnostic checks
+#PHI.mcmc<-mcmc(PHI)
+#plot(PHI.mcmc)
+pdf("HW_Fig1.pdf")
+par(mfrow=c(2,2))
+plot(PHI[,1],type="l",ylab=expression(theta),main=expression(paste("Traceplot of " ,theta)))
+plot(PHI[,2],type="l",ylab=expression(gamma),main=expression(paste("Traceplot of " ,gamma)))
+plot(density(PHI[,1]),xlab=expression(theta),main=expression(paste("Density of " ,theta)))
+plot(density(PHI[,2]),xlab=expression(gamma),main=expression(paste("Density of " ,gamma)))
+dev.off()
+
+
+#autocorr.plot(PHI.mcmc)
+
+pdf("HW_Fig2.pdf")
+par(mfrow=c(1,2))
+acf(PHI[,1],main=expression(paste("Autocorrelation plot of " ,theta)))
+acf(PHI[,2],main=expression(paste("Autocorrelation plot of " ,gamma)))
+dev.off()
+
+effectiveSize(PHI[,1])
+effectiveSize(PHI[,2])
+
+
+#RHat - To be discussed Ch 10
+#a_gamma<-8
+#b_gamma<-8
+
+#child.Gibbs<-function(theta0,gamma0){
+#PHI<-matrix(nrow=S,ncol=2)
+#PHI[1,]<-phi<-c( theta0 ,gamma0)
+#for(s in 2:S) {
+
+# generate a new theta value from its full conditional
+
+#phi[1]<-rgamma(1,nA*ybarA+nB * ybarB+a_theta,nA+nB*phi[2]+b_theta)
+
+# generate a new gamma value from its full conditional
+
+#phi[2]<- rgamma(1, nB*ybarB+a_gamma, nB*phi[1]+b_gamma)
+
+#PHI[s,]<-phi         }
+#return(PHI)
+}
+
+#run 5 chains with different starting values
+#PHI1<-mcmc(child.Gibbs(0.5,1)) 
+#PHI2<-mcmc(child.Gibbs(0.5,2))
+#PHI3<-mcmc(child.Gibbs(1,3))
+#PHI4<-mcmc(child.Gibbs(1,2))
+#PHI5<-mcmc(child.Gibbs(2,2))
+
+#PHI.list<-mcmc.list(list(PHI1,PHI2,PHI3,PHI4,PHI5))
+
+#gelman.diag(PHI.list)
+
+
+#pdf("HW_Fig3.pdf")
+#plot(c(1:5000),PHI1[,1],type="l",col="blue")
+#lines(c(1:5000),PHI2[,1],col="red")
+#dev.off()
+
+
+#Problem 2
+library(MCMCpack)
+y<- read.table("glucose.dat", header = F)
+y<-y[,1]
+
+#a)
+pdf("HW_Fig4.pdf")
+hist(y,breaks=50,main="Histogram of Glucose",xlab="Glucose")
+dev.off()
+
+
+#c)
+alpha<-1
+beta<-1
+
+mu0<-120
+tau20<-200
+sigma20<-1000
+nu0<-10
+mcmc.mix<-function(y, niter=10000, theta1=mean(y),theta2=mean(y),sigma12=var(y),sigma22=var(y)){
+	n=length(y); K=2; theta=c(theta1,theta2); sigma2=c(sigma12,sigma22); p=0.5
+	x=NULL; nk=NULL
+	p.mcmc=NULL; theta.mcmc=NULL; sigma2.mcmc=NULL; x.mcmc=NULL
+	for (nit in 1:niter) {
+	for (i in 1:n) {
+		p.z<-exp(-(y[i]-theta)^2/2/sigma2)/sqrt(sigma2)*c(p,1-p)
+		x[i]<-sample(1:2,1,prob=p.z/sum(p.z))}
+		#print(p.z/sum(p.z))
+		x.mcmc=rbind(x.mcmc,x)
+		for (k in 1:K){
+			nk[k]=sum(x==k)
+			muk<-(mu0/tau20+nk[k]*mean(y[x==k])/sigma2[k])/(1/tau20+nk[k]/sigma2[k])
+			t2n<-1/(1/tau20+nk[k]/sigma2[k])
+		theta[k]<-rnorm(1,muk,sqrt(t2n))
+           nuk<-nu0+sum(x==k)
+           sk2<-(nu0*sigma20+(nk[k]-1)*var(y[x==k])+nk[k]*(mean(y[x==k])-theta[k])^2)/nuk
+           sigma2[k]<-rinvgamma(1,nuk/2,nuk*sk2/2)
+		}	
+		#print(nk)
+		#print(theta)
+		#print(sigma2)
+		theta.mcmc<-rbind(theta.mcmc,theta)
+		sigma2.mcmc<-rbind(sigma2.mcmc,sigma2)
+		p<-rbeta(1,alpha+2*n-sum(x),beta+sum(x)-n)
+		#print(p)
+		p.mcmc<-rbind(p.mcmc,p)
+
+	}
+			return(list(x=x.mcmc, theta=theta.mcmc,sigma2=sigma2.mcmc,p=p.mcmc))
+	}
+	
+obj<-mcmc.mix(y, niter=10000, theta1=mean(y),theta2=mean(y),sigma12=var(y),sigma22=var(y))
+
+theta.post<-obj$theta
+
+pdf("HW_Fig5.pdf")
+par(mfrow=c(2,2))
+theta.post.min<-apply(theta.post,1,min)
+theta.post.max<-apply(theta.post,1,max)
+plot(theta.post.min)
+plot(theta.post.max)
+acf(theta.post.min)
+acf(theta.post.max)
+dev.off()
+
+
+thin.theta.post.min<-theta.post.min[seq(1,length(theta.post.min),10)]
+thin.theta.post.max<-theta.post.max[seq(1,length(theta.post.max),10)]
+
+pdf("HW_Fig6.pdf")
+par(mfrow=c(2,2))
+plot(thin.theta.post.min)
+plot(thin.theta.post.max)
+acf(thin.theta.post.min)
+acf(thin.theta.post.max)
+dev.off()
+
+effectiveSize(theta.post.min[9001:10000])
+effectiveSize(theta.post.max[9001:10000])
+effectiveSize(thin.theta.post.min)
+effectiveSize(thin.theta.post.max)
+
+
+#d) 
+
+p.post<-obj$p
+sigma.post<-obj$sigma2
+x.post<-NULL
+for (i in 1:10000){
+x.post<-c(x.post,sample(c(1,2),1,prob=c(p.post[i],1-p.post[i])))
+}
+
+y.post<-NULL
+for (i in 1:10000){
+y.post<-c(y.post,rnorm(1,theta.post[i,x.post[i]],sqrt(sigma.post[i,x.post[i]])))
+}
+pdf("HW_Fig7.pdf")
+hist(y.post,breaks=50,prob=TRUE, main="Histogram of Glucose",xlab="Glucose")
+par(new=TRUE)
+plot(density(y),xlab="",xaxt="n",col="blue",yaxt="n",ylab="",main="")
+dev.off()
+
+result<-NULL
+
+for (i in 1:10000){
+	x<-sample(c(1,2),length(y),prob=c(p.post[i],1-p.post[i]),replace=TRUE)
+	y.s<-rnorm(length(y),theta.post[i,x],sqrt(sigma.post[i,x]))
+	result<-cbind(result,c(min(y.s),quantile(y.s,probs=c(0.75,0.9,0.95,0.975)),max(y.s),mean(y.s)))
+}
+
+mean(result[1,]>=min(y))
+mean(result[2,]>=quantile(y,0.75))
+mean(result[3,]>=quantile(y,0.90))
+mean(result[4,]>=quantile(y,0.95))
+mean(result[5,]>=quantile(y,0.975))
+1-mean(result[6,]>=max(y))
+mean(result[7,]>=mean(y))

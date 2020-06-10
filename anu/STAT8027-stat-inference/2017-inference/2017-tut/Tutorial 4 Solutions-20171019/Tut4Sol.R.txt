@@ -1,0 +1,122 @@
+## ---- binom--------------------------------------------------------------
+    set.seed(1001)
+    n <- 8
+    p <- 2/3
+    S <- 1000
+    u <- runif(S)
+    y <- qbinom(u, size=n, prob=p)
+    
+    mean(y)
+    true.mean <- n*p
+    true.mean
+    
+    var(y)  
+    true.var <- n*p*(1-p)
+    true.var
+    
+p.y <- table(y)/S
+p.y <- c(0, p.y)
+x <- 0:n
+plot(x, p.y, type="h", lwd=3)
+points(x, dbinom(x, n, p), col="red", cex=1.5)
+
+## ---- nbinom-------------------------------------------------------------
+    set.seed(1001)
+    n <- 5
+    p <- 1/3
+    
+    S <- 1000
+    u <- runif(S)
+    y <- qnbinom(u, n, p)
+    
+    mean(y)
+    true.mean <- (n*(1-p))/p
+    true.mean
+    
+    var(y)  
+    true.var <- (n*(1-p))/p^2
+    true.var
+    
+p.y <- table(y)/S
+x <- as.numeric(names(table(y)))
+plot(x, p.y, type="h", lwd=3)
+x <- 0:max(as.numeric(names(table(y))))    
+points(x, dnbinom(x, n, p), col="red", cex=1.5)
+
+## ------------------------------------------------------------------------
+set.seed(1001)
+S <- 10000
+out <- rep(0, S)
+acc <- 0
+
+## starting value
+y <- 5
+out[1] <- y
+
+## tuning parameter
+sigma <- 1
+
+## MCMC
+for(i in 2:S){
+  
+  y.star <- y + rnorm(1, 0, sigma)
+  r <-  dt(y.star, 10)/dt(y, 10)
+  rho <- min(r,1)
+  
+  if(runif(1) <= rho){
+    y <- y.star
+    acc <- acc + 1
+    }
+  
+  out[i] <- y
+  }
+    
+hist(out, col="yellow", xlim=c(-5,5), prob=TRUE, 
+     main="Student's t distribution with dof 10 - M-H Alg.")
+y <- seq(-5, 5, by=0.01)
+lines(y, dt(y,10), type="l", lwd=3)    
+
+## ------------------------------------------------------------------------
+y <- seq(-10, 10, by=0.001)
+plot(y, dt(y, 10)/dcauchy(y, location = 0, scale = 1), lwd=3, type="l")  
+M <- max(dt(y, 10)/dcauchy(y, location = 0, scale = 1))
+M
+
+## ------------------------------------------------------------------------
+y <- seq(-10, 10, by=0.001)
+plot(y,  dt(y, 10), type="l", lwd=3, ylim=c(0,0.5))
+lines(y, M*dcauchy(y, location = 0, scale = 1), lwd=3, col="red")    
+mean(M*dcauchy(y, location = 0, scale = 1) >= dt(y, 10))
+
+## ------------------------------------------------------------------------
+n <- 10000
+y <- NULL
+
+for(i in 1:n){
+u <- runif(1, 0, 1)
+v <- rcauchy(1, 0, 1)
+if(u < (1/M)*(dt(v, 10)/dcauchy(v, 0, 1))){
+ y.i <- v
+ y <- c(y, y.i)
+  }}
+    
+hist(out, col="yellow", xlim=c(-5,5), prob=TRUE, 
+     main="Student's t distribution with dof 10 - A/R Alg.")
+y <- seq(-5, 5, by=0.01)
+lines(y, dt(y,10), type="l", lwd=3)     
+
+## ------------------------------------------------------------------------
+set.seed(1001)    
+S <- 10000
+out <- rep(0, S)
+  
+for(s in 1:S){
+  z <- rnorm(11)
+  out[s] <- z[1]/sqrt(sum(z[2:11]^2)/10)
+  }
+    
+hist(out, col="yellow", xlim=c(-5,5), prob=TRUE, 
+    main="Student's t distribution with dof 10 - Direct Alg.")
+y <- seq(-5, 5, by=0.01)
+lines(y, dt(y,10), type="l", lwd=3)    
+

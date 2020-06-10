@@ -1,0 +1,78 @@
+Starting SAT-based planner...
+Checking for plugins...
+Encodings registered:    3
+Solvers registered:      1
+Command line options:
+    Domain file:          benchmarks/blocks/domain.pddl
+    Problem file:         benchmarks/blocks/problem08.pddl
+    Experiment name:      blocks
+    Query strategy:        ramp, min_h = 15 max_h = 55 step_h = 6
+    Compute plangraph:     False
+    Plangraph constraints: both
+    Encoding:              basic
+    Solver                 precosat
+    SAT solver time out    None
+    Write debug CNF:       False
+    Remove tmp files:      True
+Command line arg processing time: 0.00226593017578125
+Parsing the PDDL domain...
+Parsing the PDDL problem...
+Simplifying the problem representation...
+Parsing time: 0.03628420829772949
+Grounding the problem...
+Grounding time: 0.026113510131835938
+Simplifying the ground encoding...
+Simplify time: 0.020374536514282227
+Planning...
+
+Step: 15
+-------------------------------------------------
+Generating base encoding: basic ...
+Encoding generation time: 0.266904354095459
+Writing CNF file...
+Total variables: 3584
+Total clauses: 187806
+Writing time: 0.23650717735290527
+Solving...
+UNSAT
+Solution time:  0.4225039482116699
+Step time: 0.939896821975708
+
+Step: 21
+-------------------------------------------------
+Generating base encoding: basic ...
+Encoding generation time: 0.42878293991088867
+Writing CNF file...
+Total variables: 4982
+Total clauses: 262890
+Writing time: 0.33123779296875
+Solving...
+SAT
+Solution time:  2.381432294845581
+Extracting the plan...
+Plan:
+0: unstack a g
+1: stack a c
+2: unstack g e
+3: stack g b
+4: unstack d h
+5: stack d g
+6: unstack d g
+7: put-down d
+8: unstack a c
+9: stack a g
+10: pick-up c
+11: stack c a
+12: unstack h f
+13: stack h c
+14: pick-up e
+15: stack e h
+17: pick-up f
+18: stack f e
+19: pick-up d
+20: stack d f
+Simulating plan for validation.
+Plan valid. 20 actions.
+Step time: 3.1654934883117676
+Total time: 4.19984769821167
+

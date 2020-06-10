@@ -1,0 +1,40 @@
+#Lectrue 10 
+
+February 10, 2015
+
+**Binary Search of a Sorted List of $$ n $$ Elements**
+
+- split into 2 pieces, look at one of them, recurse.
+- the left side is $$ \lfloor\frac{n}{2}\rfloor $$, the right side is $$ \lceil\frac{n}{2}\rceil $$
+- $$ \lfloor\frac{n}{2}\rfloor,\lceil\frac{n}{2}\rceil \in \mathbb{N} $$ and $$\lfloor\frac{n}{2}\rfloor + \lceil\frac{n}{2}\rceil = n $$
+- For $$ n \in \mathbb{N} $$, let $$ T(n) $$ be worst-case number of steps.
+- $$ T(n) = 1 + \max(T(\lfloor\frac{n}{2}\rfloor), T(\lceil\frac{n}{2}\rceil)), n \geqslant 2 $$ or 1 when $$ n = 1 $$ 
+
+e.g. $$ T(236) = 1 + \max(T(118), T(118))  = 1 + \max(1+\max(T(59, T(59)), 1 + \max(T(59), T(59))) = ...$$
+
+$$ T(256) = 1 + \max(T(128), T(128)) = 1 + T(128) = 1 + 1 + \max(T(64), T(64))$$
+$$ = 1 + 1 + 1 + \max(T(32), T(32)) = 1 + 1 + 1 + 1 +\max(T(16), T(16)) $$
+$$ = 5 + T(8) = 6 + T(4) = 7 + T(2) = 8 + T(1) = 9 $$
+
+For $$ k \in \mathbb{N}, T(2^k) = 1 + \max(T(\lfloor\frac{2^k}{2}\rfloor), T(\lceil\frac{2^k}{2}\rceil)) = 1 + \max(T(\lfloor2^{k-1}\rfloor), \lceil2^{k-1}\rceil) $$
+$$ = 1 + \max(T(\lfloor2^{k-1}\rfloor), \lceil2^{k-1}\rceil) $$
+$$ k \in \mathbb{N} $$ and $$ k-1\geqslant0 $$, so $$ 2^{k-1} \in \mathbb{N} = 1 + T(2^{k-1}) $$
+
+$$ T(2^8) = 1 + T(2^{8-1}) = 1 + 1 + T(2^{8-1-1}) = 1 + 1 + 1 + T(2^{8-1-1-1}) = ...$$
+$$ = 8 + T(2^{8-8}) = 8 + T(1) = 9 $$
+
+$$ T(2^k) = 1 + T(2^{k-1}) = 2 + T(2^{k-2}) = ... =  $$  // onrolling rewinding
+$$ = k + T(2^{k-k}) = k + T(1) = k + 1 $$
+
+->For $$ n = 2^k $$ i.e. $$ k = \log_2n $$ s.t. $$ k\geqslant1 $$: $$ T(n) = k + 1 = 1 + \log_2n $$<- 
+
+
+$$ k \leqslant l $$
+$$ T(k) = 1 + \max(T(\lfloor\frac{k}{2}\rfloor), T(\lceil\frac{k}{2}\rceil)) $$
+$$ T(l) = 1 + \max(T(\lfloor\frac{l}{2}\rfloor), T(\lceil\frac{l}{2}\rceil)) $$
+
+
+$$ T(236) \leqslant T(239) $$
+$$ T(236) = 1 + \max(T(118), T(118)) $$
+$$ T(239) = 1+ \max(T(120), T(120)) $$
+For $$ n \in \mathbb{N}, n \geqslant 1 $$, let $$ P(n) $$ be $$ T $$ is non-decreasing from $$ 1 $$ up to (but not including?) $$ n $$.

@@ -1,0 +1,307 @@
+---
+title: Tutorial 10 Solutions  
+author: STAT 3013/4027/8027
+output:
+    pdf_document:
+        includes:
+            in_header: mystyletut.sty
+---
+
+---
+\Large
+
+1. **Chapter 9 Question 3:**  Here we have the following data: $X \sim \textrm{binomial} (100, p)$ and the following hypotheses:
+
+\begin{eqnarray*}
+H_0: && p=0.5 \\
+H_1: && p\not=0.5 \\
+\end{eqnarray*}
+
+
+Consider the following decision rule: **Reject H_0 if $\big \vert X - 50 \big \vert > 10$.**
+
+a.  We want to figure out the $\alpha$, the probability of a **Type I Error** (reject the null given the null is true).
+  
+  \begin{eqnarray*}
+  P_{H_0}( \vert X - 50  \vert > 10) &=& P_{H_0}\left( \frac{\vert X - 50  \vert}{\sqrt{100p(1-p)}} > \frac{10}{\sqrt{np(1-p)}} \right ) \\
+  &=& P_{H_0}\left( \frac{\vert X - 50  \vert}{\sqrt{100p(1-p)}} > \frac{10}{\sqrt{100 (0.5)(0.5)}} \right ) \\
+  &=& P_{H_0}\left( \vert Z \vert > \frac{10}{5} \right )  \\
+  &=& P_{H_0}\left( \vert Z \vert > 2 \right ) \\
+  &\approx& P_{H_0}\left( Z > 2 \right ) + P_{H_0}\left( Z < -2 \right ) = 2 P_{H_0}\left( Z < -2 \right ) 
+  \end{eqnarray*}    
+  
+          
+    
+
+```{r}
+    alpha <- 2*pnorm(-2)
+    alpha
+    ```    
+
+b.  Now let's get the power of the test [1- probability (Type II Error)].  Recall the power is the probability that the test reject the null when the alternative is true.
+  
+\begin{eqnarray*}
+  P_{H_A}( \vert X - 50  \vert > 10) &=&  P_{H_A}(  X - 50   > 10) + P_{H_A}(  X - 50   <  -10) \\
+  &=&  P_{H_A}(  X - 50   > 10) + P_{H_A}(  X - 50   <  -10) \\
+  &=&  P_{H_A}(  X   > 60) + P_{H_A}(  X   <  40) \\
+  &=& \left[1 - P_{H_A}(  X   < 60) \right] + P_{H_A}(  X   <  40) \\
+  \end{eqnarray*}
+
+  We can let R standardize this for use:
+  
+  
+```{r}
+  p <- seq(0.01, 0.99, by=0.001)
+  plot(p, 1-pnorm(60, mean=100*p, sd=sqrt(100*p*(1-p))) + 
+         pnorm(40, mean=100*p, sd=sqrt(100*p*(1-p))), type="l", lwd=3,
+       ylab="Power")
+    ```
+
+  
+2. **Chapter 9 Question 4:** 
+
+a.  The likelihood ratio for each $x$ is as follows:
+
+
+$$\Lambda = \frac{L(\theta_0)}{L(\theta_1)}$$
+
+$$\Lambda = \frac{0.2}{0.1} = 2, \ \ \Lambda = \frac{0.3}{0.4} = 0.75, \Lambda = \frac{0.3}{0.1} = 3,  \Lambda = \frac{0.2}{0.4} = 0.5.$$
+
+If we rank the $x$s from smallest to largest for $\Lambda$ we have: $x_4, x_2, x_1, x_3$:
+
+$$\Lambda_{x_4} = \frac{0.2}{0.4} = 0.5.,\ \  \Lambda_{x_2} = \frac{0.3}{0.4} = 0.75, \ \ \Lambda_{x_1} = \frac{0.2}{0.1} = 2, \ \ \Lambda_{x_3} = \frac{0.3}{0.1} = 3,  $$
+
+b. Based on the **Neyman-Pearson lemma** we will reject $H_0$ for small values of $\Lambda$:
+
+$$\Lambda = \frac{L(\theta_0)}{L(\theta_1)} \leq k$$
+ To construct an $\alpha$ level test, we need to find a critical value $k$ such that,
+ 
+  \begin{eqnarray*}
+  P_{H_0}(\Lambda \leq k) = 0.2 \\
+  P_{H_0}(X = x_4) = 0.2 \\
+  P_{H_0}(\Lambda \leq ) = 0.2 \\
+  \end{eqnarray*}
+  
+  Now let's change $\alpha=0.5$:
+  
+  \begin{eqnarray*}
+  P_{H_0}( \Lambda \leq k) &=& \alpha = 0.5 \\
+  P_{H_0}( X = x_4 \textrm{ or } X = x_2) &=& \alpha = 0.5 \\
+  P_{H_0}( \Lambda \leq 3/4) &=& \alpha = 0.5
+  \end{eqnarray*}
+  
+  c. If the prior probabilities for $H_0$ and $H_1$ are the same (i.e. $P(H_0) = P(H_1) = 1/2$) the we can consider ratio of the posterior probabilities for for the two models:
+  
+  \begin{eqnarray*}
+  \frac{P(H_0 \vert x)}{P(H_1 \vert x)} &=& \frac{P(x \vert H_0)}{P(x \vert H_1)} \times \frac{P(H_0)}{P(H_1)} \\
+  &=& \frac{P(x \vert H_0)}{P(x \vert H_1)}  = \Lambda
+  \end{eqnarray*}
+  
+  
+  We can see that $\Lambda < 1$ for $x_4, x_2$, and so favor $H_1$.  While $\Lambda > 1$ for $x_1, x_3$, which then favors $H_0$. 
+  
+  d.  We can see that the prior probabilities of $P(H_0) = P(H_1) = 1/2$ correspond to the decision rule based on $\alpha=0.5$. Let's see if we can extend this idea.  We will reject $H_0$ if $\Lambda > 1$.  So we want $\Lambda_{x_2} \leq 1$ and $\Lambda_{x_1} > 1$.
+  
+    \begin{eqnarray*}
+    \frac{P(H_0 \vert x)}{P(H_1 \vert x)} &=& \frac{P(x \vert H_0)}{P(x \vert H_1)} \times \frac{P(H_0)}{P(H_1)} \\
+    \frac{P(H_0 \vert x_2)}{P(H_1 \vert x_2)} &=& \frac{P(x \vert H_0)}{P(x \vert H_1)} \times \frac{P(H_0)}{P(H_1)} = 0.75 \times \frac{p}{1-p}  \leq 1\\
+    &\Rightarrow& p \leq 4/7.
+    \end{eqnarray*}
+  
+    \begin{eqnarray*}
+    \frac{P(H_0 \vert x_1)}{P(H_1 \vert x_1)} &=& \frac{P(x \vert H_0)}{P(x \vert H_1)} \times \frac{P(H_0)}{P(H_1)} = 2 \times \frac{p}{1-p}  > 1\\
+    &\Rightarrow& p > 1/3.
+    \end{eqnarray*} 
+  
+  
+    $$ 1/3 < p = P(H_0) \leq 4/7$$ 
+  
+  * For the $\alpha=0.2$ case we would like the following prior probabilities based $\Lambda_{x_2} \leq 1$ and $\Lambda_{x_1} > 1$
+  
+    \begin{eqnarray*}
+    \frac{P(H_0 \vert x_2)}{P(H_1 \vert x_2)} &=& \frac{P(x \vert H_0)}{P(x \vert H_1)} \times \frac{P(H_0)}{P(H_1)} = 0.75 \times \frac{p}{1-p}  > 1\\
+    &\Rightarrow& p > 4/7.
+    \end{eqnarray*}
+    
+    
+    \begin{eqnarray*}
+    \frac{P(H_0 \vert x_1)}{P(H_1 \vert x_1)} &=& \frac{P(x \vert H_0)}{P(x \vert H_1)} \times \frac{P(H_0)}{P(H_1)} = 0.5 \times \frac{p}{1-p}  \leq 1\\
+    &\Rightarrow& p \leq 2/3.
+    \end{eqnarray*}
+  
+    $$ 4/7 < p = P(H_0) \leq 2/3$$ 
+  
+  
+3. **Chapter 9 Question 9:**  Let $X_1, \ldots, X_{25} \iid \textrm{normal}(\mu, \sigma^2=100)$  
+
+  a.  Let's test the following hypotheses at $\alpha=0.10$:
+  
+  \begin{eqnarray*}
+  H_0: && \mu= 0 \\
+  H_1: && \mu = 1.5 \\
+  \end{eqnarray*}
+  
+  This is the standard Neyman-Pearson set-up, so we will reject for small values of $k$:
+  
+  \begin{eqnarray*}
+  \lambda(\bs{x}) &=& \frac{exp\left( -\frac{1}{2} \sum_{i=1}^n X_i^2 \right) }{exp \left(-\frac{1}{2} \sum_{i=1}^n (X_i-1.5)^2 \right) }\\
+  &&= exp\left(-\frac{1}{2}  \sum_{i=1}^n\left[  X_i^2 - (X_i-1.5)^2 \right] \right) \\
+  &&= exp\left(-\frac{1}{2}  \sum_{i=1}^n\left[ 3 X_i - 2.25 \right] \right) \\
+  &&= exp\left(\frac{n 2.25}{2} - (3/2) \sum_{i=1}^n X_i \right) \\
+  \end{eqnarray*}
+  
+  * So we get the rejection region:
+  
+  \begin{eqnarray*}
+  R &=& \left\{  exp\left(\frac{n 2.25}{2} - (3/2) \sum_{i=1}^n X_i \right) \leq k \right\} \\
+  &=& \left\{  \bar{X}  > c^* \right\} \\
+  \end{eqnarray*}
+  
+  So under $H_0$ we have:
+  
+  \begin{eqnarray*}
+  P_{H_0}(R) &=& P_{H_0}\left(  \bar{X}  \geq c^* \right) = \alpha \\
+  &=& P_{H_0}\left(  \frac{\bar{X} - 0}{10/\sqrt{25}}  \geq c^{**} \right) = \alpha \\
+  &=& P_{H_0}\left( Z  \geq c^{**} \right) = \alpha \\
+  &=& P_{H_0}\left( Z  \geq c^{**} \right) = 0.10 \\
+  \end{eqnarray*}
+  
+```{r}
+  qnorm(0.9)
+```
+  
+  So $c^* =$ `r round(qnorm(0.9),3)`.  Or we reject when $\frac{\bar{X}-0}{2} > 1.282 \ \Rightarrow \ \bar{X} > 2.56$.
+  
+  
+  
+  * Now let determine the power for $\mu_1=1.5$:
+    
+  \begin{eqnarray*}
+  P_{H_1}(R) &=& P(\bar{X} > 2.56) \\
+  &=& P_{H_1}\left(  \frac{\bar{X} - 1.5}{10/\sqrt{25}}  > \frac{2.56 - 1.5}{10/\sqrt{25}} \right) \\
+  &=& 1 - P(Z \leq (2.56-1.5)/2)
+  \end{eqnarray*}
+    
+```{r}
+  1 - pnorm((2.56-1.5)/2)
+```
+
+
+  * Now let's change $\alpha$ to $\alpha=0.01$:
+  
+  \begin{eqnarray*}
+  P_{H_0}(R) &=& P_{H_0}\left(  \bar{X}  \geq c^* \right) = \alpha \\
+  &=& P_{H_0}\left(  \frac{\bar{X} - 0}{10/\sqrt{25}}  \geq c^{**} \right) = \alpha \\
+  &=& P_{H_0}\left( Z  \geq c^{**} \right) = \alpha \\
+  &=& P_{H_0}\left( Z  \geq c^{**} \right) = 0.01 \\
+  \end{eqnarray*}
+  
+```{r}
+  qnorm(0.99)
+```
+  
+  So we reject when $\bar{X} > 4.66$.
+  
+  \begin{eqnarray*}
+  P_{H_1}(R) &=& P(\bar{X} > 4.66) \\
+  &=& P_{H_1}\left(  \frac{\bar{X} - 1.5}{10/\sqrt{25}}  > \frac{4.66 - 1.5}{10/\sqrt{25}} \right) \\
+  &=& 1 - P(Z \leq (4.66-1.5)/2)
+  \end{eqnarray*}
+    
+```{r}
+  1 - pnorm((4.66-1.5)/2)
+```
+
+
+4. **Chapter 9 Question 10:**  We know that if $T$ is a sufficient  statistic for $\theta$, then we can decompose the likelihood as follows:
+
+$$L(\theta | \bs{x}) = g(T(\bs{x}) \vert \theta)  h(\bs{x})$$
+
+  This suggests that the likelihood ratio will only be based on $g(\cdot)$:
+  
+  $$\Lambda = \frac{L(\theta_0 | \bs{x})}{L(\theta_1 | \bs{x})} = \frac{g(T(\bs{x} \vert \theta_0) )}{g(T(\bs{x}) \vert \theta_1)}$$
+  
+  The likelihood ratio rejection is:  $\left\{R: \Lambda < c \right\}$.  If we know the distribution of the sufficient $T(\bs{x})$ under $H_0$ then we may be able to determine the distribution of $\lambda$ under the NULL (as $\Lambda$ is a function of $T(\bs{x}))$.  Perhaps this would have to be done via simulation.  Then we can determine $c$:  
+  
+  $$P_{H_0}(\Lambda < c ) = \alpha$$
+  
+  Once you know the value of $c$, you look for the values of $T(\bs{x})$ such that $\Lambda$ is less than $c$. This then becomes your rejection region for $T(\bs{x})$.
+  
+5. **Chapter 9 Question 11:**  Let $X_1, \ldots, X_{25} \iid \textrm{normal}(\mu, \sigma^2=100)$  
+
+  a.  Let's test the following hypotheses at $\alpha=0.10$:
+  
+  \begin{eqnarray*}
+  H_0: && \mu= 0 \\
+  H_1: && \mu \not= 0 \\
+  \end{eqnarray*}
+  
+  
+  For this type of test, we will consider a **Generalized Likelihood Ratio Test**:
+  
+  $$\lambda(\bs{x}) = \frac{\underset{\Theta_0}{sup} L(\theta | \bs{x})}{\underset{\Theta}{sup} L(\theta | \bs{x})}$$
+
+  
+  \begin{eqnarray*}
+\lambda(\bs{x}) &=& \frac{(2 \pi)^{-n/2} exp[ - \sum (x_i - \theta_0)^2/2] }{(2 \pi)^{-n/2} exp[ - \sum (x_i - \bar{x})^2/2]} \\
+&=& exp\left[ \left( - \sum (x_i - \theta_0)^2 +  \sum (x_i - \bar{x})^2 \right)/2 \right] \\
+&=& exp\left[ \left( - \left[\sum (x_i - \bar{x})^2 +  n(\bar{x} - \theta_0)^2 \right] +  \sum (x_i - \bar{x})^2 \right)/2 \right] \\
+&=& exp\left[ -  n(\bar{x} - \theta_0)^2/2  \right] \\
+&=& exp\left[ -  n(\bar{x}- 0)^2/2  \right] \\
+&=& exp\left[ -  n\bar{x}^2/2  \right] \\
+\end{eqnarray*}
+
+
+\begin{eqnarray*}
+R &=& \{\lambda(\bs{x}) \leq c\} \\
+&=& \{exp\left[ -  n\bar{x}^2/2  \right]  \leq c \}\\
+&=& \{ -  n\bar{x}^2/2    \leq log(c) \}\\
+&=& \{  \bar{x}^2    > -2log(c)/n \}\\
+&=& \{  \big\vert \bar{x} \big \vert     > \sqrt{-2log(c)/n} \}\\
+&=& \{  \big\vert \frac{\bar{x} -0}{2} \big \vert     > \frac{\sqrt{-2log(c)/n} - 0}{2} \}\\
+\end{eqnarray*}
+
+
+
+*  Now we have:
+
+$$R =  \left\{|Z|  > c^* \right\}$$
+ 
+
+* \tr{Under the null hypothesis} $\theta = 0$.  So $Z \sim \textrm{normal}(0, 1)$. 
+
+\begin{eqnarray*}
+P(|Z| > c^*) &=&  P(Z > c^*) + P(Z < -c^*) = \alpha\\
+&=& 2 P(Z < -c^*) = \alpha \\
+&=& P(Z < -c^*) = \alpha/2 \\
+&=& P(Z < c^{**}) = \alpha/2
+\end{eqnarray*}
+
+
+* Suppose $\alpha = 0.10$, then $c^{**} = 1.64$
+
+```{r}
+qnorm(1-0.10/2)
+```
+
+* So we will reject $H_0$ if:
+
+$$\left\{ \left| \frac{(\bar{x} - 0)}{2} \right|  > 1.64 \right\} = \vert \bar{x} \vert > 2 (1.64) $$
+
+* Now let's get the power:
+
+\begin{eqnarray*}
+P_{H_1}(R) &=& P_{H_1}(\bar{X} > 3.26) + P_{H_1}(\bar{X} <  3.28) \\
+          &=& P_{H_1}((\bar{X}-mu_1)/2 > (3.28-mu_1)/2) + P_{H_1}(\bar{X} <  (-3.28-\mu_1)/2) \\
+          &=& 1 - P_{H_1}(Z < (3.28-mu_1)/2) + P_{H_1}(Z <  (-3.28-\mu_1)/2) \\
+           &=& 1 - P_{H_1}(Z < 1.64 - mu_1/2) + P_{H_1}(Z <  -1.64 -\mu_1/2) \\
+\end{eqnarray*}
+
+```{r}
+mu.1 <- seq(-10,10, by=0.1)
+plot(mu.1, 1-pnorm(1.64-mu.1/2) + pnorm(-1.64-mu.1/2), type="l", 
+     lwd=3, ylab="power", ylim=c(0,1))
+abline(h=0.10, col="red", lwd=3)
+```
+
+b. You can follow the same procedure for $\alpha=0.05$.  A similar example with $\alpha=0.05$ was done in class.

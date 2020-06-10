@@ -1,0 +1,136 @@
+newton <- function (f, g, x, n)
+{
+    if (n < 1)
+        stop("invalid number of iterations")
+
+    for (i in 1:n) {
+        x <- x - f(x) / g(x)
+        cat(i,"x =",x,"f(x) =",f(x),"g(x) =",g(x),"\n")
+    }
+  
+    x
+}
+
+
+options(digits = 15)         ## to change precisions
+
+
+
+bisect <- function (f, a, b, n)
+{
+    if (n < 1)
+        stop("invalid number of iterations")
+
+    fa <- f(a)
+    if (fa == 0)
+        return(a)
+
+    fb <- f(b)
+    if (fb == 0)
+        return(b)
+
+    if ((fa < 0) != (fb > 0))
+        stop("endpoints are not of opposite sign")
+
+    fa_negative <- fa < 0
+
+    i <- 1
+    repeat {
+        m <- a + (b-a)/2
+        if (i == n)
+            return(m);
+        fm <- f(m)
+        if (fm == 0)
+            return(m);
+        cat("i =",i,"a =",a,"m =",m,"b =",b,"fm =",fm,"\n")
+        if (fa_negative) {
+            if (fm < 0) a <- m else b <- m
+        }
+        else {
+            if (fm > 0) a <- m else b <- m
+        }
+        i <- i + 1
+    }
+}
+
+
+
+
+
+
+
+
+f_1 =function(x) (x-2.3)^2-1 
+g_1= function(x) 2*(x-2.3)
+newton(f,g,2.7,15)
+
+
+
+##above newton method may go wrong direciton, see example below.
+ 
+f_2 = function(x) 1/(1+exp(-x))-0.2
+g_2 = function(x) 1/(1+exp(-x))*(1+exp(x))
+newtown (f_2,g_2,3,15)
+
+
+# The new function 
+newton2 <- function (f, g, x, n)
+{
+    if (n < 1)
+        stop("invalid number of iterations")
+
+    fx <- f(x)
+    for (i in 1:n) {
+        d <- fx / g(x)
+        r <- 0
+        repeat {
+            new_x <- x - d
+            new_fx <- f(new_x)
+            if (abs(new_fx) <= abs(fx)) 
+                break
+            d <- d / 2    ####### The loop will breake since d will go to 0 in the end otherwise 
+            r <- r + 1
+        }
+        x <- new_x
+        fx <- new_fx
+        cat("x =",x,"f(x) =",f(x),"g(x) =",g(x),"d =",d,"r =",r,"\n")
+    }
+  
+    x
+}
+
+newton2(f_2,g_2,3,15)
+
+#################################################################
+
+####nlm find the min 
+
+nlm (function(x) -cos(x-0.23),-0.1) ### -0.1 is the starting point
+
+nlm (function(x) -cos(x-0.23),-0.8)
+help(nlm)
+
+
+#######################################################
+
+g = function(lam,L,U)
+{
+	n = length(L)
+	res = 0
+	for (i in 1:n)
+		res= res+ log(sum(dpois(c(L[i]:U[i]),lam)))
+	res
+}
+	
+nlm(function(lam) -g(lam,c(0,3,7,1),c(2,3,7,2)),5)
+
+
+###################test			
+#L = c(0,3,7,1)
+#U = c(2,3,7,2)
+#f(c(L[1]:U[1]),lam)
+3.26
+#g(2,1,1)
+
+test = g(2,c(0,3,7,1),c(2,3,7,2))
+

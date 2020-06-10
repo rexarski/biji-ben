@@ -1,0 +1,50 @@
+#34303
+
+2015-09-29
+
+- assignment 1 to be posted tomorrow.
+- more operations in RA
+- solving advanced RA examples
+
+summary of RA operators
+
+- choose rows, select
+- choose columns, project
+- combine tables
+	- cartesian product
+	- natural join
+	- theta join
+- rename relation (and attributes), rename
+- assignment, assignment
+
+- cardinality of some operators (R1(X1), R2(X2)):
+	- cartesian product: product of cardinalities of each
+	- natural joinsL: a closed domain from 0 to the product of each cardinality
+	- if the attributes used in a natural join (i.e. the attributes in X1 intersects X2) contains a key for R2, then the cardinality is in a closed domain from 0 to the cardinality of R1
+	- sample applies for left/right outer joins
+
+##specific types of query
+- max (min is analogous)
+	- not directly supported in relational algebra
+	- pair tuples and find those that are not the max.
+	- then subtract from all to find the maxes
+
+- "k or more":
+	- make all combos of k different tuples that satisfy the condition
+	
+- "every..."
+	- examples:
+		- students with grade "100" for every course they took
+		- did "raj" like every FB status I posted last week?
+	- one possible approach:
+		- make all combos that should have occured
+		- subtract thsoe that did occur to find those that didn't always
+			- these remaining are the failures
+		- subtract failures from all to get the answer
+
+##exercises
+basic steps:
+
+- table
+- selection
+- projection

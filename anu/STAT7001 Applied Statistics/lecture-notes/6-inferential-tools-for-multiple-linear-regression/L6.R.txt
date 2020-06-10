@@ -1,0 +1,62 @@
+#Last Updated: 08/08/2016
+rm(list=ls())
+setwd('~/Desktop/Research/AppliedStat2017/L6')
+#install.packages('Sleuth3')
+library(Sleuth3)
+
+#Part I
+wing=ex0918
+wingsize=wing$Females   #response variable
+con=wing$Continent      #explan variable (categorical)
+lat=wing$Latitude       #explan variable quantitative
+#creating the indicator for North America
+indNA=ifelse(con=="NA",1,0)  
+#fitting the MLR allowing for an interaction
+wingint.reg=lm(wingsize~lat+indNA+indNA*lat)
+sum((wingint.reg$residuals)^2)
+deviance(wingint.reg)
+
+
+
+
+
+#Part II
+brain<-case0902
+head(brain)
+names(brain)
+pairs(brain[,1])      #pairwise scatterplots
+
+pairs(log(brain[,-1])) #using the log transformation
+
+
+Y=log(brain$Brain)
+X1=log(brain$Gestation)
+X2=log(brain$Body)
+X3=log(brain$Litter)
+brain.reg = lm(Y ~ X1 + X2 + X3) #full model
+summary(brain.reg)
+
+
+#extra-sums-of-squares test       
+brain.regr=lm(Y~X2) #reduced model
+anova(brain.regr,brain.reg,test='F')
+
+#extra-sums-of-squares test       
+brain.regr=lm(Y~1) #reduced model
+anova(brain.regr,brain.reg,test='F')
+
+#extra-sums-of-squares test       
+brain.regr=lm(Y~X1+X2) #reduced model
+anova(brain.regr,brain.reg,test='F')
+
+
+
+#CI
+x0=data.frame(X1=5,X2=2,X3=0.6)
+predict(brain.reg,x0,interval='confidence',level=0.95)
+
+#PI
+Xnew=data.frame(X1=5,X2=2,X3=0.6)
+predict(brain.reg,Xnew,interval='prediction',level=0.95)
+
+

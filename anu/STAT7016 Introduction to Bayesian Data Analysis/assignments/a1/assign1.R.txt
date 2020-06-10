@@ -1,0 +1,161 @@
+#Problem 1
+m<-1000
+n<-c(10,25,100)
+p<-c(0.05,0.25,0.50)
+
+binom.conf.interval<-function(y,n){
+  z<-qnorm(0.975)
+  phat<-y/n
+  se<-sqrt(phat*(1-phat)/n)
+  return(c(phat-z*se,phat+z*se))
+}
+
+CI_CR<-function(){
+CR<-NULL
+for (i in 1:3){
+  for (j in 1:3){
+    COV<-0
+  y<-rbinom(m,n[i],p[j])
+  for(k in 1:m){
+    CI<-binom.conf.interval(y[k],n[i])
+    COV<-COV+1*(p[j]>=CI[1]& p[j]<=CI[2])
+  }
+  CR<-c(CR,COV/m)
+}
+}
+
+names(CR)<-c("n=10; p=0.05","n=10; p=0.25","n=10; p=0.50","n=25; p=0.05","n=25; p=0.25", "n=25; p=0.50", "n=100; p=0.05","n=100; p=0.25","n=100; p=0.50")
+return(CR)
+}
+
+CI_CR
+#Problem 2
+#Beta(4,4) Prior
+k<-(beta(4,14)+10*beta(5,13)+45*beta(6,12))
+a1<-4
+b1<-14
+a2<-5
+b2<-13
+a3<-6
+b3<-12
+
+Etheta<-(beta(4,14)*(a1/(a1+b1))+10*beta(5,13)*(a2/(a2+b2))+45*beta(6,12)*(a3/(a3+b3)))/k
+
+Etheta2<-(beta(4,14)*(a1/(a1+b1))*(a1+1)/(a1+b1+1)+10*beta(5,13)*(a2/(a2+b2))*(a2+1)/(a2+b2+1)+45*beta(6,12)*(a3/(a3+b3))*(a3+1)/(a3+b3+1))/k
+
+Vtheta<-Etheta2-Etheta^2
+
+#sketch of posterior density of theta
+theta<-seq(0,1,0.01)
+dens<-(beta(4,14)*dbeta(theta,a1,b1)+10*beta(5,13)*dbeta(theta,a2,b2)+45*beta(6,12)*dbeta(theta,a3,b3))/k
+pdf("Fig2.pdf")
+plot(theta,dens,ylim=c(0,1.1*max(dens)),ylab="",xlab=expression(theta),type="l",yaxt="n",lwd=2)
+dev.off()
+
+#95% posterior interval
+
+#quantile based
+post.theta<-sample(theta,1000,replace=TRUE,prob=dens)
+quantile(post.theta,c(0.025,0.975))
+
+
+#Highest posterior density region function
+hpd<-function(x,dx,p){
+md<-x[dx==max(dx)]
+px<-dx/sum(dx)
+pxs<--sort(-px)
+ct<-min(pxs[cumsum(pxs)< p])
+list(hpdr=range(x[px>=ct]),mode=md) }
+
+ord<-order(-dens)
+
+xdens<-cbind(theta[ord],dens[ord])
+xdens<-cbind(xdens,cumsum(xdens[,2])/sum(xdens[,2]))
+
+hpd(xdens[,1],xdens[,2],0.95)$hpdr
+
+
+#Beta(10,10) Prior
+k<-(beta(20,30)+10*beta(21,29)+45*beta(22,28))
+a1<-20
+b1<-30
+a2<-21
+b2<-29
+a3<-22
+b3<-28
+
+Etheta<-(beta(a1,b1)*(a1/(a1+b1))+10*beta(a2,b2)*(a2/(a2+b2))+45*beta(a3,b3)*(a3/(a3+b3)))/k
+
+Etheta2<-(beta(a1,b1)*(a1/(a1+b1))*(a1+1)/(a1+b1+1)+10*beta(a2,b2)*(a2/(a2+b2))*(a2+1)/(a2+b2+1)+45*beta(a3,b3)*(a3/(a3+b3))*(a3+1)/(a3+b3+1))/k
+
+Vtheta<-Etheta2-Etheta^2
+
+#sketch of posterior density of theta
+theta<-seq(0,1,0.01)
+dens2<-(beta(a1,b1)*dbeta(theta,a1,b1)+10*beta(a2,b2)*dbeta(theta,a2,b2)+45*beta(a3,b3)*dbeta(theta,a3,b3))/k
+
+lik<-choose(10,0)*(1-theta)^(10)+choose(10,1)*theta*(1-theta)^9+choose(10,2)*theta^2*(1-theta)^8
+pdf("Fig3.pdf")
+plot(theta,dens2,ylim=c(0,1.1*max(dens2)),ylab="",xlab=expression(theta),type="l",yaxt="n",lwd=2,col="blue")
+lines(theta,dbeta(theta,20,20),lty=2,col="blue")
+lines(theta,dbeta(theta,4,4),lty=2,col="red")
+lines(theta,lik,lty=3)
+lines(theta,dens,col="red",lwd=2)
+legend(0.43,6.25,c(expression(paste("p(",theta,"|Y<3);(",theta, "~Beta(20,20))")),expression(paste("p(",theta,"|Y<3);(",theta, "~Beta(4,4))")),
+    expression(paste("p(",theta,");(",theta, "~Beta(20,20))")),expression(paste("p(",theta,");(",theta, "~Beta(4,4))")),
+          expression(paste("p(Y<3|",theta,")"))),cex=0.5,bty="n",lty=c(1,1,2,2,3),col=c("blue","red","blue","red","black"))
+dev.off()
+
+#95% posterior interval
+
+#quantile based
+post.theta<-sample(theta,1000,replace=TRUE,prob=dens2)
+quantile(post.theta,c(0.025,0.975))
+
+
+#Highest posterior density region function
+hpd<-function(x,dx,p){
+  md<-x[dx==max(dx)]
+  px<-dx/sum(dx)
+  pxs<--sort(-px)
+  ct<-min(pxs[cumsum(pxs)< p])
+  list(hpdr=range(x[px>=ct]),mode=md) }
+
+ord<-order(-dens2)
+
+xdens2<-cbind(theta[ord],dens2[ord])
+xdens2<-cbind(xdens2,cumsum(xdens2[,2])/sum(xdens2[,2]))
+
+hpd(xdens2[,1],xdens2[,2],0.95)$hpdr
+
+
+
+
+#Problem 4b)
+N<-seq(159,1000,1)
+post.f<-function(N) 1/N*(199/200)^N
+sum(post.f(N))
+
+1/sum(post.f(N))
+
+n2.f<-function(N) N * (199/200)^N
+
+sqrt(sum(n2.f(N))*3.2-288.44^2)
+
+#Problem 5a)
+lambda<-c(0.5,1,1.5,2,2.5,3)
+plambda<-c(0.1,0.2,0.3,0.2,0.15,0.05)
+y<-12
+t<-6
+f<-function(plambda,lambda,y,t) plambda*exp(-t*lambda)*(t*lambda)^y
+
+lambda.post<-NULL
+for (i in 1:6){
+  lambda.post<-c(lambda.post,f(plambda[i],lambda[i],y,t))
+}  
+lambda.post
+lambda.post<-lambda.post/sum(lambda.post)
+
+#b) 
+pp<-exp(-7*lambda)*lambda.post
+sum(pp)

@@ -1,0 +1,83 @@
+Starting SAT-based planner...
+Checking for plugins...
+Encodings registered:    3
+Solvers registered:      1
+Command line options:
+    Domain file:          benchmarks/blocks/domain.pddl
+    Problem file:         benchmarks/blocks/problem13.pddl
+    Experiment name:      blocks_temp
+    Query strategy:        ramp, min_h = 15 max_h = 50 step_h = 5
+    Compute plangraph:     True
+    Plangraph constraints: both
+    Encoding:              basic
+    Solver                 precosat
+    SAT solver time out    None
+    Write debug CNF:       False
+    Remove tmp files:      False
+Command line arg processing time: 0.0020339488983154297
+Parsing the PDDL domain...
+Parsing the PDDL problem...
+Simplifying the problem representation...
+Parsing time: 0.08662199974060059
+Grounding the problem...
+Grounding time: 0.03193998336791992
+Simplifying the ground encoding...
+Simplify time: 0.11046695709228516
+Generating Plangraph invariants...
+Step: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 
+Plangraph invariants time: 0.8520340919494629
+Planning...
+
+Step: 15
+-------------------------------------------------
+Generating base encoding: basic ...
+PRE_EFF_COUNT:
+37440
+FRAME COUNT:
+5880
+INT MUTEX COUNT:
+286650
+REACH COUNT:
+3662
+FMUTEX COUNT:
+9976
+Encoding generation time: 32.73401498794556
+Writing CNF file...
+Total variables: 8206
+Total clauses: 343816
+Writing time: 0.4715559482574463
+Solving...
+UNSAT
+Solution time:  0.44780683517456055
+Step time: 33.655895948410034
+
+Step: 20
+-------------------------------------------------
+Generating base encoding: basic ...
+PRE_EFF_COUNT:
+49920
+FRAME COUNT:
+7840
+INT MUTEX COUNT:
+382200
+REACH COUNT:
+4009
+FMUTEX COUNT:
+22165
+Encoding generation time: 42.985520124435425
+Writing CNF file...
+Total variables: 10876
+Total clauses: 466342
+Writing time: 0.6083898544311523
+Solving...
+UNSAT
+Solution time:  0.5916752815246582
+Step time: 44.187952280044556
+
+Step: 25
+-------------------------------------------------
+Generating base encoding: basic ...
+PRE_EFF_COUNT:
+62400
+FRAME COUNT:
+9800

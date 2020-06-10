@@ -1,0 +1,332 @@
+# STAT2008/STAT4038/STAT6038 Regression Modelling 
+
+# Assignment 2 for 2017
+
+# Question 1 (a)
+
+# Assuming you are using the same workspace as Assignment 1,
+# you simply need to attach the dataset again:
+
+attach(moorhen)
+summary(moorhen)
+
+# Otherwise you will have to repeat the code from 
+# Assignment1_2017.R to read the data in again.
+
+pairs(moorhen)
+cor(moorhen)
+
+# Question 1 (b)
+
+model_1b <- lm(Shield ~ Weight + Stern + Hb + TandT + Adult)
+plot(model_1b, which=1)
+
+# Question 1 (c)
+
+model_1c <- lm(log(Shield) ~ Weight + Stern + Hb + TandT + Adult)
+plot(model_1c, which=1)
+
+cbind(Adult, fitted(model_1c))
+
+# Question 1 (d)
+
+anova(model_1c)
+summary(model_1c)
+
+model_1d <- lm(log(Shield) ~ Stern + Adult + Weight + Hb + TandT)
+anova(model_1d)
+
+qf(0.95, 1, 37)
+qf(0.95, 2, 37)
+qf(0.95, 3, 37)
+
+# Question 1 (e)
+
+model_1e <- lm(log(Shield) ~ Adult + Stern)
+anova(model_1e)
+
+sort(rstandard(model_1e))
+
+plot(fitted(model_1e), rstandard(model_1e), xlab="Fitted values", ylab="Internally Studentised Residuals", sub="lm(log(Shield) ~ Adult + Stern)")
+abline(0,0, lty=2)
+title("Standardised Residuals vs Fitted Values")
+identify(fitted(model_1e), rstandard(model_1e))
+
+plot(model_1e, which=2)
+abline(0,1,lty=2)
+
+plot(model_1e, which=4)
+
+# Question 1 (f)
+
+plot(c(57,71), c(50,550), type="n", xlab="Stern", ylab="Shield Area", main="43 Commonwealth Park Moorhens")
+points(Stern[Adult==1],Shield[Adult==1],pch=19)
+points(Stern[Adult==0],Shield[Adult==0],pch=1)
+
+new_Stern <- 560:720/10
+fittedAdult <- predict(model_1e, newdata=data.frame(cbind(Stern=new_Stern, Adult=1)))
+lines(new_Stern, exp(fittedAdult))
+fittedJuvenile <- predict(model_1e, newdata=data.frame(cbind(Stern=new_Stern, Adult=0)))
+lines(new_Stern, exp(fittedJuvenile), lty=2)
+legend(57, 540, c("Adult birds","Juveniles"), lty=1:2, pch=c(19,1))
+
+# Question 1 (g)
+
+summary(model_1e)
+
+coef_Adult <- coef(model_1e)[2]
+coef_Adult
+
+se_coef_Adult <- summary(model_1e)$coef[2,2]
+se_coef_Adult
+
+exp(coef_Adult)
+exp(c(coef_Adult + qt(0.025,model_1e$df.residual)*se_coef_Adult, coef_Adult + qt(0.975,model_1e$df.residual)*se_coef_Adult))
+
+
+# Question 2 (a)
+
+library(UsingR)
+help(fat)
+attach(fat)
+summary(fat)
+
+c_height <- height
+c_height[42] <- 69.5
+c_height - height
+
+cor(cbind(body.fat, body.fat.siri, density))
+
+cor(BMI, weight/(c_height^2))
+
+cor(ffweight, weight*(100-body.fat)/100)
+
+# Question 2 (b)
+
+plot(weight, body.fat)
+identify(weight, body.fat)
+
+range(body.fat)
+case[body.fat==0]
+plot(log(weight), log(body.fat + 1))
+identify(log(weight), log(body.fat + 1))
+
+plot(c_height, body.fat)
+plot(log(c_height), log(body.fat + 1))
+
+# Putting at least body.fat, weight and height on a log scale linearises the non-linear 
+# relationship between the three and produces slightly better looking graphs. The same
+# argument seems sensible for the other biometric measurements, so also log transform
+# neck, chest, abdomen, hip, thigh, knee, ankle, bicep, forearm and wrist, with the
+# only real question being whether to do the same to age:
+
+plot(age, body.fat)
+plot(age, log(body.fat + 1))
+plot(log(age), log(body.fat + 1))
+
+# Using the variance inflation function from the multicollinearity example:
+
+vif <- function(xmatrix) {
+  if (class(xmatrix) == "matrix" | class(xmatrix) == "data.frame")
+    diag(solve(cor(xmatrix))) 
+  else  
+    diag(solve(cor(model.matrix(xmatrix)[,-1])))
+  # assuming a linear model object, if not a matrix
+}
+
+vif(cbind(age, weight, c_height, neck, chest, abdomen, hip, thigh, knee, ankle, bicep, forearm, wrist))
+cor(cbind(age, weight, c_height, neck, chest, abdomen, hip, thigh, knee, ankle, bicep, forearm, wrist))
+
+vif(cbind(log(age), log(weight), log(c_height), log(neck), log(chest), log(abdomen), log(hip), log(thigh), log(knee), log(ankle), log(bicep), log(forearm), log(wrist)))
+cor(cbind(log(age), log(weight), log(c_height), log(neck), log(chest), log(abdomen), log(hip), log(thigh), log(knee), log(ankle), log(bicep), log(forearm), log(wrist)))
+
+anova(lm(log(body.fat + 1) ~ log(weight) + log(c_height) + log(age) + log(neck) + log(chest) + log(abdomen) + log(hip) + log(thigh) + log(knee) + log(ankle) + log(bicep) + log(forearm) + log(wrist)))
+
+anova(lm(log(body.fat + 1) ~ log(weight) + log(c_height) + log(age) + log(abdomen) + log(thigh) + log(hip) + log(wrist) + cbind(log(neck), log(chest), log(knee), log(ankle), log(bicep), log(forearm))))
+
+anova(lm(log(body.fat + 1) ~ log(weight) + log(c_height) + log(age) + log(abdomen) + log(thigh) + log(hip) + log(wrist)))
+summary(lm(log(body.fat + 1) ~ log(weight) + log(c_height) + log(age) + log(abdomen) + log(thigh) + log(hip) + log(wrist)))
+vif(cbind(log(age), log(weight), log(c_height), log(abdomen), log(hip), log(thigh), log(wrist)))
+
+# The nested F test above suggests that neck, chest, knee, ankle, bicep and forearm taken as
+# a group are not a significant addition to a model that already contains weight and other key
+# variables - abdomen or belly fat is supposedly key in male obesity, thigh and hip play a 
+# similar role for women, but may also be important for men. However, the partial regression 
+# coefficient for our really key variable, weight, is not significant and even worse, it
+# is actually slightly negative. These mixed messages from the ANOVA table and the 
+# summary of partial regression coefficients suggest that multicollinearity is still an
+# issue and the VIFs confirm this. Weight is a non optional part of the model, so 
+# try removing hip - not sure we need both hip and thigh:
+
+anova(lm(log(body.fat + 1) ~ log(weight) + log(c_height) + log(age) + log(abdomen) + log(thigh) + log(wrist)))
+summary(lm(log(body.fat + 1) ~ log(weight) + log(c_height) + log(age) + log(abdomen) + log(thigh) + log(wrist)))
+vif(cbind(log(age), log(weight), log(c_height), log(abdomen), log(thigh), log(wrist)))
+
+# Still some problems; reluctant to delete abdomen, but it is highly correlated with weight:
+
+anova(lm(log(body.fat + 1) ~ log(weight) + log(c_height) + log(age) + log(thigh) + log(wrist)))
+summary(lm(log(body.fat + 1) ~ log(weight) + log(c_height) + log(age) + log(thigh) + log(wrist)))
+vif(cbind(log(age), log(weight), log(c_height), log(thigh), log(wrist)))
+
+# Now in the right ball-park, but there is still a hint that not all of the variables are
+# necessary, so we could try fitting the non key variables in a different order:
+
+anova(lm(log(body.fat + 1) ~ log(weight) + log(c_height) + log(age) + log(wrist) + log(thigh)))
+summary(lm(log(body.fat + 1) ~ log(weight) + log(c_height) + log(age) + log(wrist) + log(thigh)))
+vif(cbind(log(weight), log(c_height), log(age), log(wrist), log(thigh)))
+
+anova(lm(log(body.fat + 1) ~ log(weight) + log(c_height) + log(age) + log(wrist)))
+summary(lm(log(body.fat + 1) ~ log(weight) + log(c_height) + log(age) + log(wrist)))
+vif(cbind(log(age), log(weight), log(c_height), log(wrist)))
+
+# This last model looks like a good candidate for our final model, pending a review of the
+# residual plots.
+
+fat.loglm <- lm(log(body.fat + 1) ~ log(weight) + log(c_height) + log(age) + log(wrist))
+fat.loglm
+
+plot(fitted(fat.loglm), rstandard(fat.loglm), xlab="Fitted values", ylab="Internally Studentised residuals")
+title(main="Standardised Residuals vs Fitted Values", sub="lm(log(body.fat + 1) ~ log(weight) + log(c_height) + log(age) + log(wrist))")
+abline(h=0, lty=2)
+identify(fitted(fat.loglm), rstandard(fat.loglm))
+
+plot(fat.loglm, which=2)
+abline(0,1, lty=2)
+
+plot(fat.loglm, which=4)
+
+anova(fat.loglm)
+summary(fat.loglm)
+vif(fat.loglm)
+     
+# Obvious problems with outliers and a hint of decreasing variance and possibly non-normality
+# (on the qq plot), suggesting that the log transformation might have been too strong.
+# The log transformation did linearise the key underlying relationship, with coefficients as 
+# you might expect in modelling the constitute parts of BMI on the log scale (i.e. weight 
+# appears in the numerator of BMI and has a positive coefficient and height appears in the
+# denominator and has a negative coefficient). However, we could follow Assignment 1 and
+# try a model with the response variable on the original (untransformed) scale, but keep
+# all of the explanatory variables on the log scale: 
+
+fat.lm <- lm(body.fat ~ log(weight) + log(c_height) + log(age) + log(wrist))
+
+plot(fitted(fat.lm), rstandard(fat.lm), xlab="Fitted values", ylab="Internally Studentised residuals")
+title(main="Standardised Residuals vs Fitted Values", sub="lm(body.fat ~ log(weight) + log(c_height) + log(age) + log(wrist)")
+abline(h=0, lty=2)
+identify(fitted(fat.lm), rstandard(fat.lm))
+
+plot(fat.lm, which=2)
+abline(0,1, lty=2)
+
+plot(fat.lm, which=4)
+
+anova(fat.lm)
+summary(fat.lm)
+vif(fat.lm)
+
+# All in all, things are now not too bad and it is arguably a simpler model.
+# Also there are now fewer potential outliers.
+
+# Experimenting with re-introducing other predictors simply revisits the earlier
+# problems with multicollinearity.
+
+# For the reasons outlined above, if forced to make a choice (as per the assignment
+# instructions), I would choose this simpler model, possibly deleting some outliers.
+
+# Question 2 (c)
+
+fat[BMI<18.5|BMI>35,]
+range(BMI[-c(39, 41, 182, 216)])
+
+# Reviewing the first assignment, we had very few observations towards the extremes of BMI:
+# only 1 case (#182) was underweight, which is the problem case with a body.fat = 0, 
+# (the smallest BMI in the rest of the data is 19, which is well within the normal range); 
+# and there are only 3 cases (#s 41, 216 & 39) in the severely obese range (BMI over 35).
+
+# Two of these cases featured as potential outliers in the SLR regression model in the first
+# assignment and two of the cases also feature in the main residual plot for the simpler
+# model from part (b).
+
+# Further investigation of the potential problem group (cases 39, 41, 182, 216) for 
+# the simpler model from part (b):
+
+rstandard(fat.lm)[c(39, 41, 182, 216)]
+rstudent(fat.lm)[c(39, 41, 182, 216)]
+qt(0.025, fat.lm$df.residual-1)
+
+hatvalues(fat.lm)[c(39, 41, 182, 216)]
+2*length(coef(fat.lm))/length(body.fat)
+
+round(cooks.distance(fat.lm)[c(39, 41, 182, 216)],3)
+
+dffits(fat.lm)[c(39, 41, 182, 216)]
+2*sqrt(length(coef(fat.lm))/length(body.fat))
+
+dfbetas(fat.lm)[c(39, 41, 182, 216),]
+2/sqrt(length(body.fat))
+
+covratio(fat.lm)[c(39, 41, 182, 216)]
+c(1-3*length(coef(fat.lm))/length(body.fat), 1+3*length(coef(fat.lm))/length(body.fat))
+
+# Observation 39 has reasonably large leverage and judging by the dfbetas, it does appear
+# to be having an effect on the coefficient of weight. 
+
+# We can justify the exclusion of observation 39 on the basis that it does appear to be
+# an outlier, not just in terms of BMI, but also weight and many of the other variables:
+
+fat[39,]
+summary(fat[-39,])
+
+# We really cannot expect to get a reasonable model for the severely obese when we have
+# no almost data to work with. On that point, note that there is only have 1 observation
+# in the underweight category and this lack of data should make us very cautious about
+# using any model based on these data to predict for that category.
+
+# So, my chosen model is the simpler model from part (b) with observation 39 removed:
+
+body.fat.m39 <- body.fat[-39]
+ln.weight.m39 <- log(weight[-39])
+ln.height.m39 <- log(c_height[-39])
+ln.age.m39 <- log(age[-39])
+ln.wrist.m39 <- log(wrist[-39])
+
+fat.lm.m39 <- lm(body.fat.m39 ~ ln.weight.m39 + ln.height.m39 + ln.age.m39 + ln.wrist.m39)
+
+plot(fitted(fat.lm.m39), rstandard(fat.lm.m39), xlab="Fitted values", ylab="Internally Studentised residuals")
+title(main="Standardised Residuals vs Fitted Values\nwith case 39 removed", sub="lm(body.fat.m39 ~ ln.weight.m39 + ln.height.m39 + ln.age.m39 + ln.wrist.m39)")
+abline(h=0, lty=2)
+identify(fitted(fat.lm.m39), rstandard(fat.lm.m39))
+
+plot(fat.lm.m39, which=2)
+abline(0,1,lty=2)
+
+plot(fat.lm.m39, which=4)
+
+# All looking pretty good now! Just a minor departure from normality.
+
+# Question 2 (d)
+
+anova(fat.lm.m39)
+
+summary(fat.lm.m39)
+
+# Question 2 (e)
+
+# Summary of the data by category:
+
+num.cases <- c(length(BMI[BMI<18.5]), length(BMI[BMI>=18.5&BMI<25]), length(BMI[BMI>=25&BMI<30]), length(BMI[BMI>=30&BMI<40]), length(BMI[BMI>=30]), length(BMI[BMI>=40]), length(BMI))
+body.fat.means <- c(mean(body.fat[BMI<18.5]), mean(body.fat[BMI>=18.5&BMI<25]), mean(body.fat[BMI>=25&BMI<30]), mean(body.fat[BMI>=30&BMI<40]), mean(body.fat[BMI>=30]), mean(body.fat[BMI>=40]), mean(body.fat))
+BMI.means <- c(mean(BMI[BMI<18.5]), mean(BMI[BMI>=18.5&BMI<25]), mean(BMI[BMI>=25&BMI<30]), mean(BMI[BMI>=30&BMI<40]), mean(BMI[BMI>=30]), mean(BMI[BMI>=40]), mean(BMI))
+weight.means <- c(mean(weight[BMI<18.5]), mean(weight[BMI>=18.5&BMI<25]), mean(weight[BMI>=25&BMI<30]), mean(weight[BMI>=30&BMI<40]), mean(weight[BMI>=30]), mean(weight[BMI>=40]), mean(weight))
+height.means <- c(mean(c_height[BMI<18.5]), mean(c_height[BMI>=18.5&BMI<25]), mean(c_height[BMI>=25&BMI<30]), mean(c_height[BMI>=30&BMI<40]), mean(c_height[BMI>=30]), mean(c_height[BMI>=40]), mean(c_height))
+age.means <- c(mean(age[BMI<18.5]), mean(age[BMI>=18.5&BMI<25]), mean(age[BMI>=25&BMI<30]), mean(age[BMI>=30&BMI<40]), mean(age[BMI>=30]), mean(age[BMI>=40]), mean(age))
+wrist.means <- c(mean(wrist[BMI<18.5]), mean(wrist[BMI>=18.5&BMI<25]), mean(wrist[BMI>=25&BMI<30]), mean(wrist[BMI>=30&BMI<40]), mean(wrist[BMI>=30]), mean(wrist[BMI>=40]), mean(wrist))
+
+data.frame(cbind(num.cases, body.fat.means, BMI.means, weight.means, height.means, age.means, wrist.means), row.names=c("underweight","normal","overweight","obese excl 39", "obese incl 39", "case 39", "overall"))
+
+# Predictions (based on the data with observation 39 excluded and included):
+
+new_log_values <- data.frame(cbind("ln.weight.m39"=log(weight.means),"ln.height.m39"=log(height.means),"ln.age.m39"=log(age.means),"ln.wrist.m39"=log(wrist.means)), row.names=c("underweight","normal","overweight","obese excl 39", "obese incl 39", "case 39", "overall"))
+new_log_values
+
+predict(fat.lm.m39, newdata=new_log_values, interval="confidence")

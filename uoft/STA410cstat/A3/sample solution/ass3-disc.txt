@@ -1,0 +1,37 @@
+STA 410/2101, Fall 2015, Assignment 3 Discussion
+
+As the initial parameter values for Gibbs sampling, I used estimates
+based on just the beetles with known species, with an adjustment to
+avoid values for rho near 0 or 1.  This resulted in the Gibbs sampling
+converging pretty much immediately, as judged by the trace plots,
+though I discarded the first 20 iterations as burn-in just in case.
+
+The resulting estimates from the remaining 480 iterations show
+posterior means that are mostly similar to the maximum likelihood
+estimates from Assignment 2 (though those were found without fixing
+alpha).
+
+The trace plots show some substantial dependencies along the chain for
+some parameters (such as the rho parameter plotted in black), and for
+some species indicators (such as that for beetle 8).  Because of this
+I increased the length of the chain to 500 iterations, after having
+initially run for only 200.
+
+I also tried using initial parameter values found from averages over
+all beetles (the same initial values for all species).  With these
+initial values, the chain made a large move to a different place after
+about 40 iterations, so it obviously had not converged before then.
+For the remaining 460 iterations, it appeared as if it was sampling
+correctly, but the distribution of states was in some respects quite
+different from that found with the first initialization.  This was
+true for a longer run of 5000 iterations as well.  
+
+It appears that this initialization results in the chain being trapped
+(from a practical perspective) in a different mode, in which some of
+the species indicators are swapped, with 5000 iterations not being
+enough for it to move to the other mode (which probably has higher
+probability, since it better matches the maximum likelihood estimates,
+and the estimates based just on the complete data).  This is an
+illustration that Gibbs sampling (and Markov chain Monte Carlo methods
+in general) can sometimes fail to give the right answer in a run of
+feasible length.

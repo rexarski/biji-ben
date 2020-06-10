@@ -1,0 +1,37 @@
+#Tutorial 5 
+February 26, 2015
+
+$$ f(n) = \left\{ \begin{array}{l l} 2 & \quad \text{if $n=0$}\\  f(\lfloor\frac{n}{2}\rfloor)^2 + 2f(\lfloor\frac{n}{2}\rfloor) & \quad \text{if $n\geqslant1$} \end{array} \right. $$
+
+prove if $$ m, n \in \mathbb{N}$$ with $$ m \leqslant n $$, then $$ f(m) \leqslant f(n) $$.
+
+Questions:
+1. Complete Induction
+2. $$ m = n, m < n $$ 
+
+Predicate:
+For $$ n \in \mathbb{N} $$, let $$ P(n) $$ be for $$ m \in \mathbb{N} $$ if $$ m \in \mathbb{N} $$ if $$ m \leqslant n $$ then $$ f(m) \leqslant f(n) $$.
+
+Base Case:
+$$ n = 0 $$ this forms $$ m =0 $$ 
+$$ f(m) = f(0) = 2 = f(n) \therefore P(0) $$ holds.
+
+Inductive Step:
+Let $$ m\in \mathbb{N} $$ where $$ m \leqslant n $$.
+Then assume $$ P(k) $$ holds for all $$ 0 \leqslant k < n $$ for $$ k \in \mathbb{N} $$.
+Consider if $$ n > 0 $$, then there are 2 cases to consider.
+
+Case 1: $$ m = 0 $$ 
+$$ f(m) = f(0) \leqslant f(\lfloor\frac{n}{2}\rfloor) $$ by IH $$ P(\lfloor\frac{n}{2}\rfloor) $$ because $$ \lfloor\frac{n}{2}\rfloor<n $$ when $$ n > 0, \lfloor\frac{n}{2}\rfloor \in \mathbb{N} $$.
+$$ \leqslant 2f(\lfloor\frac{n}{2}\rfloor) $$ since $$ f(\lfloor\frac{n}{2}\rfloor)\geqslant0 $$.
+$$ \leqslant f(\lfloor\frac{n}{2}\rfloor)^2 + 2f(\lfloor\frac{n}{2}\rfloor) $$ since $$ f(\lfloor\frac{n}{2}\rfloor) \geqslant f(0) $$
+$$ = f(n) $$
+$$ P(n) $$ holds.
+
+Case 2: $$ m > 0 $$
+$$ f(m) = f(\lfloor\frac{m}{2}\rfloor)^2 + 2f(\lfloor\frac{m}{2})\rfloor$$
+$$ \leqslant f(\lfloor\frac{n}{2}\rfloor) + 2f(\lfloor\frac{n}{2}\rfloor) $$ 
+$$ = f(n) $$ 
+$$ \therefore P(n) $$ holds.
+
+because $$ f(\lfloor\frac{m}{2}\rfloor)\leqslant f(\lfloor\frac{n}{2}\rfloor) $$ by I.H., $$ P(\lfloor\frac{n}{2}\rfloor) $$ and since $$ m \leqslant n, \lfloor\frac{m}{2}\rfloor \leqslant \lfloor\frac{n}{2}\rfloor $$.

@@ -1,0 +1,276 @@
+RESEARCH SCHOOL OF FINANCE, ACTUARIAL STUDIES AND APPLIED STATISTICS
+GRAPHICAL DATA ANALYSIS
+Tutorial 2 
+Sample Solution.
+
+Question 1. The ozone data.
+
+When you first look at the data (by typing ozone), you can see that it is
+set out as a matrix with two columns, the first for Stamford, the second
+for Yonkers. Each column has 153 entries, but each column has some missing
+values (denoted as NA in R). We will need some mechanism to delete the
+NA's from the the columns for some of the graphics commands to work.
+
+Start by separating the columns from the matrix:
+
+stamford=ozone[,1]
+yonkers=ozone[,2]
+
+Now plot histograms for each column (the hist command ignores missing values,
+so we don't need to worry about that here).
+
+hist(stamford,main="Histogram of Stamford Ozone")
+hist(yonkers,main="Histogram of Yonkers Ozone")
+
+Both histograms look to be skewed to the right. You could alternatively use
+stem-and-leaf plots (these deal with missing values as well), and with the
+bin width for the histograms, if you wish.
+
+hist(stamford,breaks=seq(0,250,25))
+hist(yonkers,breaks=seq(0,250,25))
+
+Using the same set of breaks on the histograms reveals something interesting:
+  while both sets of data are skewed, the ranges of the two data sets are rather
+different. The Stamford data range from 0 to about 250; the Yonkers data from
+0 to about 150. We can easily compare these histograms by plotting them on the
+same size axes:
+
+xl=range(c(stamford,yonkers),na.rm=T)
+par(mfrow=c(2,1))  # Two histograms on the same page
+hist(stamford,breaks=seq(0,250,25),main="Histogram of Stamford Ozone",xlim=xl)
+hist(yonkers,breaks=seq(0,250,25),main="Histogram of Yonkers Ozone",xlim=xl)
+
+
+The Yonkers data is clearly bunched lower than the Stamford data. We could
+try to do some numerical comparisons, but the mean function (for example)
+  chokes on the missing values from the data. We need to create "clean" versions
+of the data that don't contain missing values. To do this, we make use of the
+function is.na which returns T if the argument is NA and F otherwise. The
+vector is.na(stamford) is a vector of T's and F's, true where there is an NA
+in stamford, and false otherwise. The cleaned versions of the data are:
+
+stamford=stamford[!is.na(stamford)]
+yonkers=yonkers[!is.na(yonkers)]
+
+(The ! is the same as "not", so !is.na(stamford) returns a vector of T's and
+F's that is T when the value is not missing and F if it is).
+
+Now we can do a numerical comparison.
+
+mean(stamford)
+[1] 89.66912
+
+mean(yonkers)
+[1] 54.68919
+
+The Stamford mean is clearly higher, reflecting what we've seen in the 
+graphics. But should we be using the mean??? Try the median. The medians 
+are 80 and 49.5 respectively, so the two distributions do appear to be 
+located differently. The shapes, however, seem roughly the same. To further
+look into the shapes, we can plot smooth densities instead of histograms:
+  Some messing around with window widths is necessary and desirable until one
+reaches sufficiently smooth curve.
+
+plot(density(stamford,window="c",width=60),type='l',xlab="Ozone",ylab="Density",main="Stamford Ozone",xlim=xl)
+plot(density(yonkers,window="c",width=60),type='l',xlab="Ozone",ylab="Density",main="Yonkers Ozone",xlim=xl)
+
+
+(Note we still get two graphs on the one page unless we set par(mfrow=c(1,1))
+ back). The window width 60 works OK, but more smoothness may be required:
+  
+plot(density(stamford,window="c",width=80),type='l',xlab="Ozone",ylab="Density",main="Stamford Ozone",xlim=xl)
+plot(density(yonkers,window="c",width=80),type='l',xlab="Ozone",ylab="Density",
+     main="Yonkers Ozone",xlim=xl)
+
+
+***Optional***: We can further check the symmetry of the two data sets by employing a 
+symmetry plot, if we wish, although the non-symmetry is pretty clear 
+already. To construct a symmetry plot for this data, we would use (following
+lecture notes)
+
+par(mfrow=c(1,1))     # one plot per page
+ord=order(stamford)
+par(pty="s")		# Square axes
+plot(median(stamford)-stamford[ord[1:(length(stamford)/2)]],
+     stamford[ord[length(stamford):(length(stamford)/2+1)]]-median(stamford),
+     main="Ozone Distribution, Stamford",sub="Symmetry Plot",
+     ylab="Upper Tail",xlab="Lower Tail",xlim=range(median(stamford)-
+                                                      stamford[ord[1:(length(stamford)/2)]],
+                                                    stamford[ord[length(stamford):(length(stamford)/2+1)]]-median(stamford)),
+     ylim=range(median(stamford)-stamford[ord[1:(length(stamford)/2)]],
+                stamford[ord[length(stamford):(length(stamford)/2+1)]]-median(stamford)))
+abline(0,1)
+par(pty="m")
+
+The extent of non-symmetry is obvious from this plot. A similar plot can be
+carried out for the Yonkers data.
+
+We might also consider some Q-Q plots of the data: clearly the Stamford 
+and Yonkers data is non-normal (if you like, use qqnorm to see what the
+                                normal Q-Q plot looks like):
+
+qqoz=qqnorm(c(stamford,yonkers))
+xl=range(qqoz$x)
+yl=range(qqoz$y)
+par(mfrow=c(1,2),pty="s")
+qqnorm(stamford,xlim=xl,ylim=yl)
+qqline(stamford)
+qqnorm(yonkers,xlim=xl,ylim=yl)
+qqline(yonkers)
+
+Notice how setting the axes the same for each plot brings out the difference
+in ranges: try the same plots but without setting the axes!!
+  
+It is interesting to try a Q-Q plot of one variable against the other (in
+trying to answer: do these two sets of measurement come from the same TYPE
+of distribution; is one more skewed than the other? etc)
+
+par(mfrow=c(1,1))
+qqplot(stamford,yonkers,main="Q-Q plot of Stamford and Yonkers data")
+
+The Q-Q plot yields essentially a straight line. This suggests that the 
+two data distributions are similar (albeit with different locations and
+so on) -- that is, they have the same shape.
+
+Finally, we might like to use boxplots to compare the two data distributions:
+  
+boxplot(split(c(stamford,yonkers),c(rep(1,length(stamford)),rep(2,
+length(yonkers)))),main="Ozone Distribution for Stamford and Yonkers",
+sub="Boxplot",ylab="Ozone",names=c("Stamford","Yonkers"))
+
+Once again, the differences in location and spread are now apparent, although
+the distributions appear, in the main, to have similar shapes.
+
+What about transformations? We might try a few of the popular transformations
+to see if they can symmetrize the data. Log seems to be too strong (a
+histogram of log(stamford) yields a graph skewed in the opposite direction
+to the original). Square root seems about right. We can now re-analyze the
+data on the square root scale -- a symmetry plot of the transformed data
+yields a much better result than originally. However, there remains some
+asymmetry. The cube-root transformation seems to work really well, and so
+an analysis on this scale is probably the most appropriate:
+  For example, try the following on the cube-root data:
+  
+newstam=stamford^(1/3)
+newyonk=yonkers^(1/3)
+# Histograms 
+hist(newstam,main="Histogram of Transformed Stamford Ozone")
+hist(newyonk,main="Histogram of Transformed Yonkers Ozone")
+# Histograms, new breaks
+par(mfrow=c(2,1),pty="m")  # Two histograms on the same page
+hist(newstam,breaks=seq(2,7,1/3),main="Histogram of Transformed Stamford Ozone")
+hist(newyonk,breaks=seq(2,7,1/3),main="Histogram of Transformed Yonkers Ozone")
+# Densities. Be careful with window width!!
+xl=range(c(newstam,newyonk))
+plot(density(newstam,window="c",width=2),type='l',xlab="Ozone",ylab="Density",
+     main="Transformed Stamford Ozone",xlim=xl)
+plot(density(newyonk,window="c",width=2),type='l',xlab="Ozone",ylab="Density",
+     main="Transformed Yonkers Ozone",xlim=xl)
+
+*** Optional*** # A symmetry plot
+par(mfrow=c(1,1))       # one plot per page
+ord=order(newstam)
+par(pty="s")            # Square axes
+plot(median(newstam)-newstam[ord[1:(length(newstam)/2)]],
+     newstam[ord[length(newstam):(length(newstam)/2+1)]]-median(newstam),
+     main="Ozone Distribution, Stamford",sub="Symmetry Plot",
+     ylab="Upper Tail",xlab="Lower Tail",xlim=range(median(newstam)-
+                                                      newstam[ord[1:(length(newstam)/2)]],
+                                                    newstam[ord[length(newstam):(length(newstam)/2+1)]]-median(newstam)),
+     ylim=range(median(newstam)-newstam[ord[1:(length(newstam)/2)]],
+                newstam[ord[length(newstam):(length(newstam)/2+1)]]-median(newstam)))
+abline(0,1)
+par(pty="m")
+
+# Normal Q-Q plots -- still some mild departure from normality
+qqoz2=qqnorm(c(newstam,newyonk))
+xl=range(qqoz2$x)
+yl=range(qqoz2$y)
+par(mfrow=c(1,2),pty="s")
+qqnorm(newstam,xlim=xl,ylim=yl)
+qqline(newstam)
+qqnorm(newyonk,xlim=xl,ylim=yl)
+qqline(newyonk)
+# Q-Q plot
+par(mfrow=c(1,1))
+qqplot(newstam,newyonk,main="Q-Q plot of Stamford and Yonkers data")
+par(pty="m")
+# Boxplots
+boxplot(split(c(newstam,newyonk),c(rep(1,length(newstam)),rep(2,
+length(newyonk)))),main="Ozone Distribution for Stamford and Yonkers",
+sub="Boxplot",ylab="Ozone",names=c("Stamford","Yonkers"))
+
+Question 2. The nickel data.
+
+This data set gives data on five years' production of Canadian nickels 
+(5 cent pieces). First, we'll separate the data into the different years:
+  
+year1=nickel[,1]
+year2=nickel[,2]
+year3=nickel[,3]
+year4=nickel[,4]
+year5=nickel[,5]
+
+official=4.53
+
+We'll start by trying to compare the histograms of the nickel weights for 
+the five years:
+
+par(mfrow=c(5,1))
+hist(year1)
+hist(year2)
+hist(year3)
+hist(year4)
+hist(year5)
+
+This gives a set of histograms that suggest that there have been variable
+locations over the five years, but that the variability in weight has remained
+roughly constant. We can try to check this idea numerically by calculating 
+means and standard deviations for the five years:
+mean(year1)
+[1] 4.510972
+sqrt(var(year1))
+[1] 0.08154386
+mean(year2)
+[1] 4.5151
+sqrt(var(year2))
+[1] 0.05835985
+mean(year3)
+[1] 4.539835
+sqrt(var(year3))
+[1] 0.04824217
+mean(year4)
+[1] 4.525713
+sqrt(var(year4))
+[1] 0.03861779
+mean(year5)
+[1] 4.53111
+sqrt(var(year5))
+[1] 0.04091817
+
+These figures back up our suspicions somewhat, but are still rather 
+inconclusive. Though the shapes of the densities are not really at issue,
+it might be worth smoothing the histograms a little to see if the effects
+become clearer after smoothing: (some fiddling to get the right window 
+width will be necessary!)
+
+plot(density(year1,window="c",width=0.1),type='l',main="1977 nickels")
+plot(density(year2,window="c",width=0.1),type='l',main="1978 nickels")
+plot(density(year3,window="c",width=0.1),type='l',main="1979 nickels")
+plot(density(year4,window="c",width=0.1),type='l',main="1980 nickels")
+plot(density(year5,window="c",width=0.1),type='l',main="1981 nickels")
+
+The five densities look defensibly normal, with roughly equal variability.
+Probably the best way to proceed would be by using side-by-side boxplots.
+
+par(mfrow=c(1,1))
+boxplot(split(c(year1,year2,year3,year4,year5),c(rep(1,40),rep(2,40),rep(3,40),
+rep(4,40),rep(5,40))),main="Nickel weights for five years",
+sub="Boxplot",ylab="Weight (gms)",names=c("1977","1978","1979","1980","1981"))
+
+The boxplot makes the picture very clear: variability in weights have
+remained roughly constant from 1978-1981, but the weights of nickels 
+appear to have been more variable in 1977. Perhaps the manufacturing 
+process was altered? When is a nickel worth five cents??
+
+

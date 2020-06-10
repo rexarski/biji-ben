@@ -1,0 +1,18 @@
+RESEARCH SCHOOL OF FINANCE, ACTUARIAL STUDIES AND APPLIED STATISTICS
+Graphical Data Analysis
+Tutorial 5
+
+This tutorial is intended to enable you to investigate the relationship
+between a response and several explanatory variables.
+
+1.     Anthropologists measured the blood pressure of 39 Peruvian
+Indians who had moved from isolated villages in the high Andes to
+larger cities at lower altitudes to investigate the effects of such
+environmental changes on blood pressure.  The data is available in a
+R matrix called blood.   The systolic blood pressure may be related
+to three other variables namely the fraction of life since changing
+environments,  the weight and height of the subjects.
+
+Explore and describe the relationship between the systolic blood
+pressure and the explanatory variables.
+

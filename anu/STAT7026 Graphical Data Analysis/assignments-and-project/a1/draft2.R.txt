@@ -1,0 +1,127 @@
+library(ggplot2)
+library(reshape2) # data cleaning
+library(plyr)
+library(wesanderson)
+
+pal <- wes_palette("Zissou", 100, type = "continuous")
+
+load("./classdata.RData")
+attach(singers)
+
+# melt the data
+heights <- melt(singers, measure.vars=c("soprano.1","soprano.2","alto.1","alto.2","tenor.1","tenor.2","bass.1","bass.2"))
+
+heights <- as.data.frame.list(heights)
+heights <- cbind(heights, c(rep("F",127),rep("M",101)))
+colnames(heights) <- c("value","voice","gender")
+
+male <- heights[heights$gender=='M',]
+female <- heights[heights$gender=='F',]
+
+cheights <- ddply(heights,"gender",summarise,h.mean=mean(value))
+cheights
+# gender   h.mean
+# 1      F 64.73228
+# 2      M 70.34653
+
+female.mean <- cheights$h.mean[1]
+male.mean <- cheights$h.mean[2]
+soprano.1.mean <- mean(heights[heights$voice=='soprano.1',]$value) # 64.25
+soprano.2.mean <- mean(heights[heights$voice=='soprano.2',]$value) # 63.96667
+alto.1.mean <- mean(heights[heights$voice=='alto.1',]$value) # 64.88571
+alto.2.mean <- mean(heights[heights$voice=='alto.2',]$value) # 66.07692
+tenor.1.mean <- mean(heights[heights$voice=='tenor.1',]$value) # 68.90476
+tenor.2.mean <- mean(heights[heights$voice=='tenor.2',]$value) # 70.11111
+bass.1.mean <- mean(heights[heights$voice=='bass.1',]$value) # 70.71795
+bass.2.mean <- mean(heights[heights$voice=='bass.2',]$value) # 71.21739
+
+# HISTOGRAM BY GENDER
+
+ggplot(heights, aes(value)) + 
+  geom_histogram(binwidth=1, colour='black', aes(fill=..count..)) + 
+  facet_grid(gender ~ .) +
+  scale_fill_gradientn(colours = pal) +
+  ylim(0, 30) + 
+  geom_vline(data=cheights, aes(xintercept=cheights$h.mean),
+             linetype="dashed", size=1,colour="black") +
+  ylab("count") +
+  xlab("height (inch)") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))+
+  ggtitle("Singer Height Histogram by Gender")
+
+# DENSITY PLOT BY GENDER
+# ggplot(heights, aes(x=value, fill=gender, colour=gender)) + 
+#   geom_density(alpha=.5) +
+#   scale_color_grey()+
+#   scale_fill_grey()+
+#   theme_minimal()+
+#   geom_vline(data=cheights, aes(xintercept=cheights$h.mean,colour=gender),
+#              linetype="dashed", size=1) +
+#   theme(plot.title = element_text(hjust = 0.5, face = "bold"))+
+#   ggtitle("Singer Height Density Plot by Gender")
+
+ggplot(heights, aes(x=value)) + 
+  geom_density(alpha=.5) +
+  ylim(0, 0.2) +
+  geom_vline(data=cheights, aes(xintercept=cheights$h.mean),
+             linetype="dashed", size=1) +
+  facet_wrap(~gender,nrow=2) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))+
+  ggtitle("Singer Height Density Plot by Gender")
+
+# HISTOGRAM BY VOICE
+
+# reorder the data frame by certain voice pitch order
+target <- c("soprano.1", "soprano.2", "alto.1", "alto.2", "tenor.1", "tenor.2", "bass.1", "bass.2")
+heights[match(target, heights$voice),]
+heights$voice <- factor(heights$voice, levels=unique(heights$voice))
+
+ggplot(heights,aes(value)) + 
+  geom_histogram(binwidth = 1,aes(fill=..count..)) +
+  facet_wrap(~voice,nrow=2) +
+  scale_fill_gradientn(colours = pal) +
+  ylab("count") +
+  xlab("height (inch)") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))+
+  ggtitle("Singer Height Histogram by Voice")
+
+# DENSITY PLOT BY VOICE
+ggplot(heights, aes(value)) +
+  geom_density() +
+  facet_wrap(~voice,nrow=2) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))+
+  ggtitle("Height Density Plot by Voice")
+
+# MORE THAN GENDER & VOICE
+
+heights.sub <- heights
+for (i in 1:nrow(heights.sub)) {
+  if (heights.sub[i,]$gender == 'F') {
+    if (heights.sub[i,]$voice == 'soprano.1') {
+      heights.sub[i,]$value <- heights.sub[i,]$value - female.mean - soprano.1.mean
+    } else if (heights.sub[i,]$voice == 'soprano.2') {
+      heights.sub[i,]$value <- heights.sub[i,]$value - female.mean - soprano.2.mean
+    } else if (heights.sub[i,]$voice == 'alto.1') {
+      heights.sub[i,]$value <- heights.sub[i,]$value - female.mean - alto.1.mean
+    } else {
+      heights.sub[i,]$value <- heights.sub[i,]$value - female.mean - alto.2.mean
+    }
+  } else {
+    if (heights.sub[i,]$voice == 'tenor.1') {
+      heights.sub[i,]$value <- heights.sub[i,]$value - male.mean - tenor.1.mean
+    } else if (heights.sub[i,]$voice == 'tenor.2') {
+      heights.sub[i,]$value <- heights.sub[i,]$value - male.mean - tenor.2.mean
+    } else if (heights.sub[i,]$voice == 'bass.1') {
+      heights.sub[i,]$value <- heights.sub[i,]$value - male.mean - bass.1.mean
+    } else {
+      heights.sub[i,]$value <- heights.sub[i,]$value - male.mean - bass.2.mean
+    }
+  }
+}
+
+ggplot(heights.sub, aes(x=voice, y=value, shape=gender, colour=gender)) +
+  geom_point() +
+  scale_colour_manual(values = c("red","blue")) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))+
+  ggtitle("Scatterplot without Gender and Voice Effects")
+

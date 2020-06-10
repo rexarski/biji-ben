@@ -1,0 +1,137 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE PROPERTIES SYSTEM "property.dtd">
+<PROPERTIES>
+   <PROPERTY id="pp814219" owner="owner_1">
+      <ADDRESS>
+         <UNIT_NUM>1203</UNIT_NUM>
+         <STREET_NUM>666</STREET_NUM>
+         <STREET>Spadina Avenue</STREET>
+         <CITY>Toronto</CITY>
+         <PROVINCE>ON</PROVINCE>
+         <COUNTRY>Canada</COUNTRY>
+         <POSTCODE>M5S 2H8</POSTCODE>
+      </ADDRESS>
+      <RESIDENTIAL>
+         <SINGLE_UNIT bedrooms="2" ca="no" utilities="no">
+            <INFO rented_by="renter_2">
+               <RENT_AMOUNT>1500</RENT_AMOUNT>
+               <RENT_PERIOD>monthly</RENT_PERIOD>
+            </INFO>
+         </SINGLE_UNIT>
+      </RESIDENTIAL>
+   </PROPERTY>
+   <PROPERTY id="p927511" owner="owner_2">
+      <ADDRESS>
+         <STREET_NUM>80</STREET_NUM>
+         <STREET>Beverly Street</STREET>
+         <CITY>Toronto</CITY>
+         <PROVINCE>ON</PROVINCE>
+         <COUNTRY>Canada</COUNTRY>
+         <POSTCODE>M5T 1Y1</POSTCODE>
+      </ADDRESS>
+      <RESIDENTIAL>
+         <MULTI_UNIT>
+            <UNIT id="punit 1" bedrooms="1" ca="no" utilities="yes">
+               <INFO>
+                  <RENT_AMOUNT>500</RENT_AMOUNT>
+                  <RENT_PERIOD>monthly</RENT_PERIOD>
+               </INFO>
+            </UNIT>
+            <UNIT id="punit 2" bedrooms="2" ca="no" utilities="yes">
+               <INFO>
+                  <RENT_AMOUNT>400</RENT_AMOUNT>
+                  <RENT_PERIOD>monthly</RENT_PERIOD>
+               </INFO>
+            </UNIT>
+            <UNIT id="punit 3" bedrooms="1" ca="no" utilities="yes">
+               <INFO rented_by="renter_1">
+                  <RENT_AMOUNT>800</RENT_AMOUNT>
+                  <RENT_PERIOD>monthly</RENT_PERIOD>
+            </INFO>
+            </UNIT>
+      </MULTI_UNIT>
+      </RESIDENTIAL>
+   </PROPERTY>
+   <PROPERTY id="p321456" owner="owner_3">
+      <ADDRESS>
+         <UNIT_NUM>251C</UNIT_NUM>
+         <STREET_NUM>10</STREET_NUM>
+         <STREET>Bloor Street West</STREET>
+         <CITY>Toronto</CITY>
+         <PROVINCE>ON</PROVINCE>
+         <COUNTRY>Canada</COUNTRY>
+         <POSTCODE>M4W 3L8</POSTCODE>
+      </ADDRESS>
+      <COMMERCIAL sqft="1000">
+         <SINGLE_UNIT>
+            <INFO rented_by="renter_3">
+               <RENT_AMOUNT>5000</RENT_AMOUNT>
+               <RENT_PERIOD>montly</RENT_PERIOD>
+            </INFO>
+         </SINGLE_UNIT>
+      </COMMERCIAL>
+   </PROPERTY>
+   <PROPERTY id="pproperty_4" owner="owner_3">
+      <ADDRESS>
+         <STREET_NUM>20</STREET_NUM>
+         <STREET>Yonge Street</STREET>
+         <CITY>Toronto</CITY>
+         <PROVINCE>ON</PROVINCE>
+         <COUNTRY>Canada</COUNTRY>
+         <POSTCODE>M5E 0A6</POSTCODE>
+      </ADDRESS>
+      <COMMERCIAL sqft="2000">
+         <MULTI_UNIT>
+            <UNIT id="pbasement">
+               <INFO>
+                  <RENT_AMOUNT>2000</RENT_AMOUNT>
+                  <RENT_PERIOD>montly</RENT_PERIOD>
+               </INFO>
+            </UNIT>
+            <UNIT id="pupper floors">
+               <INFO>
+                  <RENT_AMOUNT>15000</RENT_AMOUNT>
+                  <RENT_PERIOD>yearly</RENT_PERIOD>
+               </INFO>
+            </UNIT>
+         </MULTI_UNIT>
+      </COMMERCIAL>
+   </PROPERTY>
+   <PROPERTY id="p567901" owner="owner_2">
+      <ADDRESS>
+         <UNIT_NUM>650</UNIT_NUM>
+         <STREET_NUM>720</STREET_NUM>
+         <STREET>Spadina Avenue</STREET>
+         <CITY>Toronto</CITY>
+         <PROVINCE>ON</PROVINCE>
+         <COUNTRY>Canada</COUNTRY>
+         <POSTCODE>M5S 2H8</POSTCODE>
+      </ADDRESS>
+      <RESIDENTIAL>
+         <SINGLE_UNIT bedrooms="2" ca="yes" utilities="no">
+            <INFO rented_by="renter_4">
+               <RENT_AMOUNT>1200</RENT_AMOUNT>
+               <RENT_PERIOD>monthly</RENT_PERIOD>
+            </INFO>
+         </SINGLE_UNIT>
+      </RESIDENTIAL>
+   </PROPERTY>
+   <PROPERTY id="p3214563" owner="owner_3">
+      <ADDRESS>
+         <STREET_NUM>198</STREET_NUM>
+         <STREET>Palmerston Blvd</STREET>
+         <CITY>Toronto</CITY>
+         <PROVINCE>ON</PROVINCE>
+         <COUNTRY>Canada</COUNTRY>
+         <POSTCODE>M8V 4Z9</POSTCODE>
+      </ADDRESS>
+      <COMMERCIAL sqft="1280">
+         <SINGLE_UNIT>
+            <INFO>
+               <RENT_AMOUNT>1875</RENT_AMOUNT>
+               <RENT_PERIOD>montly</RENT_PERIOD>
+            </INFO>
+         </SINGLE_UNIT>
+      </COMMERCIAL>
+   </PROPERTY>
+</PROPERTIES>

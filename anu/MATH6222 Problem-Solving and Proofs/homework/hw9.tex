@@ -1,0 +1,309 @@
+\documentclass[12pt]{article}
+
+\usepackage{fancyhdr}
+\usepackage{extramarks}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{tikz}
+\usepackage[plain]{algorithm}
+\usepackage{algpseudocode}
+\usepackage{graphicx}
+
+\usetikzlibrary{automata,positioning}
+
+%
+% Basic Document Settings
+%
+
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=6.5in
+\textheight=9.0in
+\headsep=0.25in
+
+\linespread{1.1}
+
+\pagestyle{fancy}
+\lhead{\hmwkAuthorName}
+\chead{\hmwkClass\ \hmwkTitle}
+\rhead{\firstxmark}
+\lfoot{\lastxmark}
+\cfoot{\thepage}
+
+\renewcommand\headrulewidth{0.4pt}
+\renewcommand\footrulewidth{0.4pt}
+
+\setlength\parindent{0pt}
+
+%
+% Create Problem Sections
+%
+
+\newcommand{\enterProblemHeader}[1]{
+    \nobreak\extramarks{}{Problem \arabic{#1} continued on next page\ldots}\nobreak{}
+    \nobreak\extramarks{Problem \arabic{#1} (continued)}{Problem \arabic{#1} continued on next page\ldots}\nobreak{}
+}
+
+\newcommand{\exitProblemHeader}[1]{
+    \nobreak\extramarks{Problem \arabic{#1} (continued)}{Problem \arabic{#1} continued on next page\ldots}\nobreak{}
+    \stepcounter{#1}
+    \nobreak\extramarks{Problem \arabic{#1}}{}\nobreak{}
+}
+
+\setcounter{secnumdepth}{0}
+\newcounter{partCounter}
+\newcounter{homeworkProblemCounter}
+\setcounter{homeworkProblemCounter}{1}
+\nobreak\extramarks{Problem \arabic{homeworkProblemCounter}}{}\nobreak{}
+
+%
+% Homework Problem Environment
+%
+% This environment takes an optional argument. When given, it will adjust the
+% problem counter. This is useful for when the problems given for your
+% assignment aren't sequential. See the last 3 problems of this template for an
+% example.
+%
+\newenvironment{homeworkProblem}[1][-1]{
+    \ifnum#1>0
+        \setcounter{homeworkProblemCounter}{#1}
+    \fi
+    \section{Problem \arabic{homeworkProblemCounter}}
+    \setcounter{partCounter}{1}
+    \enterProblemHeader{homeworkProblemCounter}
+}{
+    \exitProblemHeader{homeworkProblemCounter}
+}
+
+%
+% Homework Details
+%   - Title
+%   - Date
+%   - Class
+%   - Instructor
+%   - Author
+%
+
+\newcommand{\hmwkTitle}{Homework\ \#9}
+\newcommand{\hmwkDate}{2017-05-06}
+\newcommand{\hmwkClass}{MATH6222}
+\newcommand{\hmwkClassInstructor}{Instructor: Dr. David Smyth}
+\newcommand{\hmwkTutor}{Tutor: Mark Bugden (Wednesday 1-2pm)}
+\newcommand{\hmwkAuthorName}{\textbf{Rui Qiu u6139152}}
+
+%
+% Title Page
+%
+
+\title{
+    \vspace{2in}
+    \textmd{\textbf{\hmwkClass:\ \hmwkTitle}}\\
+    \normalsize\vspace{0.1in}\small{\hmwkDate}\\
+    \vspace{0.1in}\large{\textit{\hmwkClassInstructor}}\\
+    \vspace{0.1in}
+    	\large{\textit{\hmwkTutor}}
+    \vspace{3in}
+}
+
+\author{\hmwkAuthorName}
+\date{}
+
+\renewcommand{\part}[1]{\textbf{\large Part \Alph{partCounter}}\stepcounter{partCounter}\\}
+
+%
+% Various Helper Commands
+%
+
+% New QED symbol
+\renewcommand{\qedsymbol}{$\blacksquare$}
+
+% Useful for algorithms
+\newcommand{\alg}[1]{\textsc{\bfseries \footnotesize #1}}
+
+% For derivatives
+\newcommand{\deriv}[1]{\frac{\mathrm{d}}{\mathrm{d}x} (#1)}
+
+% For partial derivatives
+\newcommand{\pderiv}[2]{\frac{\partial}{\partial #1} (#2)}
+
+% Integral dx
+\newcommand{\dx}{\mathrm{d}x}
+
+% Alias for the Solution section header
+\newcommand{\solution}{\textbf{\large Solution}}
+
+% Probability commands: Expectation, Variance, Covariance, Bias
+\newcommand{\E}{\mathrm{E}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\Bias}{\mathrm{Bias}}
+
+\begin{document}
+
+\maketitle
+
+\pagebreak
+
+\begin{homeworkProblem}
+Let $X_1, X_2, X_3$ be random variables such that $P(X_i=j)=\frac{1}{n}$ for all $(i,j)\in[3]\times [n]$. Compute the probability that $X_1+X_2+X_3\leq 6$, given that $X_1+X_2\geq 4$. You may assume that the random variables are \textit{independent}, i.e.
+
+\[P(X_1=a_1,X_2=a_2, X_3=a_3)=P(X_1=a_1)P(X_2=a_2)P(X_3=a_3).\]\\
+
+\textbf{Solution:} As $X_1+X_2\geq 4$, the possible combinations of $X_1$ and $X_2$ that fails this are $(1, 1), (1, 2), (2, 1)$. So
+
+\[P(X_1+X_2\geq 4)= 1-\frac{1}{n}\cdot\frac{1}{n}\cdot 3=1-\frac{3}{n^2}\]
+
+Now we consider the possible combinations of $X_1, X_2, X_3$ when $X_1+X_2+X_3 \leq 6$. Note that since $X_1+X_2\geq 4$, then
+
+\[X_3 \leq 6 - (X_1+X_2)\leq 2\]
+
+So $X_3=1$ or $2$.
+\begin{itemize}
+	\item When $X_3 = 2$, $(X_1, X_2)\in \{(1,3),(2,2),(3,1)\}.$ The total probability here is $\frac{1}{n}\cdot 3\cdot \frac{1}{n^2}=\frac{3}{n^3}$.
+	\item When $X_3 = 1$, $(X_1, X_2)\in \{(1,3),(2,2),(3,1),(1,4),(2,3),(3,2),(4,1)\}$. The total probability here is $\frac{1}{n}\cdot\frac{7}{n^2}=\frac{7}{n^3}$.
+\end{itemize}
+
+Therefore,
+
+\[P(X_1+X_2+X_3\leq 6|X_1+X_2\geq 4) = \frac{\frac{3}{n^3}+\frac{7}{n^3}}{1-\frac{3}{n^2}}=\frac{10}{n^3-3n}\leq 1\]
+
+Also note that $n^3-3n\geq 10$, so $n\geq 3$ makes this meaningful.
+
+\end{homeworkProblem}
+
+\begin{homeworkProblem}
+	You hold a bag of ten coins, all superficially similar, but nine are fair, and one is foul (it shows heads with probability $\frac{9}{10}$). You draw out a coin and begin flipping it.\\
+	
+	(a) The first five tosses are $HHHTH$. What is the probability that you are flipping one of the fair coins?\\
+	
+	\textbf{Solution:} Suppose $A$ be the event that first five tosses are $HHHTH$, $B$ be the event that we are flipping one of the fair coins.
+	
+	We are interested in the conditional probability $P(B|A)$, which is:
+	
+	\[
+	\begin{split}
+		P(B|A)&=\frac{P(A\cap B)}{P(A)}=\frac{P(A\cap B)}{P(A|B)P(B)+P(A|\neg B)P(\neg B)}\\
+		&=\frac{P(A|B)P(B)}{P(A|B)P(B)+P(A|\neg B)P(\neg B)}\\
+		&=\frac{(\frac{1}{2})^5\cdot \frac{9}{10}}{(\frac{1}{2})^5\cdot \frac{9}{10}+(\frac{9}{10})^4\cdot\frac{1}{10}\cdot\frac{1}{10}}\\
+		&=\frac{3125}{3854}\\
+		&\simeq 0.81085
+	\end{split}
+	\]
+	
+	(b) The next five tosses are $HHHHH$. Now what is the probability that you are flipping one of the fair coins?\\
+	
+	Let $C$ be the event that the first ten tosses are $HHHTHHHHHH$. And similarly,
+	
+	\[
+	\begin{split}
+		P(B|C)&=\frac{P(C\cap B)}{P(C)}\\
+		&=\frac{P(C\cap B)}{P(C|B)P(B)+P(C|\neg B)P(\neg B)}\\
+		&=\frac{(\frac{1}{2})^{10}\cdot \frac{9}{10}}{(\frac{1}{2})^{10}\cdot \frac{9}{10}+(\frac{9}{10})^9\cdot \frac{1}{10}\cdot \frac{1}{10}}\\
+		&\simeq 0.18491
+	\end{split}
+	\]
+	
+
+\end{homeworkProblem}
+
+\begin{homeworkProblem}
+Suppose that a collection of $2n$ insects is randomly divided into $n$ pairs. If the collection consists of $n$ males and $n$ females, what is the expected number of male-female pairs?\\
+	
+\textbf{Solution:} Suppose $X$ is a random variable that indicates the number of male-female pairs in such randomization. Suppose again 
+
+\[X_{i,j}=\begin{cases}1,\ &\text{if the i-th male insect is paired with the j-th female insect.}\\ 0,\ &\text{otherwise.}\end{cases}\]
+
+Then by linearity of expectation, 
+
+\[E(X)=\sum^{(n,n)}_{(i,j)\in[n]\times[n]}E(X_{i,j})=n^2E(X_{i,j})\]
+
+Since for each certain insect, it has the same probability to pair with any other $2n-1$ insect, so that a particular $(i,j)$ pair has the expectation:
+
+\[E(X_{i,j})=0\cdot P(i,1) + \cdots +1\cdot P(i,j) + \cdots +0\cdot P(i,n) = \frac{1}{2n-1}\]
+
+Therefore,
+
+\[E(X)=\frac{n^2}{2n-1}.\]
+	
+\end{homeworkProblem}
+
+\begin{homeworkProblem}[5]
+Recall that in the finger game, player $A$ and $B$ show $1$ or $2$ fingers, and $A$ then receives a payoff according to the following chart (a negative number indicates that $A$ pays $B$).
+
+\begin{table}[htbp!] 
+	\centering
+	\begin{tabular}{|c|c|c|}
+		\hline
+		$\ $ & $B$ shows $1$ & $B$ shows $2$ \\
+		\hline
+		$A$ shows $1$ & $-2$ & $+3$\\
+		\hline
+		$A$ shows $2$ & $+3$ & $-4$\\
+		\hline
+	\end{tabular}
+\end{table}
+
+We considered a scenario where $A$ shows $1$ finger with probability $x$ and $B$ shows $1$ finger with probability $y$, and showed that $x=\frac{7}{12}$ gives an expected payoff of $\frac{1}{12}$ for $A$, and that this strategy is optimal. Here, \textit{optimal} means that for any other choice of $x$, there exists a $y\in[0,1]$ such that the expected payoff is lower than $1/12$.\\
+
+(a) For what range of values $x\in[0,1]$ can $A$ guarantee a positive expected payoff, no matter how $B$ plays?\\
+
+\textbf{Solution:}
+
+Suppose $A$ has probability $x$ to show $1$ finger. Then the expected payoff when $B$ shows $1$ finger is $-2x+3(1-x)=3-5x$. And the expected payoff when $B$ shows $2$ fingers is $3x-4(1-x)=7x-4$.
+
+Let both expected payoff be greater than $0$, so we have $3-5x>0, 7x-4>0$. Solve these we get $\frac{4}{7}< x <\frac{3}{5}$.
+
+So when $x\in\left(\frac{4}{7}, \frac{3}{5}\right)$, $A$ can guarantee a positive expected payoff, no matter how $B$ plays.\\
+
+(b) Prove that $y=7/12$ is the optimal strategy for $B$.\\
+
+\textbf{Proof:}\\
+
+The expected payment from $A$ to $B$ is $-2y+3(1-y)=3-5y$ and $3y-4(1-y)=7y-4$ when $A$ shows $1$ or $2$ finger(s) respectively.
+
+\[x(3-5y)+(1-x)(7y-4)=3x-5xy+7y-4-7xy+4x=7x+7y-12xy-4=x(7-12y)+7y-4\]
+
+This is the amount of money $A$ pays $B$, so $B$ wants to maximize the minimum of them, this happens when the effect of $x$ is totally eradicated as 
+
+\[7-12y=0 \implies y=\frac{7}{12}\]
+
+The maximized minimum is therefore, $7\cdot\frac{7}{12}-4=\frac{1}{12}$.\\
+
+To show it is \textit{optimal}, we assume $y\not=\frac{7}{12}$, such that we have a smaller payoff than $\frac{1}{12}$: 
+
+\[
+\begin{split}
+	x(7-12y)+7y-4&<\frac{1}{12}\\
+	x(7-12y)+7y&<\frac{49}{12}\\
+	\text{If}\ y<\frac{7}{12},\ x<\frac{\frac{49}{12}-7y}{7-12y}&=\frac{7}{12}\\
+	\text{If}\ y>\frac{7}{12},\ x>\frac{\frac{49}{12}-7y}{7-12y}&=\frac{7}{12}
+\end{split}
+\]
+
+Therefore, as long as $y\not=\frac{7}{12}$, we can always find a $x$ in $[0,1]$ such that the expected payoff of $B$ is smaller than $\frac{1}{12}$. Thus the strategy with $y=\frac{7}{12}$ is \textit{optimal}.\\
+
+(c) Assuming that both players play their optimal strategy, what proportion of the games do $A$ and $B$ actually win.\\
+
+\textbf{Solution:} In this case, $x=y=\frac{7}{12}$.
+
+\begin{itemize}
+	\item $A$ wins when the sum is odd, $P(A\ \text{wins})=x(1-y)+(1-x)y=\frac{7}{12}\cdot\frac{5}{12} + \frac{5}{12}\cdot\frac{7}{12}=\frac{35}{72}$.
+	\item $B$ wins when the sum is even, $P(B\ \text{wins})=xy + (1-x)(1-y)=1-x-y+2xy=1-\frac{7}{12}-\frac{7}{12}+2\cdot\frac{7}{12}\cdot\frac{7}{12}=\frac{37}{72}$
+\end{itemize}
+
+So $B$ wins $\frac{37}{72}$ of the games, while $A$ wins $\frac{35}{72}$ of the games.
+\end{homeworkProblem}
+
+%
+% Non sequential homework problems
+%
+
+% Jump
+%\begin{homeworkProblem}[5]
+
+%\end{homeworkProblem}
+
+\end{document}

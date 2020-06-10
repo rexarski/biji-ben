@@ -1,0 +1,127 @@
+#Tutorial6
+
+#Question 1
+#Part A
+setwd("C:/Users/u5708538/Desktop")
+pollution=read.table("pollution.csv",header=T,sep=",")
+city=pollution$CITY
+mort=pollution$MORT
+precip=pollution$PRECIP
+educ=pollution$EDUC
+nonwhite=pollution$NONWHITE
+NOX=pollution$NOX
+SO2=pollution$SO2
+par(mfrow=c(2,1))
+pairs(cbind(mort,precip,educ,nonwhite,NOX,SO2))
+pairs(cbind(mort,precip,educ,nonwhite,log(NOX),log(SO2)))
+
+#log transformation is suitable 
+
+poll.lm=lm(mort~precip+educ+nonwhite+log(NOX)+log(SO2))
+
+#cook's distance: used in Regression Analysis to find influential outliers in a set of predictor variables. In other words, it’s a way to identify points that negatively affect your regression model. The measurement is a combination of each observation’s leverage and residual values; the higher the leverage and residuals, the higher the Cook’s distance.
+cook<-cooks.distance(poll.lm)
+par(mfrow=c(3,1))
+plot(poll.lm$fitted.values,poll.lm$residuals)
+#or standardized residuals
+rstd<-rstandard(poll.lm)
+plot(cook)
+plot(rstd)
+
+#point 60 is problematic
+
+poll.lm=lm(mort[-60]~precip[-60]+educ[-60]+nonwhite[-60]+log(NOX[-60])+log(SO2[-60]))
+summary(poll.lm)
+
+#t-values show that log(NOx) is not an important factor due to its low t-value. But log(So2) is important
+
+#Part B
+
+x1<-precip[-60]
+x2<-educ[-60]
+x3<-nonwhite[-60]
+x4<-log(NOX[-60])
+x5<-log(SO2[-60])
+y<-mort[-60]
+fit<-lm(y~x1+x2+x3+x4+x5)
+xnew<-data.frame(x1=30,x2=10,x3=20,x4=0,x5=0)
+predict(fit,xnew,interval="confidence")
+#confidence interval = [858.85, 935.94]
+
+#Part C
+#F-test B2=B3=0
+
+fittnew<-lm(y~x1+x2+x3+x4+x5)
+anova(fittnew)
+qf(0.975,df1=53,df2=51)
+
+
+#Question 2
+#Part A
+
+#Question 2
+
+birds<-read.table("birds.csv",header=T,sep=",")
+time=birds[,2]
+pairs=birds[,3]
+pairs(cbind(time,pairs))
+pairs(cbind(log(time),pairs))
+
+
+fit1<-lm(log(time)~pairs+as.factor(birds$SIZE)+as.factor(birds$STATUS))
+summary(fit1)
+
+par(mfrow=c(2,1))
+plot(fit1$fitted.values,fit1$residuals)
+qqnorm(fit1$residuals)
+
+
+#check for interaction between nesting pair and size
+
+size<-ifelse(birds$SIZE=="S",1,0)
+fit2<-lm(log(birds$TIME)~birds$PAIRS+size+as.factor(birds$STATUS)+I(birds$PAIRS*size))
+summary(fit2)
+#interaction is insignificant
+
+
+
+#Question 3
+
+#Forward Selection
+
+install.packages("Sleuth3")
+library(Sleuth3)
+head(case1102)
+attach(case1102)
+
+ISex=ifelse(Sex=='Female',1,0)
+#Variable=c("Days","Tumor","Loss", "Weight", "ISex")
+p=length(Variable)
+X=data.frame(Days,Tumor,Loss, Weight, ISex)
+Y=log(Brain/Liver)
+#detach(case1102)
+
+install.packages("wle")
+library(wle) #need to load this library!
+X=as.matrix(X)
+
+mle.stepwise(Y~X,type="Forward")
+result=mle.stepwise(Y~X,type="Forward")
+result=as.vector(result$step[length(result$step[,1]),2:(p+1)])
+#Selected Variables
+Variable[as.logical(result)]
+#[1] "Days"   "IndSex" 
+
+#Backward Selection
+mle.stepwise(Y~X,type="Backward")
+result=mle.stepwise(Y~X,type="Backward")
+result=as.vector(result$step[length(result$step[,1]),2:(p+1)])
+#Selected Variables
+Variable[as.logical(result)]
+
+#Backward Selection
+mle.stepwise(Y~X,type="Stepwise")
+result=mle.stepwise(Y~X,type="Stepwise")
+result=as.vector(result$step[length(result$step[,1]),2:(p+1)])
+#Selected Variables
+Variable[as.logical(result)]

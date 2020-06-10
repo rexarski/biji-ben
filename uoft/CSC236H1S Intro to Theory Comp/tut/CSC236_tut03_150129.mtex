@@ -1,0 +1,53 @@
+#Tutorial 3
+
+January 29, 2015
+
+1. Use inductions to prove that $$ (1+\frac{1}{n})^n \leqslant n $$ for most natural numbers $$ n $$.
+
+Proof:
+
+Predicate $$ P(n) $$: $$ n \in \mathbb{N}, (1+\frac{1}{n})^n \leqslant n $$.
+
+Base Case: when $$ n = 3, (1+\frac{1}{3})^3\leqslant 3 $$, so $$ P(3) $$ holds.
+
+Inductive Step: suppose we have $$ P(k) $$ for $$ k $$ is a natural number, then we want to show it also holds for case $$ k + 1 $$.
+
+Assume $$ (1+\frac{1}{k})^k \leqslant k $$,
+then $$ (1+\frac{1}{k+1})^k \leqslant (1+\frac{1}{k})^k \leqslant k $$,
+so $$ (1++\frac{1}{k+1})^{k+1} \leqslant k(1+\frac{1}{k+1})= k+\frac{k}{k+1} < k + 1 $$ since $$ \frac{k}{k+1} < 1 $$.
+Therefore, $$ P(k+1) $$ holds as well.
+
+-> $$ \blacksquare $$  
+
+2. Prove that any full binary trees with more than zero nodes has exactly one more leaf than internal nodes. A full binary tree is one in which every node is either a leaf or has both children.
+
+Proof:
+
+Leaf -  a node with no children
+Internal node - a node with at least one child
+
+Suppose the number of leaves to be $$ f(x) $$ and the number of internal nodes to be $$ t(x) $$ where x is the number of nodes in the tree.
+
+Predicate $$ P(x) $$: ...
+
+Base Case: $$ f(1) - t(1) = 1 - 0 = 1 $$, so $$ P(1) $$ holds.
+
+Note that $$ x $$ the number of nodes in the tree has its own restriction, which has to be an odd number like $$ 1, 3, 5, 7, 9, ... $$
+
+Inductive Step: suppose $$ P(2k+1) $$ holds  where $$ k $$ is a natural number, we want to show $$ P(2k+3) $$ also holds.
+
+Since $$ P(2k+1) $$ holds, $$ f(2k+1) - t(2+1) = 1 $$.
+Now if $$ 2k + 3 $$ case, we have to add two leaves to a previous leaf, which makes it an internal node so:
+
+-> $$ f(2k+3) = f(2k + 1) -1 +2 = f(2k+1) + 1 $$;<-
+
+->$$ t(2k+3) = t(2k+1) + 1$$.<-
+
+Therefore $$ f(2k+3) - t(2k+3) = f(2k+1)+1 - t(2k+1) - 1 = 1 $$.
+
+So $$ P(2k+3) $$ holds as well.
+
+->$$ \blacksquare $$
+
+_NOTE_: you can use **height** instead of number of nodes to prove as well.
+

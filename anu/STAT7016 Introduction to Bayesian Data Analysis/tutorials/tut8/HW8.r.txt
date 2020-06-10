@@ -1,0 +1,93 @@
+
+#Problem 1 Hoff 8.2 
+##### prior parameters
+mu0<-75 ; g02<-100
+del0.sens<-c(rep(-4,4),rep(-2,4),rep(0,4),rep(2,4),rep(4,4)) ; 
+t02.sens<-rep(c(10,50,100,500),5)
+s20<-100; nu0<-2
+#####
+
+##### starting values
+
+ybarA<-75.2
+sA<-7.3
+
+ybarB<-77.5
+sB<-8.1
+
+nA<-nB<-16
+mu<- (ybarA + ybarB )/2
+del<- (ybarA- ybarB )/2
+#####
+
+##### Gibbs sampler
+MU<-DEL<-S2<-array(NA,c(20,5000))
+
+
+for (i in 1:20)
+{
+del0<-del0.sens[i]
+t02<-t02.sens[i]
+set.seed(1)
+for(s in 1:5000) 
+{
+
+  ##update s2
+  s2<-1/rgamma(1,(nu0+nA+nB)/2, 
+        (nu0*s20+(nA-1)*sA^2+nA*((mu+del)-ybarA)^2+(nB-1)*sB^2+nB*((mu-del)-ybarB)^2) /2)
+  ##
+
+  ##update mu
+  var.mu<-  1/(1/g02+ (nA+nB)/s2 )
+  mean.mu<- var.mu*( mu0/g02 + nA*(ybarA-del)/s2 + nB*(ybarB+del)/s2 )
+  mu<-rnorm(1,mean.mu,sqrt(var.mu))
+  ##
+
+  ##update del
+  var.del<-  1/(1/t02+ (nA+nB)/s2 )
+  mean.del<- var.del*( del0/t02 + nA*(ybarA-mu)/s2-  nB*(ybarB-mu)/s2 )
+  del<-rnorm(1,mean.del,sqrt(var.del))
+  ##
+
+  ##save parameter values
+  MU[i,s]<-mu ; DEL[i,s]<-del ; S2[i,s]<-s2
+  
+}                 
+}
+
+#####
+
+#i)
+apply(DEL,1,function(x) mean(x<0))
+
+
+#ii)
+ source("hdr_2d.r")
+ library(hdrcde)
+ library(ash)
+ 
+
+apply(DEL,1,function(x) quantile(x,c(0.025,0.975)))
+apply(DEL,1,function(x) hdr(x,prob=95)$hdr)
+
+iii)
+apply(cbind(rep(g02,20),t02.sens),1,function(x) (x[1]-x[2])/(x[1]+x[2]))
+
+A<-MU+DEL
+B<-MU-DEL
+
+post.cor<-NULL
+for (i in 1:20)
+{
+	post.cor<-c(post.cor,cor(A[i,],B[i,]))
+	
+}
+
+post.cor
+
+
+
+
+
+
+

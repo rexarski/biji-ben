@@ -1,0 +1,18 @@
+a) All instances are solved in a flash. Specifically, 
+
+* Q1-5-3.dzn finished in 77msec.
+* Q1-8-4.dzn finished in 94msec.
+* Q1-12-4.dzn finished in 57msec.
+* Q1-21-8.dzn finished in 108msec.
+-----------------------------------------------------------------------------
+
+b) 
+
+Didn't try other solvers since the default solver performed pretty good above.
+-----------------------------------------------------------------------------
+
+c) 
+
+For the first constraint, when calculating the sum of two types of goods, for a particular truck, it should be loaded with priority.
+
+Specifically, a refridged truck should load chilled goods first, while a non-refridged truck should load ambient goods instead. In this we, we can maximize the utility of each individual truck. That is why we compare the capacity and delivery load by types.

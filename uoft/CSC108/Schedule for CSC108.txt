@@ -1,0 +1,13 @@
+9 Jan Readings: chapter 1 (Introduction to Python)
+16 Jan Readings: chapter 2 (Python basics)
+23 Jan Readings: section 5.6 (mutability, aliasing), chapter 6 (booleans)
+30 Jan Readings: chapter 3 (strings), sections 7.2 - 7.7 (while loops)
+6 Feb Readings: chapter 5 (lists)
+13 Feb Readings: chapter 8 (files)
+20 Feb
+27 Feb Readings: sections 9.2, 9.5 (dictionaries)
+05 Mar Readings: sections 4.5 (testing), 12.3, 12.4 (debugging)
+12 Mar Readings: chapter 13 (classes)
+19 Mar Readings: sections 11.3, 11.4 (sorting)
+26 Mar Readings: chapter 10 (complexity)
+2 Apr Readings: none (wrap-up)

@@ -1,0 +1,156 @@
+# ------------------------------- Q1 -------------------------------
+library(Sleuth3)
+library(leaps)
+library(car)
+
+data <- ex1225
+attach(data)
+
+IMale <- ifelse(Sex=="Male",1,0)
+IMarried <- ifelse(MaritalStatus=="Married",1,0)
+
+IMidwest=ifelse(Region=="Midwest",1,0) 
+INortheast=ifelse(Region=="Northeast",1,0) 
+ISouth=ifelse(Region=="South",1,0)
+
+IMetropolitan=ifelse(MetropolitanStatus=="Metropolitan",1,0) 
+INotMetropolitan=ifelse(MetropolitanStatus=="Not Metropolitan",1,0)
+
+IFedGov <- ifelse(JobClass=="FedGov",1,0)
+ILocalGov <- ifelse(JobClass=="LocalGov",1,0)
+IStateGov <- ifelse(JobClass=="StateGov",1,0)
+
+# ------------------------------- (a) -------------------------------
+Y <- log(WeeklyEarnings)
+X <- cbind(Age,IMale,IMarried,EdCode,
+           IMidwest,INortheast,ISouth,
+           IMetropolitan,INotMetropolitan,
+           IFedGov,IStateGov,ILocalGov,IMale*IMarried)
+Cpsel <- leaps(X,Y,method="Cp",nbest=2)
+plot(Cpsel$size,Cpsel$Cp,main="Cp plot",xlab="size",ylab="Cp")
+
+# ------------------------------- (b) -------------------------------
+cbind(Cpsel$which, Cpsel$size, Cpsel$Cp)
+
+# ------------------------------- (c) -------------------------------
+fit=lm(Y~Age+IMale+IMarried+EdCode+IMidwest+INortheast+ISouth+
+           IMetropolitan+INotMetropolitan+IFedGov+ILocalGov+IStateGov+
+           IMale*IMarried)
+vif(fit)
+
+# ------------------------------- (d) -------------------------------
+# dropping IMetropolitan
+X1 <- X[,-8]
+fit1 <- lm(Y~.,data=as.data.frame(X1))
+deviance(fit1) # 3043.996
+
+# dropping INotMetropolitan
+X2 <- X[,-9]
+fit2 <- lm(Y~.,data=as.data.frame(X2))
+deviance(fit2) # 3045.14
+
+vif(fit1) # problem solved
+
+detach(data)
+
+# ------------------------------- Q2 -------------------------------
+sparrow <- ex2016
+head(sparrow)
+sparrow$AG <- factor(sparrow$AG)
+
+# ------------------------------- (a) -------------------------------
+sparrow.glm <- glm(Status~AG*(TL+AE+WT+BH+HL+FL+TT+SK+KL),
+                   family=binomial(link=logit),
+                   data=sparrow)
+summary(sparrow.glm)
+
+# ------------------------------- (b) -------------------------------
+sparrow.null.glm <- glm(Status~1,family=binomial(link=logit),data=sparrow)
+anova(sparrow.null.glm,sparrow.glm,test="Chisq")
+# the TS is 79.802
+
+# ------------------------------- (c) -------------------------------
+library(RcmdrMisc)
+(sparrow.glm2 <- stepwise(sparrow.glm,direction="forward",criterion="BIC",trace=F))
+
+# Coefficients:
+#     (Intercept)           TL           HL           WT           KL  
+# 49.9861      -0.6573      72.3327      -0.7896      27.3775  
+
+library(MASS)
+sparrow.glm22 <- stepAIC(sparrow.null.glm,
+                         scope=list(lower=~1,upper=~AG*(TL+AE+WT+BH+HL+FL+TT+SK+KL)),
+                         direction="forward",
+                         k=log(length(sparrow$Status)),trace=F)
+# Coefficients:
+#     (Intercept)           TL           HL           WT           KL  
+# 49.9861      -0.6573      72.3327      -0.7896      27.3775
+
+# ------------------------------- Q3 -------------------------------
+train <- read.csv("ice_cream1.csv",header=T)
+test <- read.csv("ice_cream2.csv",header=T)
+
+# ------------------------------- (a) -------------------------------
+levels(factor(train$rating))
+library(MASS)
+rate.ord <- polr(formula=factor(rating)~fat,data=train,method="logistic")
+summary(rate.ord)
+# 1+8=9 unknown parameters
+
+# ------------------------------- (b) -------------------------------
+round(confint(rate.ord, 'fat', level=0.95),4)
+# (-0.6216,2.9369)
+
+# ------------------------------- (c) -------------------------------
+Anova(rate.ord)
+# p-value 0.2022>0.05, fat not needed
+
+# ------------------------------- (d) -------------------------------
+library(nnet)
+rate.nom <- multinom(formula=factor(rating)~fat,data=train,method="logistic")
+summary(rate.nom)
+# 2*8=16 unknown parameters
+
+# ------------------------------- (e) -------------------------------
+Anova(rate.nom)
+# p-value 0.2197>0.05, fat not needed as well
+
+# ------------------------------- (f) -------------------------------
+test$rating
+pred.ord <- predict(rate.ord,test,type="class")
+(pcf.ord <- sum(pred.ord==test$rating)/length(test$rating))
+# 24%
+
+# ------------------------------- (g) -------------------------------
+pred.nom <- predict(rate.nom,test,type="class")
+(pcf.nom <- sum(pred.nom==test$rating)/length(test$rating))
+# 20%
+
+# ------------------------------- Q4 -------------------------------
+
+# ------------------------------- (a) -------------------------------
+set.seed(7001)
+beta0 <- 2; beta1 <- 1
+n <- 1000
+X <- seq(0.001,1,0.001)
+pii <- exp(beta0+beta1*X)/(1+exp(beta0+beta1*X))
+k <- 0
+Yi.df <- NULL
+for (i in 1:1000) {
+    Yi <- rbinom(1000,1,pii)
+    Yi.df <- rbind(Yi.df,Yi)
+}
+
+coef.df <- NULL
+for (i in 1:1000) {
+    fit <- glm(Yi.df[i,]~X,family="binomial")
+    coef.df <- rbind(coef.df,fit$coefficients)
+}
+
+# ------------------------------- (b) -------------------------------
+round(mean(coef.df[,2]),4) # 1.0306
+
+# ------------------------------- (c) -------------------------------
+hist(coef.df[,2],main="Histogram of 1000 simulated beta1.hat",xlab="beta1.hat",
+     col="#7B84FC")
+

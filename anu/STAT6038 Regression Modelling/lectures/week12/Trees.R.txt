@@ -1,0 +1,76 @@
+# This example is the basis for Question 2 in the Practice
+# Final Examination
+
+trees <- read.csv("trees.csv", header=T)
+trees
+attach(trees)
+
+# Note the trees data is also one of the datasets in the
+# package of example datasets that comes with R:
+
+search()
+ls(pos="package:datasets")
+
+# This means that there is also a help file for these data.
+
+help(trees)
+
+# Note the Variable called Diameter in the lectures notes
+# is called Girth in both the data that comes with R and
+# the associated help file.
+
+pairs(trees)
+
+# As there are only 3 variables involved here, we could 
+# employ a little 3-D visualisation, remembering to first
+
+# install.packages("rgl")
+
+# if you did not do that earlier in the semester or
+# are now working in a different directory.
+
+library(rgl)
+
+plot3d(Diameter, Height, Volume)
+
+# This may correct the apparent slight curvature:
+
+log_Volume <- log(Volume)
+
+pairs(cbind(Diameter, Height, log_Volume))
+
+plot3d(Diameter, Height, log_Volume)
+
+# Now for the rest of the analysis in the old exam question:
+
+trees.lm <- lm(log_Volume ~ Diameter + Height)
+plot(fitted(trees.lm), rstudent(trees.lm), main="Residuals vs Fitted")
+abline(0,0,lty=2)
+
+cbind(fitted(trees.lm), rstudent(trees.lm), hatvalues(trees.lm))
+
+plot(trees.lm, which=4)
+
+anova(trees.lm)
+
+summary(trees.lm)
+
+# Let's also try transforming the explanatory variables:
+
+Radius_ft <- Diameter/24
+log_Radius <- log(Radius_ft)
+log_Height <- log(Height)
+
+pairs(cbind(log_Radius, log_Height, log_Volume))
+
+plot3d(log_Radius, log_Height, log_Volume)
+
+trees.lm2 <- lm(log_Volume ~ log_Radius + log_Height)
+plot(fitted(trees.lm2), rstudent(trees.lm2), main="Residuals vs Fitted")
+abline(0,0,lty=2)
+
+plot(trees.lm2, which=4)
+
+anova(trees.lm2)
+
+summary(trees.lm2)

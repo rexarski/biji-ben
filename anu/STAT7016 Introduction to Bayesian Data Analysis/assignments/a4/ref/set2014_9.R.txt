@@ -1,0 +1,169 @@
+### Problem Set 9
+
+### sample from a multivariate normal
+rmvnorm<-
+function(n,mu,Sigma) {
+  p<-length(mu)
+  res<-matrix(0,nrow=n,ncol=p)
+  if( n>0 & p>0 ) {
+  E<-matrix(rnorm(n*p),n,p)
+  res<-t(  t(E%*%chol(Sigma)) +c(mu))
+                   }
+  res
+}
+
+### sample from the Wishart distribution
+rwish<-function(n,nu0,S0)
+{
+  sS0 <- chol(S0)
+  S<-array( dim=c( dim(S0),n ) )
+  for(i in 1:n)
+  {
+     Z <- matrix(rnorm(nu0 * dim(S0)[1]), nu0, dim(S0)[1]) %*% sS0
+     S[,,i]<- t(Z)%*%Z
+  }
+  S[,,1:n]
+}
+
+########################################################
+### Part (a)
+### Data can also be read in directly from
+### http://www.stat.washington.edu/hoff/courses/564/Data/HwData/tplant.dat
+data <- read.table("tplant.dat")
+y <- data$V1
+x <- cbind(data$V2,data$V3)
+ols <- lm(y~x)
+summary(ols)
+########################################################
+### Part (b)
+pdf(file="set9b.pdf",width=8,height=8,points=12)
+par(mfrow=c(2,2))
+### Plot the residuals as a function of plant
+ind <- which(x[,1]==0)
+y.max <- max(ols$residuals)
+y.min <- min(ols$residuals)
+plot(1:10,ols$residuals[ind],ylim=c(y.min,y.max),xlab="Plant",ylab="Residual",main="(a)")
+points(1:10,ols$residuals[-ind],col=2)
+### Plot scatterplot of residuals for each plant
+plot(ols$residuals[ind],ols$residuals[-ind],xlab="Residual at time 0",ylab="Residual at time 1",main="(b)",ylim=c(y.min,y.max),xlim=c(y.min,y.max))
+### Plot the residuals as a function of soil pH
+plot(x[,2],ols$residuals,xlab="Soil pH",ylab="Residual",main="(c)")
+### Plot the residuals as function of time
+plot(x[,1],ols$residuals,xlab="Time",ylab="Residual",main="(d)")
+dev.off()
+########################################################
+### Part (c)
+
+R <- 5000 # nr of scans
+## We only keep beta
+BETA <- array(NA,dim=c(R,3,10))
+## Add contant term to covariates
+X <- cbind(rep(1,20),x)
+## set starting values
+Sigma <- solve(t(X)%*%X)
+theta <- ols$coef
+sigma.sq <- var(ols$res)
+## Gibbs sampler
+for(s in 1:R)
+  {
+    if(s%%100 == 0) print(s)
+    ## update beta
+    Sigma.inv <- solve(Sigma)
+    B <- NULL
+    for(i in 1:10)
+      {
+        ind <- (2*i-1):(2*i)
+        delta <- solve(Sigma.inv+t(X[ind,])%*%X[ind,]/sigma.sq)
+        alpha <- delta %*% (Sigma.inv%*%theta + t(X[ind,])%*%y[ind]/sigma.sq)
+        beta <- t(as.matrix(rmvnorm(1,alpha,delta)))
+        B <- cbind(B,beta)
+      }
+    BETA[s,,] <- B
+    ## update theta
+    Lambda <- solve(diag(3) + 10*Sigma.inv)
+    beta.bar <- as.matrix(apply(B,1,mean))
+    mu <- Lambda %*% (ols$coef + 10*Sigma.inv%*%beta.bar)
+    theta <- t(rmvnorm(1,mu,Lambda))
+    ## update Sigma
+    S.theta <- 0
+    for(i in 1:10)
+      {
+        S.theta <- S.theta + (B[,i]-theta)%*%t(B[,i]-theta)
+      }
+    Sigma <- solve(rwish(1,11,solve(diag(3)+S.theta)))
+    ## update sigma.sq
+    SSR <- 0
+    for(i in 1:10)
+      {
+        ind <- (2*i-1):(2*i)
+        SSR <-  SSR + sum((y[ind]-t(as.matrix(B[,i]))%*%t(X[ind,]))^2)
+      }
+    sigma.sq <- 1/rgamma(1,21/2,(1+SSR)/2)
+  }
+
+### Diagnostics
+### Calculate effective sample size
+library(coda)
+min.eff <- R
+for(i in 1:3)
+  {
+    for(j in 1:10)
+      {
+        eff <- effectiveSize(BETA[1001:R,i,j])
+        if(eff < min.eff) min.eff <- eff
+      }
+  }
+min.eff # 989
+### Plot cumulative means
+pdf(file="set9c.pdf",width=12,height=4,points=12)
+par(mfrow=c(1,3))
+ind <- 1001:R
+for(i in 1:3)
+  {
+    plot(ind,cumsum(BETA[ind,i,1])/(1:4000),type="l",ylim=c(0,10),xlab="Scan",ylab=paste("Coefficient",i),main="")
+    for(j in 2:10) lines(ind,cumsum(BETA[ind,i,j])/(1:4000))
+  }
+dev.off()
+
+########################################################
+### Part (d)
+### Plot the ten posteriors and the OLS estimator for each coefficent
+pdf(file="set9d.pdf",width=12,height=4,points=12)
+par(mfrow=c(1,3))
+ind <- 1001:R
+for(i in 1:3)
+  {
+    plot(density(BETA[ind,i,1]),type="l",ylim=c(0,2),ylab="",xlab=paste("Coefficient",i),main="")
+    for(j in 2:10) lines(density(BETA[ind,i,j]))
+    abline(v=ols$coef[i],col=2)
+  }
+dev.off()
+
+#######################################################
+### Testing the residuals
+beta.post.mean <- array(NA,dim=c(3,10))
+for(i in 1:3) for(j in 1:10) beta.post.mean[i,j] <- mean(BETA[1001:5000,i,j])
+res <- NULL
+for(i in 1:10)
+  {
+    ind <- (2*i-1):(2*i)
+    res <- c(res,y[ind]-beta.post.mean[,i]%*%t(X[ind,]))
+  }
+par(mfrow=c(2,2))
+ind <- which(x[,1]==0)
+y.max <- max(res)
+y.min <- min(res)
+plot(1:10,res[ind],ylim=c(y.min,y.max),xlab="Plant",ylab="Residual",main="(a)")
+points(1:10,res[-ind],col=2)
+### Plot scatterplot of residuals for each plant
+plot(res[ind],res[-ind],xlab="Residual at time 0",ylab="Residual at time 1",main="(b)",ylim=c(y.min,y.max),xlim=c(y.min,y.max))
+### Plot the residuals as a function of soil pH
+plot(x[,2],res,xlab="Soil pH",ylab="Residual",main="(c)")
+### Plot the residuals as function of time
+plot(x[,1],res,xlab="Time",ylab="Residual",main="(d)")
+
+cor(cbind(ols$residuals[ind],ols$residuals[-ind]))
+cor(cbind(res[ind],res[-ind]))
+########################################################
+########################################################
+########################################################

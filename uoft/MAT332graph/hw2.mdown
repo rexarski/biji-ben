@@ -1,0 +1,26 @@
+# homework and quiz and midterm
+
+##hw2
+- ch4: 1, 6, 15, 17, 18, 31, 32
+- ch5: 2, 3
+- proof of prop 1.2.2 on page 6
+- thm 1.4.3 on page 13
+
+##quiz2
+
+based on hw2, october 27
+
+##midterm
+- all material of chapter 1 except section 1.9
+- 4.1, 4.2, 4.4
+- 5.1
+- which pairs of graphs are isomorphic or not (with proofs)
+- use Kuratowski thm to disprove planarity
+- spanning trees, bipartite graphs, cycles, paths and walks, Euler tours, minors and topological minors, connectivity and edge-connectivity, multigraps, adjacency and incidence matrices, Euler's formula and its implications for planar graphs, the five colour theorem.
+
+
+## hw3
+
+- Quiz 3 will be given in class on Tuesday, November, 17. It will be based on Homework 3:
+- Ch. 2 Problems 1, 5, 7, 8, 11, 12, 13, 14, 19 and 
+- Ch. 3 Problems 1, 7, 8, 10, 15, 16, 19.

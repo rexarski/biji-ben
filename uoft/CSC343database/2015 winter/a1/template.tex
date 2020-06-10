@@ -1,0 +1,165 @@
+\documentclass{article}
+\usepackage{fullpage}
+\usepackage[normalem]{ulem}
+\usepackage{amstext}
+\newcommand{\var}[1]{\mathit{#1}}
+\setlength{\parskip}{6pt}
+
+\begin{document}
+
+~~~\vspace{-2.0cm}
+
+\noindent
+University of Toronto\\
+{\sc csc}343, Winter 2015\\[10pt]
+{\LARGE\bf Assignment 1: Your name and student number here}
+
+\noindent
+Unary operators on relations:
+\begin{itemize}
+\item $\Pi_{x, y, z} (R)$
+\item $\sigma_{condition} (R) $
+\item $\rho_{New} (R) $
+\item $\rho_{New(a, b, c)} (R) $
+\end{itemize}
+Binary operators on relations:
+\begin{itemize}
+\item $R \times S$
+\item $R \bowtie S$
+\item $R \bowtie_{condition} S$
+\item $R \cup S$
+\item $R \cap S$
+\item $R - S$
+\end{itemize}
+Logical operators:
+\begin{itemize}
+\item $\vee$
+\item $\wedge$
+\item $\neg$
+\end{itemize}
+Assignment:
+\begin{itemize}
+\item $New(a, b, c) := R$
+\end{itemize}
+
+\noindent
+Below is the text of the assignment questions; we suggest you include it in your solution.
+We have also included a nonsense example of how a query might look in LaTeX.  
+We used \verb|\var| in a couple of places to show what that looks like.  
+If you leave it out, most of the time the algebra looks okay, but names
+such as ``Offer" look horrific without it.
+
+The characters ``\verb|\\|" create a line break and ``[5pt]" puts in 
+five points of extra vertical space.  The algebra is easier to read with extra
+vertical space.
+We chose ``---" to indicate comments, and added less vertical space between comments
+and the algebra they pertain to than between steps in the algebra.
+This helps the comments visually stick to the algebra.
+
+%----------------------------------------------------------------------------------------------------------------------
+\section*{Part 1: Queries}
+
+\begin{enumerate}
+
+\item   % ----------
+Report the user name of every student who has never worked with anyone, but
+has indeed submitted at least one file for at least one assignment.
+
+{\bf Answer:}\\[5pt]
+{\large
+--- IDs of all big Floops:  \\[5pt]
+$
+BigFloop(ID) := 
+\Pi_{One.who} \sigma_{One.who = \var{Offer.LID} \wedge One.what > 10} (One \times \var{Offer}) \\[10pt]
+$
+--- Name and favourite ice cream of those Floops: \\[5pt]
+$
+\Pi_{name, flavour} Floop \bowtie Everyone
+$
+}
+
+\item   % ----------
+Find the graders who have marked every assignment.
+We will say that a grader has marked an assignment if
+they have given a grade on that assignment to at least one group,
+whether or not that grade has been released.
+Report the grader's userName.
+
+\item   % ----------
+Find all groups for A2
+({\it i.e.}, the assignment whose description is ``A2")
+whose last submission was after the due date, but who submitted at least two different files
+({\it i.e.}, files with two different names) before the due date.
+Report the group ID, the name of the first file they submitted, and when they submitted it.
+If there are ties for a group's first submit, report them all.
+
+\item   % ----------
+Find pairs of students who worked in a group together, and without any other students,
+on each assignment in the database that allowed groups of size two or more.
+Report their user names, last names, and firstnames.
+
+\item   % ----------
+Find any assignments where 
+the highest mark given by one grader is less than 
+the lowest mark given by another grader.
+In your result, include a row for each grader on each of these assignments.
+Report the assignment ID, the grader's userName, and their minimum and maximum grade.
+
+\item   % ----------
+Find all students who have worked in a group with at least one other person, 
+but have never worked with the same person
+twice.
+Report their userName.
+
+\item   % ----------
+Find all students who meet these two requirements:
+(a) their groups (whether they were working alone or with others)
+handed in every required file, and did so on time, for all assignments, and
+(b) their grades never went down from one assignment to another with a later due date.
+Report their userName.\\
+Note: If an assignment has no required files, it is true of any group that they handed in every required file.
+
+\item   % ----------
+Find all assignments that have one or more groups with no grade or with a grade that has not
+been released.
+Report the assignment ID and description.
+
+\item   % ----------
+Assignments may have required files, but students can also hand in other files that are not required.
+Find all groups that never handed in a file that was not required.
+Report the group ID.
+
+\end{enumerate}
+
+
+
+%----------------------------------------------------------------------------------------------------------------------
+\section*{Part 2: Additional Integrity Constraints}
+
+Express the following integrity constraints
+with the notation $R = \emptyset$, where $R$ is an expression of relational algebra. 
+You are welcome to define intermediate results with assignment
+and then use them in an integrity constraint.
+
+\begin{enumerate}
+
+\item   % ----------
+No grades can be released for an assignment 
+unless every group has been given a grade on that assignment (whether or not it has been released).
+
+\item   % ----------
+A TA can't give a grade to any groups on an assignment unless they have completed marking 
+({\it i.e.,} they have given a grade, whether or not it has been released)
+for every group they were assigned to grade on every assignment with an earlier due date.
+
+\item   % ----------
+A TA can't be assigned to grade a group of size two or more unless he or she has already 
+given a grade (that has been released) to at least 3 students (each working in a group of size 1) 
+on an assignment with an earlier due date.
+
+\end{enumerate}
+
+\end{document}
+
+
+

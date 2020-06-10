@@ -1,0 +1,96 @@
+# -----SETUP-----
+source("regression_gprior.r")
+
+# -----DATA PREP-----
+
+# load AirBnb data scraped on June 11th, 2016.
+dat <- read.csv("./Airbnb Data-20170810/sydney/tomslee_airbnb_sydney_0300_2016-01-29.csv")
+
+dim(dat) # 13134 entries
+head(dat)
+unique(dat$room_type)
+unique(dat$borough)
+unique(dat$neighborhood)
+summary(dat$reviews)
+max(dat$reviews>1 & !is.na(dat$overall_satisfaction))
+dim(dat[!is.na(dat$overall_satisfaction),])
+sydney <- subset(dat,select = c("room_id","room_type","reviews",
+                                "overall_satisfaction","bedrooms",
+                                "price","latitude","longitude"))
+
+# data munging
+
+sydney <- sydney[!is.na(sydney$price),] # remove entires with NA price
+# combine number of reviews and overall_satisfaction into a new variable indicating the popularity of a listing
+sydney$hot <- sydney$overall_satisfaction*sydney$reviews
+sydney[is.na(sydney$hot),]$hot <- 0 # also set NA hot to 0
+# imputation for bedroom 
+sydney[is.na(sydney$bedroom),]$bedrooms <- round(mean(sydney[(sydney$room_type=="Entire home/apt")&(!is.na(sydney$bedrooms)),]$bedrooms),0)
+# add three indicator variables
+sydney$entire <- ifelse(sydney$room_type=="Entire home/apt",1,0)
+sydney$private <- ifelse(sydney$room_type=="Private room",1,0)
+sydney$shared <- ifelse(sydney$room_type=="Shared room",1,0)
+# (room_type have no problem!)
+
+# reorganize the data frame
+sydney <- subset(sydney,select = c("room_id","price","hot",
+                                   "bedrooms","entire","private",
+                                   "shared","latitude","longitude"))
+
+rm(dat)
+
+# ----- MODEL SELECTION-----
+X <- cbind(rep(1,nrow(sydney)),sydney$hot,sydney$bedrooms,
+           sydney$entire,sydney$private,sydney$shared)
+y <- sydney$price
+
+z <- matrix(data=rep(c(1,rep(0,5)),8),ncol=6,byrow=T)
+
+z[2,2] <- 1
+z[3,3] <- 1
+z[4,4:6] <- 1
+z[5,c(2,3)] <- 1
+z[6,c(2,4:6)] <- 1
+z[7,c(3,4:6)] <- 1
+z[8,c(2,3,4:6)] <- 1
+
+# marginal probability
+# while calculating we have a problem:
+# system is computationally singular: reciprocal condition number
+# so we need to modify lpy.X:
+
+lpy.X <- function(y,X,g=length(y),
+                  nu0=1,s20=try(summary(lm(y~-1+X))$sigma^2,silent=TRUE)) {
+    n <- dim(X)[1]; p <- dim(X)[2]
+    if (p==0) {
+        Hg <- 0
+        s20 <- mean(y^2)
+    }
+    if (p>0) {
+        Hg <- (g/(g+1))*X%*%solve(t(X)%*%X)%*%t(X)
+    }
+    SSRg <- t(y)%*%(diag(1,nrow=n)-Hg)%*%y
+    -0.5*(n*log(pi)+p*log(1+g)+(nu0+n)*log(nu0*s20+SSRg)-
+              nu0*log(nu0*s20))+lgamma((nu0+n)/2)-lgamma(nu0/2)
+}
+
+lpy.p <- NULL
+for (i in 1:nrow(z)) {
+    z.use <- z[i,]
+    lpy.p <- c(lpy.p,lpy.X(y,X[,z.use==1,drop=F]))
+}
+mprob <- data.frame(matrix(rep(NA,2*8),ncol=2))
+margin.prob <- round(exp(lpy.p-mean(lpy.p))/sum(exp(lpy.p-mean(lpy.p))),4)
+
+for (i in 1:nrow(z)) {
+    model <- "("
+    for(j in 1:(ncol(z)-1)){
+        model <- paste(model,z[i,j],",",sep="")
+    }
+    model <- paste(model,z[i,ncol(z)],")",sep="")
+    mprob[i,1] <- model
+    mprob[i,2] <- margin.prob[i]
+}
+colnames(mprob) <- c("model","margProb")
+mprob
+

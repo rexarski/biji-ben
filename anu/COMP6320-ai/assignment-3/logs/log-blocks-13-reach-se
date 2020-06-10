@@ -1,0 +1,79 @@
+Starting SAT-based planner...
+Checking for plugins...
+Encodings registered:    3
+Solvers registered:      1
+Command line options:
+    Domain file:          benchmarks/blocks/domain.pddl
+    Problem file:         benchmarks/blocks/problem13.pddl
+    Experiment name:      blocks_temp
+    Query strategy:        ramp, min_h = 15 max_h = 50 step_h = 5
+    Compute plangraph:     True
+    Plangraph constraints: reachable
+    Encoding:              basic
+    Solver                 precosat
+    SAT solver time out    None
+    Write debug CNF:       False
+    Remove tmp files:      False
+Command line arg processing time: 0.0032896995544433594
+Parsing the PDDL domain...
+Parsing the PDDL problem...
+Simplifying the problem representation...
+Parsing time: 0.08609318733215332
+Grounding the problem...
+Grounding time: 0.035372018814086914
+Simplifying the ground encoding...
+Simplify time: 0.10891485214233398
+Generating Plangraph invariants...
+Step: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 
+Plangraph invariants time: 0.8437812328338623
+Planning...
+
+Step: 15
+-------------------------------------------------
+Generating base encoding: basic ...
+PRE_EFF_COUNT:
+37440
+FRAME COUNT:
+5880
+INT MUTEX COUNT:
+286650
+REACH COUNT:
+3662
+Encoding generation time: 30.98863697052002
+Writing CNF file...
+Total variables: 8206
+Total clauses: 333840
+Writing time: 0.460237979888916
+Solving...
+UNSAT
+Solution time:  0.43599486351013184
+Step time: 31.88716697692871
+
+Step: 20
+-------------------------------------------------
+Generating base encoding: basic ...
+PRE_EFF_COUNT:
+49920
+FRAME COUNT:
+7840
+INT MUTEX COUNT:
+382200
+REACH COUNT:
+4009
+Encoding generation time: 41.40636610984802
+Writing CNF file...
+Total variables: 10876
+Total clauses: 444177
+Writing time: 0.5721690654754639
+Solving...
+UNSAT
+Solution time:  0.574578046798706
+Step time: 42.55556321144104
+
+Step: 25
+-------------------------------------------------
+Generating base encoding: basic ...
+PRE_EFF_COUNT:
+62400
+FRAME COUNT:
+9800

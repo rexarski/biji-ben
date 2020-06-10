@@ -1,0 +1,70 @@
+#Lecture 11
+
+February 12, 2015
+
+$$ T(1) = 1 $$
+$$ T(n) = 1 + \max(T(\lceil\frac{n}{2}\rceil), T(\lfloor\frac{n}{2}\rfloor)), n \geqslant2 $$
+$$ T $$ is non-decreasing on the positive natural numbers
+
+$$ \forall n\in \mathbb{N}, 1 \leqslant n \implies (T(n) \leqslant T(n+1)) $$ 
+
+$$ \bf{\forall m, n \in \mathbb{N}, 1 \leqslant m \leqslant n \implies T(m) \leqslant T(n)} $$
+
+Claim $$ P(1) $$: $$ T(1) \leqslant T(1) $$
+$$ P(2) $$
+$$ T(1) \leqslant T(2) $$ 
+$$ T(2) \leqslant T(2) $$
+$$ P(3) $$
+$$ T(1) \leqslant T(3) $$
+$$ T(2) \leqslant T(3) $$ 
+$$ T(3) \leqslant T(3) $$
+$$ P(4) $$
+$$ T(1) \leqslant T(4) $$
+$$ T(2) \leqslant T(4) $$
+$$ T(3) \leqslant T(4) $$
+$$ T(4) \leqslant T(4) $$
+
+Prove $$ T(3) \leqslant T(4) $$
+
+$$ T(3) = 1 + \max(T(2), T(1)) $$
+$$ T(4) = 1 + \max(T(2), T(2)) $$
+
+Prove $$ T(7) \leqslant T(11) $$
+
+$$ T(7) = 1 + \max(T(4), T(3)) $$
+$$ T(11)= 1+\max(T(6), T(5)) $$
+
+For $$ n\in \mathbb{N} $$, let $$ P(n) $$ be: $$ \forall m \in \mathbb{N}, 1 \leqslant m \leqslant n \implies T(m) \leqslant T(n) $$.
+
+e.g. $$ P(3) $$: $$ \forall m \in \mathbb{N}, 1\leqslant m\leqslant3 \implies T(m) \leqslant T(3) $$
+
+So
+$$ T(1) \leqslant T(3) $$
+$$ T(2) \leqslant T(3) $$
+$$ T(3) \leqslant T(3) $$
+
+e.g. $$ T(123) \leqslant T(236) $$
+
+$$ T(123) = 1 + \max(T(62), T(61)) $$
+$$ T(236) = 1 + \max(T(118), T(118)) $$
+$$ P(118): T(62) \leqslant T(118) $$
+$$ P(119): T(62) \leqslant T(119) $$
+
+
+**Proof of $$ \forall n \in \mathbb{N}, n \geqslant 1 \implies P(n) $$**
+
+**Base case** $$ P(1) $$. proof : $$ 1 \leqslant m \leqslant 1 \implies T(m) \leqslant T(1), T(1) \leqslant T(1) $$
+**Inductive Step**: Let $$ n\in \mathbb{N}, n \geqslant 1 $$
+**Inductive Hypothesis**: Assume $$ \bf{P(1), P(2), P(3), ... P(n-1)} $$ #dangerous
+Assume $$ P(k) $$ for such $$ k \in \mathbb{N} $$ with $$ 1 \leqslant k < n $$ that $$ \forall m \in \mathbb{N}, 1 \leqslant m \leqslant k \implies T(m) \leqslant T(k) $$
+Prove: $$ \forall l \in \mathbb{N}, 1 \leqslant l \leqslant n \implies T(l) \leqslant T(n) $$
+Let $$ l \in \mathbb{N}, 1 \leqslant l \leqslant n $$
+CASE: $$ l \leqslant 2 $$
+$$ T(l) = 1 + \max(T(\lceil\frac{l}{2}\rceil),T(\lfloor\frac{l}{2}\rfloor)) $$
+$$ T(n) = 1 + \max(T(\lceil\frac{n}{2}\rceil),T(\lfloor\frac{n}{2}\rfloor)) $$, since $$ n \geqslant 2 $$
+Use $$ P(\lceil\frac{n}{2}\rceil), P(\lfloor\frac{n}{2}\rfloor) $$
+$$ k = \lceil\frac{n}{2}\rceil, k = \lfloor\frac{n}{2}\rfloor $$
+$$ k\in \mathbb{N}, 1 \leqslant k < n because n \geqslant 2 $$
+
+$$ T(\lceil\frac{l}{2}\rceil) \leqslant T(\lceil\frac{n}{2}\rceil) $$
+$$ T(\lfloor\frac{l}{2}\rfloor) \leqslant T(\lfloor\frac{n}{2}\rfloor) $$

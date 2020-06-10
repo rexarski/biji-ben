@@ -1,0 +1,145 @@
+#Last Updated: 23/10/2017
+
+
+
+
+
+rm(list=ls())
+setwd('~/Desktop/Research/AppliedStat2017/L15')
+testscores=read.table("testscores.txt",header=T)
+head(testscores)
+
+head(testscores[,1:2])
+X1=testscores[,1]; X2=testscores[,2];k=2
+plot(X1,X2,xlab="diff",ylab="complex")
+
+testscores.pca = princomp(testscores[, 1:k])
+summary(testscores.pca, loadings = T)
+
+Z1=testscores.pca$scores[,1]
+Z2=testscores.pca$scores[,2]
+cor(Z1, Z2)
+cor(X1, X2)
+var(Z1)/(var(X1) + var(X2))
+
+par(mfrow=c(2,1))
+plot(testscores[,1],testscores[,2],xlab="diff",ylab="complex")
+plot(Z1,Z2,xlab="PC 1",ylab="PC 2")
+
+t(testscores.pca$loadings[,1:k])
+
+testscores.pca$center
+
+-t(testscores.pca$loadings[,1:k])%*%testscores.pca$center
+
+cbind(-t(testscores.pca$loadings[,1:k])
+      %*%testscores.pca$center,
+      t(testscores.pca$loadings[,1:k]))
+
+Z=t(cbind(-t(testscores.pca$loadings[,1:k])
+          %*%testscores.pca$center,
+          t(testscores.pca$loadings[,1:k]))%*%t(cbind(1,X1,X2)))
+
+head(Z[,1])
+head(Z[,2])
+
+head(testscores.pca$scores[,1])
+head(testscores.pca$scores[,2])
+
+testscores.pca=princomp(testscores)
+summary(testscores.pca,loadings=T)
+
+k=5
+cbind(-t(testscores.pca$loadings[,1:k])
+      %*%testscores.pca$center,
+      t(testscores.pca$loadings[,1:k]))
+
+Z=t(cbind(-t(testscores.pca$loadings[,1:k])
+          %*%testscores.pca$center,
+          t(testscores.pca$loadings[,1:k]))
+    %*%t(cbind(1,testscores)))
+
+head(Z[,1])
+head(Z[,2])
+
+head(testscores.pca$scores[,1])
+head(testscores.pca$scores[,2])
+
+Z1=testscores.pca$scores[,1]
+Z2=testscores.pca$scores[,2]
+plot(Z1,Z2,xlab="PC 1",ylab="PC 2")
+
+screeplot(testscores.pca,type='lines',main='Scree Plot')
+
+library(Sleuth3)
+SATdata=case1201 
+head(SATdata)
+SATdata=SATdata[-29,]  #removing Alaska
+n=length(SATdata[,1])
+n
+#Randomly choose the training data and test data
+set.seed(1)
+TestIndex=sample(1:n,floor(n*0.1),replace=F)
+TestIndex
+SATdataTest=SATdata[TestIndex,]
+SATdataTraining=SATdata[-TestIndex,]
+YTraining<-SATdataTraining[,2]
+XTraining<-SATdataTraining[,-c(1,2)]
+
+fit=lm(YTraining~.,data=XTraining)
+summary(fit)
+library(car)
+vif(fit)
+
+pca = princomp(XTraining)
+summary(pca,loadings=T)
+
+k=6
+round(cbind(-t(pca$loadings[,1:k])
+            %*%pca$center,
+            t(pca$loadings[,1:k])),4)
+
+ZTraining=t(cbind(-t(pca$loadings[,1:k])
+                  %*%pca$center,
+                  t(pca$loadings[,1:k]))
+            %*%t(cbind(1,XTraining)))
+
+screeplot(pca,type='lines',main='Scree Plot')
+
+ZTraining.pca2=data.frame(ZTraining[,1:2])
+fit.pca2=lm(YTraining~.,data=ZTraining.pca2)
+summary(fit.pca2)
+vif(fit.pca2)
+
+YTest<-SATdataTest[,2]
+XTest<-SATdataTest[,-c(1,2)]
+ZTest=t(cbind(-t(pca$loadings[,1:k])
+              %*%pca$center,
+              t(pca$loadings[,1:k]))
+        %*%t(cbind(1,XTest)))
+
+YPred=predict(fit,XTest)
+MSPE=mean((YTest-YPred)^2)
+MSPE
+ZTest.pca2=data.frame(ZTest[,1:2])
+YPred.pca2=predict(fit.pca2,ZTest.pca2)
+MSPE.pca2=mean((YTest-YPred.pca2)^2)
+MSPE.pca2
+
+ZTraining.pca6=data.frame(ZTraining)
+fit.pca6=lm(YTraining~.,data=ZTraining.pca6)
+summary(fit.pca6)
+
+vif(fit.pca6)
+
+ZTest.pca6=data.frame(ZTest)
+YPred.pca6=predict(fit.pca6,ZTest.pca6)
+MSPE.pca6=mean((YTest-YPred.pca6)^2)
+MSPE.pca6
+
+
+
+
+
+
+

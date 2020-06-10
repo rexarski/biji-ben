@@ -1,0 +1,201 @@
+# STAT2008/STAT6038 Regression Modelling Tutorial 2 - R Commands
+
+#======================================================================
+# Go to Wattle - STAT2008 - Statistical Computing - Tutorial 2 & 2014 Assignment 1 - Download "auscars.csv", "prostate.csv", "teengamb.csv"
+
+# Set up your working directory:
+# Go to Session - Set Working Directory - Choose Directory - Choose the folder that you download "auscars.csv" before
+# for me: setwd("~/Documents/ANU-Master/2017S1/STAT2008-2017S1/Tutorial/Tutorial 2 - Wk 5 + Wk 6")
+#======================================================================
+# Question One
+
+# Q1 (a)
+  auscars <- read.csv("auscars.csv", header=T)    
+  auscars                                       
+  attach(auscars)                             
+
+# Q1 (b)
+  # 1. Now fit the requested model using lm():
+  auscars.lm <- lm(L.100k ~ Weight)
+  auscars.lm
+  
+  # 2. b0=? b1=? SEb0=? SEb1=?
+  summary(auscars.lm)
+  
+  # 3. Plot:
+  plot(Weight, L.100k, ylim=c(5,20), xlab="Unladen weight (kgs)", ylab="Fuel efficiency (Litres/100Km)", main="NRMA Car Data 1991")
+  abline(coef(auscars.lm))
+
+
+# Q1 (c)
+  # Method 1: Individual hypothesis for (B1)
+  summary(auscars.lm)$coef
+  qt(0.975,length(L.100k)-2)
+  
+  # Method 2: Overall hypothesis (anova)
+  anova(auscars.lm)
+  qf(0.95,1,length(L.100k)-length(auscars.lm$coef))
+
+# Q1 (d)
+  # 1. R^2 = SSR/(SSR+SSE)
+  anova(auscars.lm)
+  
+  # 2. From Summary:
+  summary(auscars.lm)
+  summary(auscars.lm)$r.squared
+  
+  # 3. r^2=R^2 (SLR):
+  cor(Weight,L.100k)^2
+
+# Q1 (e)
+  # 1. Calculate CI(B0)
+  # Generate b0 and SEb0
+  coef(auscars.lm)
+  b0 <- coef(auscars.lm)[1]
+  b0
+  
+  summary(auscars.lm)$coef
+  SEb0 <- summary(auscars.lm)$coef[1,2]
+  SEb0
+  
+  # The df for residual:
+  auscars.lm$df
+  auscars.lm$df.residual
+  
+  # The Critical value:
+  qt(0.025,auscars.lm$df)
+  qt(0.975,auscars.lm$df)
+  
+  # CI:
+  c(b0 + qt(0.025,auscars.lm$df)*SEb0, b0 + qt(0.975,auscars.lm$df)*SEb0)
+  
+  # 2. Interpretation
+
+# Q1 (f)
+  # Define new Xi
+  newWeight <- 1800
+  
+  # 1. 95%CI 
+  predict(auscars.lm, newdata=as.data.frame(cbind(Weight=newWeight)), interval="confidence")
+  
+  # 2. 95%PI
+  predict(auscars.lm, newdata=as.data.frame(cbind(Weight=newWeight)), interval="prediction")
+
+
+# Q1 (g)
+  # 1. New Xis: Generate a sequence from min(Weight) to max(Weight), the increment level is by 10 
+  newWeight <- seq(min(Weight),max(Weight),10)
+  newWeight
+  
+  # 2. Calculate the fitted value of Y and CI for EACH of the new Xi
+  auscars.cis <- predict(auscars.lm, newdata=as.data.frame(cbind(Weight=newWeight)), interval="confidence")
+  auscars.cis
+  
+  # 3. For each new Xi, we obtain its LB and UB for CI, 
+  # we have many new Xis, each Xi has 1 LB and 1 UB
+  lines(newWeight, auscars.cis[,"lwr"], lty=2)
+  lines(newWeight, auscars.cis[,"upr"], lty=2)
+  
+  # 4. Calculate the fitted value of Y and PI for each of the new Xi
+  auscars.pis <- predict(auscars.lm, newdata=as.data.frame(cbind(Weight=newWeight)), interval="prediction")
+  auscars.pis
+  
+  # 5. For each new Xi, we obtain its LB and UB for PI
+  lines(newWeight, auscars.pis[,"lwr"], lty=3)
+  lines(newWeight, auscars.pis[,"upr"], lty=3)
+  # add title on the graph
+  legend(720,20,c("Estimated SLR model", "95% Confidence Intervals", "95% Prediction Intervals"), lty=1:3)
+  
+  # 6. CI vs PI
+#======================================================================
+#======================================================================
+# Question 2
+
+# run install.packages(faraway) to install the faraway library
+library(faraway)
+
+# Or you could read in the data from the Oracle:
+prostate <- read.csv("prostate.csv", header=T)
+prostate
+attach(prostate)
+
+# Q2 (a)
+  # 1. Scatterplot
+  plot(lcavol,lpsa, main="Relationship between prostate specific antigen test\n and cancer tumour volume", xlab="log(Cancer Volume)", ylab="log(PSA)")
+  
+  # 2. Correlation test
+  cor.test(lcavol, lpsa)
+  cor.test(lcavol, lpsa)$statistic
+  qt(0.975, length(lcavol)-2)
+  cor.test(lcavol, lpsa)$p.value
+
+# Q2 (b)
+  # 1. Fit a SLR for lcavol(Y), lpsa (X).
+  prostate.lm <- lm(lcavol ~ lpsa)
+  prostate.lm
+  
+  # 2. Residual plots
+  par(mfrow=c(2, 2))
+  # Use residual plots to check
+  plot(prostate.lm, which=1) # Residual versus fitted => check (1), (2)
+  plot(prostate.lm, which=2) # Normality plot => check (3) 
+  # Unusual observation 
+  plot(prostate.lm, which=4) # Cooks Distance (mix effect)
+  barplot(hat(lpsa), main="Leverage plot of the hat values") # Leverage (influential point)
+  abline(h=4/length(lpsa))  # Rule of Thumb: hi>2*p/n=2*2/n (in SLR), p=# parameters
+
+
+# Q2 (c) 
+  # overall hypothesis (Q2(c))
+  anova(prostate.lm)
+  qf(0.95,1,length(lcavol)-length(prostate.lm$coef))
+  # individual hypothesis (Q2(d))
+  summary(prostate.lm)$coef
+  # correlation test (Q2(a))
+  cor.test(lcavol, lpsa)
+
+# Q2 (d)
+  # 1. b0=? b1=? SE(b0)=? SE(b1)=? Hypo(B0,B1)=?
+  summary(prostate.lm)
+  qt(0.975,length(lcavol)-2)
+  # 2. log transformation for (b0)
+  exp(prostate.lm$coef)
+
+# Q2 (e) 
+  par(mfrow=c(1, 1))
+  # 1. Generate a seqence of Xis
+  # check the domain for lpsa
+  range(lpsa)  
+  # generate a sequence follows that domain (from -20/20=-1 to 120/20=6, the incremental unit is 1/20)
+  lpsa.values <- -20:120/20
+  lpsa.values
+  
+  # 2. 95% CI for the mean or expected value of lcavol
+  cintervals <- predict(prostate.lm, newdata=data.frame(lpsa=lpsa.values), interval="confidence")
+  cintervals[1,]
+  
+  # 3. Plot log(psa) versus log(cavol)
+  plot(lpsa, lcavol, main="Relationship between cancer tumour volume\n and prostate specific antigen test", xlab="log(PSA)", ylab="log(Cancer Volume)")
+  # Generate the fitted line: lcavol hat = b0 + b1 * lpsa
+  abline(prostate.lm$coef)
+  # Generate the CI's UB and LB each (from 141# of Xis => we have 141# of UB and LB each)
+  lines(lpsa.values, cintervals[,"lwr"], lty=2)
+  lines(lpsa.values, cintervals[,"upr"], lty=2)
+  legend(-0.63, 4, c("SLR Model", "95% Confidence Intervals"), lty=1:2)
+  
+  # 5. PI for 141# of new Xis
+  pintervals <- predict(prostate.lm, newdata=data.frame(lpsa=lpsa.values), interval="prediction")
+  pintervals[1,]
+  lines(lpsa.values, pintervals[,"lwr"], lty=3)
+  lines(lpsa.values, pintervals[,"upr"], lty=3)
+  
+  # 6. Transformation
+  # Scatterplot: pas versus cavol
+  plot(exp(lpsa), exp(lcavol), main="Relationship between cancer tumour volume\n and prostate specific antigen test", xlab="PSA (ng/ml)", ylab="Cancer Volume (ml)")
+  # Generate the fitted line, CI, PI based on Xi = psa (not lpsa) (based on exp of 141# of lpsa)
+  lines(exp(lpsa.values), exp(cintervals[,"fit"]))
+  lines(exp(lpsa.values), exp(cintervals[,"lwr"]), lty=2)
+  lines(exp(lpsa.values), exp(cintervals[,"upr"]), lty=2)
+  lines(exp(lpsa.values), exp(pintervals[,"lwr"]), lty=3)
+  lines(exp(lpsa.values), exp(pintervals[,"upr"]), lty=3)
+  legend(164, 4, c("SLR Model on log-log scale", "95% Confidence Intervals", "95% Prediction Intervals"), lty=1:3)

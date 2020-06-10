@@ -1,0 +1,68 @@
+#Question 3
+
+#part c
+setwd("~/Desktop")
+crab<-read.table("crab.csv",header=T,sep=",")
+names(crab)
+force=crab$FORCE
+height=crab$HEIGHT
+species=crab$SPECIES
+ILP=ifelse(species==species[16],1,0)
+ICP=ifelse(species==species[28],1,0)
+crab.reg=lm(log(force)~log(height)+ILP+ICP+ILP*log(height)+ICP*log(height))
+summary(crab.reg)
+qt(df=32,p=0.975)
+
+CIlower=(1.66-2.037*0.7889)
+CIupper=(1.66+2.037*0.7889)
+CIlower
+CIupper
+
+
+#this suggests that B5 is different from zero
+
+#part c
+
+#for checking significance of model fit, we look at F-statistic
+#F-value = 24.75 with p-value = 0.0000000003935
+#so reject Ho, model is highly significant.
+
+# part d
+# To answer this question we need to test whether ß4=ß5=0. 
+anova(crab.reg)
+
+#F-stat = [(1.55 + 0.83)/2]/0.187 = 6.36
+#F-critical --> 2 ways
+
+qf(p=0.975,df1=2,df2=32)
+1-pf(6.36,df1=2,df2=32)
+
+#We reject the null (ß4=ß5=0) and conclude that the slopes are different.
+
+#Question 1
+
+old=rab<-read.table("oldfaithful.csv",header=T,sep=",")
+names(old)
+date=old$DATE
+duration=old$DURATION
+interval=old$INTERVAL
+I2=ifelse(date==2,1,0)
+I3=ifelse(date==3,1,0)
+I4=ifelse(date==4,1,0)
+I5=ifelse(date==5,1,0)
+I6=ifelse(date==6,1,0)
+I7=ifelse(date==7,1,0)
+I8=ifelse(date==8,1,0)
+old.reg=lm(interval~duration+I2+I3+I4+I5+I6+I7+I8)
+
+#we want to test if B2=B3=B4=...=B8=0 i.e. interval = B0 + B1*(duration) becomes our restricted model)
+anova(old.reg) 
+
+#F-stat = [(9.87+2.68+0.15+0.05+52.72+0.26+3.13)/7]/47.14 = 0.209
+
+#F-critical 
+qf(p=0.975,df1=7,df2=98)
+1-pf(0.209,df1=7,df2=98)
+
+#we can not reject null meaning that difference in mean intervals may not be due to the date of recording.
+

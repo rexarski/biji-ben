@@ -1,0 +1,169 @@
+#Lecture 5
+
+2015-10-13
+
+recap of RA
+
+recall natural right/left/full join
+
+in practice natural join is dangerous
+
+- attributes with matching names don't necessarily mean matching meanings
+- having implicit comparisons impairs readability
+- also if the schema changed, a query that looks fine may actually be broken, without being able to tell
+
+##keywords INNER and OUTER
+
+##NULL VALUE
+
+- two common scenarios:
+	- missing value
+	- inapplicable attribute
+		- e.g., attribute *spouse* for unmarried person
+- representing missing info
+	- one possibility: use a special value as a placeholder
+	- pros and cons?
+	- better solution: use a value not in any domain. call this **null value**
+	- tuples in SQL relations can have `NULL` as a value for one or more component
+- checking NULL value
+	- using `IS NULL` and `IS NOT NULL`
+
+	SELECT *
+	FROM Course
+	WHERE breadth IS NULL;
+
+Note: do not use `WHERE breadth = NULL`
+
+##impact of null values on SQL expressions?
+- arithmetic expressions?
+	- result is always `NULL`
+		- (x - x) is also `NULL`
+- comparison operators? (>, <, =, ...)
+	- (x < 32) -> UNKNOWN
+	- Result is UNKNOWN
+	- truth values in SQL are: (`TRUE, FALSE, UNKNOWN`)
+
+##evaluating logic expressions with UNKNOWN
+- logic: TRUE, FALSE, UNKNOWN
+	- UNKNOWN OR FALSE -> UNKNOWN
+	- UNKNOWN OR TRUE -> TRUE
+	- UNKNOWN AND TRUE -> UNKNOWN
+	- UNKNOWN AND FALSE -> FALSE
+	- NOT UNKNOWN -> UNKNOWN
+
+trick: TRUE = 1, FALSE = 0, UNKNOWN = 1/2, AND = min(...), OR = max(...), NOT = 1-x
+
+- in SQL, a tuple is in a query result iff the result of the WHERE clause is TRUE
+- aggregation ignores `NULL`
+- NULL never contributes to a sum, average, or count, and can never be the minimum or maximum of a column (unless every value is NULL)
+- if all values are NULL in a column, then the result of aggregation is NULL
+
+
+
+##SQL: exercise with nulls
+1. we have table R and T.
+R:
+
+	 a | b
+	---+---
+	 1 | 2
+	 8 | 7
+	 5 | 
+	   | 6
+	(4 rows)
+
+T:
+
+	 b | c
+	---+---
+	 2 | 5
+	 2 | 9
+	 1 | 4
+	   | 18
+	 6 | 88
+	(5 rows)
+
+	select * from R natural join T;
+
+	Answer:
+	 b | a | c
+	---+---+---
+	 2 | 1 | 5
+	 2 | 1 | 9
+	 6 |   | 88
+
+ note that two UNKNOWN are not comparable, so they are not joined.
+
+
+2. Suppose we have this table:
+	
+	create table names(first text, last text, unique (first, last));
+
+what will the result of the following be?
+(a) doing this twice: `insert into names values ('Stephen', 'Cook');
+Error, duplicate key.
+(b) doing this twice: `insert into names values (null, 'Rackoff');
+Worked.
+
+3. 
+	csc343h-dianeh=> select * from R;
+	 a | b
+	---+---
+	 1 | 2
+	 8 | 7
+	 5 |
+	   | 6
+	(4 rows)
+
+	csc343h-dianeh=> select * from S;
+	 a | b
+	---+---
+	 3 | 4
+	 8 | 7
+	 5 |
+	   | 6
+	(4 rows)	
+
+(a) `(SELECT * from R) INTERSECT (SELECT * from S)`;
+	
+	 a | b
+	---+---
+	   | 6
+	 8 | 7
+	 5 | 
+	(3 rows)
+
+(b) `(SELECT * from R) EXCEPT (SELECT * from S)`;
+
+	 a | b
+	---+---
+	 1 | 2
+
+-------------------------------
+-------------------------------
+-------------------------------
+
+
+##subqueries in a FROM clause
+
+	SELECT sid, dept || cnum as course, grade FROM Took,
+		(SELECT) *
+		 FROM Offering
+		 WHERE instructor = 'Horton') Hoffering
+	WHERE Took.oid = Hoffering.oid;
+
+##subquery as a value in a WHERE
+- if a subquery is guaranteed to produce exactly one tuple, then the subquery can be used as a value.
+
+
+##The operator ANY
+syntax: `x <<comparison>> ANY (<<subquery>>)`
+or equivalently: `x <<comparison>> SOME (<<subquery>>)`
+
+##ALL
+syntax: `x <<comparison>> ALL (<<subquery>>)`
+
+##IN
+syntax: `x IN (<<subquery>>)`
+
+##NOT EXISTS

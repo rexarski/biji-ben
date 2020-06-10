@@ -1,0 +1,87 @@
+# Counting NAs, without loops and with loops.
+
+how_many_NA <- function (v) sum(is.na(v))
+
+how_many_NA2 <- function (v) {
+    s <- 0
+    for (i in 1:length(v))
+        if (is.na(v[i])) s <- s+1
+    s
+}
+
+how_many_NA_in_df <- function (df) sapply(df,how_many_NA)
+
+how_many_NA_in_df2 <- function (df) {
+    r <- numeric(ncol(df))
+    names(r) <- colnames(df)
+    for (j in 1:ncol(df))
+        r[j] <- how_many_NA2(df[[j]])
+    r
+}
+
+# One way to write the simple version of swap_born_died.
+
+swap_born_died <- function (df) {
+    new_df <- df
+    for (i in 1:nrow(df)) {
+        if (df$born[i] > df$died[i]) {
+            new_df$born[i] <- df$died[i]
+            new_df$died[i] <- df$born[i]
+        }
+    }
+    new_df
+}
+
+# Two ways to write a version of swap_born_died that handles NA.
+
+swap_born_died2 <- function (df) {
+    new_df <- df
+    for (i in 1:nrow(df)) {
+        if (!is.na(df$born[i]) && !is.na(df$died[i]) && df$born[i]>df$died[i]) {
+            new_df$born[i] <- df$died[i]
+            new_df$died[i] <- df$born[i]
+        }
+    }
+    new_df
+}
+
+swap_born_died2 <- function (df) {
+    new_df <- df
+    sw <- !is.na(df$born) & !is.na(df$died) & df$born>df$died
+    new_df$born[sw] <- df$died[sw]
+    new_df$died[sw] <- df$born[sw]
+    new_df
+}
+
+
+# A solution for string_matrix_from_string_vectors.
+
+string_matrix_from_string_vectors <- function (u, v) {
+    M <- matrix("",nrow=length(u),ncol=length(v))
+    for (i in 1:length(u)) {
+        for (j in 1:length(v)) {
+            M[i,j] <- paste (substring(u[i],1,1), substring(v[j],1,1), sep="")
+        }
+    }
+    rownames(M) <- u
+    colnames(M) <- v
+    M
+}
+
+# A solution for find_longest_run. 
+
+longest_run <- function (v) {
+    if (length(v) < 2) 
+        return (length(v))
+    run <- 1
+    longest_run <- 1
+    for (i in 2:length(v)) {
+        if (v[i]==v[i-1])
+            run <- run + 1
+        else
+            run <- 1
+        if (run > longest_run)
+            longest_run <- run
+    }
+    longest_run
+}

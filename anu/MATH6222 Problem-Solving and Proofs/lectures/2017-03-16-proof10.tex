@@ -1,0 +1,121 @@
+\documentclass[a4paper, 11pt, twoside]{article}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\begin{document}
+\title{MATH6222 week 4 lecture 10}
+\author{Rui Qiu}
+\date{2017-03-16}
+
+\maketitle
+
+If $A$ is a finite set, let $|A|$ denotes the number of elements in $A$.
+
+Claim that
+
+\[
+\begin{split}
+	|A|&=|B| \iff \exists \text{ a bijection } f: A\to B.\\	
+	|A|&\leq |B| \iff \exists \text{ a injection } f: A\to B.\\
+	|A|&\geq |B| \iff \exists \text{ a surjection } f: A \to B.\\
+\end{split}
+\]
+
+\paragraph{Proof of the first:}\ \\
+
+Suppose $|A|=|B|$, then $A=\{a_1, a_2, \dots, a_n\}, B=\{b_1,b_2,\dots, b_n\}.$
+
+Then define $f:A\to B$, i.e. $f(a_i)=b_i.$ Clearly $f$ is a bijection (which maps every $a_i$ to $b_i$).
+
+On the other hand, if $f:A\to B$ is a bijection.
+
+Then I claim $A$ and $B$ have the same number of elements.
+
+Let's write $A=\{a_1, \dots, a_n\}.$
+
+Then $B=\{b_1,\dots, b_n\}.$
+
+--------------------
+
+What does it mean to say \textit{$A$ has $n$ elements}?
+
+It means we can write $A$ as $\{a_1, a_2, \dots, a_n\}$
+
+--------------------
+
+Given 2 arbitrary sets $A, B$, we'll say that $A$ and $B$ have the same cardinality (yeah i'm fancy) and write $|A|=|B|$ if $\exists$ bijection $f:A\to B$.\\
+
+\paragraph{Proposition:}
+\begin{enumerate}
+	\item For any set $A, |A|=|A|.$ (id. $A\to A$)
+	\item For any set $A, B, |A|=|B| \iff |B| = |A|.$ ($f:A\to B, f^{-1}:B\to A$)
+	\item For any set $A, B, C$, if $|A|=|B|, |B|=|C| \implies |A|=|C|.$ ($f:A\to B, g: B\to C, g\circ f:A\to C$)
+\end{enumerate}
+
+\paragraph{Remark:}\ \\
+
+Given $f: A\to B, g: B \to C,$ we can define
+
+\[g\circ f: A\to C\]
+
+\paragraph{Proposition:} If $f: A\to B$ and $g: B\to C$ are injective/surjective, then $g\circ f$ is injective/surjective.\\
+
+\paragraph{Proof:}\ \\
+$g\circ f: A\to C$ Given $a_1, a_2\in A$ with $a_1\not= a_2$, must show $(g\circ f)(a_1)\not=(g\circ f)(a_2).$
+
+Since $f$ injective, $f(a_1)\not=f(a_2)$ (as elements of $B$).
+
+Since $g$ injective, $g(f(a_1))\not=g(f(a_2))$.
+
+For surjections...\\
+
+\textbf{Example:}
+
+$\mathbb{N}=\{1, 2, 3, \dots\}$
+
+$\mathbb{N}$ \textbackslash $\{1\} = \{2, 3, 4, \dots\}$
+
+$|\mathbb{N}| = |\mathbb{N}$ \textbackslash $\{1\}|$\\
+
+\textbf{Next example:}
+
+$\mathbb{N}=\{1,2,3,\dots\}$
+
+$\mathbb{E}=\{2, 4, 6,\dots\}$
+
+$\exists$ a bijection $\mathbb{N}\to\mathbb{E}$\\
+
+$\mathbb{N}\subset \mathbb{Z} \subset \mathbb{Q} \subset \mathbb{R}$
+
+\textbf{Example:}
+
+$\exists$ bijection $\mathbb{N}\to\mathbb{Z}, n \to \left.
+\begin{cases}
+	\frac{n}{2}, &\text{ even}\\
+	-\frac{n-1}{2}, &\text{ odd}
+\end{cases}
+\right.$\\
+
+\paragraph{Definition:} We say a set $A$ is \textbf{countably infinite} if $|A|=|\mathbb{N}|$.\\
+
+$\mathbb{Q}^+ =\{\frac{a}{b}: a, b \in \mathbb{N} \text{ st. } a \text{ and } b \text { have no common factors}$\\
+
+\[
+\begin{split}
+	&\frac11, \frac21, \frac31, \frac41, \frac51, \dots\\
+	&\frac12, \frac32, \frac52, \frac72, \frac92, \dots\\
+	&\frac13, \frac23, \frac43, \frac53, \frac73, \dots\\
+	&\frac14, \frac34, \dots\\
+\end{split}
+\]
+
+Then ... zig-zag...\\
+
+What we really need to show here is to show $\mathbb{N}\times\mathbb{N}\to \mathbb{N}$
+
+Think about this: $(i, j)\to 2^{i-1}(2j-1)$\\
+
+$\mathbb{Q}=\mathbb{Q}^+\cup\mathbb{Q}^-\cup\{0\}$
+
+do $\{0, \frac{1}{1}, -\frac{1}{1}, \frac{2}{1}, -\frac{2}{1}, \frac{1}{2}, -\frac{1}{2}, \dots\}$
+
+\end{document}

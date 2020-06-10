@@ -1,0 +1,49 @@
+%
+%    Enter your details below:
+%
+%    Name: Rui Qiu
+%    Student ID: u6139152
+%    Email: u6139152@anu.edu.au
+%
+
+
+int: C;                                      % Number of customers
+int: T;                       		    % Number of trucks
+int: G;                     		    % Number of goods types 
+int: MAXCAP;                		    % Maximum truck capacity
+
+set of int: trucks = 1..T;    	     	    % Set of trucks
+set of int: customers = 0..C;        	    % Set of customers. Includes depot as customer 0
+set of int: goods = 1..G;            	    % Set of goods types
+int: chilled = 1;  int: ambient = 2; 	    % Good types
+
+array[trucks] of int: cap;	     	    % Capacity of trucks
+array[trucks] of bool: refrig;	     	    % Whether or not trucks are refrigerated
+array[goods,customers] of int: order;	    % Number of units of goods types ordered by customers
+
+
+% Insert your variables and constraints here
+
+array[customers,trucks] of var 0..MAXCAP: chilled_goods_units_delivered;    % The quantity of chilled goods that a truck delivers to a customer
+array[customers,trucks] of var 0..MAXCAP: ambient_goods_units_delivered;    % Similar quantity for ambient goods
+
+% Rule 1: Do not exceeding capacity.
+constraint forall (t in trucks)
+    ((sum(c in customers)(chilled_goods_units_delivered[c,t]) + sum(c in customers)(ambient_goods_units_delivered[c,t])) <= cap[t]);
+% Rule 2: Chilled goods only be carried in a refridged truck.
+constraint forall (t in trucks, c in customers)
+    (if refrig[t]==false then chilled_goods_units_delivered[c,t]=0 else true endif);
+% Rule 3&4: Exact amount of chilled goods delivered, exact amount of ambient goods delivered, i.e. everyone is happy!
+constraint forall (c in customers)
+    (sum(t in trucks)(chilled_goods_units_delivered[c,t])=order[chilled,c]);
+constraint forall (c in customers)
+    (sum(t in trucks)(ambient_goods_units_delivered[c,t])=order[ambient,c]);
+
+% In question Q1, we are only finding a satisfying solution
+solve satisfy;
+
+% Write a Minizinc output item to print the solution in the desired format for Q1
+output [show(T)++","++show(C)++"\n"] ++ 
+    [if fix(chilled_goods_units_delivered[c,t]) !=0 \/ fix(ambient_goods_units_delivered[c,t])!=0 
+    then show(t)++","++show(c)++","++show(chilled_goods_units_delivered[c,t])++","++show(ambient_goods_units_delivered[c,t])++"\n" 
+    else "" endif | t in trucks, c in customers];

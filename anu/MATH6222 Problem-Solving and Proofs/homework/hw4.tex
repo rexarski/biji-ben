@@ -1,0 +1,331 @@
+\documentclass[12pt]{article}
+
+\usepackage{fancyhdr}
+\usepackage{extramarks}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{tikz}
+\usepackage[plain]{algorithm}
+\usepackage{algpseudocode}
+\usepackage{graphicx}
+
+\usetikzlibrary{automata,positioning}
+
+%
+% Basic Document Settings
+%
+
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=6.5in
+\textheight=9.0in
+\headsep=0.25in
+
+\linespread{1.1}
+
+\pagestyle{fancy}
+\lhead{\hmwkAuthorName}
+\chead{\hmwkClass\ \hmwkTitle}
+\rhead{\firstxmark}
+\lfoot{\lastxmark}
+\cfoot{\thepage}
+
+\renewcommand\headrulewidth{0.4pt}
+\renewcommand\footrulewidth{0.4pt}
+
+\setlength\parindent{0pt}
+
+%
+% Create Problem Sections
+%
+
+\newcommand{\enterProblemHeader}[1]{
+    \nobreak\extramarks{}{Problem \arabic{#1} continued on next page\ldots}\nobreak{}
+    \nobreak\extramarks{Problem \arabic{#1} (continued)}{Problem \arabic{#1} continued on next page\ldots}\nobreak{}
+}
+
+\newcommand{\exitProblemHeader}[1]{
+    \nobreak\extramarks{Problem \arabic{#1} (continued)}{Problem \arabic{#1} continued on next page\ldots}\nobreak{}
+    \stepcounter{#1}
+    \nobreak\extramarks{Problem \arabic{#1}}{}\nobreak{}
+}
+
+\setcounter{secnumdepth}{0}
+\newcounter{partCounter}
+\newcounter{homeworkProblemCounter}
+\setcounter{homeworkProblemCounter}{1}
+\nobreak\extramarks{Problem \arabic{homeworkProblemCounter}}{}\nobreak{}
+
+%
+% Homework Problem Environment
+%
+% This environment takes an optional argument. When given, it will adjust the
+% problem counter. This is useful for when the problems given for your
+% assignment aren't sequential. See the last 3 problems of this template for an
+% example.
+%
+\newenvironment{homeworkProblem}[1][-1]{
+    \ifnum#1>0
+        \setcounter{homeworkProblemCounter}{#1}
+    \fi
+    \section{Problem \arabic{homeworkProblemCounter}}
+    \setcounter{partCounter}{1}
+    \enterProblemHeader{homeworkProblemCounter}
+}{
+    \exitProblemHeader{homeworkProblemCounter}
+}
+
+%
+% Homework Details
+%   - Title
+%   - Date
+%   - Class
+%   - Instructor
+%   - Author
+%
+
+\newcommand{\hmwkTitle}{Homework\ \#4}
+\newcommand{\hmwkDate}{2017-03-17}
+\newcommand{\hmwkClass}{MATH6222}
+\newcommand{\hmwkClassInstructor}{Instructor: Dr. David Smyth}
+\newcommand{\hmwkTutor}{Tutor: Mark Bugden (Wednesday 1-2pm)}
+\newcommand{\hmwkAuthorName}{\textbf{Rui Qiu u6139152}}
+
+%
+% Title Page
+%
+
+\title{
+    \vspace{2in}
+    \textmd{\textbf{\hmwkClass:\ \hmwkTitle}}\\
+    \normalsize\vspace{0.1in}\small{\hmwkDate}\\
+    \vspace{0.1in}\large{\textit{\hmwkClassInstructor}}\\
+    \vspace{0.1in}
+    	\large{\textit{\hmwkTutor}}
+    \vspace{3in}
+}
+
+\author{\hmwkAuthorName}
+\date{}
+
+\renewcommand{\part}[1]{\textbf{\large Part \Alph{partCounter}}\stepcounter{partCounter}\\}
+
+%
+% Various Helper Commands
+%
+
+% New QED symbol
+\renewcommand{\qedsymbol}{$\blacksquare$}
+
+% Useful for algorithms
+\newcommand{\alg}[1]{\textsc{\bfseries \footnotesize #1}}
+
+% For derivatives
+\newcommand{\deriv}[1]{\frac{\mathrm{d}}{\mathrm{d}x} (#1)}
+
+% For partial derivatives
+\newcommand{\pderiv}[2]{\frac{\partial}{\partial #1} (#2)}
+
+% Integral dx
+\newcommand{\dx}{\mathrm{d}x}
+
+% Alias for the Solution section header
+\newcommand{\solution}{\textbf{\large Solution}}
+
+% Probability commands: Expectation, Variance, Covariance, Bias
+\newcommand{\E}{\mathrm{E}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\Bias}{\mathrm{Bias}}
+
+\begin{document}
+
+\maketitle
+
+\pagebreak
+
+\begin{homeworkProblem}
+Let $f:A\to B$ and let $g:B\to C$ be functions, and let $h=g\circ f$. Determine which of the following statements are true. Give proofs of the true statements and counterexamples for the false statements.
+
+(a) If $h$ is injective, then $f$ is injective.
+
+(b) If $h$ is injective, then $g$ is injective.
+
+(c) If $h$ is surjective, then $f$ is surjective.
+
+(d) If $h$ is surjective, then $g$ is surjective.\\
+
+\textbf{Proof:}\\
+
+Consider $h$ is injective, for any $a_i\not=a_j\in A, h(a_i)\not=h(a_j)$\\
+
+(a) \textbf{TRUE}. \textbf{Proof by contradiction:} Suppose $f$ is not injective, then $\exists\ a_i\not=a_j$ but $f(a_i)=f(a_j)$, then \[h(a_i)=g(f(a_i))=g(f(a_j))=h(a_j).\]
+
+which contradicts the fact that $h$ is injective.
+
+So statement (a) is true.
+\qed\\
+
+(b) \textbf{FALSE}. \textbf{Counterexample:} Suppose $A=\{a\}, B=\{b_1, b_2\}, C=\{c\},$ then $f(a) = b_1,$ but $g(b_1)=g(b_2)=c$. Clearly, $f, h$ are injective, but $g$ is not injective as $b_1\not=b_2$.
+
+So statement (b) is false.
+
+\qed\\
+
+Consider $h$ is surjective now, $\forall c \in C, \exists\ a \in A$ such that $h(a)=c$.\\
+
+(c) \textbf{FALSE}. \textbf{Counterexample:} Suppose $A=\{a_1,a_2\}, B=\{b_1, b_2\}, C=\{c\}$, then $f(a_1)=f(a_2)=b_1, g(b_1)=g(b_2)=c$. Then $h(a_1)=h(a_2)=c$, $h$ is surjective. But $f$ is not surjective, since there is not an $a\in A$ such that $f(a)=b_2.$
+
+So statement (c) is false. 
+
+\qed\\
+
+(d) \textbf{TRUE}. Suppose $a\in A, h(a)\in C,$ then $h(a)=g(f(a)).$ Since $h$ is surjective, the image of $h$ covers everything in $C$. Besides, the image of $h$ is a subset of the image of $g$, so the image of $g$ contains everything in $C$ as well, i.e. $g$ is surjective.
+
+\qed \\
+
+\end{homeworkProblem}
+
+\pagebreak
+
+\begin{homeworkProblem}[3]
+Recall that $[n]=\{1,2,\dots,n\}$. Let $A$ denote set of subsets of $[n]$ with an even number of elements, and let $B$ denote the set of subsets of $[n]$ with an odd number of elements. Prove that $|A|=|B|$ by constructing an explicit bijection from $A$ to $B$.\\
+
+\textbf{Proof:}\\
+
+First we have to claim that $n\not=0$ since if $[0]=\{\emptyset\}$ then $A=\{\emptyset\}, B=\emptyset$, the statement is just trivially false.\\
+
+Then, $\forall n\in \mathbb{N}, n\geq 1$, we construct the following interesting function: $\forall a\in A,$
+
+\[
+f(a)=
+\begin{cases}
+	f(a) \text{\textbackslash} \{1\}\ &\text{ when } 1\in a,\\
+	f(a)\cup\{1\}\ &\text{ when } 1\not\in a.
+\end{cases}
+\]
+
+This means, if $a$ is an element of $A$, i.e. $a$ is a subset of $[n]$ with even number of elements, then we can find a way to map it to a unique element of $B$ (with odd number of elements).\\
+
+The easiest way is just add/remove an element to/from $a$, so that the total number of elements becomes odd. And we can set up a criteria for this:
+
+\begin{itemize}
+	\item If $a$ has a certain element, then we remove it from $a$.
+	\item If $a$ does not have such certain element, then we append it to $a$.
+\end{itemize}
+
+Actually, this certain element could be any element in the powerset of $[n]$. For simplicity, we such select $\{1\}$.\\
+
+Now we claim $f: A\to B$ is a bijection.
+
+\begin{itemize}
+	\item Suppose $x\not= y, x,y\in A$.
+	\begin{itemize}
+		\item If only one of $x,y$ contains $\{1\}$. WLOG, say $\{1\}\subseteq x$, then $\{1\}\not\subseteq f(x), \{1\}\subseteq f(y).$ Therefore, $f(x)\not=f(y)$, $f$ is injective in this case.
+		\item If $x,y$ both contain $\{1\}$, then neither of $f(x), f(y)$ has $\{1\}$, but still the rest part $f(x)-\{1\}\not=f(y)-\{1\}.$ $f$ is injective in this case as well.
+		\item Similarly, if $x,y$ both don't have $\{1\}$, then both $f(x), f(y)$ do have $\{1\}$, but stil $f(x)\cup\{1\}\not=f(y)\cup\{1\}.$ $f$ is injective.
+	\end{itemize}
+	\item $\forall\ b\in B,$ we can always go backward and find an $a$ such that $f(a)=b.$ The idea is intuitive: just check if $b$ contains $\{1\}$. In this way, $f$ is surjective.
+\end{itemize}
+
+Hence, $f: A\to B$ is a bijection.
+
+\qed
+
+\end{homeworkProblem}
+
+\pagebreak
+
+\begin{homeworkProblem}
+Construct explicit bijections: $f: (0, 1)\to [0, 1)$ and $g:(0,1)\to [0, 1]$.\\
+
+\textbf{Solution:}\\
+
+Consider the function:
+
+\[
+f(x) = 
+\begin{cases}
+	0, &x=\frac{1}{2};\\
+	\frac{1}{x^{-1}-1}, &x=\frac{1}{n}\ \text{for}\ $n=3,4,5,\dots$;\\
+	x, &\text{ otherwise.}
+\end{cases}
+\]
+
+Again, consider the function:
+
+\[
+g(x) = 
+\begin{cases}
+	0, &x=\frac{1}{2};\\
+	1, &x=\frac{1}{3};\\
+	\frac{1}{x^{-1}-2}, &x=\frac{1}{n}\ \text{for}\ $n=4,5,6,\dots$;\\
+	x, &\text{ otherwise.}
+\end{cases}
+\]
+
+The idea of constructing these two bijections is to use some fixed point value in the domain to map to the boundary value in the image (in $f$, we use $f(\frac{1}{2})=0$; in $g$, we use $g(\frac{1}{2})=0, g(\frac{1}{3})=1.$ Then the values of $f(\frac{1}{n})$ and $g(\frac{1}{n})$ are just shifted to $\frac{1}{n-1}$ and $\frac{1}{n-2}$. And the rest part of the function remains as $f(x)=x$ (or $g(x)=x$).\\
+
+$f$ and $g$ are obviously injective, since not a number in the image was hit twice. \\
+
+They are also surjective, since every number in the image is covered. \\
+
+(\textit{Recall:} These two functions are just the variations of an example in week 4 tutorial.)
+
+\end{homeworkProblem}
+
+\pagebreak
+
+%
+% Non sequential homework problems
+%
+
+% Jump
+\begin{homeworkProblem}
+Let $L$ be the set of all sentences of the English language. Prove that $L$ is countable. (For the purpose of this exercise, a sentence of the English language is any finite sequence of characters chosen from the set of characters visible on your computer's keyboard.)\\
+
+\textbf{Proof:}\\
+
+Consider $A = \{\text{All characters visible on the computer's keyboard}\},$ which is trivially countable.\\
+
+Now we claim the set of all finite sequences of elements of $A$, which is the set of all sentences of the English language i.e. $L$, is also countable.\\
+
+Suppose $\forall n\in \mathbb{N}, L_n=\{\text{All sequences of length $n$ of elements of $A$}\}$, we can prove this by induction.\\
+
+\textbf{Base step:} When $n=0$, $L_0=\{\emptyset\}$. Obviously, $L_0$ is countable.\\ 
+
+\textbf{Inductive step:} Suppose $k\in\mathbb{N}^+$ and $L_k$ is countable, we want to show 
+
+\[L_{k+1}=\{\text{All sequences of length $k+1$ of elements of $A$}\}\]
+
+ is also countable.\\
+
+Consider the function $F:L_{k}\times A\to L_{k+1}$ as 
+
+\[F(f,a)=f\cup\{a\},\]
+
+where $f\in L_k$ is a sequence of $k$ elements of $A$, and $a\in A$ is an element of $A$. In fact, $F(f,a)$ is a sequence of length $k+1$ starting with sequence $f$ and end with $a$ as its $(k+1)$th term in the sequence.\\
+
+And such $F$ is a bijection, because\\
+
+\begin{itemize}
+	\item If $(f_1, a_1) \not= (f_2, a_2)$, then $f_1\cup\{a_1\}\not=f_2\cup\{a_2\}$. $F$ is injective.
+	\item For all element in $L_{k+1}$, it can be decomposed into two parts: a sentence of length $k$ as $f$, which is in $L_k$, and an element of $A$ as $a$. $F$ is surjective.\\
+\end{itemize}
+
+Therefore, the following two sets should have the same cardinality as:
+
+\[|L_k\times A|=|L_{k+1}|\]
+
+By theorem that \textbf{the cartesian product of 2 countable sets is also countable,} here both $L_k$ and $A$ are countable, so $L_{k+1}$ should his countable too.\\
+
+Therefore, for any finite length $n$, $L_n$ is a countable set. Hence $L$ is countable.\\
+
+\qed
+
+\end{homeworkProblem}
+
+\end{document}

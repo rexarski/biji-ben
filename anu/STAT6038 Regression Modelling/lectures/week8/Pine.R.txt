@@ -1,0 +1,146 @@
+# Example 2 from page 12 of chapter 2 of the lecture notes:
+# Pine tree data (see description in the "brick")
+
+pine <- read.csv("pine.csv")
+pine
+
+# Attach the data so we can access each of the various columns by name:
+
+attach(pine)
+
+# To explore the data graphically in R, draw a scatterplot matrix:
+
+pairs(pine)
+
+# Relationships between the variables not as clear as in our previous
+# example (the Squid data), but drawing on the underlying science (see
+# the description in the brick), we could try some transformations:
+
+x1 <- HD
+x2 <- AGE*N
+x3 <- HD/N
+pairs(cbind(x1,x2,x3,MDBH))
+
+# The suggested multiple regression model is:
+
+pine.lm <- lm(MDBH ~ x1 + x2 + x3)
+pine.lm
+anova(pine.lm)
+
+plot(pine.lm)
+
+plot(pine.lm, which=4)
+
+# We will discuss the fit of this model and alternative models later 
+# in the course, but assuming the model is OK (not a great assumption),
+# let's look at the required predictions:
+
+new.x1 <- c(10, 80, 75)
+new.x2 <- c(5*500, 10*600, 25*1000)
+new.x3 <- c(10/500, 80/600, 75/1000)
+new.xs <- data.frame(x1=new.x1, x2=new.x2, x3=new.x3)
+new.xs
+
+predict(pine.lm, newdata=new.xs, interval="confidence")
+
+predict(pine.lm, newdata=new.xs, interval="prediction")
+
+# We could try refining the above model and redo the predictions:
+
+pine.lm2 <- lm(MDBH ~ x1 + x2)
+pine.lm2
+anova(pine.lm2)
+
+plot(pine.lm2)
+
+plot(pine.lm2, which=4)
+
+# We will revisit the issue of analysis of potential outliers in the
+# next section of the course.
+
+predict(pine.lm2, newdata=new.xs, interval="confidence")
+
+predict(pine.lm2, newdata=new.xs, interval="prediction")
+
+# Bonferroni corrected simultaneous prediction intervals:
+
+predict(pine.lm2, newdata=new.xs, interval="prediction", level=0.98333333)
+
+# Let's have another look at the residual plots for the above models:
+
+data.frame(MDBH,fitted=fitted(pine.lm),residual=residuals(pine.lm),standardised=rstandard(pine.lm),studentised=rstudent(pine.lm))
+
+# The two types of standardised residuals are described in the brick
+# in section VI Model Diagnostics, part i Residual Analysis on pages
+# 14 to 17 of Chapter 2:
+# rstandard() gives ri's (internally Studentised or PRESS residuals)
+# rstudent() gives ti's (externally Studentised residuals). 
+
+plot(fitted(pine.lm), rstandard(pine.lm))
+abline(0,0, lty=2)
+title("Standardised Residual Plot")
+identify(fitted(pine.lm), rstandard(pine.lm))
+
+data.frame(MDBH,fitted=fitted(pine.lm2),residual=residuals(pine.lm2),standardised=rstandard(pine.lm2),studentised=rstudent(pine.lm2))
+      
+plot(fitted(pine.lm2), rstandard(pine.lm2))
+abline(0,0, lty=2)
+title("Standardised Residual Plot")
+identify(fitted(pine.lm2), rstandard(pine.lm2))
+
+# Create an indicator variable for the 20th observation:
+
+obs20 <- c(rep(0,19), 1)
+obs20
+
+# Use this indicator variable to test if observation 20 is an outlier
+# in the context of both of the first of the above models:
+
+pine.lmO <- lm(MDBH ~ x1 + x2 + x3 + obs20)
+pine.lmO
+anova(pine.lmO)
+summary(pine.lmO)
+
+# Note that the t value associated with obs20 is the same as the 
+# externally studentised residual for observation 20 in the first
+# model pine.lm
+
+data.frame(MDBH,fitted=fitted(pine.lm),residual=residuals(pine.lm),standardised=rstandard(pine.lm),studentised=rstudent(pine.lm))
+c(qt(0.025, pine.lm$df.residual-1), qt(0.975, pine.lm$df.residual-1))
+
+plot(pine.lmO)
+
+plot(pine.lmO, which=4)
+
+round(data.frame(Obs20=obs20,MDBH,fitted=fitted(pine.lmO),residual=residuals(pine.lmO),standardised=rstandard(pine.lmO),studentised=rstudent(pine.lmO)),7)
+
+# Now for the second of the above models:
+
+pine.lm2O <- lm(MDBH ~ x1 + x2 + obs20)
+pine.lm2O
+anova(pine.lm2O)
+summary(pine.lm2O)
+
+# Note that the t value associated with obs20 is the same as the 
+# externally studentised residual for observation 20 in the second
+# model pine.lm2
+
+data.frame(MDBH,fitted=fitted(pine.lm2),residual=residuals(pine.lm2),standardised=rstandard(pine.lm2),studentised=rstudent(pine.lm2))
+c(qt(0.025, pine.lm2$df.residual-1), qt(0.975, pine.lm2$df.residual-1))
+
+plot(pine.lm2O)
+
+plot(pine.lm2O, which=4)
+
+round(data.frame(Obs20=obs20, MDBH,fitted=fitted(pine.lm2O),residual=residuals(pine.lm2O),standardised=rstandard(pine.lm2O),studentised=rstudent(pine.lm2O)),7)
+
+# So the apparent outlier appears to be significant in the first model, 
+# but not the second - more on indicator variables and how to intepret
+# them later in the course (and more on outliers as well).
+
+# But note that we don't need to use indicator variables for the 
+# purpose of outlier detection, as most of the information is 
+# contained in the externally studentised residuals - we just need
+# to remember that if we want to use them as a formal test, the 
+# estimate of the error variance and the standard error is based
+# on 1 less degree of freedom than the original model.

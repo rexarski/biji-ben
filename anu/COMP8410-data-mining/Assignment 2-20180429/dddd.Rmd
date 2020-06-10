@@ -1,0 +1,168 @@
+---
+title: "word count"
+author: "Rui Qiu"
+date: '2018-05-16'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# 1. Introduction
+
+One of the features of stock market prices is its unpredictability and volatility. Burton Malkiel, argues in his 1973 book, "A Random Walk Down Wall Street", that if the market is genuinely efficient and a share price reflects all factors immediately as soon as they're made public, a blindfolded monkey throwing darts at a newspaper stock listing should do as well as any investment professional [1]. However, things are not always extreme. If we treat the stock prices as a non-stochastic process then at least we can model the data. Even though our potential model wouldn't be exact, it still makes capturing the trend of rise and fall, and forecasting the short-term future price accordingly possible.
+
+In the matter of "learning something interesting about the data", one could start in two opposite ways: _retrospective_ and _prospective_. On the one hand, we could investigate the patterns within; on the other hand, we could use learned outcome to predict the future. Therefore, we list the following questions as our goal of this data mining project:
+
+1. Are there any frequent patterns among different stocks?
+2. Are there any methods to predict future stock price changes? If the answer is yes, can we find other ways based on different prior knowledge?
+
+# 2. Data Description
+
+- Source: The data is collected from the Wall Street Journal [2].
+- Attributes: Stored in a CSV file as column names (in R, we also call them variables). The attributes of each entry consist of:
+    - `Code`: the stock code of a company.
+    - `Sector` and `SubSector`: the particular field of a company. We have 5 main categories and 10 subcategories.
+    - `Date`, `Weekday`, `DayofMonth`, `Month`, `Year`, `WeekofYear` and `DayofYear`: time-related attributes of a data entry.
+    - `Open`, `High`, `Low`, `Close`: four basic prices information within one day.
+    - `Volume`: the trading volume on the same day.
+    - `Close.Open`, `Change`, `High.Low`, `HMLOL`: four advanced price information which reflect the relationship among the basics. `Close.Open` and `High.Low` are the differences, `HMLOL` is the ratio between `High.Low` and `Low`. `Change` indicates whether `Close.Open` is positive or not. 
+    - `PriorClose`: the close price on the previous day.
+- Components: The data set includes 61 selected Australian stocks and their daily prices ranging from 1 January 2017 to 12 April 2018. These companies involve some big names like *Woolworths*, *Commonwealth Bank*, *ANZ*, etc.
+- Data quality: the data is tidy already with no missing data inside.
+- Summary: the basic summary statistics of numeric attributes is shown below. Two results stand out:
+    * Four basic price attributes are highly right-skewed, that means the majority of data has rather low values less than 1. Specifically, the first quartile of these four attributes stay low, but after exceeding median (50% quantile), the values of these increase fast.
+    * "Up" are almost twice of "down"s. So the general trend of stock prices in our period of interest is increasing. In some ways, we can consider it as the sign of blooming economy.
+
+# 3. Mining Methods
+
+## 3.1 Associate Mining
+As we mentioned before, we would like to discover some pattern in stock prices. In details, what factors are responsible for the increase or decrease in stock prices? To achieve this goal, we are going to make some changes to the original data set and use `Rattle` [3] to unearth the hidden gems inside.
+
+Because we are only interested in the qualitative change, instead of quantitative difference in this part, we select the following variables as inputs: `Change`, `Sector`, `SubSector`, `Weekday`, `Month`, `Year`. Naturally, we ignore the rest. Then we set the minimum support threshold to be `0.1` and minimum confidence threshold to be `0.5`. In other words, a rule will only be selected under the circumstance that it quite "frequent", taking about 10% occurrences. Additionally, it has to be "truth", that the proportion of the transaction that contains LHS also contain RHS.
+
+After that, we need to hand-pick some rules, because the results from `Rattle` are flawed, thus not as interesting as we expected, and they should be filtered out.
+
+- Some rules have `Sector/Subsector` on the left hand side and `SubSector/Sector` on the right hand side. These are not very informative. A stock under `Software` subsector is automatically under `Technology` sector as the data source has already pre-defined the classification.
+- Some rules exceed minimum confidence threshold but have lift values smaller than 1, which indicate negative correlations.
+
+Meanwhile, we use $\chi^2>1$ as a rule-of-thumb critical value to ensure that the correlation is interesting. [4]
+
+## 3.2 General Stock Price Predictions
+
+After answering the question about what patterns we could see from the data, the next one followed is if we could use some known information to predict the stock price quantitatively.
+
+In the following paragraphs, we are going to use two numeric methods, neural network (non-deterministic) and logistic regression (deterministic) to formulate a mathematical expression of stock prices. Moreover, we will use daily `Close` prices as a target. This is more like a personal preference, but indeed it is the best conclusion of a stock price after one day. We could also use the average price of `Close` and `Open` as the target.
+
+### 3.2.1 Neural Network
+One highlighted advantage of a neural network is its tolerance of noise so that it is handy to deal with untrained real-world data. In our case, we aim to randomly separate the data into one training set and one testing set with a ratio $3:1$. The input layer will include some basic numeric attributes `High`, `Low`, `Open`, two other numeric attributes `Volume` and `PriorClose` and some categorical attributes `Sector`, `Weekday`, `Month` and `Year`.
+
+The reason why we exclude relational attributes like `HMLOL` and `Close.Open` is because we believe they provide no more additional information than its corresponding basic attributes. Especially in the later method we are going to use, linear regression is pretty good at capturing linear relation between quantities. What is more, we turn `Sector`, `Weekday` and `Month` into factors so that they could be handled by neural networks.
+
+Note that we have known that the price data are highly skewed, which means they concentrate on small values. Hence the step of normalisation is necessary before we proceed to train the neural network.
+
+Regarding the selections of the numbers of hidden layers and neurons on each layer, we referenced some empirical choices [5]. That is, to choose 1 or 2 hidden layers with the number of neurons fewer than that of input neurons. After several trials, we decide to use a 2-hidden-layer neural network with 8 neurons on the first layer and 4 on the second. The whole process is implemented by the `neuralnet` package in R [6].
+
+### 3.2.2 Linear Regression
+
+To use the linear regression model for prediction is straightforward. The core step is to assume a linear relation between the target `Close` and inputs. At the same time, we should also suppose the error terms are independent and identically normally distributed [7]. In this case:
+
+### 3.2.3 Remark
+
+Now, let us review what we have done so far. We have utilised two different methods to construct models and train them with some data. Then we have used trained model to predict testing data. These are accomplished based on unbalanced "general knowledge", that is to say, we are ignoring the fact that in our data, more stocks tend to have comparatively low prices. Now consider an extreme case that a well-trained model for stock prices between $0.01$ and $1.00$, it might not handle high price stock well, because it has never studied any background knowledge about high price stock so far. So here comes an alternative approach, which is to do time series analysis on just one stock, then predict its future trend.
+
+## 3.3 Time Series Analysis
+
+Time series analysis is the most common and fundamental method used to forecast stock prices [8]. It only requires historical information of the subject of interest itself; then the model won't be distracted by noise from other unrelated stocks.
+
+Note that one precondition of performing time series analysis is that values should be measured at equal time intervals. After that, during the data cleaning procedure, we need to extract one stock from the whole dataset and do imputations by adding "fake" closing price on non-trading days such as holidays and weekends. Brutally setting the closing prices as zero is problematic, it will add unnecessary fluctuations and messes up the data. What we choose to perform here is to set the close prices on non-trading days as the last close price on trading days. For example, let the close prices on Saturday and Sunday be that of the previous Friday's. (See Appendix for details.)
+
+Another change we have made towards the data is, we take data in the year 2017 as training data. When the model is fixed, we would like to check how our model predicts the stock prices change in the year 2018.
+
+In this experiment, we choose the stock prices of Woolworths Ltd (Code: `WOW`) and apply a basic ARIMA model on the daily close price. In this way, we could model close price as:
+
+\[\text{Close}_t=S_t+T_t+E_t,\]
+
+where $S_t$ is the seasonal component, $T_t$ is the trend component and $E_t$ is the random noise. A seasonal ARIMA model can be expressed as $ARIMA(p,d,q)(P,D,Q)_m$ where $(p,d,q)$ is the non-seasonal part of the model and $(P,D,Q)_m$ is the seasonal part. $m$ is the number of periods per season.
+
+From the stock price line plot, we cannot directly confirm the size of a cycle. But recall that we have found some frequent patterns that stock prices tend to be increasing on Thursdays and Fridays, so we would like to give 7-day-cycle a try, letting $m=7$. Then we use the built-in `auto.arima()` function in `forecast` package [9] to automatically determine the model parameter by finding the model with the least AIC (Akaike information criterion) [10]. Note that `auto.arima()` speeds up by taking shortcuts in the algorithm, but we can set `stepwise=F` and `approximation=F` to avoid it. In such a way, we have the following model.
+
+Then our candidate model is $ARIMA(0,1,0)(2,0,2)_7$. Detailed scripts about the discovery of this model can be found in Appendix.
+
+# 4. Presentation
+
+## 4.1 Frequent Patterns
+For this experiment, `Rattle` [3] is used, and a total of 26 rules are generated. Based on some manual criteria we mentioned above, not all strong rules are selected because some of them are meaningless. The hand-picked rules are listed below:
+
+The barplot in Figure 2 indicates the support count and confidence of rules of our selection.
+
+An interpretation of these interesting rules can be: during the whole year of 2017 and the first quarter of 2018, the Australian stock prices (according to the selection of 61 stocks) tend to be increasing on Thursday and Friday. Among all industries, the technology industry and basic materials industry are prosperous. Two types of sub-industries, the mining and metals (under resources) and software (under technology) are typical examples.
+
+The detailed output of association mining can be found in Appendix.
+
+## 4.2 General Stock Price Predictions
+
+The neural network in Figure 3 is hard to interpret at this moment. However, we understand the goal of this method is to roughly predict the numeric value of closing price given some inputs, hence we could still evaluate how it works by calculating its mean absolute difference ($MAE$) between true and predicted values on preprocessed testing data. The $MAE$ we use here is defined as followed:
+
+where $x^*_i$ is the predicted value of $i$th observation and $x_i$ is the true value, and $N$ is the total number of observations.
+
+And we repeat the evaluation process on linear regression result, and then we could have a general idea about how precise these predictions are by comparing them side by side.
+
+We use R to calculate the corresponding $MAE$s, and we have:
+
+\[
+MAE_{NN}=0.0725,\ MAE_{LM}=0.0223
+\]
+
+This means, on average, the neural network's prediction deviates about $\pm 0.0725$ around the actual values, and linear regression's prediction deviates about $\pm 0.0223$. It seems that linear regression performs better in predicting `Close` prices. We look back into the basic summary statistics of numeric inputs in part 1. 
+
+The data is skewed, though the $MAE$s are not very ideal for 1st quantile data, it still provides consistent estimation in general. The real value vs prediction plot (Figure 4) has shown us the predictions are better on a large scale. Though due to the cardinality of observations, thousands of observations might stack together, we still can see when real close price is high, its predicted value by neural network oscillates more than linear model's prediction. 
+
+Another procedure we would like to conduct is to check the summary information of the linear model.
+
+The summary statistics reflect the insignificancce of input variables `Sector`, `Weekday` and `Month`. They do not provide very information in prediction. Consequently, a potential operation is to simplify the model by removing them. Additionally, by looking at Figure 4, we notice the existence of 4 "clusters". Then we can stratify the data, repeat training separate neural networks and linear regression models. 
+
+Afterwards, we have this table of $MAE$s from different models.
+
+It is not hard to find out that, the more observations we have, the more accurate our neural network and linear regression model are. The models are the most accurate when predicting small value stock prices. Besides, linear models are generally more reliable than neural networks. The neural network only outperforms linear model in the $(40,60]$ price range. And this could cause overfitting since no cross-validation is applied.
+
+Another thing we need to notice is that we should always be careful with the temptation of overfitting. In this part, we simplify the problem by taking only one pair of training and testing data for each model.
+
+## 4.3 Time Series Analysis
+
+After finding the seasonal ARIMA model, we are interested in its predicting power.
+
+As we can see, the red curve indicates the real stock price of Woolworths in the year 2018, while the blue curve is the original prediction by ARIMA. Meanwhile, the outer shaded area stands for 80% confidence interval, and the inner is 95%. In other words, there is 80% or 95% chance the future stock prices fall in these areas. In fact, the real stock prices in 2018 are inside the 95% confidence interval region. However, the real fluctuation is larger, and the prediction does not capture a downward trend on a large scale. But if we zoom in, consider different segments of data, it is clear that the prediction is correct about up and down in most of the cases, only the magnitudes are underestimated to some extent. For this reason, but generally we have a solid prediction.
+
+Therefore, we have confirmed the possibility of picking out one stock and predict its future price by solely studying its historical prices. The third goal of our experiment is fulfilled.
+
+# 5. Conclusions and Extensions
+
+From our previous three mining method experiments, we can draw some direct conclusions, which can answer the questions we had at the very beginning.
+
+**Conclusions:**
+
+1. Are there any frequent patterns among different stocks? Yes. We notice that stock prices tend to be increasing on Thursday and Friday. Besides, the resource industry and technology industry are thriving during this period.
+
+2. Are there any methods to predict future stock price changes? Yes, we can build mathematical models, either as explicit as linear regressions or implicit as neural networks, to predict the future stock price with some given input. An extra approach is to use data of a single stock, to build a time series model. And in this way, the same goal can be achieved as well. For the former method, once we finish training, we are bold enough to use it to predict any other stock prices in the data set. However, the latter needs to be carried out toward the target stock we would like to predict. This is the difference between the two.
+
+But before celebrating the discovery of these conclusions, we would also like to state some limitations and possible improvements we can make.
+
+**Limitations:** 
+
+1. Since our data only covers 61 manually selected Australian stocks, the data might be biased, thus cannot serve as a good sample of the Australian economy. That is to say, even if we have a well-developed model, it is still a toy to play with these 61 stocks, and will not be as powerful as expected to predict any other stocks.
+
+2. The limitation of data not only appears as the number of stocks but also as not enough observed history. Traditionally in time series analysis, we need to have at least two cycles (periods) of data [9]. Some stock prices, in fact, have yearly seasonality. For example, the sales amount of an agriculture company might be at its peak in a certain season. But if trace back to our data, it only contains around 16 months of data. Needless to say, it restricted our choices.
+
+3. Due to the restriction of computing power, we cannot conduct more complex neural network training. Although we believe any further improvement in mean absolute difference is questionable, we still would like to mention this.
+
+**Improvements:**
+
+1. Expanding the dimensions of our data is our top priority. It is possible for us to crawl more stocks data and more past price changes. The more information our algorithm learns, more accurate they could be in predicting future prices. For example, 500 stocks with daily prices from the past 5 years would improve our results in general.
+
+2. In time series analysis, we used a seasonal ARIMA model. We can try some other models like Box-Cox forecast and exponential smoothing forecast [11].
+
+3. High-dimensional time series analysis is worth trying as well. It is suitable for comparing different stocks prices at the same time.
+
+At last, we would like to emphasise that the ultimate goal of data mining is to find the patterns in the history and use them properly, to serve us better in the future. Put it into this context, finding and studying the patterns from a large chunk of data is never the end of data mining, applying it to prediction is. Although the prediction of stock prices is troublesome and uninterpretable sometimes, it is still the right track we should stay on and keep on trying.

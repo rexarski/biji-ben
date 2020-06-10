@@ -1,0 +1,163 @@
+Applied Stats Tutorial 7
+
+#Question 3
+install.packages("Sleuth3")
+library(Sleuth3)
+head(case1102)
+attach(case1102)
+
+ISex=ifelse(Sex=='Female',1,0)
+X=data.frame(Days,Tumor,Loss, Weight, ISex)
+Y=log(Brain/Liver)
+
+
+#a)
+install.packages("leaps")
+library(leaps)
+Cpsel=leaps(X,Y,method="Cp",nbest=3) 
+plot(Cpsel$size,Cpsel$Cp)
+cbind(Cpsel$which, Cpsel$size, Cpsel$Cp)
+#Selected Variables
+#"Days" "ISex": Note the lowest Cp Ratio
+
+#b)
+r2sel=leaps(X,Y,method="adjr2",nbest=2) 
+plot(r2sel$size,r2sel$adjr2)
+cbind(r2sel$which, r2sel$size, r2sel$adjr2)
+
+#Selected Variables
+#Days and ISex : note the lowest Cp Ratio
+# "Days"   "Weight" "ISex" : Note the highest adj. Rsquared of 0.4646
+
+#c
+library(MASS)
+fit<-lm(Y~1,data=X)
+stepAIC(fit,direction="forward",scope=list(lower=~1,upper=~ Days+Tumor+Loss+Weight+ISex))
+
+#Selected Variables
+#"Days" "ISex"
+
+#d
+#the only difference between the r function of AIC and BIC is weight argument. Weight is usually length(y)
+
+n=length(Y)
+fit<-lm(Y~.,data=X)
+stepAIC(fit,direction="backward",data=X,k=log(n))
+#Selected Variables
+#"Days" "ISex"
+
+#Q1
+library(Sleuth3)
+Xf=ex1217[,3:17]
+Variablef=colnames(Xf)
+pf=length(Variablef)
+Y=ex1217$Mortality
+
+#Cp
+X=Xf[,1:12]
+Variable=colnames(X)
+p=length(Variable)
+
+
+Cpsel=leaps(X,Y,method="Cp",nbest=2) 
+plot(Cpsel$size,Cpsel$Cp)
+cbind(Cpsel$which, Cpsel$size, Cpsel$Cp)
+result=cbind(Cpsel$which, Cpsel$size, Cpsel$Cp)
+lengthr=length(result[1,])
+result=result[which(result[,lengthr]==min(result[,lengthr])),][1:p]
+
+#Selected Variables
+Variable[as.logical(result)]
+
+Svariable=Variable[as.logical(result)]
+
+Xn=cbind(X[,Svariable],log(Xf[,13:15]))
+fit=lm(Y~.,data=Xn)
+
+fitr=lm(Y~.,data=X[,Svariable])
+anova(fitr,fit,test='F')
+
+
+#Adj R2
+X=Xf[,1:12]
+Variable=colnames(X)
+p=length(Variable)
+
+
+Cpsel=leaps(X,Y,method="adjr2",nbest=2) 
+plot(Cpsel$size,Cpsel$adjr2)
+cbind(Cpsel$which, Cpsel$size, Cpsel$adjr2)
+result=cbind(Cpsel$which, Cpsel$size, Cpsel$adjr2)
+lengthr=length(result[1,])
+result=result[which(result[,lengthr]==max(result[,lengthr])),][1:p]
+
+#Selected Variables
+Variable[as.logical(result)]
+
+Svariable=Variable[as.logical(result)]
+
+Xn=cbind(X[,Svariable],log(Xf[,13:15]))
+fit=lm(Y~.,data=Xn)
+
+fitr=lm(Y~.,data=X[,Svariable])
+anova(fitr,fit,test='F')
+
+
+
+#Q2
+X=cbind(X,log(Xf[,13:15]))
+X2=X^2
+colnames(X2)=paste(colnames(X),'2',sep='')
+X=cbind(X,X2)
+Variable=colnames(X)
+p=length(Variable)
+
+
+#a) Cp
+Cpsel=leaps(X,Y,method="Cp",nbest=2) 
+plot(Cpsel$size,Cpsel$Cp)
+cbind(Cpsel$which, Cpsel$size, Cpsel$Cp)
+result=cbind(Cpsel$which, Cpsel$size, Cpsel$Cp)
+lengthr=length(result[1,])
+result=result[which(result[,lengthr]==min(result[,lengthr])),][1:p]
+
+#Selected Variables
+Variable[as.logical(result)]
+
+#Time
+system.time(leaps(X,Y,method="Cp",nbest=2))
+
+
+
+
+#b) BIC
+n=length(Y)
+fit<-lm(Y~1,data=X)
+name=''
+for (i in 1:(p-1)){
+  name=paste(name,colnames(X)[i],'+',sep='')
+}
+name=paste(name,colnames(X)[p],sep='')
+name
+
+stepAIC(fit,direction="forward",scope=list(lower=~1,upper=~ Precip+Humidity+JanTemp+JulyTemp+Over65+House+Educ+Sound+Density+NonWhite+WhiteCol+Poor+HC+NOX+SO2+Precip2+Humidity2+JanTemp2+JulyTemp2+Over652+House2+Educ2+Sound2+Density2+NonWhite2+WhiteCol2+Poor2+HC2+NOX2+SO22),k=log(n))
+result=stepAIC(fit,direction="forward",scope=list(lower=~1,upper=~ Precip+Humidity+JanTemp+JulyTemp+Over65+House+Educ+Sound+Density+NonWhite+WhiteCol+Poor+HC+NOX+SO2+Precip2+Humidity2+JanTemp2+JulyTemp2+Over652+House2+Educ2+Sound2+Density2+NonWhite2+WhiteCol2+Poor2+HC2+NOX2+SO22),k=log(n))
+names(result)
+#Selected Variables
+names(result$coef)[-1]
+
+#Time
+system.time(stepAIC(fit,direction="forward",scope=list(lower=~1,upper=~ Precip+Humidity+JanTemp+JulyTemp+Over65+House+Educ+Sound+Density+NonWhite+WhiteCol+Poor+HC+NOX+SO2+Precip2+Humidity2+JanTemp2+JulyTemp2+Over652+House2+Educ2+Sound2+Density2+NonWhite2+WhiteCol2+Poor2+HC2+NOX2+SO22),k=log(n)))
+
+
+
+#c) AIC
+fit<-lm(Y~.,data=X)
+stepAIC(fit,direction="both",data=X)
+result=stepAIC(fit,direction="both",data=X,k=log(n))
+names(result)
+#Selected Variables
+names(result$coef)[-1]
+
+#Time
+system.time(stepAIC(fit,direction="both",data=X))

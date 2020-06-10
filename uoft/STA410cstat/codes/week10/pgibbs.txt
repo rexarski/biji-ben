@@ -1,0 +1,44 @@
+# Gibbs sampling for a model in which, given lambda, x[1], ..., x[n] are 
+# iid with Poisson(lambda) distribution, but we do not observe the x[i],
+# but only the fact that |x[i+1]-x[i]| <= L for i = 1, ..., n-1.  We give
+# lambda the Exp(1) prior distribution.  
+#
+# The Markov chain state is all x[i] and lambda.  Gibbs sampling is done
+# for k iterations, updating lambda first, then each x[i] in turn.  Initially,
+# all x[i] are zero.  The value returned is a list with a k by n matrix x
+# and a vector lambda of length k.
+
+pgibbs <- function (L, n, k)
+{
+    x <- numeric(n)
+
+    r <- list (x = matrix(nrow=k,ncol=n), lambda=numeric(k))
+
+    for (i in 1:k) {
+
+        lambda <- rgamma(1,sum(x)+1,n+1)
+	
+        for (j in 1:n) {
+	    if (j == 1) { 
+                low <- max(0,x[j+1]-L)
+                high <- x[j+1]+L
+            }
+            else if (j == n) {
+                low <- max(0,x[j-1]-L)
+                high <- x[j-1]+L 
+            }
+            else {
+                low <- max(0,x[j-1]-L,x[j+1]-L)
+                high <- min(x[j-1]+L,x[j+1]+L)
+            }
+            if (high != low) {
+                x[j] <- sample(low:high,1,prob=dpois(low:high,lambda))
+            }
+        }
+
+        r$lambda[i] <- lambda
+        r$x[i,] <- x
+    }
+
+    r
+}

@@ -1,0 +1,220 @@
+# 1.  Read in Data
+
+x <- c(0,0,0,0,0,2.5,0.2,2.9,8.5,4.2,0.5,0.5,2.3,8.3,0.7,8.9,23.1,
+       14.3,1.1,16.2,20.0,19.5,19.2,18.8,21.3,11.7,0,0,0,0,0,0,1.4,4.0,14.6,
+       0,0,0,0,0,9.0,5.3,8.8,7.8,6.4,7.0,0,0,0,0,0,0,0,3.1,13.0,9.8,14.1,5.3,
+       14.7,12.8,11.5,20.5,14.8,23.2,20.3,10.3,21.9,13.0,18.6,14.6,14.9,
+       24.2,1.8,9.2,0,0,0,0,0,18.5,20.6,4.9,0.2,19.1,1.8,22.5,2.5,9.2,9.2,
+       14.9,17.6,6.6)
+
+y <- c(0.6,2.3,1.0,0.9,0.9,1.4,0.7,1.7,6.9,2.9,1.2,3.4,3.5,8.3,1.0,
+       4.8,38.4,13.4,2.6,18.8,51.1,21.4,31.2,50.7,49.5,8.5,2.9,2.0,0.6,
+       1.1,1.2,0.5,1.0,3.4,4.5,3.2,4.9,1.0,2.4,2.9,9.0,2.1,8.7,6.7,2.3,3.4,
+       2.9,2.5,2.6,3.2,2.5,3.6,2.2,5.4,7.7,5.9,7.9,6.1,10.9,5.4,8.3,39.1,
+       23.5,39.6,45.9,12.8,32.6,17.6,13.8,16.3,1.2,43.5,5.0,5.2,1.4,0.5,0.7,
+       0.6,1.3,6.5,31.0,1.8,1.6,35.0,3.6,22.5,1.5,6.5,4.8,4.5,5.8,2.9)
+
+plot(x,y,main="Plot of AVP level versus Blood Loss",xlab="Blood Loss",ylab="AVP level")
+
+out <- Nreps(x,y)
+Sunflowers(out$x,out$y,out$rays,add=F,
+  main="Sunflower Plot of AVP versus Blood Loss",xlab="Blood Loss",ylab="AVP",
+  sub="Each Ray Equals One Obsvn")
+
+# 2.  Simple enhancements to bring out a relationship
+
+plot(x,y,main="Plot of AVP level versus Blood Loss",xlab="Blood Loss",ylab="AVP level")
+length(y)
+# [1] 92
+ord <- order(x)
+abline(v=x[ord[c(15,30,45,60,75)]])
+
+# Three attempts to add boxplots.
+# a) This does not add the box plots to the existing plot.
+
+boxplot(split(y[ord],c(rep(1:6,rep(15,6)),6,6)),add=T,style.bxp="old")
+
+# b) I tried to use symbols but it seems like a lot of trouble and the end
+#   result is not completely satisfactory.
+
+hold <- boxplot(split(y[ord],c(rep(1:6,rep(15,6)),6,6)),plot=F)
+hold$stats
+
+# In R you need to reverse the order of the rows of hold$stats as R gives the
+# boxplot stats in the opposite to the obvious order
+
+hold$stats = hold$stats[c(5,4,3,2,1),]
+
+bm <- matrix(c(2,2,2,2,2,2,hold$stats[2,]-hold$stats[4,],
+               hold$stats[1,]-hold$stats[2,],hold$stats[4,]-hold$stats[5,],
+               (hold$stats[3,]-hold$stats[4,])/(hold$stats[2,]-hold$stats[4,])),nrow=6,ncol=5)
+bm
+# [,1] [,2]      [,3] [,4]      [,5]
+# [1,]    2  1.5 0.8000000  0.4 0.1333333
+# [2,]    2  2.2 0.6999998  0.2 0.6818182
+# [3,]    2  2.1 1.9000001  0.4 0.5714285
+# [4,]    2  3.5 2.0999999  1.3 0.7142859
+# [5,]    2 10.9 7.2000008  4.2 0.2844038
+# [6,]    2 21.0 7.5999985 16.7 0.5952377
+
+plot(x,y,main="Plot of AVP level versus Blood Loss",xlab="Blood Loss",ylab="AVP level")
+symbols(c(-0.1,0.1,2.6,7.4,13,20.6),hold$stats[4,]+(hold$stats[2,]-
+        hold$stats[4,])/2,boxplots=bm,add=T,inches=F)
+
+# c) Finally, I wrote my own function to do the job elegantly.
+
+plot(x,y,main="Plot of AVP level versus Blood Loss",xlab="Blood Loss",ylab="AVP level")
+Addbplots(c(-0.1,0.1,2.6,7.4,13,20.6),hold$stats,rep(0.4,6))
+
+# 3. Exploring the log scale
+
+out <- Nreps(x,log(y))
+Sunflowers(out$x,out$y,out$rays,add=F,
+  main="Sunflower Plot of log(AVP) versus Blood Loss",
+  xlab="Blood Loss",ylab="log(AVP)",sub="Each Ray Equals One Obsvn")
+
+plot(x,log(y),main="Plot of log(AVP) level versus Blood Loss",xlab="Blood Loss",ylab="log(AVP) level")
+abline(v=c(0,0.2,4.9,9.8,16.2))
+stor <- boxplot(split(log(y[ord]),c(rep(1:6,rep(15,6)),6,6)),plot=F)
+stor$stats
+# [,1]       [,2]      [,3]      [,4]      [,5]     [,6]
+# [1,]  1.58923519  1.2809339 1.6863990 2.1972246 3.1570003 3.933784
+# [2,]  0.87546873  1.0647107 1.2527629 1.9315214 2.7911651 3.772761
+# [3,]  0.09531018  0.7884573 0.9555115 1.7749523 2.1400661 3.555348
+# [4,] -0.10536052 -0.3566749 0.3364722 1.2237754 1.6863990 3.113515
+# [5,] -0.69314718 -0.6931472 0.0000000 0.7419373 0.1823216 2.624669
+
+stor$stats = stor$stats[c(5,4,3,2,1),]
+
+Addbplots(c(-0.1,0.1,2.6,7.4,13,20.6),stor$stats,rep(0.4,6))
+
+# The strip with the outlier produces a distracting boxplot.
+# One can change the width argument or leave the outlier out of the calculation
+
+identify(x,log(y),x)
+# [1] 71
+
+tem <- log(y[ord[61:75]])
+
+tem
+# [1] 2.5494452 2.1162555 2.1400662 1.6863990 2.0412203 2.8678989 2.0668628
+# [8] 2.5952547 1.5040774 2.7911651 2.3887628 3.1570004 0.1823216 1.5040774
+# [15] 2.9338569
+sav <- boxplot(tem[-13],plot=F)
+sav$stats
+# [,1]
+# [1,] 3.157000
+# [2,] 2.791165
+# [3,] 2.264414
+# [4,] 2.041220
+# [5,] 1.504077
+
+# Again, reverse the order
+sav$stats=sav$stats[c(5,4,3,2,1)]
+
+stor$stats[,5] <- sav$stats
+plot(x,log(y),main="Plot of log(AVP) level versus Blood Loss",xlab="Blood Loss",ylab="log(AVP) level")
+abline(v=c(0,0.2,4.9,9.8,16.2))
+Addbplots(c(-0.1,0.1,2.6,7.4,13,20.6),stor$stats,rep(0.4,6))
+text(locator(1),"Case 71 excluded from boxplot")
+
+# 4. Scatterplot smoothing
+
+# Strip Median Smoothing
+
+plot(x,log(y),main="Plot of log(AVP) level versus Blood Loss",xlab="Blood Loss",ylab="log(AVP) level")
+abline(v=c(0,0.2,4.9,9.8,16.2))
+Addbplots(c(-0.1,0.1,2.6,7.4,13,20.6),stor$stats,rep(0.4,6))
+lines(c(-0.1,0.1,2.6,7.4,13,20.6),stor$stats[3,])
+
+plot(x,log(y),main="Plot of log(AVP) level versus Blood Loss",xlab="Blood Loss",ylab="log(AVP) level")
+abline(h=median(log(y)))
+
+plot(x[ord],log(y[ord]),main="Plot of log(AVP) level versus Blood Loss",xlab="Blood Loss",ylab="log(AVP) level",type="l")
+
+# Kernel Smoothing
+
+plot(x,log(y),main="Plot of log(AVP) level versus Blood Loss",xlab="Blood Loss",ylab="log(AVP) level",sub="Kernel Smooth with bandwidth 0.5")
+lines(ksmooth(x,log(y)),lty=4)
+
+plot(x,log(y),main="Plot of log(AVP) level versus Blood Loss",xlab="Blood Loss",ylab="log(AVP) level",sub="Kernel Smooth with bandwidth 2")
+lines(ksmooth(x,log(y),ban=2),lty=3)
+
+plot(x,log(y),main="Plot of log(AVP) level versus Blood Loss",xlab="Blood Loss",ylab="log(AVP) level",sub="Kernel Smooth with bandwidth 12")
+lines(ksmooth(x,log(y),ban=12))
+
+plot(x,log(y),main="Plot of log(AVP) level versus Blood Loss",xlab="Blood Loss",ylab="log(AVP) level",sub="Kernel Smooth with bandwidth 20")
+lines(ksmooth(x,log(y),ban=20),lty=2)
+
+# Local Polynomial Smoothing
+
+plot(x,log(y),main="Plot of log(AVP) level versus Blood Loss",xlab="Blood Loss",ylab="log(AVP) level",sub="Lowess smooth with f=1/6")
+lines(lowess(x,log(y),f=1/6))
+
+plot(x,log(y),main="Plot of log(AVP) level versus Blood Loss",xlab="Blood Loss",ylab="log(AVP) level",sub="Lowess smooth with f=2/3")
+lines(lowess(x,log(y)))
+
+# 5. Exploring spread
+
+# The quartile curves
+
+plot(x,log(y),main="Plot of log(AVP) level versus Blood Loss",xlab="Blood Loss",ylab="log(AVP) level",sub="Superimposed Quartile Curves")
+abline(v=c(0,0.2,4.9,9.8,16.2))
+Addbplots(c(-0.1,0.1,2.6,7.4,13,20.6),stor$stats,rep(0.4,6))
+lines(c(-0.1,0.1,2.6,7.4,13,20.6),stor$stats[2,])
+lines(c(-0.1,0.1,2.6,7.4,13,20.6),stor$stats[4,])
+
+# Residual plots
+
+plot(x[ord],log(y[ord]) - c(rep(stor$stats[3,1],15),rep(stor$stats[3,2],15),rep(stor$stats[3,3],15),rep(stor$stats[3,4],15),rep(stor$stats[3,5],15),rep(stor$stats[3,6],17)),main="Plot of Strip Median Residuals for Blood Loss Data",xlab="Blood Loss",ylab="Strip Median Residuals",sub="AVP on log scale")
+abline(v=c(0,0.2,4.9,9.8,16.2))
+Addbplots(c(-0.1,0.1,2.6,7.4,13,20.6),t(t(stor$stats)-stor$stats[3,]),rep(0.4,6))
+
+fit <- lowess(x,log(y))
+plot(x,log(y)-approx(fit$x,fit$y,x)$y,main="Plot of Lowess Residuals for Blood Loss Data",xlab="Blood Loss",ylab="Lowess Residuals",sub="AVP on log scale")
+
+# Spread smoothing
+
+fit <- lowess(x,log(y))
+plot(x,abs(log(y)-approx(fit$x,fit$y,x)$y),main="Plot of Absolute Lowess Residuals for Blood Loss Data",xlab="Blood Loss",ylab="Absolute Lowess Residuals",sub="AVP on log scale")
+lines(lowess(x,abs(log(y)-approx(fit$x,fit$y,x)$y)))
+
+# QQ-plots for residuals
+
+res <- log(y)-approx(fit$x,fit$y,x)$y
+s <- approx(lowess(x,abs(log(y)-approx(fit$x,fit$y,x)$y))$x,
+            lowess(x,abs(log(y)-approx(fit$x,fit$y,x)$y))$y,x)$y
+qqnorm(res,main="Quantile-Quantile Plot of Lowess Residuals for Blood Loss Data",xlab="Gaussian Quantiles",ylab="Lowess Residuals",sub="AVP on log scale",ylim=range(res,res/s))
+qqnorm(res/s,main="Quantile-Quantile Plot of Standardised Lowess Residuals for Blood Loss Data",xlab="Gaussian Quantiles",ylab="Standardised Lowess Residuals",sub="AVP on log scale")
+# Again, in R, yaxs="d" is not implemented, so you'll need to look at the axes and set them manually using ylim
+
+
+# 6. Model fitting
+
+library(MASS)
+fit <- rlm(log(y)~x)
+s <- mad(fit$resid)
+a <- sum(abs(fit$resid) <= 1.345*s)/length(x)
+v <- s^2*(a+(2/92)*(1-a))*sum((fit$w*fit$resid)^2)*solve(crossprod(cbind(1,x)))/(92*a^3)
+
+# Diagnostics
+
+par(mfrow=c(2,2),oma = c(4,0,6,0))
+qqnorm(fit$resid,main="QQ-Plot of Huber Residuals",xlab="Gaussian Quantiles",ylab="Huber Residuals")
+
+plot(x,fit$resid,main="Huber Residual Plot",xlab="Blood Loss",ylab="Huber Residuals")
+
+plot(x,abs(fit$resid),main="Absolute Huber Residual Plot",xlab="Blood Loss",ylab="Absolute Huber Residuals")
+lines(lowess(x,abs(fit$resid)))
+
+plot(c(1:92),fit$resid,main="Huber residuals versus Order",xlab="Order",ylab="Huber Residuals")
+mtext("Diagnostics for the Blood Loss Data",side=3,line=2,outer=T,cex=1.5)
+mtext("Response is Log(AVP) and Explanatory Variable Blood Loss",side=1,line=2,outer=T,cex=1.5)
+
+par(oldpars)
+plot(c(1:92),hat(x), main="Leverage Points for Blood Loss Data", xlab="Case Number",ylab="Leverage",ylim=c(0,max(hat(x))))
+segments(c(1:92),0,c(1:92),hat(x))
+abline(h=2/92)
+
+# Confidence interval
+c(fit$coef[2] - qt(0.975,90)*sqrt(v[2,2]),fit$coef[2] + qt(0.975,90)*sqrt(v[2,2]))

@@ -1,0 +1,162 @@
+# Example involving the man-hours worked per month and the total number of items
+# processed at a sample of 22 US Naval sites.
+
+# Read in the data:
+
+navymh <- read.csv("navy.csv", header=T)
+navymh
+names(navymh)
+
+# Attach and plot the data:
+
+attach(navymh)
+plot(items, manhours)
+
+# Note that in fitting a model, I have followed the example in the brick, which is a
+# bit light on important details such as the research question we are trying to answer.
+# Intuitively I would suspect that manhours worked should lead to items produced, 
+# i.e. items should be the response variable and manhours the explanatory variable,
+# but the brick has the plots and the regression model the other way round.
+
+# Start with an initial plausible model - in this case, a SLR model:
+
+navymh.lm <- lm(manhours ~ items)
+
+# Add this model to the plot we created earlier:
+
+abline(navymh.lm$coef)
+
+# Looks like a good fit, but let's have a closer look at the main residual plot:
+
+plot(fitted(navymh.lm), residuals(navymh.lm))
+
+# Add the model to this plot:
+
+abline(0,0,lty=2)
+
+# Not exactly the random scatter around the model, we were hoping for, so let's 
+# identify the points and see if we can see what is going on:
+
+identify(fitted(navymh.lm), residuals(navymh.lm))
+
+# The data were roughly sorted by size, i.e. smaller establishments (in terms of 
+# man-hours) came first. This "clustering" effect in the data may be a result of
+# different rounding being used for different size establishments, i.e. records 
+# are more exact for the smaller establshments, but are more likely to be rounded
+# (i.e. have greater error) for the larger establishments.
+
+# We also need to check the Normal Q-Q plot, which, when we use the default plot
+# function, uses standardised residuals (more on these later in the course):
+
+plot(navymh.lm, which=2)
+
+# This plot was generated using the qqnorm(function):
+
+help(qqnorm)
+
+# Note the interesting choice of a "theoretical line" in the help file description.
+# We could also have used a "Y=X" line (which in this instance, isn't really different):
+ 
+abline(0,1,lty=3)
+
+# The plot.lm() function has chosen to highlight the 3 largest residuals (14, 19 and 21)
+# as potential problems, even though their standardised residual values are within plus 
+# or minus 2! If we look at the help file for plot.lm(), we find that it by default it
+# will always label the three observations with the most extreme residual values. 
+# We will discuss problems with individual observations later in the course, but at this
+# stage we can easily generate a couple of plots to check there really is no problem.
+
+# A bar chart (plot) of the leverage values - the diagonal elements from the Hat matrix:
+
+lm.influence(navymh.lm)
+barplot(lm.influence(navymh.lm)$hat)
+abline(h=2*2/length(items))
+
+# Another measure we will look at later in the course are Cook's distances, which is an
+# attempt to measure both influence in the fitting of the model (leverage) as well as
+# measuring whether or not an observation is an outlier.
+
+plot(navymh.lm, which=4)
+
+# For both of these plots, it is best to judge whether a point is extreme compared to 
+# the other observations, i.e. make a relative judgement. Whereas a different
+# small group of points appears to behave differently in both points, the default 
+# levarage plot produced by plot.lm(), which includes arbitrary limits for Cook's 
+# distance values, suggests that these are a not really a problem as no observation 
+# lies outside these arbitrary limits:
+
+plot(navymh.lm, which=5)
+
+# As there are no obvious violations of the assumptions specific to a SLR model,
+# we can treat the model as an appropriate choice and proceeed to assess and 
+# interpret other aspects of the model:
+
+anova(navymh.lm)
+
+# The F-test which, for a SLR model, can be viewed as a test of the both whether
+# the variance explained by the model is large relative to the residual variance 
+# AND a test of whether the slope coefficient involving manhours is significantly
+# different from zero, suggests that a large part of the variation in the response
+# variable (items) is explained by the model involving manhours and that there is
+# a significant relationship between items and manhours.
+
+summary(navymh.lm)
+
+# The t-test on manhours confirms this relationship (for SLR, it is an equivalent 
+# test to the overall F test). Note that the t-test on the intercept suggests that
+# it is not significantly different from 0. This appears reasonable, we have data 
+# for relatively small establishments and having 0 items being produced should
+# mean that 0 manhours were used in production. Should we delete the intercept?
+# We can try and see what happens:
+
+navymh.lm_noi <- lm(manhours ~ items - 1)
+
+# This has resulted in some changes to the summary output, but no real changes in
+# the values of the various tests (all still have very small p-values):
+
+anova(navymh.lm)
+anova(navymh.lm_noi)
+
+summary(navymh.lm)
+summary(navymh.lm_noi)
+
+# But what about the residual plots?
+
+plot(navymh.lm_noi)
+
+# Again, almost, but not quite identical - even though the R-square appears to 
+# have increased slightly, there are now points just outside the arbitrary limits
+# on the default leverage plot. In general, we will always fit an intercept to
+# allow maximum flexibility in how the model approximates the data, unless there 
+# is a really strong reason (suggested by the underlying science) to propose a
+# particular restricted form of the model. Similarly, as we will see when we get
+# to multiple regression models, we should always fit all lower order terms 
+# when fitting higher order terms, e.g. if we fit an quadratic model with an
+# x-squared term, we should also include the x term and the intercept term, 
+# even if they are not significant.
+
+# Finally, if we thought that the slight hint of non constant variance in the
+# main residual plot for the original model was an issue, we could try a 
+# transformation to both variables (as the form of the model appears OK).
+# There will be more on this in the next example, but here is quick look 
+# with this example:
+
+hist(items)
+hist(manhours)
+hist(log(items))
+hist(log(manhours))
+
+plot(items, log(manhours))
+plot(log(items), log(manhours))
+
+navymh.loglm <- lm(log(manhours) ~ log(items))
+abline(navymh.loglm)
+
+plot(navymh.loglm)
+
+# No real improvement on the original SLR model - arguably log is too strong 
+# a transformation, so we could experiment further with weaker transformations,
+# however, I am not really convinced that despite the strange appearance of
+# the main residual plot, that is anything really wrong with the untransformed
+# SLR, which is probably good enough for exploratory purposes, though maybe not
+# good enough to use as a predictive model.

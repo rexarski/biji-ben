@@ -1,0 +1,255 @@
+\documentclass{article}
+\usepackage{fullpage}
+\usepackage[normalem]{ulem}
+\usepackage{amstext}
+\newcommand{\var}[1]{\mathit{#1}}
+\setlength{\parskip}{6pt}
+
+\begin{document}
+
+~~~\vspace{-2.0cm}
+
+\noindent
+University of Toronto\\
+{\sc csc}343, Fall 2015\\[10pt]
+{\LARGE\bf Assignment 1:\\[5pt]
+}
+
+Rui Qiu 999292509, Yirui Huang 999471058\\[5pt]
+
+%----------------------------------------------------------------------------------------------------------------------
+%----------------------------------------------------------------------------------------------------------------------
+\section*{Part 1: Queries [84\% - 7 marks each]}
+
+
+\begin{enumerate}
+
+\item   % ---------- 
+Find the last names of the athlete(s) of the country(ies) that did not compete in any event yet.
+
+{\bf Answer}:\\[5pt]
+{
+$
+Answer(lname) := \Pi_{lname}(Athelete) - \Pi_{lname}(Athelete \bowtie Result) 
+$
+}
+
+\item   % ---------- 
+Find the last names of the athlete(s) of the country(ies) that did not win any medals yet (either because they did not compete, or because their athletes did not rank in the top 3 in any event so far).
+
+{\bf Answer}:\\[5pt]
+{
+$
+Gold(lname) := \Pi_{lname}\sigma_{Athelete.AID=Result.AID \wedge Result.medal='gold'}(Athelete \times Result)\\[5pt]
+Silver(lname) := \Pi_{lname}\sigma_{Athelete.AID=Result.AID \wedge Result.medal='silver'}(Athelete \times Result)\\[5pt]
+Bronze(lname) := \Pi_{lname}\sigma_{Athelete.AID=Result.AID \wedge Result.medal='bronze'}(Athelete \times Result)\\[5pt]
+Answer(lname) := \Pi_{lname}(Athelete) - Gold \cup Silver \cup Bronze
+$
+}
+
+
+\item   % ---------- 
+Find the stadium names of all the stadiums where exactly one event took place.
+
+{\bf Answer}:\\[5pt]
+{
+$
+AllSID(SID) := \Pi_{Stadium.SID}(Stadium \bowtie Result \bowtie Event)\\[5pt]
+ExactlyOnce(SID) := AllSID - \Pi_{P1.SID}\sigma_{P1.EID\not=P2.EID \wedge P1.SID=P2.SID}(\rho_{P1}(Result \bowtie Event) \times \rho_{P2}(Result \bowtie Event))\\[5pt]
+Answer(sname) := \Pi_{Stadium.sname}(ExactlyOnce \bowtie Stadium)
+$
+}
+
+
+\item   % ---------- 
+Find all the sporting disciplines that Canadian athletes have competed in so far. 
+
+{\bf Answer}:\\[5pt]
+{
+$
+Candian(AID) := \Pi_{AID}\sigma_{cname='Canada'}(Athelete \bowtie Country)\\[5pt]
+Answer(sport) := \Pi_{sport}(Event \bowtie Result \bowtie Canadian)
+$
+}
+
+\item   % ---------- 
+Find the first and last name of the athletes whose sporting discipline is ``swimming'' 
+and who have won the highest number of gold medals among all athletes who compete 
+in the same sport.
+
+{\bf Answer}:\\[5pt]
+{
+$
+Swimming(AID, gold, fname, lname) := \Pi_{AID, gold, fname, lname}\sigma_{sport='swimming'}(Atheletes)\\[5pt]
+NotHighestMedal(AID, gold, fname, lname) := \\ \Pi_{S1.AID, S1.gold, S1.fname, S1.lname} \sigma_{S1.gold<S2.gold}(\rho_{S1}(Swimming) 
+\times  \rho_{S2}(Swimming))\\[5pt]
+Answer(fname, lname) := \Pi_{fname, lname}(Swimming) - \Pi_{fname, lname}(NotHighestMedal)
+$
+}
+
+
+\item   % ---------- 
+Find the name of every country that has won at least one of every type of medal 
+(gold, silver, and bronze).
+
+{\bf Answer}:\\[5pt]
+{
+$
+C1 := \sigma_{A1.CID=A2.CID=A3.CID}(\rho_{A1}(Athelete) \times \rho_{A2}(Athelete) \times \rho_{A3}(Athelete)) \\[5pt]
+C2 := \sigma_{A1.gold>0 \vee A2.gold>0 \vee A3.gold>0}(A1 \times A2 \times A3) \\[5pt]
+C3 := \sigma_{A1.silver>0 \vee A2.silver>0 \vee A3.silver>0}(A1 \times A2 \times A3) \\[5pt]
+C4 := \sigma_{A1.bronze>0 \vee A2.bronze>0 \vee A3.bronze>0}(A1 \times A2 \times A3) \\[5pt]
+SuchCountryID(CID) := \Pi_{A1.CID} (C1 \cap C2 \cap C3 \cap C4)\\[5pt]
+Answer(cname) := \Pi_{cname}(SuchCountryID \bowtie Country)
+$
+}
+
+
+\item   % ---------- 
+Find the gold medalist country of the event for which the very first ticket out of 
+all the tickets in the database was purchased. A gold medalist country is a country
+that has won at least one gold medal. 
+ 
+{\bf Answer}:\\[5pt]
+{
+$
+LaterDayTicket(TID, dateIssued, timeIssued, EID) := \\ \Pi_{T1.TID, T1.dateIssued, T1.timeIssued, T1.EID}\sigma_{T1.dateIssued > T2.dateIssued}(\rho_{T1}(Ticket) \times \rho_{T2}(Ticket))\\[5pt]
+FirstDayTicket(TID, dateIssued, timeIssued, EID) := \\ \Pi_{TID, dateIssued, timeIssued, EID} (T1 \times T2) - LaterDayTicket\\[5pt]
+FirstDayLaterTicket(TID, dateIssued, timeIssued, EID) := \\ \Pi_{T3.TID, T3.dateIssued, T3.timeIssued, T3.EID} \sigma_{T3.timeIssued > T4.timeIssued} \\ (\rho_{T3}(FirstDayTicket) \times \rho_{T4}(FirstDayTicket))\\[5pt]
+FirstTicket(TID, dateIssued, timeIssued, EID) := \\ \Pi_{TID, dateIssued, timeIssued, EID}(T3 \times T4) - FirstDayLaterTicket\\[5pt]
+Answer(cname) := \Pi_{cname}\sigma_{Result.medal = 'gold'}(FirstTicket \bowtie Event \bowtie Result \bowtie Country)
+$
+}
+
+
+\item   % ---------- 
+Find the first and last name of the athlete representing ``Mexico'', who so far 
+has the second highest number of gold medals (among athletes of the same country).
+
+{\bf Answer}:\\[5pt]
+{
+$
+Mexican(AID, fname, lname, gold) := \Pi_{AID, fname, lname, gold}\sigma_{cname='Mexico'}(Athelete \bowtie Country)\\[5pt]
+M3(M1.AID, M1.fname, M1.lname, M1.gold, M2.AID, M2.fname, M2.lname, M2.gold) \\[5pt]
+:= \rho_{M1}(Mexican) \times \rho_{M2}(Mexican)\\[5pt]
+M4(M1.AID, M1.fname, M1.lname, M1.gold, M2.AID, M2.fname, M2.lname, M2.gold) \\[5pt]
+:= M3 - \sigma_{M1.gold<M2.gold}(M3)\\[5pt]
+Answer(M1.fname, M1.lname) := \Pi_{M1.fname,M1.lname}(M4-\sigma_{M1.gold<M2.gold}(M4))
+$
+}
+
+
+\item   % ----------
+Find the sports disciplines for events for which at least two tickets 
+were bought on the date of the event.
+
+{\bf Answer}:\\[5pt]
+{
+$
+TicketsSameDay(EID) :=  \Pi_{T1.EID}\sigma_{T1.dateIssued = T2.dateIssued \wedge T1.TID \not = T2.TID}(\rho_{T1}(Ticket) \times \rho_{T2}(Ticket))\\[5pt]
+Answer(sport) := \Pi_{sport}(TicketsSameDay \bowtie Event)
+$
+}
+
+\item   % ----------
+Find the athlete with the highest overall number of gold medals won so far, and report that athlete’s first and last name, country name, and number of gold medals won.
+
+{\bf Answer}:\\[5pt]
+{
+$
+AtheleteLessGold(AID, fname, lname, gold, CID) :=\\[5pt]
+\hspace{6cm} \Pi_{A1.AID, A1.name, A1.lname, A1.gold A1.CID}\sigma_{A1.gold<A2.gold}(\rho_{A1}(Athelete)\times\rho_{A2}(Athelete))\\[5pt]
+Top(AID, fname, lname, gold, CID) := \Pi_{A1.AID, A1.fname, A1.lname, A1.gold, A1.CID}(A1 \times A2) - AtheleteLessGold\\[5pt]
+Answer(fname, lname, cname, gold) := \Pi_{A1.fname,A1.lname,cname,A1.gold}(Top \bowtie Country)
+$
+}
+
+\item   % ----------
+Find the discipline (sport) of the event for which the highest number of tickets was purchased. 
+
+{\bf Answer}:\\[5pt]
+{
+$
+\text{Cannot be expressed with only basic relational algebra operations.}
+$
+}
+
+\item   % ---------- 
+Find the first and last name for all athletes who have won a gold medal in an event for which no tickets were sold. 
+
+{\bf Answer}:\\[5pt]
+{
+$
+NoMan(EID) := \Pi_{EID}Event - \Pi_{EID}Tickets \\[5pt]
+Answer(fname, lname) := \Pi_{fname,lname}\sigma_{medal='gold'}(NoMan(EID) \bowtie Result \bowtie Athelete)
+$
+}
+
+\end{enumerate}
+
+
+
+%----------------------------------------------------------------------------------------------------------------------
+\section*{Part 2: Additional Integrity Constraints [16\% - 4 marks each]}
+
+Below are some additional integrity constraints on our schema. Express each of them 
+using the notation from Section 2.5 of your textbook. If a constraint cannot be 
+expressed using such notations, simply write ``cannot be expressed''.
+
+
+\begin{enumerate}
+
+\item   % ----------
+An athlete cannot win more than one medal type in the same event.
+
+{\bf Answer}:\\[5pt]
+{
+$
+\sigma_{R1.AID=R2.AID \wedge R1.medal \not=R2.medal}(\rho_{R1}(Result) \times \rho_{R2}(Result)) = \emptyset
+$
+}
+
+\item   % ---------- 
+All tickets for an event have to be purchased before the time of the event.
+
+{\bf Answer}:\\[5pt]
+{
+$
+LateDate := \sigma_{Event.date > Ticket.dateIssued}(Event \bowtie Ticket)\\[5pt]
+SameDateLateTime := \sigma_{(Event.date = Ticket.dateIssued) \wedge (Event.time > Ticket.timeIssued)}(Event \bowtie Ticket)\\[5pt]
+LateDate \cup SameDateLateTime = \emptyset
+$
+}
+
+
+\item   % ---------- 
+The number of tickets purchased for an event should not exceed the capacity 
+of the stadium where the event takes place.
+
+{\bf Answer}:\\[5pt]
+{
+$
+\text{Cannot be expressed.}
+$
+}
+
+\item   % ---------- 
+An athlete could not have competed in an event for a sporting discipline 
+that they are not qualified to participate in.
+
+{\bf Answer}:\\[5pt]
+{
+$
+Qualified(sport) := \Pi_{sport}(Event \bowtie Athelete) \\[5pt]
+Unqualified(sport) := \Pi_{sport} - Qualified \\[5pt]
+Unqualified - Qualified = \emptyset
+$
+}
+
+\end{enumerate}
+  
+
+\end{document}
+
+
+

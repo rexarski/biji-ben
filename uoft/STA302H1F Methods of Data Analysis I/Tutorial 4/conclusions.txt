@@ -1,0 +1,85 @@
+# Drawing Conclusions
+#
+# Data from the Berkeley Guidance Study on the growth of girls
+library(car)
+library(MASS)
+library(nnet)
+library(alr3)
+
+#Berkeley Guidance Study Data on the growth of girls
+data(BGSgirls)
+names(BGSgirls)
+
+#Interested the relationship of Soma and WT2, WT9, WT18
+f<-BGSgirls[,c(2,4,8,12)]
+names(f)
+attach(f)
+pairs(~WT2+WT9+WT18+Soma)
+cor(f)
+m1<-lm(Soma~WT2+WT9+WT18,data=f)
+summary(m1) # check df 
+
+#Also interested in the relationship of Soma and WT9 -WT2, WT18 -WT9
+f$DW9<-WT9-WT2
+f$DW18<-WT18-WT9
+names(f)
+m2<-lm(Soma~WT2+DW9+DW18,data=f)
+summary(m2)
+m3<-lm(Soma~WT2+WT9+WT18+DW9+DW18,data=f)
+summary(m3)
+
+# If you have fit a model called, for example, m3, then the value of
+# m3$rank will be the number of terms actually fit in the mean 
+# function, including the intercept, if any. 
+
+m3$rank
+#############################
+#Scatter plot in R
+
+scatterplot(Soma ~ WT2,box = F, smooth=F)
+
+#Residual plot versus the fitted values and all other explainatory variables
+
+residualPlots(m1, term =~ 1)
+residualPlots(m1,~.)
+
+
+#Plot standardaized residuals against the fitted values
+
+plot(fitted(m1), rstandard(m1))
+###########################################################################
+#COnfidence intervals for all parameters
+confint(m1)
+
+
+################################
+#there is this predict function in R
+
+new.data = data.frame(WT2=14,WT9=33,WT18=45)
+predict(m1, new.data, interval = "prediction")
+
+
+################################
+
+# Missing Data
+#
+# There are several functions for working with missing value indicators. 
+# "is.na" serves two purposes, to set elements of a vector or array to NA, 
+# and to test each element of the vector or array to be NA, and return 
+# either TRUE or FALSE.
+
+a<-1:5
+
+# set the elements 1 and 5 of a to NA
+is.na(a)<-c(1,5)
+a
+
+# test each element of a, is a[j]=NA?
+thomas<-is.na(a)
+thomas
+a[thomas]<-mean(a[!thomas])
+a
+
+
+###########################################################################
+

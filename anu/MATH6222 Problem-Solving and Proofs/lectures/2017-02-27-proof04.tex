@@ -1,0 +1,114 @@
+\documentclass[a4paper, 11pt, twoside]{article}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\begin{document}
+
+2017-02-27-lec04
+\\
+
+$\forall a \in \mathbb{R}, \forall \epsilon > 0, \exists \delta > 0$ such that $|x-a| < \delta \implies |f(x) - f(a)| < \epsilon$
+
+Note that $f:\mathbb{R} \rightarrow \mathbb{R}$.
+\\
+
+\textbf{Well-defined mathematical statement:} something that is clearly true or false, e.g., $1+1=3, 1+1<3, 1=5.$
+
+Something like $x+1>3$ is a well-defined statement for any particular choice of $x \in \mathbb{R}.$
+
+Generally, suppose $P(x)$ is a statement which has a well-defined truth value for all choices of $x\in S.$
+
+Then we define 
+
+\begin{itemize}
+	\item $\exists x, P(x)$ to mean $P(x)$ is true for at least one $x \in S.$
+	\item $\forall x, P(x)$ to mean $P(x)$ is true for all $x \in S.$
+	\item $\exists x, (x+1 > 3)$ -- TRUE
+	\item $\forall x, (x+1 > 3)$ -- FALSE
+\end{itemize}
+
+More generally, if you have a statement with many free variables, you can get well-defined mathematical statements by \textbf{quantifying} all the free variables.
+\\
+
+\[ P(x,y):= (y = x^3), x, y \in \mathbb{R} \]
+
+\begin{itemize}
+	\item $\forall y, \exists x (y=x^3)$ means every real number has a cube root. (TRUE)
+	\item $\exists x, \forall y (y=x^3)$. It's asserting the existence of a single real number $x$ which is the cube root of all real numbers at once. (FALSE)
+\end{itemize}
+
+In English, 
+
+$\forall y, \exists x, y=x^3$ is true for some real number $x$. (TRUE)
+
+$\exists x$, such that $y=x^3$ is true for all $y$. (FALSE)
+
+$\exists y, \forall x (y=x^3)$ -- (FALSE) for the same reason
+
+$\forall, \exists y (Y=x^3)$ -- (TRUE) Every real number has a cube.
+
+$\exists x, \exists y (y=x^3)$ -- (TRUE)
+
+$\forall x, \forall y (y=x^3)$ -- (FALSE)
+\\
+
+\textbf{Problem:} Let $a, b$ be real numbers. ($a, b \in \mathbb{R}$) Prove that the equation $ax^2 + bx = a$ has a real solution.
+
+\begin{enumerate}
+	\item Translate this statement into formal logic.
+	\item Prove it.
+\end{enumerate}
+
+\textbf{Solution}
+\\
+\begin{enumerate}
+	\item $\forall a\in \mathbb{R}, \forall b\in \mathbb{R}, \exists x\in \mathbb{R} (ax^2+bx=a)$
+	\item Want to solve $ax^2+bx-a=0$.
+\end{enumerate}
+
+
+Case 1:
+\[
+	x = \frac{-b\pm \sqrt{b^2-4a(-a)}}{2a} = \frac{-b\pm\sqrt{b^2+4a^2}}{2a}
+\]
+
+Case 2: If $a=0$, then this equation is $bx=0$, so $x=0$ is a solution.
+\\
+
+What did a strawberry say to another strawberry? HOW DID WE GET INTO HIS JAM?
+
+What did a wall say to a ceiling? I'LL MEET YOU AT THE CORNER.
+
+What does $\forall\forall\exists\exists$ mean? For all upside-down A, there exists a backward E.
+\\
+
+\textbf{Logical Connectives}: Suppose $P, Q$ well-defined mathematical statements, 
+
+\begin{itemize}
+	\item $\neg P$ means not $P$.
+	\item $P \wedge Q$ means $P$ and $Q$.
+	\item $P \vee Q$ means $P$ or $Q$.
+	\item $P\implies Q$ means $P$ implies $Q$.
+	\item $P \iff Q$ means $P$ if and only if $Q$.
+\end{itemize}
+
+\begin{tabular}{|l|c|c|c|c|r|}
+	\hline
+	$P$ & $Q$ & $P\wedge Q$ & $P\vee Q$ & $P\implies Q$ & $P\iff Q$ \\
+	\hline
+	T & T & T & T & T & T \\
+	\hline
+	T & F & F & T & F & F \\
+	\hline
+	F & T & F & T & T & F \\
+	\hline
+	F & F & F & F & T & T \\
+	\hline
+\end{tabular}
+\\
+
+\textbf{Claim:} $\neg (P \wedge Q))$ is logically equivalent to $(\neg P)\vee (\neg Q)$.
+
+For observation $P\implies Q$ is not logically equivalent to $Q \implies P$ which is the converse, but equivalent to $\neg Q \implies \neg P$ which is the contrapositive.
+
+
+\end{document}

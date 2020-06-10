@@ -1,0 +1,26 @@
+RESEARCH SCHOOL OF FINANCE, ACTUARIAL STUDIES AND APPLIED STATISTICS
+Graphical Data Analysis
+
+
+Tutorial 1
+
+
+ 1.  Create the data matrix z using
+
+	z <- cbind(evap.y,evap.x)
+
+Explore the air temperature data in z[,5:7].  Create histograms of each
+of the three variables and then create the three scatterplots of pairs
+of variables.  Use the scatterplot matrix and spinning facility in
+brush (to see the points initially, select a large brush, persistent
+brushing and then brush one entire plot; when you have the basic
+structure, return to transient brushing with a smaller brush) to
+explore this data.  Make sure you try all the spinning and brushing
+options to familiarise yourselves with their effects.  Do not print
+many copies of the spin and brush windows but be sure to print at least
+one situation so that you are familiar with use of the the printer.
+Try to give a concise verbal description of the data.
+
+2.  Repeat Question 1 with the relative humidity data in z[,8:10].
+
+

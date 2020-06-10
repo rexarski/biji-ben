@@ -1,0 +1,16 @@
+#nextsteps {
+   color: blue;
+}
+
+.emphasized {
+   font-size: 1.8em;
+   font-weight: bold;
+}
+
+.sub-section {
+   font-size: 1.8em;
+   font-weight: bold;
+   text-align:center; 
+   height:500px; 
+   line-height:500px;
+}

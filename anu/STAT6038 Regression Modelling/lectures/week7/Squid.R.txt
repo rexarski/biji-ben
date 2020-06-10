@@ -1,0 +1,148 @@
+# Example 1 from page 5 of chapter 2 of the lecture notes:
+# Squid data (see description in the "brick")
+
+squid <- read.csv("squid.csv")
+squid
+
+# Attach the data so we can access each of the various columns by name:
+
+attach(squid)
+
+# To explore the data graphically in R, draw a scatterplot matrix:
+
+pairs(squid)
+
+# The relationships between the response variable, weight and the
+# various x variables all appear roughly linear with some possible 
+# curvature in some of the relationships. Note that there are also
+# obvious relationships between the various x variables.
+
+# A initial multiple regression model could plausibly be:
+
+squid.lm <- lm(weight ~ x1 + x2 + x3 + x4 + x5)
+squid.lm
+
+# The slope coefficents are partial regression coefficients, but there
+# are relationships between the x variables, so trying to increase one
+# x variable by 1, whilst holding the others constant is not easily 
+# done in practice. The model is additive, so as all variables increase
+# by 1, the expected increase in Y would be the sum of the slopes.
+# Note that the coefficients are different to what we would get from
+# 5 different simple linear regessions:
+
+lm(weight ~ x1)
+lm(weight ~ x2)
+lm(weight ~ x3)
+lm(weight ~ x4)
+lm(weight ~ x5)
+squid.lm
+
+# Also note that the intercept lies outside the range of our data,
+# even if we were to attempt a direct interpretation:
+
+apply(squid, 2, min)
+apply(squid, 2, max)
+apply(squid, 2, range)
+summary(squid)
+
+# The residual diagnostic plots, however, suggest there are problems 
+# with this intial model:
+
+plot(squid.lm)
+
+# We can also get a simpler bar plot of Cook's distances:
+
+plot(squid.lm, which=4)
+
+# Thinking about the data, the x variables are all measurements of 
+# length and the response variable is more closely related to the 
+# overall size (volume) of the squid.  Like multiplying the sides 
+# of a rectangular prism to find the volume, we might expect a 
+# multiplicative relationship between the x variables and the weight.  
+# Applying a log transformation to all variables can transform
+# this multiplicative relationship to an additive one
+# (and is often used in this type of situation):
+
+squid.loglm <- lm(log(weight) ~ log(x1) + log(x2) + log(x3) + log(x4) + log(x5))
+
+# The diagnostic plots suggest a linear model fitted on the 
+# transformed scale is much closer to being an appropriate model: 
+
+plot(squid.loglm)
+
+# We might go further down this line of trying to find the right
+# scale for this multivariate relationship later, but for now,
+# we will use the untransformed model to examine some of the 
+# properties of multivariate relationships:
+
+# For example, the ANOVA table suggests that might be some extraneous
+# terms in this model (some of the F tests do not have significant
+# p-values).
+
+anova(squid.lm)
+
+# This is probably because the x variables are closely related to each
+# other. This is an example of multicollinearity.
+# Not an extreme example, as we can still fit the model - we do not
+# have the problem where one of x variables is a perfect linear
+# combination of the other x variables.
+
+# Because of these relationships between the X variables, the order
+# we choose to fit the variables into the model makes a difference.
+# Not to the overall fit of the model (the plots are unchanged), 
+# but to which variables we consider important: 
+
+squid.lm2 <- lm(weight ~ x5 + x4 + x3 + x2 + x1)
+
+plot(squid.lm)
+plot(squid.lm2)
+
+anova(squid.lm)
+anova(squid.lm2)
+
+# Note that it is the analysis of the different sources of variance
+# that has changed when we re-ordered the model, not the partial
+# regression coefficients:
+
+squid.lm
+squid.lm2
+
+summary(squid.lm)
+summary(squid.lm2)
+
+# Note the overall F-test and ANOVA is the same for both models:
+
+anova(lm(weight ~ cbind(x1, x2, x3, x4, x5)))
+anova(lm(weight ~ cbind(x5, x4, x3, x2, x1)))
+
+# In the ANOVA tables, where we fit the variables separately,
+# the effect of each additional variable is assessed sequentially
+# in the order in which the predictors were listed, which is why
+# only the t test for the last variable fitted is directly equivalent
+# to the sequential F test for the same variable:
+
+anova(squid.lm)
+summary(squid.lm)
+
+anova(squid.lm2)
+summary(squid.lm2)
+
+# The t test are marginal tests - testing if the effects of that variable
+# are significant, after we have accounted for all the other variables 
+# in the model? But this assumes we already have the right model!
+# We need to refine the model first and this involves working
+# with the partial or sequential F tests shown in the ANOVA table.
+
+# If we want to test a subset of predictors, we can change the
+# order and group the variables. For example, are x4 and x5 a 
+# significant addition to a model that already includes x1, x2 and x3?
+
+anova(lm(weight ~ cbind(x1, x2, x3) + cbind(x4, x5)))
+
+# Another example (also in the "brick"), are x4 and x1 a significant
+# addition to a model that already includes x2, x3 and x5?
+
+anova(lm(weight ~ cbind(x2, x3, x5) + cbind(x4, x1)))
+
+# We will come back to this comparison of nested models, when we 
+# look at the idea of refining a complicated regression model.

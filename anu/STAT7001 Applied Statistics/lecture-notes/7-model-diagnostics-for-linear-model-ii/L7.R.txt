@@ -1,0 +1,52 @@
+#Last Updated: 08/16/2016
+rm(list=ls())
+setwd('~/Desktop/Research/AppliedStat2017/L7')
+#install.packages('Sleuth3')
+library(Sleuth3)
+
+#Part I
+brain<-case0902
+Y=log(brain$Brain)
+X1=log(brain$Gestation)
+X2=log(brain$Body)
+X3=log(brain$Litter)
+brain.reg = lm(Y ~ X1 + X2 + X3) #full model
+
+CD=cooks.distance(brain.reg) #Cook's distance
+Rstd<-rstudent(brain.reg) #Studentized residuals
+X=cbind(X1,X2,X3)
+lev=hat(X) #Leverage
+
+par(mfrow=c(3,1))
+plot(CD)
+abline(h=1,col='red')
+plot(brain.reg$fitted,Rstd)
+abline(h=1.96,col='red')
+abline(h=-1.96,col='red')
+plot(lev)
+abline(h=2*(3+1)/length(Y),col='red')
+
+
+#Part II
+rm(list=ls())
+n=100
+set.seed(1)
+x1=rf(n,2,46)
+x2=rnorm(n)
+beta0=1
+beta1=2
+beta2=0.1
+epsilon=rep(0,n)
+for ( i in 1:n){
+  epsilon[i]=rnorm(1,0,x1[i])
+}
+y=beta0+beta1*x1+beta2*x2+epsilon
+plot(x1,y)
+
+#OLS
+fitOLS=lm(y~x1+x2)
+summary(fitOLS)
+
+#FGLS
+fitFGLS=lm(y~x1+x2,weights=1/fitOLS$res^2)
+summary(fitFGLS)

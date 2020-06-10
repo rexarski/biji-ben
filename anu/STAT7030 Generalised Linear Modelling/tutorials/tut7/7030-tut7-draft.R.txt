@@ -1,0 +1,9 @@
+data <- read.table('Heart.txt',header = T)
+attach(data)
+
+prptn <- disease/ssize
+nwprp <- ifelse(prptn==0, 0.05, prptn)
+nwprp <- ifelse(nwprp==1, 0.95, prptn)
+lgtdse2 <- 
+
+

@@ -1,0 +1,272 @@
+#Problem 1
+source("regression_gprior.r")
+source("backselect.r")
+#####
+#Problem 1
+swim<-read.table("swim.dat",header=FALSE)
+
+#All swimmers together
+X<-cbind(rep(1,24),c(rep(1,4),rep(2,4),rep(3,4),rep(4,4),rep(5,4),rep(6,4)))
+y<-c(swim[,1],swim[,2],swim[,3],swim[,4],swim[,5],swim[,6])
+pdf("HW_Fig1.pdf",family="Times",height=3.5,width=7)
+par(mar=c(3,3,1,1),mgp=c(1.75,.75,0))
+
+par(mfrow=c(1,1))
+plot(y~X[,2],pch=16,xlab="week",ylab="swim time")
+fit<-lm( y~-1+X)
+abline(a=fit$coef[1],b=fit$coef[2],col="black")
+dev.off()
+#####
+
+#####
+
+
+##### LS estimation 
+n<-length(y)
+
+p<-dim(X)[2]
+
+beta.ols<- solve(t(X)%*%X)%*%t(X)%*%y
+
+
+
+####
+#a)
+#LS each swimmer separately
+X<-cbind(rep(1,6),c(1,2,3,4,5,6))
+y1<-c(23.1,23.2,22.9,22.9,22.8,22.7)
+y2<-c(23.2,23.1,23.4,23.5,23.5,23.4)
+y3<-c(22.7,22.6,22.8,22.8,22.9,22.8)
+y4<-c(23.7,23.6,23.7,23.5,23.5,23.4)
+Y<-rbind(y1,y2,y3,y4)
+
+p<-dim(X)[2]
+
+fit.ls<-lm(y1~-1+ X) #~-1 because X contains a column of intercept values already
+#prior based on information that competitive times for this age group are in 
+#the range 22 to 24 seconds
+beta.0<-c(23,0) ; Sigma.0<-diag(c(0.7,0.2)^2,p)
+nu.0<-1 ; sigma2.0<- summary(fit.ls)$sigma^2
+
+
+#unit information prior
+beta.0<-fit.ls$coef
+nu.0<-1  ; sigma2.0<-sum(fit.ls$res^2)/(n-p)
+Sigma.0<- solve(t(X)%*%X)*sigma2.0*n
+
+
+####
+#use Cholesky decomposition
+rmvnorm<-function(n,mu,Sigma) 
+{ # samples from the multivariate normal distribution
+  E<-matrix(rnorm(n*length(mu)),n,length(mu))
+  t(  t(E%*%chol(Sigma)) +c(mu))
+}
+###
+
+### some convenient quantites
+p<-length(beta.0)
+iSigma.0<-solve(Sigma.0)
+XtX<-t(X)%*%X
+
+### store mcmc samples in these objects
+S<-5000
+beta.post<-matrix(nrow=S,ncol=p)
+BETA<-list(beta.post,beta.post,beta.post,beta.post)
+sigma2.post<-matrix(nrow=4,ncol=S)
+y.pred<-matrix(nrow=4,ncol=S)
+X.pred<-c(1,7)
+### starting value
+set.seed(1)
+sigma2<- var( residuals(lm(y~0+X)) )
+
+#semiconjugate prior distribution
+### MCMC algorithm
+for (i in 1:4){
+y<-Y[i,]
+
+n<-length(y)
+fit.ls<-lm(y~-1+ X) #~-1 because X contains a column of intercept values already
+#prior based on information that competitive times for this age group are in 
+#the range 22 to 24 seconds
+beta.0<-c(23,0) ; Sigma.0<-diag(c(0.7,0.2)^2,p)
+nu.0<-1 ; sigma2.0<- summary(fit.ls)$sigma^2
+
+
+beta.post<-matrix(nrow=S,ncol=p)
+### some convenient quantites
+p<-length(beta.0)
+iSigma.0<-solve(Sigma.0)
+XtX<-t(X)%*%X
+sigma2<- var( residuals(lm(y~0+X)) )
+
+for( scan in 1:S) {
+#update beta
+V.beta<- solve(  iSigma.0 + XtX/sigma2 )
+E.beta<- V.beta%*%( iSigma.0%*%beta.0 + t(X)%*%y/sigma2 )
+beta<-t(rmvnorm(1, E.beta,V.beta) )
+
+#update sigma2
+nu.n<- nu.0+n
+ss.n<-nu.0*sigma2.0 + sum(  (y-X%*%beta)^2 )
+sigma2<-1/rgamma(1,nu.n/2, ss.n/2)
+
+#save results of this scan
+beta.post[scan,]<-beta
+sigma2.post[i,scan]<-sigma2
+
+y.pred[i,scan]<-X.pred%*%beta+rnorm(1,0,sqrt(sigma2))
+
+                        }
+BETA[[i]]<-beta.post
+
+}
+
+#diagnostics
+#plots of posterior predictive distribution
+pdf("HW_Fig2.pdf")
+par(mfrow=c(2,2))
+for (i in 1:4){
+	hist(y.pred[i,],main=paste("Swimmer",i),xlab="Predicted time",breaks=20,xlim=c(21,25))
+	}
+dev.off()
+#b)
+min.pred<-NULL
+for (i in 1:S){
+   min.pred<-c(min.pred,which.min(y.pred[,i]))
+}
+
+pred.pr<-NULL
+for (i in 1:4){
+pred.pr<-c(pred.pr,mean(min.pred==i))
+}
+
+
+library(coda)
+ef_beta0<-NULL
+for (i in 1:4){
+ef_beta0<-c(ef_beta0,effectiveSize(BETA[[i]][,1]))
+}
+
+ef_beta1<-NULL
+for (i in 1:4){
+ef_beta1<-c(ef_beta1,effectiveSize(BETA[[i]][,2]))
+}
+
+
+#####
+pdf("HW_Fig3.pdf")
+par(mfrow=c(2,2))
+for (i in 1:4){
+acf(BETA[[i]][,1],main=expression(paste("ACF ",beta[0])),xlab=paste("Swimmer",i))	
+}
+dev.off()
+
+
+pdf("HW_Fig4.pdf")
+par(mfrow=c(2,2))
+for (i in 1:4){
+acf(BETA[[i]][,2],main=expression(paste("ACF ",beta[1])),xlab=paste("Swimmer",i))	
+}
+dev.off()
+
+
+
+###AZ.diabetes data
+
+diab<-read.table("azdiabetes.dat",header=T)
+#a) obtain posterior confidence intervals for all of the parameters
+
+y<-diab$glu
+n<-length(y)
+X<-cbind(diab[,1],diab[,3:7])
+
+#standardize
+y<-(y-mean(y))/sd(y)
+
+X<-t( (t(X)-apply(X,2,mean))/apply(X,2,sd))
+X<-cbind(rep(1,length(y)),X)
+tmp<-lm.gprior(y,as.matrix(X),g=dim(X)[1],nu0=2,s20=1)
+#####  #g prior
+beta.post<-tmp$beta
+s2.post<-tmp$s2
+#plot confidence intervals for beta.post
+apply(beta.post,2,function(x) quantile(x,c(0.025,0.975)))
+quantile(s2.post,c(0.025,0.975))
+
+
+mdt<-function(t,mu,sig,nu){ 
+
+gamma(.5*(nu+1))*(1+ ( (t-mu)/sig )^2/nu )^(-.5*(nu+1))/ 
+( sqrt(nu*pi)*sig* gamma(nu/2)  )
+                            }
+
+
+
+###
+
+
+
+#b) Bayesian model averaging
+
+
+
+###
+n<-length(y)
+set.seed(1)
+
+#Diabetes data model averaging
+source("regression_gprior.r")
+
+#OLS fit
+olsfit<-lm(y~-1+X)
+pdf("HW_Fig5.pdf")
+plot(olsfit$coef,type="h",lwd=2,xlab="regressor index",ylab=expression(hat(beta)[ols]))
+dev.off()
+###
+
+### back elim
+vars<-bselect.tcrit(y,X,tcrit=1.65)
+bslfit<-lm(y~-1+X[,vars$remain])
+pdf("HW_Fig6.pdf")
+plot(bslfit$coef,type="h",lwd=2,xlab="regressor index",ylab=expression(hat(beta)[backelim]))
+dev.off()
+
+#model averaging
+p<-dim(X)[2]
+S<-10000
+BETA<-Z<-matrix(NA,S,p)
+z<-rep(1,dim(X)[2] )
+lpy.c<-lpy.X(y,X[,z==1,drop=FALSE])
+
+for(s in 1:S)
+{
+      for(j in sample(1:p))
+    {
+      zp<-z ; zp[j]<-1-zp[j]
+      lpy.p<-lpy.X(y,X[,zp==1,drop=FALSE])
+      r<- (lpy.p - lpy.c)*(-1)^(zp[j]==0)
+      z[j]<-rbinom(1,1,1/(1+exp(-r)))
+      if(z[j]==zp[j]) {lpy.c<-lpy.p}
+     }
+  beta<-z;if(sum(z)>0){beta[z==1]<-lm.gprior(y,X[,z==1,drop=FALSE],S=1)$beta }
+  Z[s,]<-z
+  BETA[s,]<-beta
+
+}
+
+
+#####
+
+apply(BETA,2,function(x) quantile(x,c(0.025,0.975)))
+#apply(BETA,2,function(x) hdr(x,prob=95)$hdr)
+apply(BETA,2,function(x) mean(x!=0))
+
+#hdr(BETA[,5],prob=95)$hdr
+#hdr(BETA[,6],prob=95)$hdr
+#hdr(BETA[,7],prob=95)$hdr
+
+pdf("HW_Fig7.pdf")
+plot(apply(Z,2,mean,na.rm=TRUE),xlab="regressor index",ylab=expression(
+       paste( "Pr(",italic(z[j] == 1),"|",italic(y),",X)",sep="")),type="h",lwd=2)
+dev.off()

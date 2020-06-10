@@ -1,0 +1,44 @@
+RESEARCH SCHOOL OF FINANCE, ACTUARIAL STUDIES AND APPLIED STATISTICS 
+Graphical Data Analysis
+Assignment 1
+
+Solutions must be placed in the boxes marked STAT3011 in the foyer
+of the School Office, 4th Floor, CBE Bldg 26C.
+The assignment is due at Noon, Wednesday, 23 August, 2017. 
+
+NOTE:  This assignment contributes to your assessment for this
+course.  As a result, you are required to do the work ENTIRELY ON
+YOUR OWN.  This means you may not obtain help from other students
+or from ANY other source apart from lecture notes and other materials
+currently available in the class directory. This requirement is strict - you
+are NOT ALLOWED to use other sources. Really. If you are found
+contravening this rule, a zero mark will be recorded for you. For
+this assignment, and for following assignments, please hand in both
+text and graphics as part of your answer.  The graphics you hand
+in should be RELEVANT: that is DO NOT HAND IN EVERY GRAPHIC YOU
+PRODUCE IN THE PROCESS OF WORKING THROUGH THE ASSIGNMENT. Marks
+will be deducted if you hand in irrelevant graphics, and if your
+graphics are not sufficiently adorned with explanatory titles and
+axis labels and so on. The text part of your answer should be in
+the form of a report: it is not sufficient to merely annotate the
+graphics you produce. The text part of your report must be CONCISE
+and TO THE POINT: answers that are too lengthy may also be penalized.
+NOTE: There is a 4 (FOUR) page limit on this assignment, including
+text and all graphics. No pages beyond the fourth will be read.
+
+The assignment must be handed in as a single stack of paper, stapled
+in the top left hand corner. Do not use plastic coverslips, plastic
+folders, binders or have the work spiral or otherwise bound. No
+marks will be awarded for binding or other likewise presentation.
+
+
+The heights in inches of the singers in the New York Choral Society
+in 1979 are contained in a list called singers with components
+soprano.1, soprano.2, alto.1, alto.2, tenor.1, tenor.2, bass.1 and
+bass.2.  These components are listed in order of decreasing pitch.
+The first four components are female voices and the last four male.
+Describe and compare the height distributions, with particular
+reference to what factors appear to be important in describing
+height.
+
+Note: The data is contained in an R object named singers.

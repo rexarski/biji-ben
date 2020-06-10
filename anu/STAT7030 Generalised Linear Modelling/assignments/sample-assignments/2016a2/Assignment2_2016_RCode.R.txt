@@ -1,0 +1,355 @@
+# STAT3015/STAT7030 Generalised Linear Models
+
+# Assignment 2 for 2016 - R code appendix to the solutions
+
+# Question 1 (a)
+
+# Read in the data and fit the model from Q1(b) of the previous assignment:
+
+fruitfly <- read.csv("fruitfly.csv", header=T)
+attach(fruitfly)
+
+Activity <- c(rep("A", 125))
+Activity[1:25] <- "D"
+Activity[51:75] <- "B"
+Activity[76:100] <- "C"
+Activity[101:125] <- "E"
+levels(Activity)
+Activity <- factor(Activity)
+levels(Activity)
+data.frame(ID, Partners, Type, Activity, Thorax, Longevity)
+
+fruitfly.lm <- lm(log(Longevity) ~ Activity + Thorax)
+fruitfly.lm
+
+# The closest equivalent to this model as a non-normally distributed GLM is a gamma model, with a log link, which is essentially 
+# the same model as the above ordinary linear model, but which allows for more flexibility in modelling the variance/deviance: 
+
+fruitfly.glm <- glm(Longevity ~ Activity + Thorax, family=Gamma(link=log))
+fruitfly.glm
+
+plot(fruitfly.glm)
+
+# A quick check of the default plots suggests no new problems induced by switching from an ordinary linear model to a GLM, with 
+# possibly even some improvements on the residual plots for the ordinary linear model. Note that a bit of experimenting suggests
+# that an identity link also works reasonably (with slightly different problems), but that the canonical or default link, the
+# inverse is worth than either of these alternatives: 
+
+fruitfly.identity_glm <- glm(Longevity ~ Activity + Thorax, family=Gamma(link=identity))
+plot(fruitfly.identity_glm)
+
+fruitfly.inverse_glm <- glm(Longevity ~ Activity + Thorax, family=Gamma)
+plot(fruitfly.inverse_glm)
+
+# Question 1 (b)
+
+# Borrowing some code to standardise residuals from the "Residual Plots" example in lectures:
+
+std.residuals <- function(model, type="deviance"){
+  # Function to standardise residuals from a GLM model object
+  # Produces standardised deviance residuals, unless type="pearson" requested
+  std.error <- sqrt(summary(model)$dispersion * (1 - influence(model)$hat))
+  std.res <- residuals(model)/std.error
+  if (type=="pearson") std.res <- residuals(model, "pearson")/std.error
+  std.res
+}
+
+# And some more code from the R code for Assignment 1, suitably modified:
+
+plot(fruitfly.glm$linear.predictors, std.residuals(fruitfly.glm), type="n", xlab="Linear Predictors", ylab="Studentised Deviance Residuals")
+abline(h=c(qt(0.025,fruitfly.glm$df.residual),0,qt(0.975,fruitfly.glm$df.residual)), lty=2)
+title("Standardised Residuals vs Fitted Values", sub="Fruitfly data log gamma GLM: Longevity ~ Activity + Thorax")
+points(fruitfly.glm$linear.predictors[Activity=="A"], std.residuals(fruitfly.glm)[Activity=="A"],pch="A")
+points(fruitfly.glm$linear.predictors[Activity=="B"], std.residuals(fruitfly.glm)[Activity=="B"],pch="B")
+points(fruitfly.glm$linear.predictors[Activity=="C"], std.residuals(fruitfly.glm)[Activity=="C"],pch="C")
+points(fruitfly.glm$linear.predictors[Activity=="D"], std.residuals(fruitfly.glm)[Activity=="D"],pch="D")
+points(fruitfly.glm$linear.predictors[Activity=="E"], std.residuals(fruitfly.glm)[Activity=="E"],pch="E")
+identify(fruitfly.glm$linear.predictors, std.residuals(fruitfly.glm))
+
+# This plot looks very similar to the one in the Solutions to Assignment 1, so maybe the model isn't really an improvement! 
+# The same observations are also identified as possible problems, for the same reasons as in Assignment 1, but we will 
+# go on to check the other plots (again modifying some code from the Residual Plots example):
+
+qqnorm(std.residuals(fruitfly.glm), sub="Fruitfly data log gamma GLM: Longevity ~ Activity + Thorax")
+qqline(std.residuals(fruitfly.glm), lty=2)
+abline(0,1)
+temp <- qqnorm(std.residuals(fruitfly.glm), plot.it=F)
+identify(temp$x, temp$y)
+
+plot(fruitfly.glm, which=4, sub="Fruitfly data log gamma GLM: Longevity ~ Activity + Thorax")
+
+# Question 1 (c)
+
+anova(fruitfly.glm)
+summary(fruitfly.glm)$dispersion
+df <- fruitfly.glm$df.residual
+fruitfly.glm$deviance/df
+
+fruitfly.glm$deviance/summary(fruitfly.glm)$dispersion
+c(qchisq(0.025,df), qchisq(0.975,df))
+
+# Question 1 (d)
+
+anova(fruitfly.glm, test="Chisq")
+
+# Or better, again borrow and modify some code from the "Residual Plots" example:
+scaled.dev <- anova(fruitfly.glm)$Deviance/summary(fruitfly.glm)$dispersion
+chisq.pvalues <- 1 - pchisq(scaled.dev, anova(fruitfly.glm)$Df)
+cbind(anova(fruitfly.glm), "Scaled Dev"=scaled.dev, "Pr(>Chi)"=chisq.pvalues)
+
+qchisq(0.95,4)
+qchisq(0.95,1)
+
+round(summary(fruitfly.glm)$coefficients,8)
+
+c(qt(0.025,df),qt(0.975,df))
+
+# Question 1 (e)
+
+# Reorganise the data and calculate the required summary statistics: 
+
+Size <- rep("medium",125)
+Size[Thorax<0.74]<-"small"
+Size[Thorax>0.84]<-"large"
+Size<-as.factor(Size)
+levels(Size)
+
+tapply(ID,Size,length)
+Thorax.medians <- tapply(Thorax,Size,median)
+Thorax.medians
+
+Longevity.counts <- tapply(Longevity,list(Activity,Size),length)
+Longevity.counts
+Longevity.means <- tapply(Longevity,list(Activity,Size),mean)
+Longevity.means
+Longevity.mins <- tapply(Longevity,list(Activity,Size),min)
+Longevity.mins
+Longevity.maxs <- tapply(Longevity,list(Activity,Size),max)
+Longevity.maxs
+
+# Now to create the new values for which we want estimates from the model:
+
+newSize <- as.factor(c(rep("large",5),rep("medium",5),rep("small",5)))
+newActivity <- as.factor(rep(levels(Activity),3))
+newThorax <- c(rep(Thorax.medians["large"],5),rep(Thorax.medians["medium"],5),rep(Thorax.medians["small"],5))
+DataSummary <- data.frame(Size=newSize, Activity=newActivity, Count=as.vector(Longevity.counts), Mean=as.vector(Longevity.means), Min=as.vector(Longevity.mins), Max=as.vector(Longevity.maxs), Thorax=newThorax)
+DataSummary
+
+# To find the estimates and required intervals, again borrow some code, this time from the 
+# "Predictions using GLMs" example:
+
+add.ci <- function(object, fit.se, conf.level=0.95){
+  fit <- fit.se$fit
+  se.fit <- fit.se$se.fit
+  residual.scale <- fit.se$residual.scale
+  pi.se <- sqrt(residual.scale^2 + se.fit^2) 
+  tquantile <- qt(1 - (1 - conf.level)/2, object$df.residual)
+  ci.fit <- cbind(lower = fit - tquantile*se.fit, upper = fit + tquantile*se.fit)
+  pi.fit <- cbind(lower = fit - tquantile*pi.se, upper = fit + tquantile*pi.se)
+  list(fit = fit, se.fit = se.fit, residual.scale = residual.scale, ci.fit = ci.fit, pi.fit = pi.fit)
+}
+
+temp <- predict(fruitfly.glm, newdata=DataSummary, type="link",se.fit=T)
+temp
+
+temp2 <- add.ci(fruitfly.glm, temp)
+temp2
+
+data.frame(DataSummary,Estimate=exp(temp2$fit),CI=exp(temp2$ci.fit),PI=exp(temp2$pi.fit))
+
+
+# Question 2 (a)
+
+# Read in and organise the data (this code is copied from the old code for Assignment 2 for 2015, but note we are now
+# dealing with a csv file):
+
+titanic <- read.csv("titanic2016.csv", header=T)
+titanic
+attach(titanic)
+names(titanic)
+
+# Do a little exploratory data analysis. Note that the original range of ages in the individual level data (see the Excel
+# spreadsheet) was 0 to 74, so using Mean.Age as a covariate loses some information, but not as much info as using Age.Group
+# as a factor would lose.
+
+range(Mean.Age)
+levels(P.Class)
+levels(Sex)
+unique(English)
+
+# Calculate the proportion of passengers in each group who survived:
+
+Prop.Surv <- Survived/Passengers
+Prop.Surv
+range(Prop.Surv)
+hist(Prop.Surv)
+
+# Here was the model used in Assignment 2 for 2015:
+
+titanic.glm <- glm(Prop.Surv ~ Mean.Age + Sex + P.Class + Mean.Age:Sex + Sex:P.Class + Mean.Age:P.Class, family = binomial, weights=Passengers)
+titanic.glm
+
+anova(titanic.glm, test="Chisq")
+
+# Even with the data aggregated in a different fashion, all of the terms in this model are significant, except for the  
+# main effect term for Mean.Age, though this term should still be included as the variable also forms part of a significant
+# interaction term.
+
+# Assuming this model correctly controls for the effects of age, sex and passenger class, we can now add in the indicator
+# variable for being English:
+
+titanic2.glm <- glm(Prop.Surv ~ Mean.Age + Sex + P.Class + Mean.Age:Sex + Sex:P.Class + Mean.Age:P.Class + English, family = binomial, weights=Passengers)
+titanic2.glm
+
+anova(titanic2.glm, test="Chisq")
+
+# However, the various articles referenced in the assignment specifications suggest that being English might have had
+# different effects in different classes and possibly for different ages and sexes:
+
+titanic3.glm <- glm(Prop.Surv ~ (Mean.Age + Sex + P.Class + Mean.Age:Sex + Sex:P.Class + Mean.Age:P.Class) * English, family = binomial, weights=Passengers)
+titanic3.glm
+
+anova(titanic3.glm, test="Chisq")
+
+# None of the terms involving the indicator variable are significant, but here we do not have orthogonal contrasts, 
+# so we would should refine the model, removing one term at time (starting with the most complex three-way interactions).
+# However, this makes no real diffence and eventually we end up back at the earlier model titanic.glm2, remembering
+# the model must include the factor English in at least one term, otherwise it cannot be used to address a research
+# question that is about the effects of being English on survival. The conclusion appears to be that being English does 
+# not have a significant effect on survival, once we control for the effects of age, sex and passenger class.
+
+# Question 2 (b)
+
+# Given we have already borrowed the necessary code in Question 1, we can easily produce the required plots and I have
+# added a leverage bar plot for good measure:
+ 
+par(mfrow=c(2,2))
+
+plot(titanic2.glm$linear.predictors, std.residuals(titanic2.glm), xlab="Linear Predictors", ylab="Studentised Deviance Residuals")
+abline(h=c(qt(0.025,titanic2.glm$df.residual),0,qt(0.975,titanic2.glm$df.residual)), lty=2)
+title("Standardised Residuals vs Fitted Values", sub="Titanic data: binomial GLM with logit link")
+identify(titanic2.glm$linear.predictors, std.residuals(titanic2.glm))
+
+qqnorm(std.residuals(titanic2.glm), sub="Titanic data: binomial GLM with logit link")
+qqline(std.residuals(titanic2.glm), lty=2)
+abline(0,1)
+temp <- qqnorm(std.residuals(titanic2.glm), plot.it=F)
+identify(temp$x, temp$y)
+
+plot(titanic2.glm, which=4)
+title(sub="Titanic data: binomial GLM with logit link")
+
+barplot(hatvalues(titanic2.glm), xlab="Observation Number", ylab="Leverage values")
+title("Leverage Bar Plot", sub="Titanic data: binomial GLM with logit link")
+abline(h=(2*length(coef(titanic2.glm))/length(Mean.Age)), lty=2)
+
+par(mfrow=c(1,1))
+
+# There are numerous potential outliers here, in fact, 9/89 or over 10% of the residuals lie outside the 2 standard 
+# deviation limits (rather than the expected 5%), so I have only identifed the most extreme observations, which all
+# have absolute standardised residuals values in excess of 2.5:
+
+sort(std.residuals(titanic2.glm))
+titanic[c(5,19,70,75),]
+
+# Question 2 (c)
+
+anova(titanic2.glm)
+summary(titanic2.glm)$dispersion
+df <- titanic2.glm$df.residual
+titanic2.glm$deviance/df
+
+titanic2.glm$deviance/summary(titanic2.glm)$dispersion
+c(qchisq(0.025,df), qchisq(0.975,df))
+
+# Question 2 (d)
+
+anova(titanic2.glm, dispersion=titanic2.glm$deviance/df, test="Chisq")
+
+# Or better, again borrow and modify some code from the "Residual Plots" example:
+scaled.dev <- anova(titanic2.glm)$Deviance/(titanic2.glm$deviance/df)
+chisq.pvalues <- 1 - pchisq(scaled.dev, anova(titanic2.glm)$Df)
+cbind(anova(titanic2.glm), "Scaled Dev"=scaled.dev, "Pr(>Chi)"=chisq.pvalues)
+
+qchisq(0.95,2)
+qchisq(0.95,1)
+
+round(summary(titanic2.glm)$coefficients,8)
+
+c(qt(0.025,df),qt(0.975,df))
+
+# Question 2 (e)
+
+# To fit similar models to the individual level data, first read in and check the individual data:
+
+passengers <- read.csv("passengers2016.csv", header=T)
+passengers
+names(passengers)
+
+# All the individual level variables involved in the model have new names, compared with the aggregate data, except
+# Survived, which now becomes our binary response variable.
+
+attach(passengers)
+
+range(Age)
+levels(Cabin)
+levels(Gender)
+levels(Home_Country)
+unique(ESC)
+levels(Nat_Group)
+
+# First re-fit the old model from the 2015 Assignment to check that things are consist between the binary response
+# model and the aggregate model:
+
+passengers.glm <- glm(Survived ~ Age + Gender + Cabin + Age:Gender + Gender:Cabin + Age:Cabin, family = binomial)
+passengers.glm
+
+# Compare with the aggregate model:
+
+titanic.glm
+
+# The main residual plot is far less helpful, unless we do something to group the residuals:
+
+plot(passengers.glm, which=1)
+title("Titanic data: same logistic binomial GLM fitted to unit record data")
+
+# Note how both the residual and the outlier analysis changes:
+
+plot(passengers.glm, which=1:5)
+
+std.residuals(passengers.glm)[abs(std.residuals(passengers.glm))>2]
+
+range(std.residuals(passengers.glm))
+
+# Compare the Analysis of Deviance tables for the aggregate and individual record models:
+
+anova(titanic.glm, test="Chisq")
+anova(passengers.glm, test="Chisq")
+
+# And we can also compare the model coefficients:
+
+summary(titanic.glm)
+summary(passengers.glm)
+
+# Both of the above are remarkably similar on all aspects that are comparable.
+
+# Now to repeat the important bits for the model fitted in the earlier parts of this question, but
+# considering the English-speaking countries rather than just being English:
+
+passengers2.glm <- glm(Survived ~ Age + Gender + Cabin + Age:Gender + Gender:Cabin + Age:Cabin + ESC, family = binomial)
+
+anova(passengers2.glm, test="Chisq")
+
+anova(titanic2.glm, test="Chisq")
+
+# What about the different Nationality groups, which are yet another way (like English and ESC) of 
+# re-categorising the information available in Home_Country:
+
+passengers3.glm <- glm(Survived ~ Age + Gender + Cabin + Age:Gender + Gender:Cabin + Age:Cabin + Nat_Group, family = binomial)
+
+anova(passengers3.glm, test="Chisq")
+
+summary(passengers3.glm)
+levels(Nat_Group)
+
+

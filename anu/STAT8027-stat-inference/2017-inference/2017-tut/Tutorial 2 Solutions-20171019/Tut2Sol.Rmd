@@ -1,0 +1,145 @@
+---
+title: "Tutorial 2 Solutions"
+author: "STAT 3013/8027"
+output: pdf_document
+---
+---
+\large
+
+1.  Rice: 5.1, 5.13, 5.16  **Ans.** See the handwritten pages.
+
+* **5.13 R code:**
+
+
+```{r}
+##
+set.seed(10)
+x <- rbinom(60, 1, 0.5)
+x[x==0] <- -1
+x <- x*50
+
+w <- cumsum(x)
+
+##
+plot(w, type="l", lwd=3, main="A Realization of the Drunkard's Walk")
+
+
+## Let's examine the sampling distirbution of W
+set.seed(10)
+S <- 10000
+W <- rep(0, S)
+
+for(s in 1:S){
+  x <- rbinom(60, 1, 0.5)
+  x[x==0] <- -1
+  x <- x*50
+  W[s] <- sum(x)
+}
+
+##
+mean(W)
+var(W)
+
+##
+hist(W, col="yellow")
+```
+
+* **5.19 (a)**
+
+Let's first work out the exact answer.
+
+\begin{eqnarray*}
+\int_0^1 cos(2 \pi x) dx &=& \frac{1}{2 \pi} sin(2 \pi x) \big\vert_0^1 \\
+&=& 0
+\end{eqnarray*}
+
+  + Note.  Suppose we consider $U \sim \textrm{Uniform(0,1)}$.  Let's look at the $E[U]$.
+  
+  $$E[U] = \int_0^1 u f(u) du = \int_0^1 u \ du $$
+  
+  + Now let's look at the expected value of the function: $cos(2 \pi u)$:
+  
+  $$E[g(U)] = \int_0^1 cos(2 \pi u) \ du $$
+
+**So our integral of interest is the expected value of the function.  We can approximate that via simulation.**
+
+$$\hat{I}(g(u)) = \frac{1}{S}\sum_{1}^S cos(2 \pi u)$$
+
+```{r}
+set.seed(1001)
+S1 <- 100
+
+u <- runif(S1)
+g.u <- cos(2*pi*u)
+mean(g.u)
+```
+
+```{r}
+set.seed(1001)
+S2 <- 1000
+
+u <- runif(S2)
+g.u <- cos(2*pi*u)
+mean(g.u)
+```
+
+
++ Now let's plot for increasing values of $S$:
+
+```{r}
+S <- 50:5000
+g.u <- rep(0, length(S))
+
+c <- 1
+for(s in S){
+g.u[c] <- mean(cos(2*pi* runif(s)))
+c <- c+1
+}
+
+plot(S, g.u, type="l", lwd=3, col="blue") 
+abline(h=0, col="red", lwd=4)
+```
+
++ As we can work out the $E[g(u)]$ and the $V[g(u)]$ we could also use the CLT theorem for calculations based on the $\frac{1}{S}\sum_{1}^S cos(2 \pi u)$.
+
+
+* **5.19 (b) R code**
+
+  + For this question we can't work out an analytical solution (some type of approximation must be performed).
+
+\begin{eqnarray*}
+E[I(g(u))] &=& \int_0^1 cos(2 \pi u^2) du\\
+&\approx& \frac{1}{S} \sum_1^S  cos(2 \pi u^2)
+\end{eqnarray*}
+
+```{r}
+set.seed(1001)
+S1 <- 100
+
+u <- runif(S1)
+g.u <- cos(2*pi*u^2)
+mean(g.u)
+```
+
+```{r}
+set.seed(1001)
+S2 <- 1000
+
+u <- runif(S2)
+g.u <- cos(2*pi*u^2)
+mean(g.u)
+```
+
+```{r}
+S <- 50:5000
+g.u <- rep(0, length(S))
+
+c <- 1
+for(s in S){
+g.u[c] <- mean(cos(2*pi* runif(s)^2))
+c <- c+1
+}
+
+plot(S, g.u, type="l", lwd=3, col="blue") 
+```  
+

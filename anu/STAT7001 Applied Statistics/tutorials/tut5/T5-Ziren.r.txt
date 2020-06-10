@@ -1,0 +1,69 @@
+#Question 1
+
+crab<-read.table("crab.csv",header=T,sep=",")
+names(crab)
+force=crab$FORCE
+height=crab$HEIGHT
+species=crab$SPECIES
+ILP=ifelse(species==species[16],1,0)
+ICP=ifelse(species==species[28],1,0)
+crab.reg=lm(log(force)~log(height)+ILP+ICP+ILP*log(height)+ICP*log(height))
+
+#part1
+confint(crab.reg,'log(height):ICP',level=0.95)
+#part2
+summary(crab.reg,correlation=TRUE)
+#part3
+crab.regr=lm(log(force)~log(height)+ILP+ICP) #reduced model 
+anova(crab.regr,crab.reg,test='F') #the partial F test anova 
+anova(crab.regr)
+anova(crab.reg)
+#Diagnostics for full model 
+par(mfrow=c(3,1))
+plot(crab.reg,which=4)
+abline(h=1,col='red') 
+plot(crab.reg$fitted,rstudent(crab.reg)) 
+abline(h=1.96,col='red') 
+abline(h=-1.96,col='red')
+plot(hatvalues(crab.reg),type='h') 
+abline(h=2*(5+1)/length(force),col='red')
+
+#Question 2
+
+old<-read.table("oldfaithful.csv",header=T,sep=",")
+names(old)
+date=old$DATE
+duration=old$DURATION
+interval=old$INTERVAL
+I2=ifelse(date==2,1,0)
+I3=ifelse(date==3,1,0)
+I4=ifelse(date==4,1,0)
+I5=ifelse(date==5,1,0)
+I6=ifelse(date==6,1,0)
+I7=ifelse(date==7,1,0)
+I8=ifelse(date==8,1,0)
+old.reg=lm(interval~duration+I2+I3+I4+I5+I6+I7+I8)#full model
+
+old.regr=lm(interval~duration) #reduced model 
+anova(old.regr,old.reg,test='F')#partial F test anova
+anova(old.regr)
+anova(old.reg)
+
+#comparing adjusted r squared and the reduced model shows better fit
+summary(old.reg)$adj.r.squared
+summary(old.regr)$adj.r.squared
+
+#Diagnostics for full model 
+par(mfrow=c(3,1))
+plot(old.reg,which=4)
+abline(h=1,col='red') 
+plot(old.reg$fitted,rstudent(old.reg)) 
+abline(h=1.96,col='red') 
+abline(h=-1.96,col='red')
+plot(hatvalues(old.reg),type='h') 
+abline(h=2*(8+1)/length(interval),col='red')
+
+
+
+
+

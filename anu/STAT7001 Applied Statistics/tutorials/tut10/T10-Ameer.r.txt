@@ -1,0 +1,89 @@
+#Tutorial 10
+
+#Question 1
+#a
+setwd("C:/Users/u5708538/Desktop")
+penalty=read.table("penalty.csv",header=T,sep=",")
+names(penalty)
+aggravation=penalty$AGGRAVATION
+victim=penalty$VICTIM
+death=penalty$DEATH
+nodeath=penalty$NODEATH
+
+indblack=ifelse(victim=="BLACK",1,0)
+
+logitprop=log((death+0.5)/(nodeath+0.5)) #empirical logit. Fixes up problems of undefined logit i.e. becuase nodeath can be equal to zero, this will make sure infinity is not returned.
+plot(aggravation[indblack==1],logitprop[indblack==1],ylab="logit observed proportion",xlab="aggravation",ylim=c(-5,4))
+points(aggravation[indblack==0],logitprop[indblack==0],pch="*")
+
+#people who murder white victims are more likely to receive the death penalty.
+
+#b
+Y=cbind(death,nodeath)
+death.logit=glm(Y~aggravation+indblack,family=binomial(link=logit))
+summary(death.logit)
+
+#c) 
+1 - pchisq(3.88, 9)
+
+#d)
+
+#t-stat for this hypothesis is -3.4 with a corresponding p-value of 0.0007. 
+#The data suggests that race is an important variable.  The odds of death are lower if the victim was black.
+
+#e)
+# 95% CI indblack is -1.806 +/- 1.96*0.5361 = (-2.86, -0.76). 
+#If we exponentiate this CI we get (0.057,0.47). 
+#This says that they odds of getting the death penalty for murdering a black victim are estimated to be between 0.057 to 0.47 times the odds for murdering a white victim, accounting for the aggravation level of the crime.
+
+#Question 2
+
+#a)
+dose<-c(0,0.25,1,2)
+subjects<-c(1158,331,552,308)
+noillness<-c(267,74,130,65)
+illness=subjects-noillness
+propotion<-c(0.231,0.224,0.236,0.211)
+
+plot(dose,log(noillness/illness),ylab="logit estimated proportion",xlab="daily dose", type="b")
+
+#b)
+y=cbind(noillness,illness)
+vitC.logit=glm(y~dose,family=binomial(link=logit))
+summary(vitC.logit)
+
+#goodness-of-fit: Ho: model is appropriate & Ha: model is unappropriate. 
+1 - pchisq(0.529, 2)
+
+#dose has test statistic of -0.48 with a p-value of 0.63 (can not reject Ho i.e. model is approporiate) 
+#z-value of dose = -0.487 i.e. not an important explanatory variable.
+
+#c)
+#From part (b) we have no evidence that the model is inappropriate.  
+#There is also no evidence that the odds of a cold are related to dose of vitamin C.
+
+#d)
+#This was done to avoid the results being biased. 
+#If patients knew they were getting vitamin C they might respond to the idea of treatment rather than treatment itself (placebo effect). 
+#If doctors knew what doses each patient was getting it may affect their diagnosis – in a borderline case doctors might be less likely to diagnose cold for a patient getting a high dose of vitamin C.
+
+#Question 3
+
+multpart=c(0,0,1,1)
+circumcised=c(1,0,1,0)
+positive=c(1,5,5,13)
+notpositive=c(46-1,27-5,168-5,52-13)
+Y=cbind(positive,notpositive)
+HIV.logit=glm(Y~circumcised+multpart,family=binomial(link=logit))
+summary(HIV.logit)
+
+#equation: logit(pie) = -1.47-2.37(circumcized) + 0.37(multiplepartners) 
+
+#odds of being HIV positive were exp(0.37)=1.45 times greater for men with multiple partners   (95% CI is 0.5 to 4). 
+#multiple partners variable is insignificant. 
+#There is strong evidence that circumcised men were less likely to be HIV positive. 
+#It is estimated that the odds of being HIV positive for the circumcised men were 0.09 times the odds for uncircumcised men (95% CI 0.04 to 0.25).
+
+
+
+

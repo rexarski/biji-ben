@@ -1,0 +1,147 @@
+#Last Updated: 11/10/2017
+
+
+rm(list=ls())
+beta0=2;beta1=1
+
+X=(1:10)/10                  
+m=length(X)
+
+mu=exp(beta0+beta1*X)
+
+#space to store the different realisations of response Z
+Z=rep(0,m)
+set.seed(2)
+for (i in 1:m){
+  Z[i]=rpois(1, mu[i])
+}
+Z
+
+for (i in 1:m){
+  Z[i]=rpois(1, mu[i])
+}
+Z
+
+R=1000
+#space to store the different datasets
+Zdata=matrix(0,ncol=m,nrow=R)
+Xdata=matrix(0,ncol=m,nrow=R)
+set.seed(2)
+for (r in 1:R){
+  for (i in 1:m){
+    Z[i]=rpois(1, mu[i])
+  }
+  Zdata[r,]=Z
+  Xdata[r,]=X
+}
+
+Zdata[1,]
+
+Zdata[2,]
+
+#space to store the different MLEs
+hatbeta0=rep(0,R)
+hatbeta1=rep(0,R)
+for (r in 1:R){
+  fit.pois=glm(Zdata[r,]~Xdata[r,],family=poisson(link=log))
+  hatbeta0[r]=fit.pois$coef[1]
+  hatbeta1[r]=fit.pois$coef[2]
+}
+
+mean(hatbeta1)
+
+sd(hatbeta1)
+
+Z=Zdata[1,];Z
+X=Xdata[1,];X
+
+set.seed(3)
+sample(1:m,size=m,replace=T)
+
+sample(1:m,size=m,replace=T)
+
+set.seed(3)
+bootind=sample(1:m,size=m,replace=T);Z[bootind]
+X[bootind]
+
+bootind=sample(1:m,size=m,replace=T);Z[bootind]
+X[bootind]
+
+R=1000
+#space to store the different datasets
+Zstardata=matrix(0,ncol=m,nrow=R)
+Xstardata=matrix(0,ncol=m,nrow=R)
+set.seed(3)
+for (r in 1:R){
+  bootind=sample(1:m,size=m,replace=T)
+  Zstardata[r,]=Z[bootind]
+  Xstardata[r,]=X[bootind]
+}
+
+Zstardata[1,]
+Xstardata[1,]
+Zstardata[2,]
+Xstardata[2,]
+
+#space to store the different MLEs
+hatbeta0star=rep(0,R)
+hatbeta1star=rep(0,R)
+for (r in 1:R){
+  fit.pois=glm(Zstardata[r,]~Xstardata[r,],family=poisson(link=log))
+  hatbeta0star[r]=fit.pois$coef[1]
+  hatbeta1star[r]=fit.pois$coef[2]
+}
+
+sd(hatbeta1star)
+
+sd(hatbeta1)
+
+sd(hatbeta1star)
+
+fit.pois=glm(Z~X,family=poisson(link=log))
+fit.pois$coefficients
+hatbeta1=fit.pois$coefficients[2]
+hatbeta1
+
+#space to store the different MLEs
+hatbeta0star=rep(0,R)
+hatbeta1star=rep(0,R)
+for (r in 1:R){
+  fit.pois=glm(Zstardata[r,]~Xstardata[r,],family=poisson(link=log))
+  hatbeta0star[r]=fit.pois$coef[1]
+  hatbeta1star[r]=fit.pois$coef[2]
+}
+Sstar=hatbeta1star-hatbeta1
+
+alpha=0.05
+quantile(Sstar,1-alpha/2)
+
+quantile(Sstar,alpha/2)
+
+c(hatbeta1-quantile(Sstar,1-alpha/2),
+  hatbeta1-quantile(Sstar,alpha/2))
+
+fit.pois=glm(Z~X,family=poisson(link=log))
+Xnew=data.frame(X=0.25)
+hatmu=predict(fit.pois,Xnew,type='response')
+hatmu
+
+#space to store the different mus
+hatmustar=rep(0,R)
+for (r in 1:R){
+  Xstar=Xstardata[r,]
+  fit.pois=glm(Zstardata[r,]~Xstar,family=poisson(link=log))
+  Xnew=data.frame(Xstar=0.25)
+  hatmustar[r]=predict(fit.pois,Xnew,type='response')
+}
+Sstar=hatmustar-hatmu
+
+alpha=0.05
+quantile(Sstar,1-alpha/2)
+
+quantile(Sstar,alpha/2)
+
+c(hatmu-quantile(Sstar,1-alpha/2),
+  hatmu-quantile(Sstar,alpha/2))
+
+

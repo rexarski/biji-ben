@@ -1,0 +1,27 @@
+> # artificial data
+> x1 <- runif(200,-1,1)
+> x2 <- runif(200,-1,1)
+> group <- factor(ifelse(x1*x2>0,1,2))
+> plot(x1,x2,type="n")
+> text(x1,x2,label=group)
+> title(main="Artificial data")
+> abline(h=0,lty=2,col="blue")
+> abline(v=0,lty=2,col="blue")
+> library(tree)
+> r <- tree(group~x1+x2)
+> plot(r)
+> text(r)
+> title(main="Estimated classification tree")
+> # Iris data
+> r <- tree(species~lsepal+wsepal+lpetal+wpetal)
+> plot(r)
+> text(r)
+> title(main="Classification tree for iris data")
+> col <- c(rep("blue",50),rep("red",50),rep("cyan",50)) 
+> plot(lpetal,wpetal,col=col,pch=20)
+> abline(v=2.45,lwd=2)
+> abline(h=1.75,lwd=2)
+> abline(v=4.95,lwd=2)
+> title(main="Petal width vs petal length with classification boundaries")
+
+

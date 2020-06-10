@@ -1,0 +1,49 @@
+Prep6 Subqueries Solutions
+
+Here you go!
+ 
+Q1) Multilingual
+country(code, name, continent, population)
+countrylanguage(countrycode, countrylanguage, isofficial, percentage)
+Find the countries where more languages are spoken than in the country with code 'MEX'.
+Report the code of the country (as attribute 'code') and the number of languages spoken in the country (as attribute 'numlanguages'). Order does not matter.
+Hint: Find the number of languages spoken in 'MEX' and use that subquery in a HAVING clause.
+ 
+Answer:
+SELECT countrycode as code, count(countrylanguage) as numlanguages
+FROM countrylanguage
+GROUP BY code
+HAVING count(countrylanguage) > (SELECT count(countrylanguage) FROM countrylanguage WHERE countrycode = 'MEX');
+ 
+ 
+Q2) English on Top 
+country(code, name, continent, population)
+countrylanguage(countrycode, countrylanguage, isofficial, percentage)
+Find all countries where 'English' is the most commonly spoken language (based on percentage). Report the country names only (as attribute 'country'); do not include any duplicates.
+
+Hint: For each country, find the percentage for English and check whether it's >= the percentage for all the other languages spoken there.
+ 
+Answer:
+SELECT DISTINCT name as country
+FROM country, countrylanguage C
+WHERE code = countrycode AND
+countrylanguage = 'English' AND
+percentage >= ALL (SELECT percentage FROM countrylanguage C1 WHERE C1.countrycode = C.countrycode );
+ 
+
+Q3) Uncommon Languages
+country(code, name, continent, population)
+countrylanguage(countrycode, countrylanguage, isofficial, percentage)
+Find all countries in Africa that have a language spoken by fewer than 1% of the population. Report the country names only (as attribute 'name'); do not include any duplicates. (Note that the percentage attribute stores a number between 0 and 100.)
+
+Hint: Go through all the countries in Africa and use EXISTS to check the other condition.
+ 
+Answer:
+select distinct name
+from country
+where continent = 'Africa' and
+EXISTS ( 
+    select * from countrylanguage L
+    where code = L.countrycode and
+    L.percentage < 1
+);

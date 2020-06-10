@@ -1,0 +1,67 @@
+EM <- function(x,k=2,em.iter=50) {
+#  get initial cluster estimates using kmeans
+         library(mvtnorm)
+         n <- nrow(x)
+         p <- ncol(x)
+         r <- kmeans(x,centers=k)
+         covs <- list(NULL)
+         means <- list(NULL)
+         lam <- rep(0,k)
+         for (i in 1:k) {
+            w <- r$cluster==i
+            m <- sum(w)
+            xi <- x[w,]
+            meani <- as.vector(apply(xi,2,mean))
+            covi <- as.matrix(cov(xi)*(m-1)/m)
+            means[[i]] <- meani
+            covs[[i]] <- covi
+            lam[i] <- m/n
+            }
+         delta <- matrix(rep(0,n*k),ncol=k)
+         for (s in 1:em.iter) {
+# compute updates of deltas 
+             for (i in 1:n) {
+                xi <- as.vector(x[i,])
+                for (j in 1:k) {
+                   mj <- as.vector(means[[j]])
+                   covj <- as.matrix(covs[[j]])
+                   denom <- 0
+                   for (u in 1:k) {
+                      mu <- as.vector(means[[u]])
+                      covu <- as.matrix(covs[[u]])
+                      denom <- denom + lam[u]*dmvnorm(xi,mu,covu)
+                      }
+                   delta[i,j] <- lam[j]*dmvnorm(xi,mj,covj)/denom
+                   }
+                   }
+# compute updates of proportions, means and covariances
+              lambda <- apply(delta,2,mean)
+              for (j in 1:k) {
+                  deltaj <- as.vector(delta[,j])
+                  mj <- apply(x,2,weighted.mean,w=deltaj)
+                  means[[j]] <- mj
+                  mj <- matrix(rep(mj,n),ncol=p,byrow=T)
+                  covj <- t(x-mj)%*%diag(deltaj)%*%(x-mj)
+                  covs[[j]] <- covj/sum(deltaj)
+                  }
+             }
+# Final updates of deltas
+             for (i in 1:n) {
+               xi <- as.vector(x[i,])
+               for (j in 1:k) {
+                 mj <- as.vector(means[[j]])
+                 covj <- as.matrix(covs[[j]])
+                 denom <- 0
+                 for (u in 1:k) {
+                    mu <- as.vector(means[[u]])
+                    covu <- as.matrix(covs[[u]])
+                    denom <- denom + lam[u]*dmvnorm(xi,mu,covu)
+                    }
+                 delta[i,j] <- lam[j]*dmvnorm(xi,mj,covj)/denom
+                 }
+                 }
+        r <- list(mu=means,cov=covs,delta=delta)
+        r
+     }
+                
+             

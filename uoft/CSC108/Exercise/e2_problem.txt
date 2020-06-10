@@ -1,0 +1,19 @@
+FAILURE:  h u1 campbell 108 course-10812s exercises e2 testing repos e2 c2qiurui e2:   test_get_str_list.TestCases      METHOD: test_empty_list
+Traceback (most recent call last):
+  File "/h/u1/campbell/108/course-10812s/exercises/e2/testing/tests/test_get_str_list.py", line 29, in test_empty_list
+    self.assertEqual(result, expected, msg)
+AssertionError: e2.get_str_list([[]]) failed test
+
+
+FAILURE:  h u1 campbell 108 course-10812s exercises e2 testing repos e2 c2qiurui e2:   test_get_str_list.TestCases      METHOD: test_multi_element_list_same_length
+Traceback (most recent call last):
+  File "/h/u1/campbell/108/course-10812s/exercises/e2/testing/tests/test_get_str_list.py", line 55, in test_multi_element_list_same_length
+    self.assertEqual(result, expected, msg)
+AssertionError: e2.get_str_list([['abc123ABC', 'def456DEF', 'ghi789GHI'], ['123', '456', '789'], ['ABC', 'DEF', 'GHI']]) failed test
+
+
+FAILURE:  h u1 campbell 108 course-10812s exercises e2 testing repos e2 c2qiurui e2:   test_get_str_list.TestCases      METHOD: test_one_element_list
+Traceback (most recent call last):
+  File "/h/u1/campbell/108/course-10812s/exercises/e2/testing/tests/test_get_str_list.py", line 38, in test_one_element_list
+    self.assertEqual(result, expected, msg)
+AssertionError: e2.get_str_list([['abc', 'def', 'ghi']]) failed test

@@ -1,0 +1,205 @@
+#Last Updated: 16/10/2017
+rm(list=ls())
+setwd('~/Desktop/Research/AppliedStat2017/A2')
+#Q1 a)
+library('Sleuth3')
+data=ex1225 
+attach(data)
+Y=log(WeeklyEarnings)
+IMale=ifelse(Sex=="Male",1,0)
+IMarried=ifelse(MaritalStatus=="Married",1,0)
+
+IMidwest=ifelse(Region=="Midwest",1,0)
+INortheast=ifelse(Region=="Northeast",1,0)
+ISouth=ifelse(Region=="South",1,0)
+
+IMetropolitan=ifelse(MetropolitanStatus=="Metropolitan",1,0)
+INotMetropolitan=ifelse(MetropolitanStatus=="Not Metropolitan",1,0)
+
+IFedGov=ifelse(JobClass=="FedGov",1,0)
+ILocalGov=ifelse(JobClass=="LocalGov",1,0)
+IStateGov=ifelse(JobClass=="StateGov",1,0)
+
+
+X=data.frame(Age,IMale,IMarried,EdCode,IMidwest,INortheast,ISouth,
+             IMetropolitan,INotMetropolitan,
+             IFedGov,ILocalGov,IStateGov,IMale*IMarried) 
+library(leaps) 
+Cpsel=leaps(X,Y,method="Cp",nbest=2) 
+plot(Cpsel$size,Cpsel$Cp)
+
+#Q1 b)
+cbind(Cpsel$which, Cpsel$size, Cpsel$Cp)
+
+k=length(X[1,])
+Variable=colnames(X)
+result=cbind(Cpsel$which, Cpsel$size, Cpsel$Cp)
+result=result[which(result[,k+2]==min(result[,k+2])),][1:k]
+
+#Selected Variables
+Variable[as.logical(result)]
+
+#Q1 c)
+fit=lm(Y~.,data=X)
+library(car)
+vif(fit)
+
+#Q1 d)
+#Try dropping IMetropolitan
+X1=X[,-8]
+fit1=lm(Y~.,data=X1)
+d1=deviance(fit1)
+#Try dropping INotMetropolitan
+X2=X[,-9]
+fit2=lm(Y~.,data=X2)
+d2=deviance(fit2)
+if (d1<d2){
+  fit=fit1
+  X=X1
+}else{
+  fit=fit2
+  X=X2
+}
+vif(fit)
+#Stop
+detach(data)
+
+#Q2 a)
+data=ex2016
+data$AG=factor(data$AG)
+attach(data)
+indStatus=ifelse(Status=='Survived', 1, 0)
+fit=glm(indStatus~AG+TL+AE+WT+BH+HL+FL+TT+SK+KL
+        +AG*TL+AG*AE+AG*WT+AG*BH+AG*HL+AG*FL+AG*TT+AG*SK+AG*KL,
+        family=binomial(link=logit))
+summary(fit)
+
+#Q2 b)
+fitr=glm(indStatus~1,family=binomial(link=logit))
+anova(fitr,fit,test='Chisq')
+
+#Q2 c)
+n=length(data[,1])
+library(MASS)
+a=stepAIC(fitr, direction = "forward", 
+          scope=list(lower=~1,upper=~
+                       AG+TL+AE+WT+BH+HL+FL+TT+SK+KL
+                     +AG*TL+AG*AE+AG*WT+AG*BH+AG*HL
+                     +AG*FL+AG*TT+AG*SK+AG*KL),k=log(n))
+summary(a)
+detach(data)
+
+attach(data)
+library(MASS)
+n=length(data[,1])
+a=stepAIC(fitr, direction = "forward", 
+          scope=list(lower=~1,upper=~
+                       AG+TL+AE+WT+BH+HL+FL+TT+SK+KL
+                     +AG*TL+AG*AE+AG*WT+AG*BH+AG*HL
+                     +AG*FL+AG*TT+AG*SK+AG*KL),k=log(n))
+summary(a)
+
+AG2=ifelse(AG=='2',1,0)
+AG2TL=AG2*TL
+AG2AE=AG2*AE
+AG2WT=AG2*WT
+AG2BH=AG2*BH
+AG2HL=AG2*HL
+AG2FL=AG2*FL
+AG2TT=AG2*TT
+AG2SK=AG2*SK
+AG2KL=AG2*KL
+
+a=stepAIC(fitr, direction = "forward", 
+          scope=list(lower=~1,upper=~
+                       AG2+TL+AE+WT+BH+HL+FL+TT+SK+KL
+                     +AG2TL+AG2AE+AG2WT+AG2BH+AG2HL
+                     +AG2FL+AG2TT+AG2SK+AG2KL),k=log(n))
+summary(a)
+detach(data)
+
+
+#Q2 a)
+data=ex2016
+data$AG=factor(data$AG)
+attach(data)
+library(nnet) 
+fit=multinom(formula=Status~AG+TL+AE+WT+BH+HL+FL+TT+SK+KL
+        +AG*TL+AG*AE+AG*WT+AG*BH+AG*HL+AG*FL+AG*TT+AG*SK+AG*KL,
+        data=data)
+summary(fit)
+
+#Q2 b)
+
+#Q2 c)
+fitr=multinom(formula=Status~1,data=data)
+n=length(data[,1])
+library(MASS)
+a=stepAIC(fitr, direction = "forward", 
+          scope=list(lower=~1,upper=~
+                       AG+TL+AE+WT+BH+HL+FL+TT+SK+KL
+                     +AG*TL+AG*AE+AG*WT+AG*BH+AG*HL
+                     +AG*FL+AG*TT+AG*SK+AG*KL),k=log(n))
+summary(a)
+detach(data)
+
+
+
+
+
+#Q3 a)
+a=read.csv(file='ice_cream1.csv')
+library(MASS)
+mod.fit.ord=polr(factor(rating)~fat,data=a,method='logistic')
+summary(mod.fit.ord)
+
+#Q3 b)
+round(summary(mod.fit.ord)$coefficient[1,1]-qnorm(0.975)*summary(mod.fit.ord)$coefficient[1,2],4)
+round(summary(mod.fit.ord)$coefficient[1,1]+qnorm(0.975)*summary(mod.fit.ord)$coefficient[1,2],4)
+
+#Q3 c)
+Anova(mod.fit.ord)
+
+#Q3 d)
+library(nnet) 
+mod.fit<-multinom(formula=factor(rating)~fat,data=a)
+summary(mod.fit)
+
+
+#Q3 e)
+Anova(mod.fit)
+
+
+#Q3 f)
+b=read.csv(file='ice_cream2.csv')
+round(mean(as.numeric(as.numeric(predict(mod.fit.ord,b,type='class'))==b$rating)),4)
+
+
+#Q3 g)
+round(mean(as.numeric(as.numeric(predict(mod.fit,b,type='class'))==b$rating)),4)
+
+#Q4
+rm(list=ls())
+beta0=2
+beta1=1
+X=(1:1000)/1000                    
+n=length(X)
+Y=rep(0,n)                
+numsamp=1000       	
+b0=rep(0,numsamp)
+b1=rep(0,numsamp)
+pi=exp(beta0+beta1*X)/(1+exp(beta0+beta1*X))
+set.seed(1)
+for(j in 1:numsamp) {
+  for (i in 1:n){
+    Y[i]=rbinom(1,1,pi[i])
+  }
+  fit=glm(Y~X,family=binomial(link=logit))
+  b0[j]=fit$coef[1]
+  b1[j]=fit$coef[2]
+} 
+round(mean(b1),4)
+hist(b1)
+
+
+

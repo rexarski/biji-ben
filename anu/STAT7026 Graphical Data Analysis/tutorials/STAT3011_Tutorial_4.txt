@@ -1,0 +1,54 @@
+RESEARCH SCHOOL OF FINANCE, ACTUARIAL STUDIES AND APPLIED STATISTICS
+Graphical Data Analysis
+Tutorial 4
+
+This tutorial is intended to enable you to explore ways of
+investigating relationships between variables.
+
+1. Accelerated life testing for studying product life involves
+subjecting the product to conditions that are more severe than normal
+so that shorter lives than normal are observed. The data obtained under
+these extreme conditions are then extrapolated back to describe the
+life distribution under normal conditions.  This type of testing offers
+a saving in time and cost over testing at normal conditions and makes
+it feasible to explore the product life of products which survive
+prohibitively long times under normal conditions.
+
+The time to breakdown of an electrical insulating fluid at each test
+voltage is given in a list called test.  Explore and describe the
+relationship between the time to breakdown and voltage.
+
+2. The agar diffusion method is the basis for many techniques for
+measuring the potency of antibiotics.  Disks containing varying amounts
+of antibiotic are placed in a carpet of growing bacteria so that the
+diffusing antibiotic kills bacteria in a circular area called the kill
+zone around the disk.  The potency of a test preparation is compared
+with that of a standard antibiotic by comparing both in a single study
+and estimating equivalent doses of the two.  Data on a standard
+preparation to explore the relationship between zone diameter and the
+concentration of the antibiotic are presented below, and are available
+in the R object agar.
+
+Zone Diameter Measurements (mm) for a Standard Preparation of Antibiotic
+
+Concentration of Antibiotic (mu/ml)
+0.0125           0.025            0.050           0.100            0.200
+--------------------------------------------------------------------------
+12.3              14.1             17.6            19.9             22.7
+10.8              15.0             16.8            19.8             22.7
+10.8              14.8             17.0            20.0             23.0
+11.7              13.8             17.2            20.5             24.1
+11.9              14.1             17.4            20.8             24.3
+12.0              14.3             17.5            20.7             23.8
+12.2              13.7             17.7            20.9             23.5
+12.0              14.2             16.9            20.6             23.7
+12.1              13.6             16.7            20.5             23.1
+
+Explore and describe the relationship between zone diameter and
+concentration of antibiotic.
+
+Suppose that a single disk dosed with 0.2 mu/ml of a test antibiotic of
+unknown potency yielded a zone diameter of 16.3 mm.   What would you
+estimate as the potency of the test preparation relative to the
+standard?  Is it more or less potent and by what factor?
+

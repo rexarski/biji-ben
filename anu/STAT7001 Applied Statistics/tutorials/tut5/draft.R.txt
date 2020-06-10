@@ -1,0 +1,21 @@
+crab <- read.csv("crab.csv", header=T)
+head(crab)
+attach(crab)
+levels(SPECIES)
+
+SPECIES <- as.factor(SPECIES)
+
+crab.lm <- lm(log(FORCE) ~ log(HEIGHT)+SPECIES)
+
+t.test(log(crab[crab$SPECIES!='Lophopanopeus bellus',]$FORCE) ~ crab[crab$SPECIES!='Lophopanopeus bellus',]$SPECIES, data=crab, conf.level=.95) # t-test
+
+anova(crab.lm) # yes
+
+summary(crab.lm) # nope
+
+of <- read.csv('oldfaithful.csv',header=T)
+attach(of)
+head(of)
+DATE <- as.factor(DATE)
+of.lm <- lm(INTERVAL ~ DURATION + DATE)
+anova(of.lm)

@@ -1,0 +1,26 @@
+# CSC 120, lab exercise 6 solutions, Part I.
+
+plot_dots <- function (dots, horizontal, vertical)
+{
+    plot(c(), xlim=c(0,horizontal+1), ylim=c(0,vertical+1), xlab="", ylab="")
+    for (i in 1:length(dots)) {
+        v <- dots[[i]]
+        points (rep(i,length(v)), v)
+    }
+}
+
+triangle <- function (n)
+{
+    L <- list()
+    for (i in 1:n)
+        L[[i]] <- 1:i
+    L
+}
+
+checkerboard <- function (n)
+{
+    L <- list()
+    for (i in 1:n)
+        L[[i]] <- if (i %% 2 == 0) 2 * (1 : (n/2)) else 1 + 2 * (0 : ((n-1)/2))
+    L
+}

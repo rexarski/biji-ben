@@ -1,0 +1,259 @@
+\documentclass[12pt]{article}
+
+\usepackage{fancyhdr}
+\usepackage{extramarks}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{tikz}
+\usepackage[plain]{algorithm}
+\usepackage{algpseudocode}
+
+\usetikzlibrary{automata,positioning}
+
+%
+% Basic Document Settings
+%
+
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=6.5in
+\textheight=9.0in
+\headsep=0.25in
+
+\linespread{1.1}
+
+\pagestyle{fancy}
+\lhead{\hmwkAuthorName}
+\chead{\hmwkClass\ \hmwkTitle}
+\rhead{\firstxmark}
+\lfoot{\lastxmark}
+\cfoot{\thepage}
+
+\renewcommand\headrulewidth{0.4pt}
+\renewcommand\footrulewidth{0.4pt}
+
+\setlength\parindent{0pt}
+
+%
+% Create Problem Sections
+%
+
+\newcommand{\enterProblemHeader}[1]{
+    \nobreak\extramarks{}{Problem \arabic{#1} continued on next page\ldots}\nobreak{}
+    \nobreak\extramarks{Problem \arabic{#1} (continued)}{Problem \arabic{#1} continued on next page\ldots}\nobreak{}
+}
+
+\newcommand{\exitProblemHeader}[1]{
+    \nobreak\extramarks{Problem \arabic{#1} (continued)}{Problem \arabic{#1} continued on next page\ldots}\nobreak{}
+    \stepcounter{#1}
+    \nobreak\extramarks{Problem \arabic{#1}}{}\nobreak{}
+}
+
+\setcounter{secnumdepth}{0}
+\newcounter{partCounter}
+\newcounter{homeworkProblemCounter}
+\setcounter{homeworkProblemCounter}{1}
+\nobreak\extramarks{Problem \arabic{homeworkProblemCounter}}{}\nobreak{}
+
+%
+% Homework Problem Environment
+%
+% This environment takes an optional argument. When given, it will adjust the
+% problem counter. This is useful for when the problems given for your
+% assignment aren't sequential. See the last 3 problems of this template for an
+% example.
+%
+\newenvironment{homeworkProblem}[1][-1]{
+    \ifnum#1>0
+        \setcounter{homeworkProblemCounter}{#1}
+    \fi
+    \section{Problem \arabic{homeworkProblemCounter}}
+    \setcounter{partCounter}{1}
+    \enterProblemHeader{homeworkProblemCounter}
+}{
+    \exitProblemHeader{homeworkProblemCounter}
+}
+
+%
+% Homework Details
+%   - Title
+%   - Date
+%   - Class
+%   - Instructor
+%   - Author
+%
+
+\newcommand{\hmwkTitle}{Homework\ \#2}
+\newcommand{\hmwkDate}{March 3, 2017}
+\newcommand{\hmwkClass}{MATH6222}
+\newcommand{\hmwkClassInstructor}{Instructor: Dr. David Smyth}
+\newcommand{\hmwkTutor}{Tutor: Mark Bugden (Wednesday 1-2pm)}
+\newcommand{\hmwkAuthorName}{\textbf{Rui Qiu u6139152}}
+
+%
+% Title Page
+%
+
+\title{
+    \vspace{2in}
+    \textmd{\textbf{\hmwkClass:\ \hmwkTitle}}\\
+    \normalsize\vspace{0.1in}\small{\hmwkDate}\\
+    \vspace{0.1in}\large{\textit{\hmwkClassInstructor}}\\
+    \vspace{0.1in}
+    	\large{\textit{\hmwkTutor}}
+    \vspace{3in}
+}
+
+\author{\hmwkAuthorName}
+\date{}
+
+\renewcommand{\part}[1]{\textbf{\large Part \Alph{partCounter}}\stepcounter{partCounter}\\}
+
+%
+% Various Helper Commands
+%
+
+% New QED symbol
+\renewcommand{\qedsymbol}{$\blacksquare$}
+
+% Useful for algorithms
+\newcommand{\alg}[1]{\textsc{\bfseries \footnotesize #1}}
+
+% For derivatives
+\newcommand{\deriv}[1]{\frac{\mathrm{d}}{\mathrm{d}x} (#1)}
+
+% For partial derivatives
+\newcommand{\pderiv}[2]{\frac{\partial}{\partial #1} (#2)}
+
+% Integral dx
+\newcommand{\dx}{\mathrm{d}x}
+
+% Alias for the Solution section header
+\newcommand{\solution}{\textbf{\large Solution}}
+
+% Probability commands: Expectation, Variance, Covariance, Bias
+\newcommand{\E}{\mathrm{E}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\Bias}{\mathrm{Bias}}
+
+\begin{document}
+
+\maketitle
+
+\pagebreak
+
+\begin{homeworkProblem}
+Consider the equation $x^4y+ay+x=0.$
+
+(a) Show that the following statement is false. "For all $a,x \in \mathbb{R},$ there is a unique $y$ such that $x^4y+ay+x=0.$"
+
+(b) Find the set of real numbers $a$ such that the following statement is true. 
+"For all $x \in \mathbb{R},$ there is a unique $y$ such that $x^4y+ay+x=0.$"\\
+
+\textbf{Solution:}\\
+
+(a) A counterexample could be $a=0, x=0$, then our equation becomes $0^4y+0y+0=0$. So that for any $y\in\mathbb{R}$, this equation holds, which is contradicting the statement that $y$ is unique. Hence the statement is false by contradiction.\qed\\
+
+(b) Based on the fact in part (a), in order to make $x^4y+ay+x=0$ hold, we have to consider the case that $x=0$, that is to say \[ay=0.\]
+
+Remember that $y$ should be unique, so that $a$ can never be $0$, i.e. $a\not=0.$ Then we have two cases.
+
+\begin{enumerate}
+	\item If $a < 0,$ then we can deliberately eliminate the $y$ term in the left hand side of this equation so that the equation has no solution. In details, $x^4y+ay+x=y(x^4+a)+x=0$. In other words, when $x=\sqrt[4]{-a},$ the equation is unsolvable for $x \in\mathbb{R}.$
+	\item If $a > 0$, $y=\frac{-x}{x^4+a}$ is always unique no matter what value $x$ is.  
+\end{enumerate}
+
+To conclude, when $a\in\{a<0, a\in\mathbb{R}\},$ the statement holds.
+\end{homeworkProblem}
+
+\pagebreak
+
+\begin{homeworkProblem}
+Let $P(x)$ be the assertion "$x$ is odd" and let $Q(x)$ be the assertion "$x^2-1$ is divisible by $8.$" Determine whether the following statements are true.
+
+(a) $(\forall x \in \mathbb{Z})(P(x) \implies Q(x)),$
+
+(b) $(\forall x \in \mathbb{Z})(Q(x) \implies P(x)).$\\
+
+\textbf{Solution:}\\
+
+(a) True. 
+
+When $P(x)$ holds, let $x=2k+1$ for $k\in\mathbb{Z}$.
+
+Then $x^2-1=(2k+1)^2-1=4k^2+4k+1-1=4k^2+4k=4k(k+1).$
+
+Since $k\in\mathbb{Z}$, either one of $k$ or $k+1$ is even, i.e. divisible by $2$.
+
+Therefore, the original formula $x^2-1$ must be divisible by $4\times 2=8,$ i.e. $Q(x)$ satisfies, so $P(x)\implies Q(x).$ \qed\\
+
+(b) True.
+
+This can be proved by proving its contrapositive, that is $(\forall x \in \mathbb{Z})(\neg P(x) \implies \neg Q(x)).$
+
+We can use the similar approach in part (a). Suppose $x$ is even, $x=2k$ for $k\in\mathbb{Z}$.
+
+Then $x^2-1=(2k)^2-1=4k^2-1$ which is odd, cannot be divisible by $8$, so $\neg Q(x)$ proved.
+
+So far, we have $\neg P(x) \implies \neg Q(x).$ Done. \qed
+
+\end{homeworkProblem}
+
+\pagebreak
+
+%
+%\begin{homeworkProblem}
+%Using statements about set membership, prove the statements below, where $A, B, C$ are any sets. Use a picture to illustrate the results and guide the proofs.
+%
+%(a) $A\cup(B\cap C)=(A\cup B)\cap (A\cup C)$
+%
+%(b) $A\cap(B\cup C)=(A\cap B)\cup (A\cap C)$
+%
+%\end{homeworkProblem}
+
+%\pagebreak
+
+%
+% Non sequential homework problems
+%
+
+% Jump
+\begin{homeworkProblem}[4]
+Consider tokens that have some letter written on one side and some integer written on the other, in unknown combinations. The tokens are laid out, some with the letter side up, some with number side up. Explain which tokens must be turned over to determine whether these statements are true.
+
+(a) Whenever the letter side is a vowel, the number side is odd.
+
+(b) The letter side is a vowel if and only if the number side is odd.\\
+
+\textbf{Solution:}\\
+
+(a) The negation of this statement is that \textit{there exists a token whose letter side is a vowel, but the number side is even.}
+
+Let's say we try to find a counterexample that satisfies the negation we wrote above (and we wish we could not find one).
+
+In this case, we check 2 types of tokens:
+
+\begin{itemize}
+	\item Those tokens with \textbf{vowels} on table, we flip them and check if the opposite sides are odd numbers. (If we get an even, we find a contradiction!)
+	\item Those tokens with \textbf{even numbers} on table, we flip them and check if the opposite sides are vowels. (If we get a non-vowel (a.k.a consonant), we find a contradiction too!)\\
+\end{itemize}
+
+(b) This statement has two directions, one is part (a) \textit{Whenever the letter side is a vowel, the number side is odd.} The other direction is \textit{Whenever the number side is odd, the letter side is a vowel,} which is also the converse of part (a) statement.
+
+To check whether the second direction is true or not, we need to check
+
+\begin{itemize}
+	\item Those tokens with \textbf{odd numbers} on table, we flip them and check if the opposite sides are vowels. (If we get a consonant, we find a contradiction!)
+	\item Those tokens with \textbf{consonants} on table, we flip them and check if the opposite sides are even numbers. (If we get a vowel, we find a contradiction!)
+	\item Also, we need to check two types of tokens mentioned in part (a) to prove the first direction of our statement. 
+\end{itemize} 
+
+In conclusion, we need turn over every single token to determine this statement.
+
+\end{homeworkProblem}
+
+\end{document}

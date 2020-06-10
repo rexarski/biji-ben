@@ -1,0 +1,349 @@
+## ------------------------------------------------------------------------
+set.seed(1001)
+x <- rnorm(10)
+sort(x)
+
+## ---- eval=FALSE---------------------------------------------------------
+## F <- ecdf(x)
+## plot(F)
+## z <- seq(-4,4, by=0.001)
+## lines(z, pnorm(z), lwd=3)
+
+## ---- echo=FALSE---------------------------------------------------------
+F <- ecdf(x)
+plot(F)
+z <- seq(-4,4, by=0.001)
+lines(z, pnorm(z), lwd=3, col="blue")
+
+## ---- echo=FALSE---------------------------------------------------------
+x <- rnorm(1000)
+F <- ecdf(x)
+plot(F)
+z <- seq(-4,4, by=0.001)
+lines(z, pnorm(z), lwd=3, col="blue")
+
+## ---- eval=FALSE---------------------------------------------------------
+## ## law school data
+## LSAT <- c(576, 578, 555, 605, 545, 635, 666, 661,
+##           653, 572, 558, 580, 651, 575, 594)
+## GPA <- c(3.39, 3.03, 3.00, 3.13, 2.76, 3.30, 3.44,
+##          3.43, 3.12, 2.88, 2.81, 3.07, 3.36, 2.74, 2.96)
+## 
+## D <- data.frame(LSAT, GPA)
+## n <- nrow(D)
+## 
+## 
+## ##
+## plot(GPA, LSAT, pch=16)
+## rho.hat <- cor(LSAT, GPA)
+## rho.hat
+
+## ---- echo=FALSE---------------------------------------------------------
+## law school data
+LSAT <- c(576, 578, 555, 605, 545, 635, 666, 661, 
+          653, 572, 558, 580, 651, 575, 594)
+GPA <- c(3.39, 3.03, 3.00, 3.13, 2.76, 3.30, 3.44, 
+         3.43, 3.12, 2.88, 2.81, 3.07, 3.36, 2.74, 2.96)
+
+D <- data.frame(LSAT, GPA)
+n <- nrow(D)
+
+
+##
+plot(GPA, LSAT, pch=16)
+rho.hat <- cor(LSAT, GPA)
+rho.hat
+
+## ---- eval=FALSE---------------------------------------------------------
+## ## Bootstrap
+## ####################################################
+## ## Take a single bootstrap sample
+## ## As it is random it is different than in the notes
+## set.seed(2000)
+## S <- sample(1:n, n, replace = TRUE)
+## D.s <- D[S,]
+## 
+## ### Let's do B samples
+## B <- 10000
+## D.B <- array(list(), B)
+## rho.hat.b <- rep(0, B)
+## 
+## for(b in 1:B){
+## S <- sample(1:n, n, replace = TRUE)
+## D.B[[b]] <- D[S,]
+## 
+## ##
+## rho.hat.b[b] <- cor(D.B[[b]]$LSAT, D.B[[b]]$GPA)	
+## 	}
+## hist(rho.hat.b, col="yellow", prob=TRUE)
+
+## ---- echo=FALSE---------------------------------------------------------
+## Bootstrap
+####################################################
+## Take a single bootstrap sample
+## As it is random it is different than in the notes
+set.seed(2000)
+S <- sample(1:n, n, replace = TRUE)
+D.s <- D[S,]
+
+### Let's do B samples
+B <- 10000
+D.B <- array(list(), B)
+
+rho.hat.b <- rep(0, B)
+
+for(b in 1:B){
+S <- sample(1:n, n, replace = TRUE)
+D.B[[b]] <- D[S,]  
+
+##
+rho.hat.b[b] <- cor(D.B[[b]]$LSAT, D.B[[b]]$GPA)  
+	}
+
+hist(rho.hat.b, col="yellow", prob=TRUE)
+
+## ------------------------------------------------------------------------
+rho.hat
+
+Bias.B.hat <- mean(rho.hat.b) - rho.hat
+Bias.B.hat
+
+Var.B.hat <- var(rho.hat.b)
+Var.B.hat
+
+
+## ------------------------------------------------------------------------
+## Law School Example
+
+## law school data
+LSAT <- c(576, 578, 555, 605, 545, 635, 666, 661, 653, 
+          572, 558, 580, 651, 575, 594)
+GPA <- c(3.39, 3.03, 3.00, 3.13, 2.76, 3.30, 3.44, 3.43, 
+         3.12, 2.88, 2.81, 3.07, 3.36, 2.74, 2.96)
+
+D <- data.frame(LSAT, GPA)
+n <- nrow(D)
+
+## ---- eval=FALSE---------------------------------------------------------
+## plot(GPA, LSAT, pch=16)
+## 
+## ##
+## rho.hat <- cor(LSAT, GPA)
+## rho.hat
+
+## ---- echo=FALSE---------------------------------------------------------
+plot(GPA, LSAT, pch=16)
+
+##
+rho.hat <- cor(LSAT, GPA)
+rho.hat
+
+## ------------------------------------------------------------------------
+### Let's do B samples
+set.seed(1001)
+B <- 10000
+
+D.B <- array(list(), B)
+
+rho.hat.b <- rep(0, B)
+
+for(b in 1:B){
+S <- sample(1:n, n, replace = TRUE)
+D.B[[b]] <- D[S,]  
+
+##
+rho.hat.b[b] <- cor(D.B[[b]]$LSAT, D.B[[b]]$GPA)	
+	}
+
+## ------------------------------------------------------------------------
+Var.B.hat <- var(rho.hat.b)
+Var.B.hat
+
+## interval based on asymptotic normality
+alpha <- 0.05
+
+c(rho.hat - qnorm(1-alpha/2)*sqrt(Var.B.hat), 
+  rho.hat + qnorm(1-alpha/2)*sqrt(Var.B.hat))
+
+## ---- eval=FALSE---------------------------------------------------------
+## ## Now let's just examine the
+## ## bootstrapped values and use
+## ## the empirical values
+## hist(rho.hat.b, col="yellow", freq=TRUE)
+## alpha=0.05
+## qu <- quantile(rho.hat.b, c(alpha/2, 1-alpha/2))
+## qu
+## abline(v=qu, col="red", lwd=3)
+## abline(v=rho.hat, col="blue", lwd=3)
+
+## ---- echo=FALSE---------------------------------------------------------
+## Now let's just examine the bootstrapped values and use the empirical values
+alpha=0.05
+qu <- quantile(rho.hat.b, c(alpha/2, 1-alpha/2))  
+qu
+
+## ---- echo=FALSE---------------------------------------------------------
+## Now let's just examine the bootstrapped values and use the empirical values
+hist(rho.hat.b, col="yellow", freq=TRUE)
+abline(v=qu, col="red", lwd=3)
+abline(v=rho.hat, col="blue", lwd=3)
+
+## ---- echo=FALSE---------------------------------------------------------
+## Now let's just examine the bootstrapped values and use the empirical values
+hist(rho.hat.b, col="yellow", freq=TRUE, xlim=c(0, 1.2))
+abline(v=qu, col="red", lwd=3)
+abline(v=rho.hat, col="blue", lwd=3)
+abline(v=c(0.5911, 1.0938), col="dark green", lwd=3)
+
+## ------------------------------------------------------------------------
+treat <- c(94, 197, 16, 38, 99, 141, 23)
+n <- length(treat)
+control <- c(52, 104, 146, 10, 51, 30, 40, 27, 46)
+m <- length(control)
+
+## ------------------------------------------------------------------------
+theta <- mean(treat) - mean(control)
+theta
+
+## ------------------------------------------------------------------------
+data <- c(treat, control)
+data.p <- sample(data)
+treat.p <- data.p[1:n]
+control.p <- data.p[(n+1):(n+m)]
+treat.p
+control.p
+theta.p <- mean(treat.p) - mean(control.p)
+theta.p
+
+## ------------------------------------------------------------------------
+set.seed(1001)
+B <- 10000
+theta.p <- rep(0, B)
+
+for(b in 1:B){
+  data.p <- sample(data)
+  treat.p <- data.p[1:n]
+  control.p <- data.p[(n+1):(n+m)]
+  theta.p[b] <- mean(treat.p) - mean(control.p)
+  }
+
+## ---- eval=FALSE---------------------------------------------------------
+## hist(theta.p, col="yellow",
+##      main="Distirbution under the NULL")
+## 
+## ## determine the critical value for alpha = 0.05
+## qu <- quantile(theta.p, 0.95)
+## abline(v=qu, lwd=3, col="red")
+## 
+## ## add the statistic based on the
+## ## original data (non permuted)
+## abline(v=theta, lwd=3, col="blue")
+
+## ---- echo=FALSE---------------------------------------------------------
+hist(theta.p, col="yellow", 
+     main="Distirbution under the NULL")
+
+## determine the critical value for alpha = 0.05
+qu <- quantile(theta.p, 0.95)
+abline(v=qu, lwd=3, col="red")
+
+## add the statistic based on the 
+## original data (non permuted)
+abline(v=theta, lwd=3, col="blue")
+
+## ------------------------------------------------------------------------
+p.value <- mean(theta.p > theta)
+p.value
+
+## ------------------------------------------------------------------------
+set.seed(1001)
+B <- 10000
+theta.star <- rep(0, B)
+N <- n+m
+theta <- mean(treat) - mean(control)
+
+for(b in 1:B){
+  data.star <- sample(data, N, replace=TRUE)
+  treat.star <- data.star[1:n]
+  control.star <- data.star[-c(1:n)]
+  theta.star[b] <- mean(treat.star) - mean(control.star)
+  }
+
+
+## ---- eval=FALSE---------------------------------------------------------
+## hist(theta.star, col="yellow",
+##      main="Distirbution under the NULL")
+## 
+## ## determine the critical value for alpha = 0.05
+## qu <- quantile(theta.star, 0.95)
+## abline(v=qu, lwd=3, col="red")
+## 
+## ## add the statistic based on the original data (non permuted)
+## abline(v=theta, lwd=3, col="blue")
+## 
+## p.value <- mean(theta.star > theta)
+## p.value
+
+## ---- echo=FALSE---------------------------------------------------------
+hist(theta.star, col="yellow", 
+     main="Distirbution under the NULL")
+
+## determine the critical value for alpha = 0.05
+qu <- quantile(theta.star, 0.95)
+abline(v=qu, lwd=3, col="red")
+
+## add the statistic based on the original data (non permuted)
+abline(v=theta, lwd=3, col="blue")
+
+p.value <- mean(theta.star > theta)
+p.value
+
+## ------------------------------------------------------------------------
+y <- treat
+mean(y)
+sd(y)
+
+## ------------------------------------------------------------------------
+set.seed(1001)
+B <- 10000
+m <- length(y)
+t.obs <- abs( (mean(y) - 129)/(sd(y)/sqrt(7)))
+t.star <- rep(0, B)
+
+for(b in 1:B){
+y.star <- sample(y, m, replace=TRUE)
+y.tilde.star <- y.star + 42.1
+  
+t.star[b] <- abs( (mean(y.tilde.star) - 129)/
+                    (sd(y.tilde.star)/sqrt(7)))
+  }
+
+
+## ---- eval=FALSE---------------------------------------------------------
+## hist(t.star, col="yellow",
+##      main="Distirbution under the NULL")
+## 
+## ## determine the critical value for alpha = 0.05
+## qu <- quantile(t.star, 0.95)
+## abline(v=qu, lwd=3, col="red")
+## 
+## ## add the statistic based on the original data
+## abline(v=t.obs, lwd=3, col="blue")
+## 
+## p.value <- mean(t.star > t.obs)
+## p.value
+
+## ---- echo=FALSE---------------------------------------------------------
+hist(t.star, col="yellow", 
+     main="Distirbution under the NULL")
+
+## determine the critical value for alpha = 0.05
+qu <- quantile(t.star, 0.95)
+abline(v=qu, lwd=3, col="red")
+
+## add the statistic based on the original data
+abline(v=t.obs, lwd=3, col="blue")
+
+p.value <- mean(t.star > t.obs)
+p.value
+

@@ -1,0 +1,94 @@
+# FUNCTION TO FIND A ZERO OF A UNIVARIATE FUNCTION USING BISECTION.
+#
+# R. M. Neal, September 2014
+#
+# Arguments:
+#    f = function to find a zero of
+#    a = one endpoint of an interval containing a zero
+#    b = other endpoint of an interval containing a zero
+#    n = number of times to bisect interval
+#
+# Returned value:  
+#    point, x, at which f(x) is approximately zero
+
+
+bisect <- function (f, a, b, n)
+{
+    if (n < 1)
+        stop("invalid number of iterations")
+
+    fa <- f(a)
+    if (fa == 0)
+        return(a)
+
+    fb <- f(b)
+    if (fb == 0)
+        return(b)
+
+    if ((fa < 0) != (fb > 0))
+        stop("endpoints are not of opposite sign")
+
+    fa_negative <- fa < 0
+
+    i <- 1
+    repeat {
+        m <- a + (b-a)/2
+        if (i == n)
+            return(m);
+        fm <- f(m)
+        if (fm == 0)
+            return(m);
+        cat("i =",i,"a =",a,"m =",m,"b =",b,"fm =",fm,"\n")
+        if (fa_negative) {
+            if (fm < 0) a <- m else b <- m
+        }
+        else {
+            if (fm > 0) a <- m else b <- m
+        }
+        i <- i + 1
+    }
+}
+
+# Here's a version that does as many iterations as possible, until the 
+# function evaluates to exactly zero, or bisection is no longer possible 
+# due to floating-point imprecision (roundoff or underflow to zero).
+
+bisect2 <- function (f, a, b)
+{
+    fa <- f(a)
+    if (fa == 0)
+        return(a)
+
+    fb <- f(b)
+    if (fb == 0)
+        return(b)
+
+    if ((fa < 0) != (fb > 0))
+        stop("endpoints are not of opposite sign")
+
+    fa_negative <- fa < 0
+
+    i <- 1
+    repeat {
+        m <- a + (b-a)/2
+        if (a < b) {
+            if (m <= a || m >= b)
+                return(m);
+        }
+        else {
+            if (m >= a || m <= b)
+                return(m);
+        }
+        fm <- f(m)
+        if (fm == 0)
+            return(m);
+        #cat("i =",i,"a =",a,"m =",m,"b =",b,"fm =",fm,"\n") ##commented out for assignment 1
+        if (fa_negative) {
+            if (fm < 0) a <- m else b <- m
+        }
+        else {
+            if (fm > 0) a <- m else b <- m
+        }
+        i <- i + 1
+    }
+}

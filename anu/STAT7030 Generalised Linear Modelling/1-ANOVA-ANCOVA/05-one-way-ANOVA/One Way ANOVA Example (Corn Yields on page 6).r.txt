@@ -1,0 +1,283 @@
+# The following R analysis of the corn data described on pages 6 and 7 of the brick, is an
+# expanded version of the code shown on pages 7 to 11 of the brick.
+
+# There are some differences between this and the S-Plus version shown in the brick, which I
+# will note and discuss below.
+
+# Read and attach the data and examine the contents. The advantage of attaching the data is 
+# that we can refer to the elements of the data as if they were vectors, without having to 
+# specify the data= option in functions such as lm():
+
+corn <- read.table("Corn.txt",header=T)
+corn
+attach(corn)
+names(corn)
+yield
+fert
+
+# The aov command in R (or S-Plus) is used to fit the one-way ANOVA model described in the brick.
+# The factor command is used to indicate that fert is a factor variable:
+
+corn.aov <- aov(yield ~ factor(fert))
+
+# We can use the plot command to asssess whether this is an appropriate model for the data.
+
+plot(corn.aov)
+
+# Here is a quick description of what the generic plot() function produces in R for a 
+# lm() or aov() object. For more details, see:
+
+help(plot.lm)
+
+# The four plots produced by default for a stored linear model are:
+
+# Plot 1 - a plot of the residuals vs fitted values which is very important for assessing the
+# underlying assumptions of independence and constant variance
+
+# Plot 2 - a normal quantile plot of the rstandard() residuals
+
+# Plot 3 - another plot of the (transformed) residuals vs the fitted values, this is an another
+# attempt to graphically examine the assumption of constant variance
+
+# Plot 4 - a leverage plot - for a lm() object, this will typically be a plot of the standardised
+# residuals against the leverage values. On such a plot, arbitrary limits can be drawn for the
+# Cook's D values for each of the data points, as Cook's D is a function of the
+# standardised residuals and the leverage values. 
+# For an aov() object, especially for a balanced experimental design where all the observations
+# have the same (constant leverage), plot 4 becomes a plot of the standardised residuals against
+# the treatments (the factor level combinations).
+
+# These plots in R suggest a problem - there appear to be two possible outliers in one of the
+# groups - observations 1 and 2 - more about this problem later.
+
+# We can examine the ANOVA table for an object created using the aov() function by applying the
+# summary function:
+
+summary(corn.aov)
+
+# Note that R adopts the dubious practice of starring the results at different level of 
+# significance - dubious because the choice of significance level should be chosen a priori 
+# (before the experiment), rather than adjusted to suit, after the analysis (a posteriori).
+
+# Note the factor command is only really necessary when the categorical variable is coded using
+# numbers such as 1,2,3,4. Here fert is a series of qualitative labels, which R would have
+# correctly interpreted as a factor, not a continuous variable -  as can be seen if we refit
+# the model:
+
+corn.aov2 <- aov(yield ~ fert)
+plot(corn.aov2)
+
+summary(corn.aov2)
+
+# We could also use the lm() function used to fit regression models in STAT2008 to fit the same
+# model:
+
+corn.lm <- lm(yield ~ fert)
+plot(corn.lm)
+
+anova(corn.lm)
+summary(corn.lm)
+
+# The main difference between an lm() and an aov() object is that summary gives the table of 
+# coefficients for the lm() object and you need to use anova() to see the ANOVA table. 
+# To get the coefficients for an aov() object you need to use:
+
+summary.lm(corn.aov2)
+
+# How do we interpret these coefficients?  Unlike version 7 and earlier versions of S-Plus,
+# (where the rather strange choice of defaults were Helmert contrasts, which are an attempt
+# to deal with highly unbalanced or non-orthogonal experimental designs) the default
+# parameterisation for factor variables in R and in S-Plus from version 8 onwards are treatment
+# contrasts:
+
+contrasts(fert)
+
+# Under treatment contrasts, the model parameters ARE closely related to the mean yields
+# for the four fertilizers, which can be calculated as follows:
+
+mean(yield)
+lvl.mns <- tapply(yield, fert, mean)
+lvl.mns
+
+# The following approach will also fit the 0-1 dummy or indicator variables described on page 10 of the brick.
+# In R or S-Plus version 8, this is the default version, so will give identical results to the previous model:
+
+corn.lm2 <- lm(yield ~ fert, contrasts=list(fert=contr.treatment))
+plot(corn.lm2)
+
+anova(corn.lm2)
+summary(corn.lm2)
+
+# In this "treatment" parameterisation, R has chosen the first or Control group as the reference
+# group by creating the following 0-1 indicator variables:
+ 
+contr.treatment(4)
+
+# If we are not happy with R's default choice of reference group, we could do our own manual 
+# coding. Here is the manually coded equivalent of what R has done above:
+
+fert1 <- ifelse(fert=="Control",1,0)
+fert2 <- ifelse(fert=="K2O+N",1,0)
+fert3 <- ifelse(fert=="K2O+P2O5",1,0)
+fert4 <- ifelse(fert=="N+P2O5",1,0)
+ferts <- cbind(fert1, fert2, fert3, fert4)
+ferts
+corn.lm2a <- lm(yield ~ ferts)
+
+# Note that unlike S-Plus, R does not give an error message to indicate that this model is 
+# over-parameterised, but if you examine the cofficients for this model, you find that R has 
+# simply decided not to fit the last of the parameters (fert4):
+
+summary(corn.lm2a)
+
+# Using treatment coding, the intercept becomes the mean for the group for which we don't fit 
+# an indicator variable - this is called the reference group. In this instance, a better choice 
+# for the reference group is the Control group, so we should delete fert1 rather than fert4:
+
+ferts <- cbind(fert2, fert3, fert4)
+corn.lm2a <- lm(yield ~ ferts)
+plot(corn.lm2a)
+
+anova(corn.lm2a)
+summary(corn.lm2a)
+
+# If we remember the level means calculated earlier, we can see that under the treatment 
+# parameterisation, the intercept is the mean for the "Control" group and the other parameters 
+# are the deviations away from this mean to get to the other group means:
+
+lvl.mns
+lvl.mns - lvl.mns["Control"]
+
+# Another approach is the "sum" parameterisation, which also has a sensible interpretation:
+
+corn.lm3 <- lm(yield ~ fert, contrasts=list(fert=contr.sum))
+plot(corn.lm3)
+
+anova(corn.lm3)
+summary(corn.lm3)
+
+# Here the intercept is the overall mean and the other parameters are deviations away from the
+# overall mean to the first three level means (in alphabetical order).  The "sum"
+# parameterisation is equivalent to applying the constraint that the (weighted) deviations for
+# the four groups sum to 0, so the deviation for the fourth group can be found by subtraction:
+
+mean(yield)
+lvl.mns - mean(yield)
+coef(corn.lm3)
+coef(corn.lm3)[2:4]
+-sum(coef(corn.lm3)[2:4])
+
+# Note that this constraint is sum(taui) = 0 not sum(ni * taui) = 0 from the notes.  This will 
+# not make a difference if the design is balanced, although if the design is unbalanced the
+# contr.sum function cannot be used to give the grand mean interpretation. In this case the 
+# coefficients for the fourth group should be:
+# (-ni[1]/ni[4],-ni[2]/ni[4],-ni[3]/ni[4]) and not (-1,-1,-1).
+
+contr.sum(4)
+
+# We could also do a manual equivalent of this "sum" parameterisation:
+
+fert1 <- c(rep(1,6), rep(0,12), rep(-1,6))
+fert2 <- c(rep(0,6), rep(1,6), rep(0,6), rep(-1,6))
+fert3 <- c(rep(0,12), rep(1,6), rep(-1,6))
+ferts <- cbind(fert1, fert2, fert3)
+ferts
+corn.lm3a <- lm(yield ~ ferts)
+plot(corn.lm3a)
+
+anova(corn.lm3a)
+summary(corn.lm3a)
+
+# By default, R gives explicit parameters for all but the last of the four groups.  If we are
+# not happy with this approach, we can force R to use a different group as the reference group:
+
+fert2 <- c(rep(-1,6), rep(1,6), rep(0,12))
+fert3 <- c(rep(-1,6), rep(0,6), rep(1,6), rep(0,6))
+fert4 <- c(rep(-1,6), rep(0,12), rep(1,6))
+ferts <- cbind(fert2, fert3, fert4)
+ferts
+corn.lm3b <- lm(yield ~ ferts)
+plot(corn.lm3b)
+
+anova(corn.lm3b)
+summary(corn.lm3b)
+
+# Note that all the above models produce identical plots and ANOVA tables - they are basically 
+# all the same model,  all of which use essentially the same information coded in different ways.
+# The differences between the models lie in how we use the different parameters to recover
+# information about the level means.
+
+# Is this model really appropriate? The outliers in the control group appear to be inflating
+# the variance of that group, which may cause problems as we are assuming that the variance is
+# constant, ie. the same for all four groups. The rule of thumb for assessing this is on page 4
+# of the brick, the ratio of the largest to smallest group variance should not be greater than 
+# the number of groups: 
+
+lvl.vars <- tapply(yield, fert, var)
+lvl.vars
+max(lvl.vars)
+min(lvl.vars)
+max(lvl.vars)/min(lvl.vars)
+
+# There are only 4 groups, so we have a problem (one which is simply ignored in the analysis in
+# the brick).  If we do decide to include these outliers, we should certainly qualify any
+# conclusions we make based on this analysis, as an important underlying assumption has been
+# violated. Here the presence of two outliers in different directions may just inflate the
+# overall estimate of the error variance, which would inflate the standard errors and therefore
+# reduce the precision of any contrasts between the treatment groups, making our inference
+# more conservative.
+
+anova(corn.lm2)
+
+# The ANOVA table indicates a strong difference between the groups, but not which fertilizer
+# treatments produce the best yields. Here are some alternative ways of doing the analysis 
+# shown at the top of page 8 of the brick: 
+
+summary(corn.lm2)
+
+# The basic results appear to be that fertilizer 1 "K20 + N", produces significantly 
+# higher corn yields than the "Control" group (which is presumably some default
+# fertilizer regime or possibly no added fertilizer at all), whilst the other two 
+# groups do not produce significantly different yields from the "Control" group.
+
+# These conclusions do not change, even if we apply an appropriate Bonferroni correction
+# to account for the fact that are performing a series of 3 comparisons (i.e. we have
+# to somehow overcome the problem of multiple comparisions):
+
+names(summary(corn.lm2))
+summary(corn.lm2)$sigma
+se <- summary(corn.lm2)$sigma*sqrt(1/6 + 1/6)
+se
+est <- coef(corn.lm2)[2:4]
+est
+lower <- est - qt(1 - 0.05/(2*3), 20)*se
+lower
+upper <- est + qt(1 - 0.05/(2*3), 20)*se
+upper
+cbind(lower, est, upper)
+
+# Different research questions would call for different analyses and therefore different 
+# interpretations of the results. Here is the analysis at the bottom of page 7 of the brick:
+
+ni <- tapply(yield, fert, length)
+ni
+h <- c(-1, 1/3, 1/3, 1/3)
+h
+est <- t(h) %*% lvl.mns
+est
+MSE <- sum((yield-fitted(corn.lm2))^2)/corn.lm2$df.residual
+MSE
+se <- sqrt(MSE)*sqrt(sum((h^2)/ni))
+lower <- est - qt(0.975, corn.lm2$df.residual)*se
+upper <- est + qt(0.975, corn.lm2$df.residual)*se
+c(lower, est, upper)
+
+# Finally, here's the analysis from the bottom of page 8. Please read the discussion of 
+# these results in the brick.
+
+h <- c(0, 0.5, -1, 0.5)
+est <- t(h) %*% lvl.mns
+se <- sqrt(MSE)*sqrt(sum((h^2)/ni))
+lower <- est - qt(0.975, corn.lm2$df.residual)*se
+upper <- est + qt(0.975, corn.lm2$df.residual)*se
+c(lower, est, upper)

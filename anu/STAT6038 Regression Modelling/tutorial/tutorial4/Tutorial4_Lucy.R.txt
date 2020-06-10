@@ -1,0 +1,74 @@
+# Generate same random outcome each time
+set.seed(1234)
+# Generate 20 observations for x1/x2/x3/y
+x1<-rnorm(20,1,2)
+x2<-rnorm(20,1,0.5)
+x3<-rnorm(20,1,0.7)
+y<-rnorm(20,1,0.9)
+
+# Hypothesis Type 1: Summary table (marginal effect)
+summary(lm(y~x1+x2+x3))
+
+# x1<- effect of lm(y~x2+x3+x1)/lm(y~x3+x2+x1)
+# x2<- effect of lm(y~x1+x3+x2)/lm(y~x3+x1+x2)
+# x3<- effect of lm(y~x1+x2+x3)/lm(y~x2+x1+x3)
+
+# Ho: Bi=0 (given all other X variables in the model)
+# TS: T value each
+# vs t(alpha/2,n-p) or P(Xi)(=p(Xi@anova last fit))
+qt(0.975,20-4)
+
+# Same coefficients as:
+summary(lm(y~x2+x3+x1))
+
+# ---------------------------------------------------
+# Hypothesis Type 2: ANOVA table (Last fit Bi)
+anova(lm(y~x1+x2+x3))
+
+# x1<- effect of lm(y~x1)
+# x2<- effect of lm(y~x1+x2)
+# x3<- effect of lm(y~x1+x2+x3)
+
+# Ho: B3=0 (given X1,X2 in the model)
+# TS: F=F(X3)=(SSx3/1)/MSE(full)=t(X3)^2
+0.2526/1/0.98887 
+(-0.505)^2
+# vs F(alpha,1,n-p)
+qf(0.95,1,20-4)
+
+# Check Ho: B1=0? (given X2,X3 in the model)
+anova(lm(y~x2+x3+x1))
+# TS: F=F(X1)=(SSx1/1)/MSE(full)=t(X1)^2
+0.6078/1/0.98887
+(0.784)^2
+
+# ---------------------------------------------------
+# Hypothesis Type 3: ANOVA table (Overall Hypothesis)
+anova(lm(y~x1+x2+x3))
+
+# Ho: B1=B2=B3=0
+# TS: F=(SSR/3)/MSE(full)=(SSx1+SSx2+SSx3)/3/MSE  (Not equal to sum(Fxis))
+(1.3996+0.0478+0.2526)/3/0.98887
+# vs F(alpha,k,n-p)
+qf(0.95,3,20-4)
+
+anova(lm(y~cbind(x1,x2,x3)))
+# TS: F=(SSR/3)/MSE(full)=F(cbind)
+1.700/3/0.98887
+0.573
+
+# ---------------------------------------------------
+# Hypothesis Type 4: ANOVA table (Last fit Bi group)
+anova(lm(y~x2+x1+x3))
+
+# Ho: B1=B3=0 (given x2 is already in the model)
+# TS: F=(SSx1+SSx3)/1/MSE(full)
+(1.1588+0.2526)/2/0.98887 
+# vs F(alpha,2,n-p)
+qf(0.95,2,20-4)
+
+anova(lm(y~x2+cbind(x1,x3)))
+# TS: F=(SSx1+SSx3)/1/MSE(full)
+1.4114/2/0.98887
+0.7136428
+#######################################################

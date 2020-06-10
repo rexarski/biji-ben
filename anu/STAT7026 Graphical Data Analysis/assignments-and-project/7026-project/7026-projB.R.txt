@@ -1,0 +1,412 @@
+rm(list=ls(all=TRUE))
+
+library(car)
+library(MASS)
+library(zipcode) # 2012 zip code data
+
+load("classdata.RData")
+insure <- as.data.frame(insure)
+insure$rRej <- insure$Invol/(insure$Invol+insure$Volun) # rate of insurance rejection
+par(mfrow=c(1,2))
+hist(insure$Income,prob=T,main="Income Distribution",xlab="Income")
+hist(log(insure$Income),prob=T,main="Log Income Distribution",xlab="Log(Income)")
+
+
+
+insure$Income <- log(insure$Income)
+
+vars <- c(2,3,4,5,8,9)
+predictors <- c(2,3,4,5,8)
+
+# ADD geo data for zip codes
+
+data(zipcode)
+dict <- zipcode[zipcode$zip %in% insure$Zip,] # 45! 2 lost
+
+insure$lon <- rep(NA,47)
+insure$lat <- rep(NA,47)
+
+for (i in 1:47) {
+    if (insure$Zip[i] %in% as.numeric(dict$zip)) {
+        id <- which(as.numeric(dict$zip)==insure$Zip[i])
+        insure$lon[i] <- dict$longitude[id]
+        insure$lat[i] <- dict$latitude[id]
+    }
+}
+
+insure[which(insure$Zip==60635),] # 41.9225, -87.815556 near Elmwood Park
+insure[which(insure$Zip==60627),] # 41.6275, -87.598611 near Dolton
+
+insure[which(insure$Zip==60635),10] <- -87.815556 # lon
+insure[which(insure$Zip==60635),11] <- 41.9225 # lat
+insure[which(insure$Zip==60627),10] <- -87.598611 # lon
+insure[which(insure$Zip==60627),11] <- 41.6275 # lat
+
+
+insure$Suburb <- 
+    c("Far North Side", "Far North Side", "Far North Side", "North Side", "North Side", 
+      "West Side", "Central", "Far North Side", "Northwest Side", "North Side",
+      "West Side", "Far North Side", "Far North Side", "Far North Side", "Far North Side",
+      "Northwest Side", "Northwest Side", "Northwest Side", "Northwest Side", "West Side",
+      "West Side", "West Side", "West Side", "West Side", "West Side",
+      "West Side", "Central", "Southwest Side", "Southwest Side", "South Side",
+      "South Side", "Southwest Side", "Southwest Side", "Southwest Side", "Southwest Side",
+      "South Side", "Southwest Side", "Southwest Side", "South Side", "South Side",
+      "Far Southeast Side", "Far Southwest Side", "Far Southwest Side", "Far Southeast Side", "Far Southeast Side",
+      "Far Southeast Side", "Far North Side")
+
+NS <- rep(NA,nrow(insure))
+for (i in 1:length(insure$Suburb)) {
+    if (insure$Suburb[i] %in% c("Far North Side", "North Side", "Northwest Side", "West Side", "Central")) {
+        NS[i] <- "N"
+    } else {
+        NS[i] <- "S"
+    }
+}
+
+NSW <- rep(NA,nrow(insure))
+for (i in 1:length(insure$Suburb)) {
+    if (insure$Suburb[i] %in% c("Far North Side", "North Side", "Northwest Side")) {
+        NSW[i] <- "N"
+    } else if (insure$Suburb[i] %in% c("West Side","Central")) {
+        NSW[i] <- "W"
+    } else {
+        NSW[i] <- "S"
+    }
+}
+
+insure$NS <- NS;insure$NSW <- NSW
+
+colnames(insure) <- 
+    c("Zip","Race","Fire","Theft","Age","Volun","Invol","LogIncome","rRej","lon","lat","Suburb","NS","NSW")
+
+# normalize predictor values
+# insure[,predictors] <- scale(insure[,predictors])
+
+head(insure)
+summary(insure)
+
+###########
+
+pairs(insure[,vars],
+      panel=function(x,y){points(x,y);abline(rlm(y~x))},upper.panel=NULL)
+cor(insure[,vars])
+
+# + cor w rRej: Race, Fire
+# - cor w rRej: LogIncome
+# also, LogIncome - cor w Race and Fire
+
+# COPLOAT FOR WHAT?
+# coplot(ins$rrej~ins$fire|ins$race*ins$age)
+# coplot(ins$rrej~ins$race+ins$fire+ins$theft+ins$age+ins$log2income|ins$race*ins$age)
+
+# histograms
+par(mfrow=c(2,3))
+for (i in vars){
+    hist(insure[,i],main=names(insure)[i],xlab="",prob=T,col="white")
+    lines(density(insure[,i]),col="red",lwd=2)
+}
+
+# boxplots (maybe not?)
+par(mfrow=c(2,3))
+for (i in vars){
+    boxplot(insure[,i],main=names(insure)[i])
+}
+
+# dependent variable versus each independent variable (maybe not? because appeared in scatter matrix already)
+# par(mfrow=c(2,3))
+# for (i in predictors){
+#     plot(insure[,i],insure$rRej,xlab=names(insure)[i],ylab=names(insure$rRej))
+#     lines(loess.smooth(insure[,i],insure$rRej))
+# }
+
+# reduced model with only race as predictor
+
+fit.red <- lm(rRej~Race,data=insure)
+summary(fit.red)
+
+
+# race is significant
+
+# but it could be possible that other predictors influence race...
+# race is still highly sig in the full but income is not. not surprising because income and race are correlated
+
+# full model 
+fit1 <- lm(rRej~Fire+Theft+LogIncome+Race+Age,data=insure)
+summary(fit1)
+anova(fit1)
+
+par(mfrow=c(2,3))
+plot(fit1, which=c(1,2,4,5))
+# absolute residual plot
+plot(fit1$fitted.values,abs(fit1$residuals),
+     main="Absolute Residuals vs fitted values",
+     ylab="Absolute residuals",xlab="Fitted values")
+lines(lowess(fit1$fitted.values,abs(fit1$residuals)),col="red")
+
+insure[c(6,7,24),]
+
+# 6 (zipcode 60610) # what's so special?
+# 7 (zipcode 60611) # low race and ...
+
+
+fit11 <- lm(sqrt(rRej)~Fire+Theft+LogIncome+Race+Age,data=insure)
+par(mfrow=c(2,3))
+plot(fit11,which=c(1,2,4,5))
+plot(fit11$fitted.values,abs(fit11$residuals),
+     main="Absolute Residuals vs fitted values",
+     ylab="Absolute residuals",xlab="Fitted values")
+lines(lowess(fit11$fitted.values,abs(fit11$residuals)),col="red")
+
+
+# histograms, with value of ZIP code 60610 indicated:
+par(mfrow=c(2,3))
+for (i in vars){
+    hist(insure[,i], main=c(names(insure)[i],"zip code 60610"),
+         xlab="", prob=T,col="white")
+    lines(density(insure[,i]),col="red",lwd=2)
+    abline(v=insure[6,i],col="blue",lwd=2)
+}
+
+# histograms, with value of ZIP code 60611 indicated:
+par(mfrow=c(2,3))
+for (i in vars){
+    hist(insure[,i], main=c(names(insure)[i],"zip code 60611"), 
+         xlab="", prob=T,col="white")
+    lines(density(insure[,i]),col="red",lwd=2)
+    abline(v=insure[7,i],col="blue",lwd=2)
+}
+
+# remove the 60610 and 60611 zip codes
+fit12 <- lm(sqrt(rRej)~Fire+Theft+LogIncome+Race+Age, 
+        data=insure, subset=c(1:47)[-c(6,7)])
+par(mfrow=c(2,3))
+plot(fit12, which=c(1,2,4,5))
+plot(fit12$fitted.values,abs(fit12$residuals),
+     main="Absolute Residuals vs fitted values",
+     ylab="Absolute residuals",xlab="Fitted values")
+lines(lowess(fit12$fitted.values,abs(fit12$residuals)),col="red")
+
+# remove the 24 (60607)
+fit13 <- lm(sqrt(rRej)~Fire+Theft+LogIncome+Race+Age, 
+           data=insure, subset=c(1:47)[-c(6,7,24)])
+par(mfrow=c(2,3))
+plot(fit13, which=c(1,2,4,5))
+plot(fit13$fitted.values,abs(fit13$residuals),
+     main="Absolute Residuals vs fitted values",
+     ylab="Absolute residuals",xlab="Fitted values")
+lines(lowess(fit13$fitted.values,abs(fit13$residuals)),col="red")
+
+summary(fit13)
+anova(fit13)
+
+# THIS IS THE MODEL!!!!!!
+
+# ADDED VARIABLE PLOT
+# Race
+par(mfrow=c(1,2))
+av1 <- lm(Race~Fire+Theft+LogIncome+Age,data=insure)
+av2 <- lm(sqrt(rRej)~Fire+Theft+LogIncome+Age,data=insure)
+plot(av1$residuals,av2$residuals,
+     xlab="Adjusted Race",ylab="Adjusted Sqrt(rRej) excl Race",
+     main="AVP (Race)")
+lines(lowess(av1$residuals,av2$residuals),col="red")
+
+
+av3 <- lm(LogIncome~Fire+Theft+Race+Age,data=insure)
+av4 <- lm(sqrt(rRej)~Fire+Theft+Race+Age,data=insure)
+plot(av3$residuals,av4$residuals,
+     xlab="Adjusted Race",ylab="Adjusted Sqrt(rRej) excl LogIncome",
+     main="AVP (LogIncome)")
+lines(lowess(av3$residuals,av4$residuals),col="red")
+
+# North vs South
+fit.NS <- lm(sqrt(rRej)~Fire+Theft+LogIncome+factor(NS)+Race+Age,
+             data=insure)
+summary(fit.NS)
+
+fit.NS.N <- lm(sqrt(rRej)~Fire+Theft+LogIncome+Race+Age,
+                 data=insure[insure$NS=="N",])
+fit.NS.S <- lm(sqrt(rRej)~Fire+Theft+LogIncome+Race+Age,
+                 data=insure[insure$NS=="S",])
+summary(fit.NS.N);summary(fit.NS.S)
+
+# North vs South vs West
+fit.NSW <- lm(sqrt(rRej)~Fire+Theft+LogIncome+factor(NSW)+Race+Age,
+             data=insure)
+summary(fit.NSW)
+
+fit.NSW.N <- lm(sqrt(rRej)~Fire+Theft+LogIncome+Race+Age,
+               data=insure[insure$NSW=="N",])
+vif(fit.NSW.N) # LogIncome and Race are multicolinear !!! 
+# THE ONLY MULTICOLINEARITY
+fit.NSW.S <- lm(sqrt(rRej)~Fire+Theft+LogIncome+Race+Age,
+               data=insure[insure$NSW=="S",])
+fit.NSW.W <- lm(sqrt(rRej)~Fire+Theft+LogIncome+Race+Age,
+                data=insure[insure$NSW=="W",])
+summary(fit.NSW.N);summary(fit.NSW.S);summary(fit.NSW.W)
+
+
+# non-city
+fit.noncity <- lm(sqrt(rRej)~Fire+Theft+LogIncome+Race+Age,
+                  data=insure[insure$Suburb!="Central",])
+summary(fit.noncity)
+
+fit.city <- lm(sqrt(rRej)~Fire+Theft+LogIncome+Race+Age,
+                  data=insure[insure$Suburb=="Central",])
+summary(fit.city)
+
+# 9 district
+# serious problem of multicolinearity. could be very overfitting
+fit.Suburb <- lm(sqrt(rRej)~Fire+Theft+LogIncome+factor(Suburb)+Race+Age,
+              data=insure)
+summary(fit.Suburb)
+
+fit.fn <- lm(sqrt(rRej)~Fire+Theft+LogIncome+Race+Age,
+             data=insure[insure$Suburb=="Far North Side",])
+fit.n <- lm(sqrt(rRej)~Fire+Theft+LogIncome+Race+Age,
+             data=insure[insure$Suburb=="North Side",]) # here we have NA after taking summary() WHY???
+fit.w <- lm(sqrt(rRej)~Fire+Theft+LogIncome+Race+Age,
+             data=insure[insure$Suburb=="West Side",])
+fit.c <- lm(sqrt(rRej)~Fire+Theft+LogIncome+Race+Age,
+             data=insure[insure$Suburb=="Central",])
+fit.nw <- lm(sqrt(rRej)~Fire+Theft+LogIncome+Race+Age,
+             data=insure[insure$Suburb=="Northwest Side",])
+fit.sw <- lm(sqrt(rRej)~Fire+Theft+LogIncome+Race+Age,
+             data=insure[insure$Suburb=="Southwest Side",])
+fit.s <- lm(sqrt(rRej)~Fire+Theft+LogIncome+Race+Age,
+             data=insure[insure$Suburb=="South Side",])
+fit.fse <- lm(sqrt(rRej)~Fire+Theft+LogIncome+Race+Age,
+             data=insure[insure$Suburb=="Far Southeast Side",])
+fit.fsw <- lm(sqrt(rRej)~Fire+Theft+LogIncome+Race+Age,
+              data=insure[insure$Suburb=="Far Southwest Side",])
+
+# probably not gonna use this in the end
+
+
+# POTENTIAL PCA and PCR
+pca <- prcomp(insure[,predictors])
+par(mfrow=c(1,1))
+plot(pca)
+biplot(pca,scale=0)
+
+scores <- pca$x
+fit.pca <- lm(sqrt(insure$rRej)~scores[,1:4])
+# fit.pca <- lm(ins$rRej~scores[,1:5])
+summary(fit.pca) # R2=0.8768
+summary(fit13) #R2=0.9232
+
+# Compare obs. vs. pred. plots
+par(mfrow = c(1,3))
+plot(sqrt(insure$rRej),predict(fit.pca),
+     xlab="Observed Rejection Rate",ylab="Predicted Rejection Rate",main="PCR",
+     xlim=c(0,1),ylim=c(0,1))
+abline(a=0,b=1,col="red")
+plot(sqrt(insure$rRej),predict(fit11),
+     xlab="Observed Rejection Rate",ylab="Predicted Rejection Rate",main="Selected Model (outliers retained)",
+     xlim=c(0,1),ylim=c(0,1))
+abline(a=0,b=1,col="red")
+plot(sqrt(insure$rRej[-c(6,7,24)]),predict(fit13),
+     xlab="Observed Rejection Rate",ylab="Predicted Rejection Rate",main="Selected Model (outliers removed)",
+     xlim=c(0,1),ylim=c(0,1))
+abline(a=0,b=1,col="red")
+
+######### MAPPING #########
+
+# library(maptools)
+# library(ggplot2)
+# library(ggfortify)
+# Chicago city boundary shapefile download:
+# https://data.cityofchicago.org/Facilities-Geographic-Boundaries/Boundaries-City/ewy2-6yfk
+
+# chicago <- readShapePoly("Boundaries - City/geo_export_33a9b7a1-292a-4f33-a841-c75effc2c7fc") # Read the shapefile (from the 'maptools' library).
+# chicago <- readShapePoly("Neighborhoods_2012/Neighborhoods_2012b")
+# chicago <- fortify(chicago) # Organizes data into a neat data frame.
+
+# ggplot(chicago) + geom_polygon(aes(x=long, y=lat, group=group)) # "Filled" map
+# ggplot(chicago) + geom_path(aes(x=long, y=lat, group=group)) # "Outline" map
+
+
+# in fact, zip codes are assigned to streets instead of districts, so we are drawing lines but not areas
+
+
+############ USING GGMAP ############
+# SO UGLY!!!
+
+library(ggplot2)
+library(ggthemes)
+library(ggmap)
+library(grid)
+
+
+# SEE http://www.cookbook-r.com/Graphs/Multiple_graphs_on_one_page_(ggplot2)/
+
+# Multiple plot function
+#
+# ggplot objects can be passed in ..., or to plotlist (as a list of ggplot objects)
+# - cols:   Number of columns in layout
+# - layout: A matrix specifying the layout. If present, 'cols' is ignored.
+#
+# If the layout is something like matrix(c(1,2,3,3), nrow=2, byrow=TRUE),
+# then plot 1 will go in the upper left, 2 will go in the upper right, and
+# 3 will go all the way across the bottom.
+#
+multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
+    require(grid)
+    
+    # Make a list from the ... arguments and plotlist
+    plots <- c(list(...), plotlist)
+    
+    numPlots = length(plots)
+    
+    # If layout is NULL, then use 'cols' to determine layout
+    if (is.null(layout)) {
+        # Make the panel
+        # ncol: Number of columns of plots
+        # nrow: Number of rows needed, calculated from # of cols
+        layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                         ncol = cols, nrow = ceiling(numPlots/cols))
+    }
+    
+    if (numPlots==1) {
+        print(plots[[1]])
+        
+    } else {
+        # Set up the page
+        grid.newpage()
+        pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+        
+        # Make each plot, in the correct location
+        for (i in 1:numPlots) {
+            # Get the i,j matrix positions of the regions that contain this subplot
+            matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+            
+            print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                            layout.pos.col = matchidx$col))
+        }
+    }
+}
+
+rjdot <- qmplot(lon,lat,data=insure,maptype="toner-lite",darken=0.7,size=rRej,color=rRej,legend="topright")
+racedot <- qmplot(lon,lat,data=insure,maptype="toner-lite",darken=0.7,size=Race,color=Race,legend="topright")
+lgincdot <- qmplot(lon,lat,data=insure,maptype="toner-lite",darken=0.7,size=LogIncome,color=LogIncome,legend="topright")
+multiplot(rjdot,racedot,lgincdot, cols=3)
+
+chicago <- get_map(location="chicago,il",color="bw",crop=FALSE,zoom=11)
+ChicagoMap <- ggmap(chicago,extent="device",legend="topright")
+ChicagoMap +
+    geom_point(data=insure,aes(x=lon,y=lat,color=rRej,size=rRej))+
+    # stat_density2d(
+        # aes(x=lon,y=lat,z=rRej,fill=..level..,alpha=..level..),
+        # bins=5,data=insure,geom="polygon"
+    # ) +
+    # scale_fill_gradient(low = "black", high = "red") +
+    facet_wrap(~NSW)
+ChicagoMap +
+    geom_point(data=insure,aes(x=lon,y=lat,color=Race,size=Race))+
+    # stat_density2d(
+    # aes(x=lon,y=lat,z=rRej,fill=..level..,alpha=..level..),
+    # bins=5,data=insure,geom="polygon"
+    # ) +
+    # scale_fill_gradient(low = "black", high = "red") +
+    facet_wrap(~NSW)

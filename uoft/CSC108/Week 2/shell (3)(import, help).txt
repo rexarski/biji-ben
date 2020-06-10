@@ -1,0 +1,70 @@
+Python 2.7.2 (v2.7.2:8527427914a2, Jun 11 2011, 14:13:39) 
+[GCC 4.0.1 (Apple Inc. build 5493)]
+Type "help", "copyright", "credits" or "license" for more information.
+[evaluate hello.py]
+>>> What is your name? Jen
+Hello Jen
+What is your name? Nathan
+>>> message1 = say_hello()
+What is your name? Jen
+Hello Jen
+>>> message1
+>>> print message1
+None
+>>> message2 = say_hello2()
+What is your name? Nathan
+>>> message2
+'Hello Nathan'
+[evaluate hello.py]
+>>> What is your name? Nathan
+[evaluate make_sunset.py]
+[evaluate make_sunset.py]
+[evaluate nesting_functions.py]
+>>> f(4)
+16
+>>> g(56)
+61
+>>> f(g(3))  # nesting one function call inside the other: inside-out rule
+64
+>>> x = g(3)
+>>> f(x)
+64
+>>> help(min)
+Help on built-in function min in module __builtin__:
+
+min(...)
+    min(iterable[, key=func]) -> value
+    min(a, b, c, ...[, key=func]) -> value
+    
+    With a single iterable argument, return its smallest item.
+    With two or more arguments, return the smallest argument.
+
+>>> dir(make_sunset_functions)   # error because we haven't imported it yet 
+Traceback (most recent call last):
+  File "<string>", line 1, in <fragment>
+NameError: name 'make_sunset' is not defined
+>>> import make_sunset
+>>> dir(make_sunset)
+['__builtins__', '__doc__', '__file__', '__name__', '__package__', 'get_picture', 'get_sunset_pic', 'media', 'pic']
+>>> help(make_sunset.get_picture)
+Help on function get_picture in module make_sunset:
+
+get_picture()
+
+>>> help(make_sunset.get_sunset_pic)
+Help on function get_sunset_pic in module make_sunset:
+
+get_sunset_pic(picture)
+
+[evaluate green.py]
+[evaluate green.py]
+[evaluate green.py]
+>>> pic = make_sunset.get_picture()
+>>> total_green(pic)
+3355909
+>>> help(total_green)
+Help on function total_green in module __main__:
+
+total_green(pic)
+    (Picture) -> int
+    Return the total amount of green in pic.

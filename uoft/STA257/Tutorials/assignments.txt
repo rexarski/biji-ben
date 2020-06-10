@@ -1,0 +1,65 @@
+Assignments
+
+Problem Set 1 (for discussion and quizzing at tutorial Sept 19, but not for hand-in) 
+Read Lecture 1 and sections 1.1-1.4 from the textbook. 
+Practice problems: p. 26-30, # 1, 2, 4, 5, 7, 8, 11, 12, 15, 20, 21, 26, 27, 30, 36, 38, 41, 42.
+Problem Set 2 (for discussion and quizzing at tutorial Sept 26) 
+Read Lecture 2 and sections 1.5-1.7 from the textbook. 
+Practice problems: p. 30-34, # 45, 47, 48, 49, 51, 56, 57, 62, 68, 71, 73, 77, 78. 
+
+Extra problem: If A is an event then the indicator function (rv) of A is defined as I(A)(x)=1 if x is in A and I(A)(x)=0 if x is not in A. I(A) is an example of a discrete rv. It is also called a Bernoulli random variable. 
+Show that I(AUB)=I(A)+I(B)-I(AB) . (AB = intersection of A and B) 
+
+Problem Set 3 (for discussion and quizzing at tutorial Oct 3) 
+Read Lectures 3 and 4 and sections 2.1 and 2.2 from the textbook. 
+Practice problems: p. 64-69, # 1, 2(b), 3, 4, 6, 7, 11, 12, 19, 25, 29, 30, 31, 33, 35, 39, 40, 45, 46, 48, 49, 52, 53. 
+
+Problem Set 3 
+Answers to some even numbers:
+#2 (b): p(0)=5/16, p(1)=6/16, p(2)=4/16. p(3)=1/16; F(0)=5/16, F(1)=11/16, F(2)=15/16, F(3)=1
+#12: 9 heads in 10 tosses
+#30: (a) p(k)=mu^k exp(-mu)/k!, mu=3.96, 3 is most probable; (b) 0.003
+#40: (a) c=3; (b) F(x)=x^3; (c) 0.124
+#46: 0.0513
+#52: (a) 25%; (b) N(177.8, 58.1), N(1.78, 0.0058)
+
+Problem Set 4 (for discussion and quizzing at tutorial Oct 10) 
+Read Lecture 5 and sections 2.3 and 4.1, 4.2 (for the univariate case only) from the textbook. 
+Practice problems: p. 69 # 57, 58, 62, 63, 67, 68 p. 166 - 169 # 2, 3, 5, 7, 14, 16, 30, 31, 34
+Problem Set 4 
+Answers to some even numbers:
+
+p. 69 # 58: f(v)=2v, 0<=v<=1
+#68: f(x)=1/(2sqrt(pi x)) exp (-sqrt(x/pi))
+p. 166 - 169 #2: E(X)=(n+1)/2, Var(X)=(n^2-1)/12
+#14: (a) 2/3; (b) 1/2, 1/18
+#30: 1/lambda(1-exp(-lambda))
+#34: 2/3
+
+Problem Set 5 pdf (for discussion and quizzing at tutorial Oct 17).
+
+Problem Set 6 (for discussion (Oct 24/31) and quizzing at tutorial Oct 31) 
+Read Lecture 7 and sections 3.1 - 3.5 from the textbook.
+Practice problems: p. 107-110 # 1, 2, 3, 7, 8, 9, 12, 14, 15, 20, 23, 27.
+
+Problem Set 7 (for discussion and quizzing at tutorial Nov 7)
+Read Lecture 8 and sections 4.3 - 4.4, 5.1 - 5.2 from the textbook.
+Practice problems: p. 169-173 # 42, 43, 44, 47, 50, 55, 56, 57, 59, 63, 70, 75, 77 (a,b);
+p. 188 # 1, 2.
+
+Problem Set 8 (for discussion and quizzing at tutorial Nov 14 and Nov 21)
+Read Lecture 9 and sections 3.6, 6.1 - 6.2 from the textbook.
+Practice problems: p. 112-113 #43, 46, 48, 50, 51, 52 ( assume both r.v.'s are uniform [0,1], 58 (optional), 61, 63, 64;
+p. 198 # 5, 6, 7, 8.
+
+Problem Set 9 (for discussion and quizzing at tutorial Nov 28)
+Read Lecture 10 and sections 3.7, 4.5 from the textbook.
+Practice problems: p. 114 # 69, 73, 79; p. 173-174 # 79, 80, 83, 85, 86, 88, 89, 91. 
+
+Please use the following formula where needed (you don't need to derive it) 
+［see 'following formula.jpg' in the same folder]
+
+
+Problem Set 10 (there is no tutorial for that week, so please use TAs' office hours to discuss the problems)
+Read Lecture 11 and section 5.3 from the textbook.
+Practice problems: p. 188-190 # 3, 4, 5, 6, 10, 16, 17, 18.

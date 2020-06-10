@@ -1,0 +1,401 @@
+# STAT2008/STAT6038 Regression Modelling Tutorial 1 - R Commands
+
+# Question One
+
+# Q1 (a)
+
+# Download the data file to the right directory and then read in and attach the data:
+
+Lubricant <- read.csv("Lubricant.csv", header=T)
+Lubricant
+attach(Lubricant)
+
+# Now fit the requested model using lm() and then the easiest way to view the estimates
+# and their standard errors is to use the default summary():
+
+Lubricant.lm <- lm(viscos ~ pressure)
+summary(Lubricant.lm)
+
+# We can find the required sum of squares by mean correcting the x (pressure) values,
+# squaring them and then adding them up:
+
+Sxx <- sum((pressure - mean(pressure))^2)
+Sxx
+
+# A similar approach works to find the sum of squares of the residuals:
+
+SSerror <- sum(residuals(Lubricant.lm)^2)
+SSerror
+
+# We can then find the Error MS by dividing by n-2 (the Error df) or in general,
+# we would use n-p, where p is the number of parameters in the model:
+
+MSerror <- SSerror/(length(viscos)-length(Lubricant.lm$coef))
+MSerror
+
+# Note we could have got this MSerror from the anova() table, which we will see later
+# in part (d). The required standard error for the slope coefficient is then:
+
+sqrt(MSerror/Sxx)
+
+# Which is the same number we see in the summary() table:
+
+summary(Lubricant.lm)
+
+# Assuming the research question is "Is viscosity (linearly) related to pressure?",
+# then the test of most interest is whether or the slope coefficient is zero or not,
+# so the hypotheses we want to test is H0: beta1 = 0 vs HA: beta1 != (not equal) 0.
+
+# This two-tailed test of a zero null hypothesis is the default test shown in the 
+# summary table, so we can use the p-value shown, which is 5.552e-15, which means
+# 5.552 x (10 to the power of -15) which is 0.00000... (and so on for 14 decimal 
+# places, before we find the 5552 in the 15th and later decimal places) - which 
+# is considerably smaller than our default level of signifcance alpha = 0.05.
+
+# So reject HO in favour of HA and conclude that the slope coefficient is not 0.
+# Even though the slope is an apparently small number (0.001053), it is not 0,
+# which implies that viscosity definitely increases as the pressure increases.
+
+
+# Q1 (b)
+
+# It is always good practice to properly label a plot - though it would have been
+# better if the description of the data had included information about the units
+# used in the sample measurements, so we could have included that info in the 
+# axis labels:
+
+plot(pressure, viscos, xlab="Pressure", ylab="Viscosity", main="Lubricant data")
+
+# Add the estimated regression line - the coefficients of the model are stored as
+# a pair, the intercept a, followed by the slope b, so they are already in the
+# appropriate format for using abline():
+
+Lubricant.lm$coef
+help(abline)
+abline(Lubricant.lm$coef)
+
+# To use the coefficients in a vector multiplication, we need to also have 
+# vectors of new values that specify what is to be multiplied by the intercept 
+# and what is to be multiplied by the slope, i.e. we want a vector of 1 and the
+# the new x value:
+
+c(1, 1000) %*% Lubricant.lm$coef
+
+# For the second prediction, we could do the multiplication the other way round.
+# Strictly speaking, vector/matrix multiplication is not transitive, so we may
+# need to transpose one of our matrices, but in the simple case of two vectors
+# R will produce the right results, even if we omit this simple detail:
+
+Lubricant.lm$coef %*% c(1, 10000)
+t(Lubricant.lm$coef) %*% c(1, 10000)
+
+# Note that the first prediction (x,y) = (1000, 5.857091) is well within the 
+# range of our data and appears to be a sensible prediction (it is on the 
+# estimated regression line in the midst of a lot of the observed sample values),
+# however, (10000, 15.33369) is off the far end of the graph - the plot suggests
+# definite problems with the fit of the model for values in the upper range of
+# the data and it would be very unwise to extrapolate the model to include 
+# even larger values - at best, simple linear regression is a good local 
+# approximation within the range of the observed data.
+
+
+# Q1 (c)
+
+# Calculate the means:
+
+xbar <- mean(pressure)
+ybar <- mean(viscos)
+c(xbar, ybar)
+
+# By inspection of the plot in part (b), this point is on the estimated regression
+# line, but we can check this by predicting the value of Y when x = xbar:
+
+t(Lubricant.lm$coef) %*% c(1, xbar)
+
+
+# Q1 (d)
+
+anova(Lubricant.lm)
+SSerror
+MSerror
+
+# The SSerror and MSerror in the ANOVA table are indeed the same as we calculated
+# in part (a). The p-value for the F statistic in the ANOVA table is also the same
+# as the p-value for the t test on the slope coefficient in the summary table:
+
+summary(Lubricant.lm)
+
+# This is not a coincidence! In the special case of simple linear regression, the
+# two tests are essentially testing the same hypotheses. We can also see that
+# the t statistic squared is equal to the F statistic (with a little rounding
+# error introduced by the fact that I am using rounded numbers, rather than
+# calculating the t statistic from scratch):
+
+10.94^2
+
+
+# Q1 (e)
+
+plot(fitted(Lubricant.lm),residuals(Lubricant.lm), xlab="Fitted Values",ylab="Residuals",
+     main="Fitted versus Residuals for Regression of Viscosity on Pressure")
+
+# There are clear signs of non-constant variance ("heteroscedasticity"), i.e. the 
+# variance of the residuals appears to be increasing as the fitted values increase, 
+# which is a violation of the underlying assumption of a constant error variance.
+
+
+# Q1 (f)
+
+# The following R code should do the job - I don't really expect students to get 
+# this question out on their first attempt (well done if you did). A good way to
+# see what each line does is to run the code line by line - though you may need
+# to have a good look at help(par) to see what is happening with all the 
+# graphical options that I am setting here.
+
+# Note that the Lubricant data is probably from a designed experiment, where the
+# different levels of temperature were set (controlled) and then the pressure and
+# resulting viscosity of the lubricant was observed. In a balanced experimental 
+# design, we would normally observe the same number of replications at each level
+# of tempature, but something may have gone wrong with some of these replications
+# and we have some missing results:
+
+table(tempC)
+
+tempCs <- unique(tempC)
+tempCs
+
+# First divide the data into 4 separate temperature groups (1,2,3,4), corresponding
+# to the 4 levels of tempC:
+
+press1 <- pressure[tempC==tempCs[1]]
+viscos1 <- viscos[tempC==tempCs[1]]
+
+press2 <- pressure[tempC==tempCs[2]]
+viscos2 <- viscos[tempC==tempCs[2]]
+
+press3 <- pressure[tempC==tempCs[3]]
+viscos3 <- viscos[tempC==tempCs[3]]
+
+press4 <- pressure[tempC==tempCs[4]]
+viscos4 <- viscos[tempC==tempCs[4]]
+
+# Now to create the plot, step by step for each of the four temperature groups:
+
+plot(pressure, viscos, type="n", xlab="Pressure", ylab="Viscosity", main="Lubricant data")
+points(press1, viscos1, pch="0")
+points(press2, viscos2, pch="2")
+points(press3, viscos3, pch="3")
+points(press4, viscos4, pch="9")
+
+# Now fit 4 separate simple linear regression models:
+
+tempC_l.lm <- lm(viscos1 ~ press1)
+summary(tempC_l.lm)
+
+tempC_2.lm <- lm(viscos2 ~ press2)
+summary(tempC_2.lm)
+
+tempC_3.lm <- lm(viscos3 ~ press3)
+summary(tempC_3.lm)
+
+tempC_4.lm <- lm(viscos4 ~ press4)
+summary(tempC_4.lm)
+
+# And add these estimated regression lines to the plot with a suitable legend:
+
+abline(tempC_l.lm$coef, lty=1)
+abline(tempC_2.lm$coef, lty=2)
+abline(tempC_3.lm$coef, lty=3)
+abline(tempC_4.lm$coef, lty=4)
+legend(5500, 7, paste(tempCs,"deg C"), pch=c("0","2","3","9"), lty=1:4,
+       title="Temperature")
+
+# From the plot, it is obvious that viscosity depends on both pressure and temperature
+# with distinctly different slopes for the four different levels of temperature.
+
+
+# Question Two
+
+# I deliberately didn't provide a data file for this question, as I would like you to 
+# experiment with different ways of entering data into R. One simple way is to type
+# the data into vectors (it is a good thing the data are all whole numbers):
+
+Day <- 0:11
+Score <- c(0, 195, 351, 503, 683, 847, 1011, 1193, 1378, 1561, 1743, 1925)
+LACE <- data.frame(Day, Score)
+LACE
+
+# I don't need to attach(LACE), as I already have the columns of this data frame 
+# available as separate vectors, which I can simply feed into a simple linear regression
+# model and produce some plots to check the assumptions underlying this model:
+
+LACE.lm <- lm(Score ~ Day)
+plot(LACE.lm)
+
+# There is a definite pattern in the residuals - they don't appear to be independent!
+# This is probably because I did the first few days of the course at the rate of about 
+# once a week, but then had almost a 6 month gap before I completed the later days,
+# at the rate of almost one session a day! It would have been good if the LACE system 
+# had recorded this addition info (the date on which I did each session), so we could 
+# include it in the model.
+
+# This curvature isn't as apparent in a plot of the data and the model, but on close
+# inspection it does look different from the plot in the LACE results, where they 
+# have simply "joined the dots".
+
+plot(Day, Score)
+abline(LACE.lm)
+title("Ian's LACE training results")
+
+# Even though it is not necessarily a "good" model, the SLR model is probably still 
+# in George Box's class of "useful models", so we will still see what it has to say on
+# the question of whether or not I have done better than the typical range. The upper
+# end of this range is 120 points per day, i.e. the question is my slope coefficient
+# greater than 120? This is an alternative hypothesis and the equivalent null 
+# hypothesis is beta1 = 120.
+
+# I can calculate a standard error for beta1 - this time I will use info stored 
+# with the model summary:
+
+summary(LACE.lm)
+names(LACE.lm)
+names(summary(LACE.lm))
+
+# Note that I can't use the t statistic and p-value for the slope coefficient 
+# from the summary, as this is for a test of H0: beta1 = 0. The standard error of
+# the slope coefficient is the required standard error, but unfortunately it is not 
+# stored in some useful object, however, sigma is the square root of the error 
+# variance and the residual degrees of freedom are stored with LACE.lm object:
+
+RMSE <- summary(LACE.lm)$sigma
+RMSE
+
+df.resid <- LACE.lm$df
+df.resid
+
+# RMSE stands for "root mean square error" and we check this is correct by squaring
+# and comparing with the MS for the residuals shown in ANOVA table"
+
+anova(LACE.lm)
+RMSE^2
+
+# We still need Sxx to calculate the standard error of the slope coefficient:
+
+Sxx <- sum((Day- mean(Day))^2)
+Sxx
+
+SEbeta1 <- RMSE/sqrt(Sxx)
+SEbeta1
+
+# Which is the correct standard error shown in the summary table. I can then use 
+# this to calculate a standardised test statistic for a test of H0: beta1 = 120.
+
+beta1 <- LACE.lm$coef[2]
+beta1
+
+test.stat <- (beta1-120)/SEbeta1
+test.stat
+
+# Using a significance level of alpha=0.05, the one-tailed critical value from 
+# a t distribution with 10 degrees of freedom is (recall that HA: beta1 > 120,
+# so we want all the rejection region to be in the upper tail):
+
+qt(0.95, df.resid)
+
+# Note with only 10 degrees of freedom, we are NOT guaranteeed any real help 
+# from the Central Limit Theorem, so the use of Student's t distribution is making 
+# a fairly strong assumption about the error distribution being normal, but that
+# assumption (at least) looked OK on the Normal Q-Q plot.
+
+# The observed test statistic 38.20506 >> the critical value 1.812461 or we could 
+# calculate a one-tailed p-value for this test statistic:
+
+1 - pt(test.stat, df.resid)
+
+# This p-value is a lot less than alpha = 0.05, so we would reject H0 in favour 
+# of HA andf conclude that I my daily scores were significantly above the typical
+# range. I completed the LACE program using my new hearing aids - my results 
+# might have been a lot worse if I had tried to do the program without them!
+
+
+# Question Three
+
+# Q3 (a) requires matrix algebra - see the solutions file.
+
+# Q3 (b)
+
+# Using the same approach to accessing the protpreg data as in the example in lectures:
+
+protpreg <- read.table("F:/STAT/STAT2008/Datasets (text)/protpreg.txt", header= F)
+protpreg
+
+# As it only contains numbers, we can treat this data frame as if it were a matrix and
+# extract the gestation numbers (the second column) and create the design matrix
+# using the following commands:
+
+gest <- protpreg[,2]
+gest
+
+X <- cbind(rep(1,length(gest)),gest)
+X
+
+# cbind(), length() and rep() are all useful R functions - have a look at the help files
+# for each of them and try breaking down the above command and running it a bit a time,
+# e.g. length(gest) to see what each of these functions does.
+
+# The data handling in R is very flexible (and can be confusing as a result) and there
+# are usually a variety of ways to accomplish the same task. Note that the following 
+# simpler code would also have done the same job:
+
+X <- cbind(1, gest)
+X
+
+
+# Q3 (c)
+
+# Now for the hat matrix:
+
+H <- X%*%solve(t(X)%*%X)%*%t(X)
+H
+
+# Which is indeed a projection matrix:
+
+Ht <- t(H)
+Ht-H
+
+# Note a bit of rounding error has crept into around the 16 and 17 decimal places:
+
+round(Ht-H,15)
+
+# Similarly for H squared: 
+
+H2 <- H%*%H
+H2-H
+round(H2-H,15)
+
+# In the lecture examples where I looked at the data on women from the second R worksheet,
+# I used the hat() function to calculate the hat values - these are the diagonal elements
+# from H:
+
+diag(H)
+hat(X)
+diag(H)-hat(X)
+round(diag(H)-hat(X),15)
+
+# Now for the least squares estimates:
+
+y <- protpreg[,1]
+y
+
+b <- solve(t(X)%*%X)%*%t(X)%*%y
+b
+
+# We got the least squares estimates in lectures using lm()
+
+coef(lm(y ~ gest))
+
+# These are the same, though we now have some rounding error in the 15th decimal place:
+
+coef(lm(y ~ gest)) - b
+round(coef(lm(y ~ gest)) - b,15)
+round(coef(lm(y ~ gest)) - b,14)

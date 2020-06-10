@@ -1,0 +1,51 @@
+# Demo of transforming an integral with an infinite bound to an integral
+# with finite bounds.
+
+source("midpoint.r")
+
+options(digits=7)
+
+# We'd like to integrate f from 0 to infinity.
+
+f <- function (x) exp(-0.5*x^2)
+
+# We can transform this integral over f(x) to an integral over x' = exp(-x),
+# with inverse transformation x = -log(x').  The bounds transform to 1 to 0,
+# which we reverse while negating the integrand.  The differential dx
+# transforms to dx' = -1/x'.  The result is an integral of the function
+# g below, from 0 to 1 (with the integration variable x' written as just x).
+
+g <- function (x) exp(-0.5*log(x)^2)/x
+
+# We happen to know the exact answer (which is related to the normal CDF).
+
+cat("exact:\n")
+print(ans <- sqrt(2*pi)/2)
+
+# Here's what we get with the midpoint rule, integrating g.
+
+cat("midpoint (error):\n")
+print(midpoint_rule(g,0,1,100)-ans)
+print(midpoint_rule(g,0,1,1000)-ans)
+print(midpoint_rule(g,0,1,10000)-ans)
+print(midpoint_rule(g,0,1,100000)-ans)
+
+# Here's what we get with R's "integrate" function, which can handle f directly.
+
+cat("integrate (error):\n")
+print(integrate(f,0,Inf)$value-ans)
+print(integrate(g,0,1)$value-ans)
+
+print(integrate(f,0,Inf,rel.tol=1e-12)$value-ans) # ask for more accurate answer
+print(integrate(g,0,1,rel.tol=1e-12)$value-ans)
+
+# We can compare the times for "midpoint" and "integrate".  Part of
+# the reason integrate is faster may be a better integration method,
+# but a lot of it is the lower overhead from doing vector arithmetic
+# when "integrate" calls f or g with a vector of values for x rather
+# than just one.
+
+print(system.time(for (i in 1:100) midpoint_rule(g,0,1,10000)))
+
+print(system.time(for (i in 1:100) integrate(f,0,Inf,rel.tol=1e-10)))
+print(system.time(for (i in 1:100) integrate(g,0,1,rel.tol=1e-10)))

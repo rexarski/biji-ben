@@ -1,0 +1,167 @@
+#CSC236 2015 Winter, Assignment 1
+
+###_Rui Qiu 999292509_
+
+1.Prove by Induction that $$1+mn\leqslant(1+m)^n$$ for all natural numbers $$m$$ and $$n$$.
+
+**PROOF**:
+Let $$ P(m, n) $$ be the predicate defined as follows:
+
+->$$ P(m,n): 1 + mn \leqslant (1+m)^n $$ <- 
+
+We are going to prove that $$ P(m, n) $$ is true for all natural numbers $$m $$ and $$n$$.
+
+**BASE CASE**: $$ m = 0 $$, $$ n = 0 $$, $$ 1+0\times0 = 1 \leqslant (1+0)^0 = 1 $$. Thus $$ P(0, 0) $$ holds.
+
+**INDUCTIVE STEP**: Note that this problem should be done with a _multidimensional induction_. We want to do induction on $$ m $$ and $$ n $$ separately.
+
+**INDUCTION ON $$ n $$**: Let $$ n = j $$ be arbitrary natural number, and assume that $$ P(m, j) $$ holds, and we want to show $$ P(m, j+1) $$ also holds.
+
+Note that we have inductive hypothesis: $$ 1+mj \leqslant (1+m)^j $$.
+
+->$$ 1+m(j+1) = 1+mj+m \leqslant(1+m)^j+m \leqslant (1+m)^j + m(1+m)^j = (1+m)^j(1+m) = (1+m)^{j+1}$$<-
+
+Hence $$ P(m, j+1) $$ holds.
+
+**INDUCTION ON $$ m $$**: LeT $$ m = i$$ be arbitrary natural number, and assume that $$ P(i, n) $$ holds, and we want to show $$ P(i + 1, n) $$ also holds. But now the inductive hypothesis is $$ 1 + in \leqslant (1+i)^n$$.
+
+We need to use _Binomial Theorem_[^1] down in the proof: 
+
+[^1]: Binomial Theorem. For $$ x, y\in \mathbb{R} (x+y)^n = {n\choose 0}x^ny^0+{n\choose 1}x^{n-1}y^1+{n\choose 2}x^{n-2}y^2+...+{n\choose n - 1}x^1y^{n-1} +{n\choose n}x^0y^n  $$.
+
+So,
+
+->$$ 1 + (i+1)n = 1 + in + n \leqslant (1+i)^n + n \leqslant 1 + n(i+1) +...+(i+1)^n = (1+(i+1))^n$$<-
+
+Therefore, $$ P(i+1, n) $$ holds. Then we can combine the two inductions we made previously, predicate $$ P(m, n) $$ holds for all natural numbers $$ m, n $$.
+
+->$$ \blacksquare $$
+
+<!--BREAK-->
+
+2.Let the sequence $$ r $$ be defined by:
+
+->$$r_1=1$$,<-
+
+->$$r_n=1+r_{\lfloor\sqrt{n}\rfloor}, n\geqslant2$$.<-
+
+Prove by Induction that $$r_n$$ is $$ O(log_2(log_2(n))) $$.
+
+**PROOF**:
+Firstly, we do the following observation:
+
+n| $$ \log_2(\log_2(n)) $$|$$ r_n $$ |$$ r_n \leqslant 4\log_2(\log_2(n)) $$
+------------|----------|---|---
+2|0|$$1 + r_{\lfloor\sqrt{2}\rfloor} = 1 + r_1 = 1 + 1 = 2 $$|/
+3|0.6644...|$$ 1 +r_{\lfloor\sqrt{3}\rfloor} = 1 + r_1 = 1 +1 =2 $$|$$ 2\leqslant 2.6576 $$
+4|1|$$ 1 +r_{\lfloor\sqrt{4}\rfloor} = 1 +r_2 = 1 + 2 =3 $$|$$ 3 \leqslant 4 $$
+5|1.2153...|$$ 1 +r_{\lfloor\sqrt{5}\rfloor} = 1 + r_2 = 1 + 2 = 3 $$|$$ 3\leqslant4.8612 $$
+6|1.3701...|$$ 1 +r_{\lfloor\sqrt{6}\rfloor} = 1 + r_2 = 1+2=3 $$|$$ 3 \leqslant5.4804 $$
+...|...|...|...
+15|1.9660...|$$ 1+r_{\lfloor\sqrt{15}\rfloor} = 1+r_3=1+2=3 $$|$$ 3 \leqslant7.864 $$
+16|2|$$ 1 +r_{\lfloor\sqrt{16}\rfloor} = 1 + r_4 = 1+3=4 $$|$$ 4 \leqslant 8 $$
+...|...|...
+255|2.9990...|$$ 1+r_{\lfloor\sqrt{255}\rfloor} = 1+r_{15}=1+3=4 $$|$$ 4 \leqslant 11.996 $$
+256|3|$$ 1 +r_{\lfloor\sqrt{256}\rfloor} = 1 + r_{16}=1+4=5 $$|$$ 5 \leqslant 12 $$
+257|3.0010...|$$ 1 +r_{\lfloor\sqrt{257}\rfloor} = 1 + r_{16}=1+4=5 $$|$$ 5 \leqslant12.004 $$
+...|...|...|...
+65536|4|$$ 1 +r_{\lfloor\sqrt{65536}\rfloor} = 1 + r_{256}=1+5=6 $$|$$ 6 \leqslant 16 $$
+...|...|...|...
+4294967295|4.9999...|$$ 1 +r_{\lfloor\sqrt{4294967295}\rfloor} = 1 +r_{65535} = 1 +5 =6$$|$$ 6 \leqslant 20 $$
+4294967296|5|$$ 1 +r_{\lfloor\sqrt{4294967296}\rfloor} = 1+r_{65536} = 1 +6=7 $$|$$ 7\leqslant20 $$
+
+Since $$ r_1 $$ is fixed, and $$ \log_2(\log_21) $$ is meaningless. So we consider the following predicate $$ P(n) $$:
+
+->$$ \forall n_0 \in \mathbb{N}, \exists c\in \mathbb{R^+}, \forall n \geqslant n_0,$$ such that $$ r_n \leqslant c \log_2(\log_2(n))$$<-
+
+**BASE CASE**: Let $$ c = 4 $$, when $$ n=3 $$, $$ r_3 = 2 \leqslant 4\log_2(\log_2(3))=2.6576 $$. So the predicate $$ P(n) $$ holds.
+
+Why 3? Instead of 2? This is because we notice that if $$ n = 2 $$, $$ \log_2(\log_2(1)) = 0 $$, so no matter what value $$ c $$ is, $$ c\log_2(\log_2(n)) $$ is $$ 0 $$.
+
+**INDUCTIVE STEP**: Let $$ n = k \geqslant 3$$ be an arbitrary natural number, and assume $$ P(k) $$ holds, which is our inductive hypothesis, then we want to show $$ P(k+1) $$ holds as well, i.e. $$ r_{k+1} \leqslant 4\log_2(\log_2(k+1)) $$.
+
+Since $$ P(k) $$ holds, 	.
+
+**CASE I**: if $$ r_{k+1} = r_k + 1 $$.
+First we notice that $$ r_{k+1} = r_k + 1 $$ only happens when $$ k+1 = 2^{2^m} = 4^m, m = 2^j, $$ where $$ j $$ is a natural number.
+	 
+Assume $$ r_{k+1} = r_{4^m} = 1 + r_{2^m} = 1 + r_k $$
+
+->$$ r_k = r_{2^m} \leqslant 4\log_2\log_2(2^m) = 4\log_2(m) $$ by IH.<-
+
+Since $$ 1 \leqslant 4\log_2(2m) - 4\log_2m = 4\log_22=4 $$, then
+
+->$$ 1+4\log_2m \leqslant 4\log_2(2m) $$<-
+
+->$$ r_{4^m} = 1 + 4\log_2m \leqslant 4\log_2(2m) = 4\log_2\log_2(2^{2m}) = 4\log_2\log_2(4^m) $$<-
+
+->i.e., $$ r_{k+1} \leqslant 4\log_2\log_2{(k+1)} $$, $$ P(k+1) $$ holds.<-
+
+**CASE II**: if $$ r_{k+1} = r_k $$, then:
+
+->$$r_{k+1}= r_k \leqslant 4\log_2(\log_2(k)) \leqslant 4(\log_2(\log_2(k+1))) $$,<-
+
+since logarithm function is monotonically increasing. Thus $$ P(k+1) $$ holds.
+
+Therefore, in both cases, $$ P(k+1) $$ holds, it is true for all natural number $$ k \geqslant3 $$.
+
+->$$ \blacksquare $$
+
+<!--BREAK-->
+
+3.Consider the number of binary trees of heigh $$ h $$, where we measure height by number of levels. For example, the empty tree is the only tree of height 0, a single-node tree is the only tree of height 1, and there are 3 trees of height 2.
+- (a) Give a recursive algebraic formula for a sequence $$b  $$, and prove for all natural numbers $$h  $$ that $$b_h  $$ is the number of binary trees of height $$h  $$.
+- (b) Let the sequence $$ a $$ be defined by:
+		
+->$$a_0 = 0  $$,<-
+		
+->$$a_{n+1} = a_n^2+1, n \in \mathbb{N}$$.<-
+
+Prove that $$b_{h+1} = a_{h+1}^2 - a_h^2  $$ for all natural numbers $$h  $$.	
+
+**SOLUTION**:
+
+(a) **GENERAL IDEA**: [PROBLEM DO WE NEED TO REALLY USE INDUCTION HERE]
+
+->![binary tree with height h](file:///Users/Rexarski/Desktop/Screen%20Shot%202015-01-24%20at%2022.19.30.jpg)<-
+
+Since we already know the number of binary trees of height $$ h-1 $$, which is $$ b_{h-1} $$, for a binary tree, say if the left subtree has $$ b_{h-1} $$ possibilities, then right tree could be a subtree of height $$ h-1 $$, or any natural number no greater than $$ h-1 $$, i.e., the right subtree has $$ b_{h-1} $$ possibilities to be a subtree with height $$ h-1 $$, $$ b_{h-2} $$ possibilities to be a subtree with height $$ h-2 $$,... and even as an empty subtree with height $$ 0 $$. So in total the right subtree has $$ b_0+b_1+...+b_{h-1} $$ possibilities. And we can always swap left subtree with right subtree, so there are $$ 2b_{h-1}(b_0+b_1+...+b_{h-1}) $$ possibilities. But note that for the scenario in which both left and right subtrees are of height $$ n-1 $$, we double-count this in the previous formula, so we have to subtract one here, which is $$ b_{h-1}^2 $$.
+
+So finally we claim that for a certain height $$ h $$, the number of possible binary trees $$ b_h $$ is given by:
+
+->$$ b_h = b_{h-1}(2(b_0+b_1+...+b_{h-2})+b_{h-1}) = 2b_{h-1}\sum_{i=0}^{h-1} b_i - b_{h-1}^2$$ where natural number $$ n\geqslant2 .$$<-
+
+Check by different $$ h $$ values, and note that $$ b_0 = b_1 = 1 $$
+
+- When $$ h=2 $$, $$ b_2=2\times b_1(b_0+b_1)-b_1^2 =3$$
+- When $$ h=3 $$, $$ b_3=2\times b_2(b_0+b_1+b_2)-b_2^2= 30-9=21 $$
+- When $$ h=4 $$, $$ b_4=2\times b_3(b_0+b_1+b_2+b_3)-b_3^2=2\times 21(1+1+3+21)-21^2=651 $$
+
+(b) Observe:
+
+$$ h $$|$$ a_h $$|$$ a_{h+1} $$|$$ b_{h+1} $$
+-------|-----|-------|-------
+0|0|1|$$ 1=1^2-0^2 $$
+1|1|2|$$ 3=2^2-1^2 $$
+2|2|5|$$ 21=5^2-2^2 $$
+3|5|26|$$ 651=26^2-5^2 $$
+4|26|677|$$  457653=677^2-26^2 $$
+...|...|...|...
+
+We have the following as a predicate $$ P(h) $$: for natural number $$ h $$, $$ b_{h+1} = a_{h+1}^2 -a_h^2 $$ where $$ b_{h+1} $$ is given by the formula in problem (a) and $$ a_h $$ is given by $$ a_h = a_h^2 + 1 $$.
+
+**BASE CASE**: when $$ h=0 $$, $$ b_{0+1} = a_{0+1}^2-a_{0}^2 = 1- 0 = 1$$. Predicate $$ P(0) $$ holds.
+
+**INDUCTIVE STEP**: let $$ h=k $$ is a natural number, assume $$ P(k) $$ holds and we want to sure $$ P(k+1) $$ holds, i.e $$ b_{k+2} = a_{k+2}^2-a_{k+1}^2 $$.
+
+$$ RHS = (a_{k+1}^2 + 1)^2-a_{k+1}^2=a_{k+1}^4+2a_{k+1}^2+1-a_{k+1}^2=a_{k+1}^4+a_{k+1}^2+1 $$
+
+Use the formula from (a):
+$$ LHS = 2b_{k+1}\sum_{i=0}^{k+1} b_i - b_{k+1}^2 = 2(a_{k+1}^2-a_{k}^2)(1+a_1^2-a_0^2+a_2^2-a_1^2+...+a_{k+1}^2-a_k^2) - (a_{k+1}^2-a_{k}^2)^2$$
+$$ =2(a_{k+1}^2-a_k^2)(1+a_{k+1}^2)-(a_{k+1}^2-a_k^2) = a_{k+1}^4+a_{k+1}^2+(a_{k+1}^2-2a_k^2-a_k^4)$$
+$$ =a_{k+1}^4+a_{k+1}^2+1$$ # by squaring both sides of $$ a_{k+1} = a_k^2 + 1 $$
+
+Hence $$ RHS = LHS $$, i.e. $$ P(k+1) $$ holds as desired.
+Therefore, $$ b_{h+1} = a_{h+1}^2 - a_h^2 $$ holds for all natural numbers $$ h $$.
+
+

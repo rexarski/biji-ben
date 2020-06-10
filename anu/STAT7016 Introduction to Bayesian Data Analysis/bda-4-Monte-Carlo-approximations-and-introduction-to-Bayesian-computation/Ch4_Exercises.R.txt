@@ -1,0 +1,201 @@
+
+#Exercise 1 - Example birth rates
+#Posterior probability theta1>theta2
+a<-2
+b<-1
+sy1<-217
+n1<-111
+sy2<-66
+n2<-44
+
+theta1.mc<-rgamma(10000,a+sy1,b+n1)
+theta2.mc<-rgamma(10000,a+sy2,b+n2)
+
+mean(theta1.mc>theta2.mc)
+
+#Posterior distribution of theta1/theta2
+hist(theta1.mc/theta2.mc)
+
+pdf("Fig3_1.pdf")
+par(mar=c(3,3,1,1),mgp=c(1.75,.75,0))
+par(mfrow=c(1,1))
+plot(density(theta1.mc/theta2.mc,adj=2),main="",xlim=c(.75,2.25),
+     xlab=expression(gamma==theta[1]/theta[2]),
+     #ylab=expression(italic(paste("p(",gamma,"|",bold(y[1]),",",bold(y[2]),")",
+     #   sep="")) ))
+     ylab=expression(paste(italic("p("),gamma,"|",bold(y[1]),",",bold(y[2]),")",
+                           sep="")) )
+
+dev.off()
+
+#Exercise 2 - Posterior predictive simulations
+#birthrate example
+sy2<-66
+ny2<-44
+theta2.mc<-rgamma(10000,a+sy2,b+ny2)
+y1.mc<-rpois(10000,theta1.mc)
+y2.mc<-rpois(10000,theta2.mc)
+
+mean(y1.mc>y2.mc)
+pdf("Fig4.pdf")
+hist(y1.mc-y2.mc,xlab=expression(paste("D=",tilde(Y)[1]-tilde(Y)[2])),main="")
+dev.off()
+
+#Posterior predictive checking of binomial model
+#data
+y<-c(1,1,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0)
+n<-20
+#hyperparameters of beta prior
+a<-1
+b<-1
+
+theta.post<-rbeta(1000,a+sum(y),b+n-sum(y))
+
+tstat<-NULL
+for (i in 1:1000){
+  ypred<-rbinom(20,1,theta.post[1])
+  y.pred1<-ypred[-1]
+  y.pred2<-ypred[-20]
+  d<-y.pred1-y.pred2
+  tstat<-c(tstat,sum(d!=0))
+  }
+abline(v=3,col="red",lwd=2)
+
+#Exercise 3 - Rejection sampling - example 2
+#a)
+z<-rnorm(1,0,1)
+x<-rchisq(1,4)
+alpha<-2*z*sqrt(4/x)
+
+z<-rnorm(1,0,1)
+x<-rchisq(1,4)
+beta<-1*z*sqrt(4/x)
+
+x<-runif(10)
+
+
+
+T<-5
+
+Y<-rpois(10,T)
+Y0<-Y[Y>0]
+r<-10-length(Y0)
+while(r>0){
+  Y<-rpois(r,T)
+  Y0<-c(Y0,Y[Y>0])
+  r<-10-length(Y0)
+}
+
+n<-Y0
+
+invlogit<-function(alpha,beta,x) exp(alpha+beta*x)/(1+exp(alpha+beta*x))
+theta<-invlogit(alpha,beta,x)
+
+y<-rbinom(10,n,theta)
+
+#b) Use rejection sampling to get 1000 independent posterior draws from (alpha,beta)
+
+#candidate density
+g.x<-function(x) {
+  dmvnorm(x,c(2,2),sigma=matrix(c(1,0.5,0.5,1),2,2))
+}
+
+#t distribution density
+t.x<-function(x,nu,sigma,mu){
+  gamma((nu+1)/2)/(gamma(nu/2)*sqrt(nu*pi*sigma))*(1+1/nu*(((x-mu)/sigma)^2))^(-(nu+1)/2)
+}	
+#unnormalized target density
+q.x<-function(alpha,beta){
+  t.x(alpha,4,2,0)*t.x(beta,4,1,0)*prod(invlogit(alpha,beta,x)^y*(1-invlogit(alpha,beta,x))^(n-y)*choose(n,y))
+}
+
+M<-10
+
+n.sim<-1000
+n.draws<-0
+draws<-NULL
+ac<-c()
+while(n.draws<n.sim){
+  x.c<-rmvnorm(1,c(2,2),sigma=matrix(c(1,0.5,0.5,1),2,2))
+  accept.prob<-q.x(x.c[1],x.c[2])/(M*g.x(x.c))
+  u<-runif(1,0,1)
+  if(accept.prob>=u){
+    draws<-rbind(draws,x.c)
+    n.draws<-n.draws+1
+    ac<-c(ac,accept.prob)
+  }
+  
+}
+
+pdf("Fig9.pdf")
+par(mfrow=c(2,2))
+hist(draws[,1],xlab=expression(alpha),main="")
+hist(draws[,2],xlab=expression(beta),main="")
+dev.off()
+
+
+
+a<-seq(-4,6,0.01)
+b<-seq(-4,6,0.01)
+post<-matrix(NA,length(a),length(b))
+for (i in 1:length(a)){
+  for (j in 1:length(b)){
+    post[i,j]<-q.x(a[i],b[j])
+  }
+}
+
+post<-post/(sum(post))
+post.a<-apply(post,1,sum)
+
+a.index<-seq(1,length(a),1)
+a.draw.index<-sample(a.index,1000,replace=TRUE,prob=post.a)
+a.draw<-a[a.draw.index]
+b.draw<-c()
+for (i in 1:1000){
+  b.draw<-c(b.draw,sample(b,1,replace=TRUE,prob=post[a.draw.index[i],]))
+}
+
+pdf("Fig9.pdf")
+plot(a.draw,b.draw,xlim=c(-4,6),ylim=c(-4,6))
+points(draws[,1],draws[,2],col="red")
+dev.off()
+
+
+contour(a,b,post,add=TRUE,col="blue")
+
+a<-seq(-4,6,0.01)
+b<-seq(-4,6,0.01)
+post.p<-matrix(NA,length(a),length(b))
+for (i in 1:length(a)){
+  for (j in 1:length(b)){
+    post.p[i,j]<-g.x(c(a[i],b[j]))
+  }
+}
+
+contour(a,b,post.p,add=TRUE,col="green")
+
+#Importance sampling
+
+#a) 
+S<-100
+zSample<-rnorm(S)
+impRatio<-dt(zSample,3)/dnorm(zSample)
+pdf("Fig13.pdf")
+hist(log(impRatio),xlab="Log Importance Ratio",main="",breaks=20)
+dev.off()
+
+#b)
+aver<-mean(impRatio*zSample)/mean(impRatio)
+variance<-mean(impRatio*zSample^2)/mean(impRatio)-aver^2
+
+#c)
+S<-10000
+zSample<-rnorm(S)
+impRatio<-dt(zSample,3)/dnorm(zSample)
+
+pdf("Fig14.pdf")
+hist(log(impRatio),xlab="Log Importance Ratio",main="",breaks=20)
+dev.off()
+
+aver<-mean(impRatio*zSample)/mean(impRatio)
+variance<-mean(impRatio*zSample^2)/mean(impRatio)-aver^2

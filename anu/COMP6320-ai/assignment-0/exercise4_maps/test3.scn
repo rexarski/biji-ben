@@ -1,0 +1,25 @@
+threshold 1
+growth 1
+spread 1
+location l0
+location l1
+location l2
+location l3
+location l4
+location l5
+location l6
+location l7
+location l8
+location l9
+start l9
+disease l0 0.5
+conn l0 l1
+conn l1 l2
+conn l2 l3
+conn l3 l4
+conn l4 l9
+conn l0 l5
+conn l5 l6
+conn l6 l7
+conn l7 l8
+conn l8 l9

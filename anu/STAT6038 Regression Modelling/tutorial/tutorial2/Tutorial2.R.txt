@@ -1,0 +1,197 @@
+# STAT2008/STAT6038 Regression Modelling Tutorial 2 - R Commands
+
+# Question One
+
+# Q1 (a)
+
+# Download the data file to the right directory and then read in and attach the data:
+
+auscars <- read.csv("auscars.csv", header=T)
+auscars
+attach(auscars)
+
+
+# Q1 (b)
+
+# Now fit the requested model using lm():
+
+auscars.lm <- lm(L.100k ~ Weight)
+
+# The estimated coefficients and associated standard errors are then given in
+# the summary:
+
+summary(auscars.lm)
+
+# The required plot:
+
+plot(Weight, L.100k, ylim=c(5,20), xlab="Unladen weight (kgs)", ylab="Fuel efficiency (Litres/100Km)", main="NRMA Car Data 1991")
+abline(coef(auscars.lm))
+
+
+# Q1 (c)
+
+# Plot looks like a reasonably strong association between Weight and L.100k. We can use the
+# F test in the ANOVA table to confirm this:
+
+anova(auscars.lm)
+
+# The p-value is extremely small, indicating the we can reject H0 and conclude that there 
+# is a significant relationship between the two variables. Since the estimate of the slope
+# coefficient is positive, we can say that the heavier a car is, the more litres it will
+# require to travel 100 kilometres, i.e. heavier cars are less fuel efficient.
+
+
+# Q1 (d)
+
+# We could calculate the R-squared value by dividing the SSregression by the sum of the
+# SSregression and SSerror (or SSresidual) in the ANOVA table = 180.031/(180.031 + 80.998)
+# = 0.6897 or 68.97% or we could just get the value from the summary output:
+
+summary(auscars.lm)
+
+# We could check this value by finding the correlation between Weight and L.100k and 
+# squaring it:
+
+cor(Weight,L.100k)
+cor(Weight,L.100k)^2
+
+# So, approximately 69% of the variability in fuel efficiency is "explained" by the 
+# weight differences in the cars.
+
+
+# Q1 (e)
+
+# We can store the estimated intercept coefficient and associated standard error by 
+# extracting them from the lm object and the summary table:
+
+coef(auscars.lm)
+b0 <- coef(auscars.lm)[1]
+b0
+
+summary(auscars.lm)$coef
+SEb0 <- summary(auscars.lm)$coef[1,2]
+SEb0
+
+# The degrees of freedom associated with MSerror is:
+
+auscars.lm$df
+
+# So the required confidence interval is:
+
+c(b0 + qt(0.025,auscars.lm$df)*SEb0, b0 + qt(0.975,auscars.lm$df)*SEb0)
+
+# However, we would have to extrapolate a long way "off the plot" (i.e. away from
+# the data) to show the intercept and it doesn't really make sense to talk about 
+# the fuel efficiency for a car with zero weight. So this interval is not useful.
+
+
+# Q1 (f)
+
+newWeight <- 1800
+
+# 95% confidence interval for the expected value of L.100k when Weight = 1800:
+
+predict(auscars.lm, newdata=as.data.frame(cbind(Weight=newWeight)), interval="confidence")
+
+# 95% prediction interval for a single value of L.100k when Weight = 1800:
+
+predict(auscars.lm, newdata=as.data.frame(cbind(Weight=newWeight)), interval="prediction")
+
+
+# Q1 (g)
+
+newWeight <- seq(min(Weight),max(Weight),10)
+newWeight
+
+auscars.cis <- predict(auscars.lm, newdata=as.data.frame(cbind(Weight=newWeight)), interval="confidence")
+auscars.cis
+
+lines(newWeight, auscars.cis[,"lwr"], lty=2)
+lines(newWeight, auscars.cis[,"upr"], lty=2)
+
+auscars.pis <- predict(auscars.lm, newdata=as.data.frame(cbind(Weight=newWeight)), interval="prediction")
+auscars.pis
+
+lines(newWeight, auscars.pis[,"lwr"], lty=3)
+lines(newWeight, auscars.pis[,"upr"], lty=3)
+
+legend(720,20,c("Estimated SLR model", "95% Confidence Intervals", "95% Prediction Intervals"), lty=1:3)
+
+# We can see that the prediction intervals are much wider than the confidence intervals,
+# as would be expected, since they incorporate the extra variability of a single random
+# event, along with the uncertainty of the expected value. Also, we note that both the
+# bands have a quadratic shape to them, which indicates that even if we firmly believe 
+# that our linear model holds, it is more and more difficult to accurately predict as
+# we move away from the centre of the data.
+
+
+# Questions Two and Three
+
+# See the R commands file for Assignment 1 for 2014, which is available in the Assessment
+# topic on Wattle.
+
+
+# Question Four
+
+# Q4 (a)
+
+x <- -3:6
+x
+
+
+# Q4 (b)
+
+ests <- matrix(0,1000,2)
+for(i in 1:1000) {
+  y <- 2 - 3*x + rnorm(length(x),0,2)
+  ests[i,] <- lm(y~x)$coef}
+ests
+
+
+# Q4 (c)
+
+hist(ests[,1],main="Intercepts")
+hist(ests[,2],main="Slopes")
+
+
+# Q4 (d)
+
+apply(ests,2,mean)
+apply(ests,2,var)
+
+# These should be unbiased estimates of the "true" values, i.e the values used to
+# generate the data, which were an intercept of 2, a slope of -3 and an error variance
+# of 2 squared or 4.
+
+# To calculate the variances of the coefficients using these "true" values, we apply 
+# some formulae from the brick:
+
+VARb0 <- 4*(1/length(x) + mean(x)^2/sum((x-mean(x))^2))
+VARb0
+
+VARb1 <- 4*(1/sum((x-mean(x))^2))
+VARb1
+
+# All the above appear to be reasonably close to the observed values.
+
+
+# Q4 (e)
+
+cor(ests)
+
+# Theoretical covariance of the intercept and slope:
+
+COVb0b1 <- 4*(-mean(x)/sum((x-mean(x))^2))
+COVb0b1
+
+# And the correlation is then:
+
+COVb0b1/sqrt(VARb0 * VARb1)
+
+# Again the observed values are not too far from the theoretical values. Note the
+# observed values will change each time that you run the above code as it generates new
+# random numbers.
+
+# Note the intercept and slope estimates are correlated. In fact, the two estimates will
+# only be uncorrelated for a regression with mean(x) = 0.
+

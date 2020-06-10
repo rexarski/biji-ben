@@ -1,0 +1,22 @@
+Remember to download and use the latest classdata from wattle because this contains corrected versions of functions you'll need. The basic approach to follow to analyse a time series, is
+
+1. Ensure the data is a time series object using the ts function.
+
+2. Plot the data using plot(z) where z is the time series object.
+
+3. Start exploring the series by thinking about whether a transformation is needed to stabilise variance.
+
+4. Once the series is on a variance-stable scale, begin a trend-seasonal decomposition. So, first we look at a lowess smooth on the series to characterise trend and then generally try to fit a low order polynomial as a parametric model for trend. Remember that to fit a cubic model or above, you'll probably need to use a "corrected" version of time (I.e. newtime = time - xxxx where xxxx is a year within the range of the time data). What this does is allows R to fit the model. This doesn't change the fitted values for the model, just remember when you write the model down at the end to use the new time variable.
+
+5. Then we try to characterise any seasonal effect. Season effects are REGULAR, PERIODIC CYCLES that you can see in the series. They need to be regular since it is important that we can identify each season explicitly (e.g. summer occurs every fourth quarter). We've mainly discussed how to fit constant seasonal factors (which are implemented as setting up a season factor using a function Factor that is also in the class data). Then I generally fit the trend-seasonal model using rlm. I also use stl when it's possible as a diagnostic/exploratory tool, but end up back with parametric models. We'd also typically look at the seasonal subseries plots to comfort ourselves that a constant factor seasonal model is reasonable. Remember that stl is only useful when the time series has frequency > 1. If you see regular, periodic cycles in the series (whether the data is measured more than once a year or not), you can always identify the relevant frequency (the number of data points from one peak to the next, basically) and use ts(z,frequency=f) where f is the relevant frequency and then use stl. Also remember that stl is mainly an exploratory tool to help you work out the basic characteristics of the trend and seasonal components.
+
+6. Once the trend seasonal model is fit, I start to examine the residuals from that fit for dependence. There is a function Ident in the class data that produces plots of the ACF and PACF from which we discuss stationarity and then try to choose an order for an AR model. Use the ACF to determine whether the series is stationary (which will be the case if the ACF damps down to zero (within the dotted blue lines) as the lag increases). Then use the PACF to work out which AR model to fit - choose an AR(k) where k is the last significant spike in the PACF (significant means going outside the blue dotted lines). Ident is used to work out a simple dependence model. There is another function Raic (e.g. fin =  Raic(fits$resid) which is the command) that can then be used to fit models to the trend-seasonal residuals ranging from an AR(1) to AR(10) and then, for example, if the choice was to fit an AR(3) you would use fin$coef[,3] to get the coefficients and fin$resid[,3] to get the residuals from the AR(3) fit. We use Raic to fit all models between an AR(1) and an AR(10) so it will be easy to find the coefficients for the model we choose.
+
+7. Then the residuals from the fit to the irregular series is assessed (using Ident and Raic again) to check that the AR fit has managed to clean out all the dependence). Also, at this stage, we would look at the standard diagnostic plots (residual plots, absolute residual plots, QQ plots) to check that all the usual assumptions seem valid.
+
+8. A wrinkle that can occur is when the ACF tells us that the irregular series is not stationary, and if this occurs, we go back and consider strategies like differencing to induce stationarity in the irregular series. The analysis then goes through the above steps with differenced data.
+
+9. Make sure you write your final model down in the simplest form possible. Generally, this will be written over two lines:
+Z(t) = Trend component + Seasonal Component + X(t) (where X(t) is the irregular series) and
+X(t) = a1*X(t-1)+...+ap*X(t-p) (for an AR(p) model).
+

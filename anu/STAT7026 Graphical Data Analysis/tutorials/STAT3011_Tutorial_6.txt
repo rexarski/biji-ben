@@ -1,0 +1,21 @@
+RESEARCH SCHOOL OF FINANCE, ACTUARIAL STUDIES AND APPLIED STATISTICS
+Graphical Data Analysis
+Tutorial 6
+
+This tutorial is intended to enable you to investigate the relationship
+between a response and several explanatory variables.
+
+1.  Data on the amount of steam per month (kg) used in an industrial
+process is available in Splus.   The response may be related to eight
+other variables namely the amount of real fatty acid in storage
+(kg/month),  the glycerine production (kg/month), average wind velocity
+(km/h), the number of days per month, the number of operating days per
+month, the number of days below zero degrees C, the average air
+temperature (degrees C) and the number of startups.  The wind velocity
+is expected to be particularly important in any analysis but may not
+have a linear effect on the response.
+
+The data are stored in an R object called indus.  Explore and describe
+the relationship between the amount of steam used and the explanatory
+variables.
+

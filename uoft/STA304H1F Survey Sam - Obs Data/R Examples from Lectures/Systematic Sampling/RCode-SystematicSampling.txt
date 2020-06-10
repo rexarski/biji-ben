@@ -1,0 +1,129 @@
+###############################
+#   Systematic Sampling -     #
+#          R Code             #
+###############################
+
+# Using R to generate Systematic Sample N=100, n=20, k=5 
+
+
+# Population values in random order
+------------------------------------
+
+# Randomly generate 100 Uniform(0,20) numbers, then round to one decimal place:
+> mydata = round(runif(100,0,20),1)
+
+> mydata
+  [1] 13.2  9.3 12.5 16.8 11.1 10.1 14.9 13.4  2.0 17.4  4.2 15.4
+ .
+ .
+ [77] 13.3  2.1  7.2  2.5  2.2 13.7  8.4 14.6  1.4  9.1 19.5 9.8 4.1
+      19.7  0.3  0.8  9.4  0.6 10.0 10.3 12.9 12.8 15.5  2.6
+
+# Generate a random starting position between 1 and k:
+
+> start = sample(1:5,1)
+> start
+[1] 3
+
+# Take the systematic sample:
+
+> mysample <- NULL
+> for (i in 1:20) {
+      mysample[i] = mydata[start + (i-1)*5 ]
+      }
+
+# OR
+
+> mysample = mydata[seq(from=start,to=100,by=5)]
+
+> mysample
+ [1] 12.5 13.4  7.9  6.5  1.1  17.9  2.8 11.1 19.8  3.6
+      6.1 15.8  8.7 15.0  13.9 2.1   8.4  9.8  9.4 12.8
+
+# Find systematic mean estimate and calculare standard error using SRS:
+
+> ybar.sys=mean(mysample)
+> SE.ybar.sys = sqrt((1-20/100)*var(mysample)/20)
+
+> ybar.sys
+[1] 9.93
+> SE.ybar.sys
+[1] 1.056311
+
+
+# Define as Clusters:
+
+> cluster = NULL
+> for (i in 1:100) {
+      if(i %% 5 ==0) {
+         cluster[i]=5
+      }
+      else {cluster[i] = i %% 5
+      }
+  }
+
+# OR
+
+> rep(c(1,2,3,4,5), 20)
+[1]  1 2 3 4 5 1 2 3 4 5 1 2 3 4 5
+      .
+      .
+[90] 1 2 3 4 5 1 2 3 4 5
+
+# Regression model with mydata variable as response and cluster as a factor
+> lin.reg <- lm(mydata ~ as.factor(cluster))
+
+# ANOVA table of regression model to check if clusters are significant
+> anova(lin.reg)
+Analysis of Variance Table
+
+Response: mydata
+                   Df Sum Sq Mean Sq F value Pr(>F)
+as.factor(cluster)  4  116.9  29.217  0.8548 0.4941
+Residuals          95 3247.0  34.179
+
+
+# Population values in Increasing Order
+----------------------------------------
+
+# Sort the mydata variable in ascending order:
+
+> mydata2 = sort(mydata)
+> order<-seq(1,100,1)
+
+# Time series plot of mydata2 population values - scatterplot of the order vs values 
+> plot(order,mydata2)
+
+# Generate a random starting position between 1 and k:
+> start2 = sample(1:5,1)
+
+> start2
+[1] 2
+
+# Take the systematic sample
+> mysample2 = mydata2[seq(from=start2,to=100,by=5)]
+
+
+# Find systematic mean estimate and calculare standard error using SRS:
+
+> ybar.sys2=mean(mysample2)
+> SE.ybar.sys2 = sqrt((1-20/100)*var(mysample2)/20)
+
+> ybar.sys2
+[1] 9.535
+
+> SE.ybar.sys2
+[1] 1.187749
+
+# Regression model with mydata2 (ordered values) as response and cluster factor
+> lin.reg2 <- lm(mydata2 ~ as.factor(cluster))
+
+# ANOVA table of regression model
+> anova(lin.reg2)
+
+Analysis of Variance Table
+
+Response: mydata2
+                   Df Sum Sq Mean Sq F value Pr(>F)
+as.factor(cluster)  4    7.6    1.89  0.0535 0.9946
+Residuals          95 3356.3   35.33

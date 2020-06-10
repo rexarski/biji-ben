@@ -1,0 +1,532 @@
+# STAT3015/STAT7030 Generalised Linear Models
+
+# Assignment 2 for 2015 - R code appendix to the solutions
+
+# Question 2 (a)
+
+# Read in and organise the data:
+
+titanic <- read.table("titanicnew.txt", header=T)
+titanic
+attach(titanic)
+names(titanic)
+
+# Do a little exploratory data analysis. Note that the original range of ages in the individual level data (see the Excel
+# spreadsheet) was 0 to 74, so using Mean.Age as a covariate loses some information, but not as much info as using Age.Group
+# as a factor would lose.
+
+range(Mean.Age)
+levels(P.Class)
+levels(Sex)
+
+# Calculate the proportion of passengers in each group who survived:
+
+Prop.Surv <- Survived/Passengers
+Prop.Surv
+range(Prop.Surv)
+hist(Prop.Surv)
+
+# A bit of experimentation with various models will hopefully eventually lead to something like the following:
+
+titanic.glm <- glm(Prop.Surv ~ Mean.Age + Sex + P.Class + Mean.Age:Sex + Sex:P.Class + Mean.Age:P.Class, family = binomial, weights=Passengers)
+titanic.glm
+
+# As we will see in part (d) below, all terms in this model are significant, except for the main effect term for Mean.Age,
+# though this term should still be included as the variable also forms part of a significant interaction term.
+
+# Question 2 (b)
+
+# You can produce an appropriate residual plot for a GLM in a variety of ways, the easiest of which is to examine the
+# deviance residual plot shown on the first page of the output from:
+ 
+plot(titanic.glm)
+
+# Various plots in this sequence highlight observations 1, 4, 5, 12 and 30 as potential problems, but note the vertical scale
+# on the Normal quantile plot! The assumed dispersion for this model is equal to 1, so the raw deviance residuals should already
+# be fairly close to being approximately standardised and a scale of -30 to +20 looks suspicious! A lot of searching through
+# the help files tells you that by default, R stores the "working" residuals in model$fit, where the working residuals are the
+# residuals from the final iteration of the IWLS fit and it doesn't really indicate on the default plots (for example on page 1)
+# whether it is plotting the "working", "deviance" or "pearson" residuals! In many instances, this will not make a difference,
+# but for the titanic data it does.
+
+# If in doubt about what R is actually doing in these default plots, the safest thing to do is produce your own versions:
+
+studentised.residuals <- residuals(titanic.glm, type="deviance")/sqrt(summary(titanic.glm)$dispersion * (1 - influence(titanic.glm)$hat))
+plot(titanic.glm$linear.predictors, studentised.residuals, xlab="Linear Predictors", ylab="Studentised Deviance Residuals", sub="glm(Prop.Surv ~ (Mean.Age + P.Class) * Sex, weights=passengers")
+abline(0,0,lty=2)
+title("Titanic data: binomial GLM with logit link")
+identify(titanic.glm$linear.predictors, studentised.residuals)
+
+# There appear to be a couple of possibly significant vertical outliers, with studentised deviance residuals values greater
+# than plus 3 or less than minus 3:  
+
+studentised.residuals[abs(studentised.residuals)>3]
+
+# For the normal quantile plot, the scale on the default plot looks a little strange, so we could borrow a little code from 
+# the Analysis of Deviance example covered in lectures (see the discussion in that example of the two different lines on 
+# this plot):
+
+temp <- qqnorm(residuals(titanic.glm, "pearson"), ylab="Pearson Residuals Quantiles", main="Normal Q-Q plot for the Titanic data: binomial GLM with logit link", sub="glm(Prop.Surv ~ (Mean.Age + P.Class) * Sex), weights=passengers)")
+qqline(residuals(titanic.glm, "pearson"))
+abline(0,1, lty=2)
+identify(temp)
+          
+# Again there appear to be two extreme observations:
+
+residuals(titanic.glm, "pearson")[abs(residuals(titanic.glm, "pearson"))>3]
+ 
+# As I am not particularly bothered about the scale on the Cook's D plot, I will use the default plot:
+
+plot(titanic.glm, which=4) 
+title("Titanic data: binomial GLM with logit link") 
+
+# Again the three plots have indicated possible problems with observations 1, 4, 5 and 12. Observation 30 didn't get a mention 
+# once we decided not to use R's default Normal quantile plot, but we might as well take a look at that observation as well:
+
+outliers <- c(1,4,5,12,30)
+cbind(titanic[outliers,],Pearson.res=residuals(titanic.glm, type="pearson")[outliers], dev.res=residuals(titanic.glm, type="deviance")[outliers], stud.dev.res=studentised.residuals[outliers], hat=influence(titanic.glm)$hat[outliers], CooksD=cooks.distance(titanic.glm)[outliers])
+
+# With the exception of observation 30, all of this group appear to stand out on at least one of the usual criteria for 
+# determining potential outliers and other discordant and/or influential observations. 
+
+# Of the potential problem observations, no. 1 is the most extreme observation in the lower tail of the Normal qq-plot and
+# is also the slightly outlying point at the bottom right of the main residual plot. This observation is a group that consists
+# of just two individuals and therefore this observation did not receive a large weight and was not influential and does not
+# have a large Cook's D value.
+
+# If you go back to the Excel spreadsheet, it is relatively easy to identify the two individuals as the only two female children
+# travelling in first class. Whilst the chance of survival appears to have been good for first class, for females and for 
+# children, one individual (2 year old, Miss Helen Lorraince Allison) definitely stands out as an exception. You can examine 
+# the biographies of the members of the Allison family in the Encyclopedia Titanica to learn why she was the only female child 
+# in 1st or 2nd class who did not survive the disaster.
+
+# The other potential problems are all larger groups, which represent the obvious outlier (observation 4) with a deviance
+# residual value of more than +4 on the main residual plot, which is in the extreme upper tail of the Normal qq-plot; and the
+# observation with a deviance residual of less than -3 on the main residual plot (observation 12). Observations 4 and 5 also
+# appear to have relatively large Cook's D value.
+
+# Overall, at least two of the outlier groups (observations 1, 4, 5 or 12, but not 30) are potentual problem observations and
+# they are probably the cause of the over-dispersion that is apparent when you divide the residual deviance by the residual
+# degrees of freedom and compare with the assumed dispersion, which should be equal to 1 for a binomial model. The statistics 
+# required for these calculations are stored with the model object:
+
+titanic.glm$deviance
+titanic.glm$df.residual
+titanic.glm$deviance/titanic.glm$df.residual
+
+# This estimated dispersion is definitely greater than the assumed dispersion of 1 for a binomial GLM, and it is even greater
+# than the conservative rule of thumb shown in the brick:
+
+1 + 3*sqrt(2/titanic.glm$df.residual)
+
+# Or better yet, we can conduct the two-tailed hypothesis test for under- or over-dispersion described in lectures:
+
+titanic.glm$deviance
+c(qchisq(0.025, titanic.glm$df.residual), qchisq(0.975, titanic.glm$df.residual))
+
+# As the observed residual deviance lies in the upper tail of a chi-square distribution with the residual degrees of freedom,
+# we reject the null hypothesis that the dispersion = 1 and conclude that there is evidence of significant over-dispersion.
+
+# So, the four remaining potential problem groups are observations 1, 4, 5 and 12 (note that these include 3 of the 6 groups 
+# of children). Together, the 4 problem groups represent 125 out of 1302 passengers or just under 10% of the original data:
+
+outliers <- c(1,4,5,12) 
+sum(Passengers[outliers])
+sum(Passengers)
+100*sum(Passengers[outliers])/sum(Passengers)
+
+# We could try effectively excluding any or all of these observations from the calculation of the model by including indicator
+# variables for all four in the model:
+
+outlier01 <- c(1, rep(0,47)) 
+outlier04 <- c(rep(0,3), 1, rep(0,44))
+outlier05 <- c(rep(0,4), 1, rep(0,43))
+outlier12 <- c(rep(0,11), 1, rep(0,36))
+
+titanic.glm1 <- glm(Prop.Surv ~ outlier01 + outlier04 + outlier05 + outlier12 + Mean.Age + Sex + P.Class + Mean.Age:Sex + Sex:P.Class + Mean.Age:P.Class, family = binomial, weights=Passengers)
+anova(titanic.glm1, test="Chisq")
+
+# So, the 2 year old Lorraine Allison is not an influential outlier, but two of other three groups are. The two problem groups
+# together contain a total of 86 passengers:
+ 
+sum(Passengers[c(4,12)])
+sum(Passengers)
+100*sum(Passengers[c(4,12)])/sum(Passengers)
+
+# In this instance, I am very reluctant to simply discard almost 7% of the data, so I will go with the original titanic.glm model,
+# but note that these underlying problems with the model definitely make the rest of this analysis indicative (exploratory),
+# rather than conclusive (predictive). I will highlight all 4 potential problem observations (1, 4, 5, and 12) in the remainder
+# of this analysis. Note that one or both of the significant problem outliers also appear to be the cause of the apparent
+# significance of the Mean.Age:P.Class two-way interaction. 
+
+# Judging by the residual deviance for the titanic.glm1 model, the outliers also appear to have been the cause of the apparent
+# over-dispersion:
+
+titanic.glm1$deviance
+titanic.glm1$df.residual
+titanic.glm1$deviance/titanic.glm1$df.residual
+
+titanic.glm1$deviance
+c(qchisq(0.025, titanic.glm1$df.residual), qchisq(0.975, titanic.glm1$df.residual))
+
+# Question 2 (c)
+
+# To aid in the interpretation of the model, I will start by drawing a few plots of the model and the data.
+# The fitted model is a binomial model using the default logit link (a logistic regression model), so the model should look
+# like a series of logistic curves on the scale of the original response variable. To draw these curves, we need to 
+# use the model to make predictions for a large range of possible values of the explanatory variables:
+
+Ages <- 65*(0:(length(Mean.Age)-1)/(length(Mean.Age)-1))
+plot(Ages, Prop.Surv, type="n", xlab="Age in years (mid point of each age group)", ylab="Proportion surviving")
+title("Male passengers surviving the sinking of the RMS Titanic") 
+points(titanic[(P.Class=="first" & Sex=="male"),]$Mean.Age, Prop.Surv[P.Class=="first" & Sex=="male"], pch="1")
+points(titanic[(P.Class=="second" & Sex=="male"),]$Mean.Age, Prop.Surv[P.Class=="second" & Sex=="male"], pch="2")
+points(titanic[(P.Class=="third" & Sex=="male"),]$Mean.Age, Prop.Surv[P.Class=="third" & Sex=="male"], pch="3")
+points(titanic[c(4,12),]$Mean.Age, Prop.Surv[c(4,12)], pch="O", cex=1.5, lwd=2)
+lines(Ages, predict(titanic.glm, newdata=data.frame(Mean.Age=Ages, P.Class="first", Sex="male"), type="response"), lty=3, lwd=3)
+lines(Ages, predict(titanic.glm, newdata=data.frame(Mean.Age=Ages, P.Class="second", Sex="male"), type="response"), lty=1, lwd=3)
+lines(Ages, predict(titanic.glm, newdata=data.frame(Mean.Age=Ages, P.Class="third", Sex="male"), type="response"), lty=8, lwd=3)
+legend(35, 1, c("1st Class", "2nd Class", "3rd Class", "Problem groups"), pch=c("1","2","3","O"), lty=c(3,1,8,0), lwd=rep(3,4))
+
+Ages <- 65*(0:(length(Mean.Age)-1)/(length(Mean.Age)-1))
+plot(Ages, Prop.Surv, type="n", xlab="Age in years (mid point of each age group)", ylab="Proportion surviving")
+title("Female passengers surviving the sinking of the RMS Titanic") 
+points(titanic[(P.Class=="first" & Sex=="female"),]$Mean.Age, Prop.Surv[P.Class=="first" & Sex=="female"], pch="1")
+points(titanic[(P.Class=="second" & Sex=="female"),]$Mean.Age, Prop.Surv[P.Class=="second" & Sex=="female"], pch="2")
+points(titanic[(P.Class=="third" & Sex=="female"),]$Mean.Age, Prop.Surv[P.Class=="third" & Sex=="female"], pch="3")
+points(titanic[c(1,5),]$Mean.Age,Prop.Surv[c(1,5)], pch="O", cex=1.5, lwd=2)
+lines(Ages, predict(titanic.glm, newdata=data.frame(Mean.Age=Ages, P.Class="first", Sex="female"), type="response"), lty=3, lwd=3)
+lines(Ages, predict(titanic.glm, newdata=data.frame(Mean.Age=Ages, P.Class="second", Sex="female"), type="response"), lty=1, lwd=3)
+lines(Ages, predict(titanic.glm, newdata=data.frame(Mean.Age=Ages, P.Class="third", Sex="female"), type="response"), lty=8, lwd=3)
+legend(2, 0.25, c("1st Class", "2nd Class", "3rd Class", "Problem groups"), pch=c("1","2","3","O"), lty=c(3,1,8,0), lwd=rep(3,4))
+
+# Overall the model appears to be following the general "trend" of the data, but there are numerous departures from this trend,
+# particularly in the youngest age groups (the "children", who form a relatively small proportion of passengers) and the oldest 
+# age group (the "elderly", who are also relatively small in number). The departures are not just the highlighted problem
+# observations.
+
+anova(titanic.glm, test="Chisq")
+summary(titanic.glm)$coef
+qt(0.975, titanic.glm$df.residual)
+
+# The analysis of deviance table suggests that there are significant differences for different combinations of age and sex and for
+# different combinations of passenger class and sex (and also for different combinations of passenger class and age, but that may 
+# just been an artifact caused by one or more of the outliers). Examining the graphs in part (c), it is obvious that first class 
+# passengers had consistently better survival than other passengers (most notably the third class passengers), female passengers
+# had better survival than male passengers, but for males, the survival of second class passengers was closer to that of third 
+# class passengers, whilst for females the survival of second class passengers was closer to the first class passengers.
+
+# It is hard to interpret the coefficients in the presence of significant interactions without looking at the graphs, but the signs
+# of the main effect terms are consistent with the above story. For passenger class, the reference group is first and both the 
+# coefficients for both second and third class passengers are negative, indicating worse survival - significantly worse in both 
+# cases, but decidedly worst for third class (moderated a little by the interaction terms for the two sexes). For sex, the reference
+# group is females (which come before males in alphabetical order) and therefore males have significantly worse survival. The slope 
+# for age is negative, suggesting worse survival as age increases, but the main effect term is not significant, however, the 
+# interaction term with sex is both negative and significant, suggesting that this decreasing survival with age is significant for
+# males.
+
+# The age pattern is not clear, but from the graphs there seems to be different levels of survival for children (relatively high
+# for both sexes), adults (low to moderate, depending on class for males and high for females, except in third class) and the elderly 
+# (where survival is lower than the younger age groups for all classes and both sexes). A better fitting model might be achieved by 
+# summarising the data further into these broad age groups (children, adults and the elderly) and fitting age as a categorical 
+# factor rather than a continuous covariate (but at the expense of losing a lot of detail).
+
+# Question 2 (d) 
+
+# Given the comments in the preceding paragraph, we could use the current model to make predictions for typical members of these
+# three broader age groups, combined with the various levels of sex and passenger class. Given we have broader age groups, the 
+# median ages are arguably a better indicator of central tendency or typical age than the mean ages. Going back to the original 
+# Excel spreadsheet, it is reasonably easy to calculate the median age for the 114 children (defined as everyone 13 or younger 
+# in the spreadsheet) as 5 years old. The median age of the 1,075 young adult passengers (aged 14 to 49 inclusive) is 28 years 
+# old and the median age of the 113 older adult passengers is 57 years old (it is a bit much to call some members of this last
+# group "elderly", but it can be difficult to find non-perjorative terms associated with age). 
+
+# So, using the model to make confidence interval predictions for the 18 combinations of age (3 groups), class (3) and sex (2):
+
+add.ci <- function(object, fit.se, conf.level=0.95){
+  fit <- fit.se$fit
+  se.fit <- fit.se$se.fit
+  residual.scale <- fit.se$residual.scale
+  pi.se <- sqrt(residual.scale^2 + se.fit^2) 
+  tquantile <- qt(1 - (1 - conf.level)/2, object$df.residual)
+  ci.fit <- cbind(lower = fit - tquantile*se.fit, upper = fit + tquantile*se.fit)
+  pi.fit <- cbind(lower = fit - tquantile*pi.se, upper = fit + tquantile*pi.se)
+  list(fit = fit, se.fit = se.fit, residual.scale = residual.scale, ci.fit = ci.fit, pi.fit = pi.fit)
+}
+
+invlogit <- function(x){exp(x)/(1 + exp(x))}
+
+Sexes <- c(rep("male", 9), rep("female",9))
+Classes <- c(rep(c("first", "second", "third"), 6)) 
+Ages <- rep(c(5, 5, 5, 28, 28, 28, 57, 57, 57), 2)
+ 
+new <- data.frame(Mean.Age=Ages, P.Class=Classes, Sex=Sexes)
+new 
+temp <- predict(titanic.glm, newdata=new, type="link", se.fit=T)
+
+broad.groups <- add.ci(titanic.glm, temp)
+broad.groups
+
+group.estimates <- cbind(new, "Lower95%CI"=invlogit(broad.groups$ci.fit[,1]), Estimate=invlogit(broad.groups$fit), "Upper95%CI"=invlogit(broad.groups$ci.fit[,2]))
+group.estimates
+
+# The results are consistent with the discussion in part (d) (and they also illustrate the differences between the groups).
+# For males, the confidence intervals for second and third class are very close, whilst first class is distinctly higher for
+# all three broad age groups. For females, the confidence interval for second class survival tend to be overlap with first class
+# survival, whilst third class survival is distinctly lower for all three broad age groups.  
+
+# Alternatively, we can do this for all existing data points and add to the earlier plots:
+
+new <- data.frame(Mean.Age, P.Class, Sex)
+new 
+temp <- predict(titanic.glm, newdata=new, type="link", se.fit=T)
+temp <- add.ci(titanic.glm, temp)
+estimates <- cbind(new, "Lower95%CI"=invlogit(temp$ci.fit[,1]), Estimate=invlogit(temp$fit), "Upper95%CI"=invlogit(temp$ci.fit[,2]))
+
+# For males:
+
+Ages <- 65*(0:(length(Mean.Age)-1)/(length(Mean.Age)-1))
+plot(Ages, Prop.Surv, type="n", xlab="Age in years (mid point of each age group)", ylab="Proportion surviving")
+title("Male passengers surviving the sinking of the RMS Titanic") 
+points(titanic[(P.Class=="first" & Sex=="male"),]$Mean.Age, Prop.Surv[P.Class=="first" & Sex=="male"], pch="1")
+points(titanic[(P.Class=="second" & Sex=="male"),]$Mean.Age, Prop.Surv[P.Class=="second" & Sex=="male"], pch="2")
+points(titanic[(P.Class=="third" & Sex=="male"),]$Mean.Age, Prop.Surv[P.Class=="third" & Sex=="male"], pch="3")
+points(titanic[c(4,12),]$Mean.Age, Prop.Surv[c(4,12)], pch="O", cex=1.5, lwd=2)
+lines(Ages, predict(titanic.glm, newdata=data.frame(Mean.Age=Ages, P.Class="first", Sex="male"), type="response"), lty=3, lwd=3)
+lines(Ages, predict(titanic.glm, newdata=data.frame(Mean.Age=Ages, P.Class="second", Sex="male"), type="response"), lty=1, lwd=3)
+lines(Ages, predict(titanic.glm, newdata=data.frame(Mean.Age=Ages, P.Class="third", Sex="male"), type="response"), lty=8, lwd=3)
+legend(35, 1, c("1st Class", "2nd Class", "3rd Class", "Problem groups"), pch=c("1","2","3","O"), lty=c(3,1,8,0), lwd=rep(3,4))
+
+male.estimates <- estimates[Sex=="male",]
+for (i in 1:nrow(male.estimates)) { 
+  lines(rep(male.estimates[i,]$Mean.Age,2),c(male.estimates[i,"Lower95%CI"],male.estimates[i,"Upper95%CI"]),lty=1,lwd=1)
+}
+
+# For females:
+
+Ages <- 65*(0:(length(Mean.Age)-1)/(length(Mean.Age)-1))
+plot(Ages, Prop.Surv, type="n", xlab="Age in years (mid point of each age group)", ylab="Proportion surviving")
+title("Female passengers surviving the sinking of the RMS Titanic") 
+points(titanic[(P.Class=="first" & Sex=="female"),]$Mean.Age, Prop.Surv[P.Class=="first" & Sex=="female"], pch="1")
+points(titanic[(P.Class=="second" & Sex=="female"),]$Mean.Age, Prop.Surv[P.Class=="second" & Sex=="female"], pch="2")
+points(titanic[(P.Class=="third" & Sex=="female"),]$Mean.Age, Prop.Surv[P.Class=="third" & Sex=="female"], pch="3")
+points(titanic[c(1,5),]$Mean.Age,Prop.Surv[c(1,5)], pch="O", cex=1.5, lwd=2)
+lines(Ages, predict(titanic.glm, newdata=data.frame(Mean.Age=Ages, P.Class="first", Sex="female"), type="response"), lty=3, lwd=3)
+lines(Ages, predict(titanic.glm, newdata=data.frame(Mean.Age=Ages, P.Class="second", Sex="female"), type="response"), lty=1, lwd=3)
+lines(Ages, predict(titanic.glm, newdata=data.frame(Mean.Age=Ages, P.Class="third", Sex="female"), type="response"), lty=8, lwd=3)
+legend(2, 0.25, c("1st Class", "2nd Class", "3rd Class", "Problem groups"), pch=c("1","2","3","O"), lty=c(3,1,8,0), lwd=rep(3,4))
+
+female.estimates <- estimates[Sex=="female",]
+for (i in 1:nrow(female.estimates)) { 
+  lines(rep(female.estimates[i,]$Mean.Age,2),c(female.estimates[i,"Lower95%CI"],female.estimates[i,"Upper95%CI"]),lty=1,lwd=1)
+}
+
+# However, exactly what you present here depends on what research question you are trying to answer. For example, say we wanted 
+# to address one of the obvious questions that occurs when you read the Wikipedia article and similar sources :
+# "Was it really Women and Children first?"
+
+# In this case, better graphs would allow you to compare the two sexes (and the different ages) on the one graph. Again to avoid
+# things becoming too cluttered, it is easier to produce different graphs for the three different passenger classes and this time, 
+# I will include point-wise confidence intervals for the full age range on each graph:
+
+Ages <- 65*(0:(length(Mean.Age)-1)/(length(Mean.Age)-1))
+length(Ages)
+new <- data.frame(Mean.Age=rep(Ages,6), P.Class=rep(c(rep("first",48), rep("second",48), rep("third", 48)),2), Sex=c(rep("female", 3*48), rep("male", 3*48)))
+temp <- predict(titanic.glm, newdata=new, type="link", se.fit=T)
+temp <- add.ci(titanic.glm, temp)
+estimates <- cbind(new, "Lower95%CI"=invlogit(temp$ci.fit[,1]), Estimate=invlogit(temp$fit), "Upper95%CI"=invlogit(temp$ci.fit[,2]))
+
+# For first class passengers:
+
+temp <- estimates[estimates$P.Class=="first",]
+
+plot(Ages, Prop.Surv, type="n", xlab="Age in years", ylab="Proportion surviving")
+title("First class passengers surviving the sinking of the RMS Titanic") 
+points(titanic[(P.Class=="first" & Sex=="female"),]$Mean.Age, Prop.Surv[P.Class=="first" & Sex=="female"], pch="F")
+points(titanic[(P.Class=="first" & Sex=="male"),]$Mean.Age, Prop.Surv[P.Class=="first" & Sex=="male"], pch="M")
+points(titanic[1,]$Mean.Age,Prop.Surv[1], pch="O", cex=2, lwd=2)
+lines(Ages, temp[temp$Sex=="female",]$Estimate, lty=3, lwd=4)
+lines(Ages, temp[temp$Sex=="male",]$Estimate, lty=1, lwd=2)
+lines(Ages, temp[temp$Sex=="female",]$"Lower95%CI", lty=2, lwd=2)
+lines(Ages, temp[temp$Sex=="female",]$"Upper95%CI", lty=2, lwd=2)
+lines(Ages, temp[temp$Sex=="male",]$"Lower95%CI", lty=2, lwd=2)
+lines(Ages, temp[temp$Sex=="male",]$"Upper95%CI", lty=2, lwd=2)
+legend(0, 0.18, c("Females", "Males", "Problems"), lty=c(3,1,0), lwd=rep(3,3), pch=c("F","M","O"))
+
+# For second class passengers:
+
+temp <- estimates[estimates$P.Class=="second",]
+
+Ages <- 65*(0:(length(Mean.Age)-1)/(length(Mean.Age)-1))
+plot(Ages, Prop.Surv, type="n", xlab="Age in years", ylab="Proportion surviving")
+title("Second class passengers surviving the sinking of the RMS Titanic") 
+points(titanic[(P.Class=="second" & Sex=="female"),]$Mean.Age, Prop.Surv[P.Class=="second" & Sex=="female"], pch="F")
+points(titanic[(P.Class=="second" & Sex=="male"),]$Mean.Age, Prop.Surv[P.Class=="second" & Sex=="male"], pch="M")
+points(titanic[4,]$Mean.Age,Prop.Surv[4], pch="O", cex=2, lwd=2)
+lines(Ages, temp[temp$Sex=="female",]$Estimate, lty=3, lwd=4)
+lines(Ages, temp[temp$Sex=="male",]$Estimate, lty=1, lwd=2)
+lines(Ages, temp[temp$Sex=="female",]$"Lower95%CI", lty=2, lwd=2)
+lines(Ages, temp[temp$Sex=="female",]$"Upper95%CI", lty=2, lwd=2)
+lines(Ages, temp[temp$Sex=="male",]$"Lower95%CI", lty=2, lwd=2)
+lines(Ages, temp[temp$Sex=="male",]$"Upper95%CI", lty=2, lwd=2)
+legend(30, 0.55, c("Females", "Males", "Problems"), lty=c(3,1,0), lwd=rep(3,3), pch=c("F","M","O"))
+
+# For third class passengers:
+
+temp <- estimates[estimates$P.Class=="third",]
+
+Ages <- 65*(0:(length(Mean.Age)-1)/(length(Mean.Age)-1))
+plot(Ages, Prop.Surv, type="n", xlab="Age in years", ylab="Proportion surviving")
+title("Third class passengers surviving the sinking of the RMS Titanic") 
+points(titanic[(P.Class=="third" & Sex=="female"),]$Mean.Age, Prop.Surv[P.Class=="third" & Sex=="female"], pch="F")
+points(titanic[(P.Class=="third" & Sex=="male"),]$Mean.Age, Prop.Surv[P.Class=="third" & Sex=="male"], pch="M")
+points(titanic[c(5,12),]$Mean.Age,Prop.Surv[c(5,12)], pch="O", cex=2, lwd=2)
+lines(Ages, temp[temp$Sex=="female",]$Estimate, lty=3, lwd=4)
+lines(Ages, temp[temp$Sex=="male",]$Estimate, lty=1, lwd=2)
+lines(Ages, temp[temp$Sex=="female",]$"Lower95%CI", lty=2, lwd=2)
+lines(Ages, temp[temp$Sex=="female",]$"Upper95%CI", lty=2, lwd=2)
+lines(Ages, temp[temp$Sex=="male",]$"Lower95%CI", lty=2, lwd=2)
+lines(Ages, temp[temp$Sex=="male",]$"Upper95%CI", lty=2, lwd=2)
+legend(40, 1, c("Females", "Males", "Problems"), lty=c(3,1,0), lwd=rep(3,3), pch=c("F","M","O"))
+
+# I feel that the three passenger class graphs would be a better way of illustrating the model to a non statistical audience
+# than the two graphs by sex, and either of the graphical approaches is better than just presenting a table of estimates. 
+# Note that in all three versions, statisticians should insist on presenting interval estimates rather than just point
+# estimates, as these are about the only way of conveying the uncertainty associated with these estimates.
+
+# Question 2 (e)
+
+# The aggregate model, particularly the graphs in part (d) provide a fairly good and persuasive answer to the research
+# question "was it really women and children first?", noting the caveats on the fit of the model discussed in part (b).
+# The model would not be a good predictive model (it is hard to imagine a situation in which we would a predictive 
+# model might be relevant), but it is fairly obvious that women certainly did have better survival than men and children
+# (the youngest age group) did have better survival than the older age groups. However, the model clearly demonstrates
+# that there were also important differences in relative survival due to passenger class.
+
+# To fit the same model to the individual level data, first read in and check the individual data:
+
+passengers <- read.table("passengers.txt", header=T)
+passengers
+names(passengers)
+
+# All the individual level variables involved in the model have new names, compared with the aggregate data, except for Sex 
+# - change this to Gender to avoid any confusion:
+
+names(passengers) <- c("ID.No","Survived","Gender","Cabin","Age")
+attach(passengers)
+
+range(Age)
+levels(Cabin)
+levels(Gender)
+
+passengers.glm <- glm(Survived ~ Age + Gender + Cabin + Age:Gender + Gender:Cabin + Age:Cabin, family = binomial)
+passengers.glm
+
+# The main residual plot is far less helpful, unless we do something to group the residuals:
+
+plot(passengers.glm, which=1)
+title("Titanic data: same logistic binomial GLM fitted to unit record data")
+
+# Note how both the residual and the outlier analysis changes:
+
+plot(passengers.glm, which=1:5)
+
+residuals(passengers.glm, type="pearson")[abs(residuals(passengers.glm, type="pearson"))>3]
+
+studentised.residuals <- residuals(passengers.glm, type="deviance")/sqrt(summary(passengers.glm)$dispersion * (1 - influence(passengers.glm)$hat))
+studentised.residuals[abs(studentised.residuals)>3]
+
+range(studentised.residuals)
+
+outliers <- c(22,523,1279,1280)
+cbind(passengers[outliers,], Pearson.res=residuals(passengers.glm, type="pearson")[outliers], dev.res=residuals(passengers.glm, type="deviance")[outliers], stud.dev.res=studentised.residuals[outliers], hat=influence(passengers.glm)$hat[outliers], CooksD=cooks.distance(passengers.glm)[outliers])
+
+# Compare the Analysis of Deviance tables for the aggregate and individual record models:
+
+anova(titanic.glm, test="Chisq")
+anova(passengers.glm, test="Chisq")
+
+# The under- and over-dispersion test can still be conducted, but is no longer a proper test with binary response data:
+
+passengers.glm$deviance
+passengers.glm$df.residual
+passengers.glm$deviance/passengers.glm$df.residual
+
+passengers.glm$deviance
+c(qchisq(0.025, passengers.glm$df.residual), qchisq(0.975, passengers.glm$df.residual))
+
+# And we can also compare the model coefficients:
+
+summary(titanic.glm)
+summary(passengers.glm)
+
+# Which are remarkably similar in all aspects that are comparable.
+
+# What about plotting the model and the data on the same plot (we need to "jitter" the points to see them on the plot):
+
+IAges <- max(Age)*(0:(length(Age)-1)/(length(Age)-1))
+length(IAges)
+Jittered <- Survived
+for (i in 1:length(Survived)){
+ Jittered[i] <- ifelse(Survived[i]==1, runif(1, min=0.9, max=1), runif(1, min=0, max=0.1))
+}
+
+Mean.Ages <- 65*(0:(length(Mean.Age)-1)/(length(Mean.Age)-1))
+new <- data.frame(Age=rep(Mean.Ages,6), Cabin=rep(c(rep("first",48), rep("second",48), rep("third", 48)),2), Gender=c(rep("female", 3*48), rep("male", 3*48)))
+temp <- predict(passengers.glm, newdata=new, type="link", se.fit=T)
+temp <- add.ci(passengers.glm, temp)
+individual.level.estimates <- cbind(new, "Lower95%CI"=invlogit(temp$ci.fit[,1]), Estimate=invlogit(temp$fit), "Upper95%CI"=invlogit(temp$ci.fit[,2]))
+
+temp <- individual.level.estimates[individual.level.estimates$Cabin=="first",]
+
+plot(IAges, Jittered, type="n", xlab="Age in years", ylab="Proportion surviving")
+title("First class passengers surviving the sinking of the RMS Titanic") 
+points(passengers[(Cabin=="first" & Gender=="female"),]$Age, Jittered[Cabin=="first" & Gender=="female"], pch="F")
+points(passengers[(Cabin=="first" & Gender=="male"),]$Age, Jittered[Cabin=="first" & Gender=="male"], pch="M")
+lines(Mean.Ages, temp[temp$Gender=="female",]$Estimate, lty=3, lwd=4)
+lines(Mean.Ages, temp[temp$Gender=="male",]$Estimate, lty=1, lwd=2)
+lines(Mean.Ages, temp[temp$Gender=="female",]$"Lower95%CI", lty=2, lwd=2)
+lines(Mean.Ages, temp[temp$Gender=="female",]$"Upper95%CI", lty=2, lwd=2)
+lines(Mean.Ages, temp[temp$Gender=="male",]$"Lower95%CI", lty=2, lwd=2)
+lines(Mean.Ages, temp[temp$Gender=="male",]$"Upper95%CI", lty=2, lwd=2)
+legend(45, 0.75, c("Females", "Males"), lty=c(3,1), lwd=rep(3,2), pch=c("F","M"))
+
+temp <- individual.level.estimates[individual.level.estimates$Cabin=="second",]
+
+plot(IAges, Jittered, type="n", xlab="Age in years", ylab="Proportion surviving")
+title("Second class passengers surviving the sinking of the RMS Titanic") 
+points(passengers[(Cabin=="second" & Gender=="female"),]$Age, Jittered[Cabin=="second" & Gender=="female"], pch="F")
+points(passengers[(Cabin=="second" & Gender=="male"),]$Age, Jittered[Cabin=="second" & Gender=="male"], pch="M")
+lines(Mean.Ages, temp[temp$Gender=="female",]$Estimate, lty=3, lwd=4)
+lines(Mean.Ages, temp[temp$Gender=="male",]$Estimate, lty=1, lwd=2)
+lines(Mean.Ages, temp[temp$Gender=="female",]$"Lower95%CI", lty=2, lwd=2)
+lines(Mean.Ages, temp[temp$Gender=="female",]$"Upper95%CI", lty=2, lwd=2)
+lines(Mean.Ages, temp[temp$Gender=="male",]$"Lower95%CI", lty=2, lwd=2)
+lines(Mean.Ages, temp[temp$Gender=="male",]$"Upper95%CI", lty=2, lwd=2)
+legend(30, 0.55, c("Females", "Males"), lty=c(3,1), lwd=rep(3,2), pch=c("F","M"))
+
+temp <- individual.level.estimates[individual.level.estimates$Cabin=="third",]
+
+plot(IAges, Jittered, type="n", xlab="Age in years", ylab="Proportion surviving")
+title("Third class passengers surviving the sinking of the RMS Titanic") 
+points(passengers[(Cabin=="third" & Gender=="female"),]$Age, Jittered[Cabin=="third" & Gender=="female"], pch="F")
+points(passengers[(Cabin=="third" & Gender=="male"),]$Age, Jittered[Cabin=="third" & Gender=="male"], pch="M")
+lines(Mean.Ages, temp[temp$Gender=="female",]$Estimate, lty=3, lwd=4)
+lines(Mean.Ages, temp[temp$Gender=="male",]$Estimate, lty=1, lwd=2)
+lines(Mean.Ages, temp[temp$Gender=="female",]$"Lower95%CI", lty=2, lwd=2)
+lines(Mean.Ages, temp[temp$Gender=="female",]$"Upper95%CI", lty=2, lwd=2)
+lines(Mean.Ages, temp[temp$Gender=="male",]$"Lower95%CI", lty=2, lwd=2)
+lines(Mean.Ages, temp[temp$Gender=="male",]$"Upper95%CI", lty=2, lwd=2)
+legend(40, 0.85, c("Females", "Males"), lty=c(3,1), lwd=rep(3,2), pch=c("F","M"))
+
+# Finally we can compare the aggregate and individual level estimates by calculating the precentage change:
+
+aggregate <- estimates[,4:6]
+individual <- individual.level.estimates[,4:6]
+data.frame(estimates[,1:3],Aggregate=aggregate$Estimate, Individual=individual$Estimate, 100*(aggregate - individual)/aggregate)
+
+# Overall, very little change in the estimates or confidence intervals!
+
+# Arguably, we are trying to address an aggregate research question, so an aggregate analysis is more appropriate and certainly
+# more informatitive on issues such as over-dispersion. Also the residual analysis is a lot less informative with individual level
+# binary response data, unless we aggregate the residuals into age groups! 

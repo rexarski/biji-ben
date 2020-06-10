@@ -1,0 +1,7 @@
+no.1 no.2 no.3 no.4 no.5 no.6 no.7 no.8 no.9
+red 5 8 5 6 9 4 7 7 6
+blue 9 5 6 3 5 4 5 5 3
+yellow 10 6 3 7 10 9 2 9 7
+green 1 7 11 6 2 9 10 4 8
+purple 4 9 6 5 10 3 7 8 3
+orange 4 4 1 4 3 5 4 4 5

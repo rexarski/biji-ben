@@ -1,0 +1,98 @@
+\documentclass[a4paper, 11pt, twoside]{article}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\begin{document}
+2017-03-06
+
+MATH6222 week 3 lecture 7\\
+
+\textbf{Principle of Induction}
+
+Suppose we $P(1), P(2), P(3), \dots$ is a sequence of mathematical statements, i.e. we have a statement $P(k)$ for each natural number $k \in \mathbb{N}$.\\
+
+[Correction: The textbook does not include zero as a natural number.]\\
+
+Suppose we can prove:
+
+\begin{enumerate}
+	\item $P(1)$ [Base step]
+	\item $P(k) \implies P(k+1)$ for each $k\in\mathbb{N}$ [Induction step]
+\end{enumerate}
+
+Then $P(1), P(2), P(3), \dots$ are all true.\\
+
+Proof: Suppose, for a contradiction, that some of the $P(i)$ are false.
+
+Consider the "First" which is false, i.e., we have $P(k)$ false but $P(k-1), P(k-2), \dots$ true.
+
+Note: This statement cannot be $P(1)$.
+
+Therefore, $P(k-1)$ exists and is true.
+
+But we also know by $(2)$ that $P(k-1)\implies P(k)$ is true.
+
+This is a contradiction.
+
+We conclude none of the statements can be false.\\
+
+\textbf{Example:} Find a pattern for the sum of the first $n$ odd, positive integers.
+
+\[
+\begin{split}
+1=1\\1+3=4\\1+3+5=9\\1+3+5+7=16	
+\end{split}
+\]
+
+\[P(n):= 1+3+5+\cdots +(2n-1)=n^2\]
+
+We want to show this is true for all $n$.
+
+\begin{enumerate}
+	\item Check $P(1). 1=1.$ It's true.
+	\item Check $P(k) \implies P(k+1).$
+\end{enumerate}
+
+Assume $P(k)$ (induction hypothesis), which is $1+3+5+\cdots + (2k-1) = k^2.$
+
+What about $P(k+1)$? It is $1+3+5+\cdots +(2k-1) + (2k+1) = (k+1)^2.$
+
+\[1+3+5+\cdots + 2k-1 + 2k+1 = k^2 + 2k+1 = (k+1)^2. \text{(Done with the induction step)}\]\\
+
+\textbf{Question:} How many squares are contained in an $n\times n$ chessboard?\\
+
+The answer is $1^2+2^2+\cdots + (n-1)^2+n^2 = \frac{n(n+1)(2n+1)}{6}.........P(n).$
+
+\begin{enumerate}
+	\item $P(1), 1=\frac{1\cdot 2\cdot 3}{6}.$ (Base step)
+	\item $P(k-1)\implies P(k), 1^2+2^2+\cdots + (k-1)^2 = \frac{(k-1)k(2k-1)}{6}.$
+\end{enumerate}  
+
+\[
+\begin{split}
+	P(k-1)\implies P(k), 1^2+2^2+\cdots + (k-1)^2 &= \frac{(k-1)k(2k-1)}{6}.\\
+	1^2+2^2+\cdots + (k-1)^2 + k^2 &= \frac{(k-1)k(2k-1)}{6} + k^2 \\
+	&= \frac{(k-1)k(2k-1)+6k^2}{6}\\
+	&= \frac{(k^2-k)(2k-1)+6k^2}{6}\\
+	&= \frac{2k^3-k^2-2k^2+k+6k^2}{6}\\
+	&= \frac{2k^3+3k^2+k}{6}\\
+	&= \frac{k(k+1)(2k+1)}{6}
+\end{split}
+\]
+
+\textbf{Problem:} For which natural numbers $n$ is it true that $3^n \geq 2^{n+1}.$\\
+
+For $n=1$, false. $n=2$, true. $n=3$, true...
+
+Let $P(n):=3^n \geq 2^{n+1}.$ We claim $P(n)$ is true for $n\geq 2.$
+
+Need \begin{enumerate}
+	\item $P(2)$ is true.
+	\item $P(k)\implies P(k+1)$ for all $k = 2, 3, \dots$
+\end{enumerate}
+
+$P(2): 9>8$ True.
+
+$P(k): 3^{k+1} > 3 \cdot 2^{k+1} > 2\cdot 2^{k+1} = 2^{k+2}.$ This completes the induction.\\
+
+\[\int_0^1xdx=?\]
+\end{document}

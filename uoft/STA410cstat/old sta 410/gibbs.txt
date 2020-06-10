@@ -1,0 +1,28 @@
+ite = 10000
+
+n = 0 
+t_x = 1
+t_y = 0
+sample = rbind(t_x,t_y)
+for (i in 1:ite){
+t_y = runif(1,y_low(t_x),y_up(t_x))
+t_x = runif(1,x_low(t_y),x_up(t_y))
+sample = cbind(sample,rbind(t_x,t_y))
+}
+
+x_low = function(y){
+if (y>1){return (0)}
+else return(sqrt(1-y^2))
+}
+
+x_up = function(y){
+return(sqrt(4-y^2))
+}
+y_low = function(x){
+if (x>1){return (0)}
+else return(sqrt(1-x^2))
+}
+
+y_up = function(x){
+return(sqrt(4-x^2))
+} 

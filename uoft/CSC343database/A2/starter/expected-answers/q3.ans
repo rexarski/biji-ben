@@ -1,0 +1,62 @@
+        record_label         | year | total_sales
+-----------------------------+------+-------------
+ A&M Records                 | 1983 |     1000000
+ ABC / Dunhill Records       | 1968 |   100000000
+ Albert Productions          | 1975 |    10000000
+ Apple Records               | 1971 |    10000000
+ Arista                      | 2004 |    10000000
+ Asylum Records              | 1976 |   100000000
+ Atlantic                    | 1957 |    10000000
+ Atlantic                    | 1961 |    10000000
+ BNA Records                 | 1996 |    10000000
+ BNA Records                 | 2003 |    10000000
+ Big Machine Records         | 2010 |    10000000
+ Capitol Records             | 1964 |    10000000
+ Capitol Records             | 1966 |    10000000
+ Capitol Records             | 1970 |    10000000
+ Capitol Records             | 2003 |     1000000
+ Columbia                    | 1952 |      100000
+ Columbia                    | 1957 |   100000000
+ Columbia                    | 1964 |    10000000
+ Columbia                    | 1967 |     1000000
+ Columbia                    | 1975 |    10000000
+ Columbia                    | 2001 |   100000000
+ Columbia                    | 2014 |    10000000
+ Decca                       | 1971 |    10000000
+ Def Jam Recordings          | 1990 |    10000000
+ Def Jam Recordings          | 1997 |    10000000
+ Elektra                     | 1986 |    10000000
+ Epic                        | 1982 |   100000000
+ Epic                        | 2010 |   100000000
+ Fella Records               | 2007 |   100000000
+ Food, Food                  | 1993 |    10000000
+ Geffen Records              | 1987 |   100000000
+ Island Records              | 1997 |    10000000
+ Island Records              | 2004 |   100000000
+ Island Records              | 2012 |    10000000
+ Island Records              | 2015 |     1000000
+ Modern Records              | 1981 |    10000000
+ One Little Indian           | 1997 |    10000000
+ PMW Records                 | 1990 |    10000000
+ Paramount                   | 1958 |     1000000
+ Parlophone                  | 1983 |   100000000
+ Parlophone                  | 1986 |    10000000
+ Parlophone                  | 2014 |    10000000
+ RCA                         | 2012 |    10000000
+ RCA                         | 2013 |   100000000
+ RCA Victor                  | 1962 |     1000000
+ RCA Victor                  | 1970 |    10000000
+ RCA Victor                  | 1973 |    10000000
+ Receiver Records Limited    | 1977 |       40000
+ Reprise                     | 2013 |     1000000
+ Roc Nation                  | 2009 |   100000000
+ Sony Discos                 | 1995 |    10000000
+ Sony Music                  | 2011 |    10000000
+ Streamline Records          | 2009 |   100000000
+ Streamline Records          | 2011 |   100000000
+ Universal                   | 2011 |    10000000
+ Universal Music New Zealand | 2013 |    10000000
+ Universal Records           | 2003 |    10000000
+ Virgin                      | 2005 |    10000000
+(58 rows)
+

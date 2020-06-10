@@ -1,0 +1,153 @@
+Question 1
+
+A. The answer, according to the shell, is below.
+
+>>> lst = [1, 2, 3]
+>>> len(lst + lst)
+6
+>>> len ([lst] + [lst])
+2
+>>> len ([lst] + lst)
+4
+>>> len(lst.append(4))
+error
+>>> len(lst * 2) * 2
+16
+>>> len(lst)
+4
+
+B. The answer, according to the shell, is below.
+
+>>> s = 'hello'
+>>> s[::]
+'hello'
+>>> s[:-2]
+'hel'
+>>> s[-1::-1]
+'olleh'
+
+
+----------
+
+Question 2. See columns.py.
+
+My approach uses a dictionary because we do not know how many columns we will have. The alternative is to use a list, and to add a new element to the list each time we get to a new column for the first time. This requires more record-keeping, but can be done.
+
+
+----------
+
+Question 3.
+A. See bricks.py (and test_bricks.py).
+
+Thanks to Nick Parlante, from whom this question originated.
+
+The key observation is that we should exhaust all of the big bricks before using small bricks to reach our goal. The opposite does not work: if we first exhaust all small bricks, we may have put ourselves in a situation where using big bricks will not get us to our goal. For example, with three small bricks, two big bricks, and a goal of ten, we cannot use any of the small bricks.
+
+B. Yes.
+
+----------
+
+A. see balanced.py
+
+B. No. For each lower bound, the program tests the segment ending at each upper bound. The program is (at least) quadratic, not linear.
+
+C. See balanced.py.
+
+Note that using max on a list _does not_ give the longest sublist in that list. You'd have to use 'key=len' as I did, or otherwise write a loop that goes through each balanced segment in the list and finds the one whose 'len' is largest.
+
+D.
+1. 
+Pass: []
+Expect: []
+Justification: test boundary case of empty list
+
+2.
+Pass: [0]
+Expect: []
+Justification: boundary case of a non-empty list with no balanced segment
+
+3.
+Pass: [0, 1]
+Expect: [[0, 1]]
+Justification: test simple case of list with one balanced segment
+
+
+
+----------
+
+Question 5
+
+A. see all_keys_values.py
+
+
+----------
+
+Question 6
+
+A.
+Example: {5: [2]}
+The inverted dictionary would be:
+{[2]:5}
+but this is impossible because lists cannot be dictionary keys.
+
+
+B. We use a list of values because we might have multiple keys mapping to the same value in the original dictionary. We do not want to arbitrarily choose which key to store with each value, so we store them all in a list.
+
+
+C. No.
+Example: 
+{2:5, 3:5}
+can be inverted as:
+{5:[2, 3]}
+or:
+{5:[3, 2]}
+
+
+----------
+
+Question 7
+
+A. According to the shell:
+>>> 'a'.join (['b', 'c'])
+'bac' 
+
+
+B. See block_string.py.
+
+Note: using 'split' might be possible, but it throws away spaces.
+
+
+----------
+
+Question 8. See star_rect.py.
+
+----------
+
+Question 9
+
+A. According to the shell:
+Animal: (Sparky) 
+
+B. According to the shell:
+False
+
+C. There must be an "is-a" relationship between the class we are defining and the class from which we are inheriting. The new class "is-a" subset of the class from which we inherit.
+
+
+
+----------
+
+Question 10
+
+A. Simply:
+lst = sorted (lst)
+
+B.
+[2, 4, 6, 9, 8, 13, 12, 19]
+
+Note: the list has not changed.
+
+
+C.
+[2, 4, 6, 8, 9, 13, 12, 19]
+

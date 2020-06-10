@@ -1,0 +1,401 @@
+%
+% This is a borrowed LaTeX template file for lecture notes for CS267,
+% Applications of Parallel Computing, UCBerkeley EECS Department.
+% Now being used for CMU's 10725 Fall 2012 Optimization course
+% taught by Geoff Gordon and Ryan Tibshirani.  When preparing 
+% LaTeX notes for this class, please use this template.
+%
+% To familiarize yourself with this template, the body contains
+% some examples of its use.  Look them over.  Then you can
+% run LaTeX on this file.  After you have LaTeXed this file then
+% you can look over the result either by printing it out with
+% dvips or using xdvi. "pdflatex template.tex" should also work.
+%
+
+\documentclass[twoside]{article}
+\setlength{\oddsidemargin}{0.25 in}
+\setlength{\evensidemargin}{-0.25 in}
+\setlength{\topmargin}{-0.6 in}
+\setlength{\textwidth}{6.5 in}
+\setlength{\textheight}{8.5 in}
+\setlength{\headsep}{0.75 in}
+\setlength{\parindent}{0 in}
+\setlength{\parskip}{0.1 in}
+
+%
+% ADD PACKAGES here:
+%
+
+\usepackage{amsmath,amsfonts,graphicx,soul}
+
+%
+% The following commands set up the lecnum (lecture number)
+% counter and make various numbering schemes work relative
+% to the lecture number.
+%
+\newcounter{lecnum}
+\renewcommand{\thepage}{\thelecnum-\arabic{page}}
+\renewcommand{\thesection}{\thelecnum.\arabic{section}}
+\renewcommand{\theequation}{\thelecnum.\arabic{equation}}
+\renewcommand{\thefigure}{\thelecnum.\arabic{figure}}
+\renewcommand{\thetable}{\thelecnum.\arabic{table}}
+
+\newcommand*\conj[1]{\bar{#1}}
+\newcommand*\mean[1]{\bar{#1}}
+\newcommand{\indep}{\rotatebox[origin=c]{90}{$\models$}}
+%
+% The following macro is used to generate the header.
+%
+\newcommand{\lecture}[4]{
+   \pagestyle{myheadings}
+   \thispagestyle{plain}
+   \newpage
+   \setcounter{lecnum}{#1}
+   \setcounter{page}{1}
+   \noindent
+   \begin{center}
+   \framebox{
+      \vbox{\vspace{2mm}
+    \hbox to 6.28in { {\bf STAT7017 Big Data Statistics
+	\hfill Semester 2 2018} }
+       \vspace{4mm}
+       \hbox to 6.28in { {\Large \hfill Lecture #1: #2  \hfill} }
+       \vspace{2mm}
+       \hbox to 6.28in { {\it Lecturer: #3 \hfill Scribes: #4} }
+      \vspace{2mm}}
+   }
+   \end{center}
+   \markboth{Lecture #1: #2}{Lecture #1: #2}
+
+   {\bf Note}: {\it LaTeX template courtesy of UC Berkeley EECS dept.}
+
+   {\bf Disclaimer}: {\it These notes have not been subjected to the
+   usual scrutiny reserved for formal publications.  They may be distributed
+   outside this class only with the permission of the Instructor.}
+   \vspace*{4mm}
+}
+%
+% Convention for citations is authors' initials followed by the year.
+% For example, to cite a paper by Leighton and Maggs you would type
+% \cite{LM89}, and to cite a paper by Strassen you would type \cite{S69}.
+% (To avoid bibliography problems, for now we redefine the \cite command.)
+% Also commands that create a suitable format for the reference list.
+\renewcommand{\cite}[1]{[#1]}
+\def\beginrefs{\begin{list}%
+        {[\arabic{equation}]}{\usecounter{equation}
+         \setlength{\leftmargin}{2.0truecm}\setlength{\labelsep}{0.4truecm}%
+         \setlength{\labelwidth}{1.6truecm}}}
+\def\endrefs{\end{list}}
+\def\bibentry#1{\item[\hbox{[#1]}]}
+
+%Use this command for a figure; it puts a figure in wherever you want it.
+%usage: \fig{NUMBER}{SPACE-IN-INCHES}{CAPTION}
+\newcommand{\fig}[3]{
+			\vspace{#2}
+			\begin{center}
+			Figure \thelecnum.#1:~#3
+			\end{center}
+	}
+% Use these for theorems, lemmas, proofs, etc.
+\newtheorem{theorem}{Theorem}[lecnum]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newenvironment{proof}{{\bf Proof:}}{\hfill\rule{2mm}{2mm}}
+
+% **** IF YOU WANT TO DEFINE ADDITIONAL MACROS FOR YOURSELF, PUT THEM HERE:
+
+\newcommand\E{\mathbb{E}}
+
+\begin{document}
+%FILL IN THE RIGHT INFO.
+%\lecture{**LECTURE-NUMBER**}{**DATE**}{**LECTURER**}{**SCRIBE**}
+\lecture{1}{23 July}{Dr Dale Roberts}{Rui Qiu}
+%\footnotetext{These notes are partially based on those of Nigel Mansell.}
+
+% **** YOUR NOTES GO HERE:
+
+% Some general latex examples and examples making use of the
+% macros follow.  
+%**** IN GENERAL, BE BRIEF. LONG SCRIBE NOTES, NO MATTER HOW WELL WRITTEN,
+%**** ARE NEVER READ BY ANYBODY.
+
+\begin{itemize}
+	\item Course Outline (available on Wattle)
+	\begin{itemize}
+		\item About me.
+		\item Assessments. (15+15+15+55)
+		\item Course schedule.
+	\end{itemize}
+	\item Structure
+	\begin{itemize}
+		\item 2 hours lectures.
+		\item 1 hour workshop / computer lab. (start next week).
+	\end{itemize}
+	\item Material
+	\begin{itemize}
+		\item Lecture notes (Handwritten), scanned and placed on Wattle.
+		\item PDFs of research papers.
+		\item Extracts from books.
+		\item R codes.
+	\end{itemize}
+\end{itemize}
+
+\hrule
+
+\textbf{Q: What is BIG DATA?}
+
+\underline{Wikipedia:} ``data sets that are so large or complex that traditional \underline{data processing} applications are inadequate".
+
+Gartner (2012): 3Vs
+\begin{itemize}
+	\item High \underline{Volume}: ``data not sampled"
+	\item High \underline{Velocity}: ``real-time"
+	\item High \underline{Variety}: ``draws from text, images, \dots, video".
+\end{itemize}
+
+I personally \underline{HATE} these definitions, because:
+\begin{itemize}
+	\item Data processing/computing is focus. $\rightarrow$ What happens in 10 years when this isn't a problem anymore? (Moore's law)
+	\item Doesn't properly capture the true (and timeless) difference to ``small data".
+\end{itemize}
+
+\textbf{Q: Are \underline{large sample sizes} really the problem?}
+
+In terms of ``volume"
+
+\begin{center}
+\begin{tabular}{ c c }
+ $1000$ & kilobyte \\ 
+ $1000^2$ & megabyte \\  
+ $1000^3$ & gigabyte \\
+ $1000^4$ & terabyte \\
+ $1000^5$ & petabyte \\
+ $1000^6$ & exabyte \\
+ \dots & \dots
+\end{tabular}
+\end{center}
+
+Starting from \emph{gigabyte}, big data?
+
+\underline{Large sample theory} is basis for classic statistics:
+
+$X_i\sim$ F iid, for $i=1,\dots$,
+
+\begin{equation}
+\begin{split}
+	\mathbb{E}X_i&=\mu \\
+	\mean{X}_n&:=\frac1n\sum^n_{i=1}X_i
+\end{split}	
+\end{equation}
+
+\underline{Law of large numbers} $\mean{X}_n\longrightarrow\mathbb{E}X$ as $n\longrightarrow \infty$. (sample mean converges to population mean)
+
+\underline{Central limit theorem} $\sqrt{n}(\mean{X}_n-\mathbb{E}X)\longrightarrow N(0, \cdot)$
+
+Big data should only reaffirm very classic theory!
+
+\textbf{Q: Is real-time data a problem?}
+
+Yes, but most data sets are not ``real-time".
+
+There is interesting theory here for \underline{streaming data}, ONLINE LEARNING, etc. (I will not cover this topic this semester.)
+
+\textbf{Q: Is data variety a problem?}
+
+Not really. The topic of \underline{multivariate analysis} has existed since early 1900s.
+
+\underline{Multivariate analysis}. Given a sample $\mathbf{x_1,x_2,\dots,x_n}$ of random observations of dimension $p$, each $\mathbf{x_i}=[x_i^{(1)}\  x_i^{(2)}\ \cdots \  x_i^{(p)}]$ (or transposed version).
+
+Methods such as PCA have been available since early 1900s.
+
+Observed Gaussian: Student's T-test, Fisher's test, ANOVA, all of which are \emph{non-asymptotic} methods.
+
+Non-Gaussian: (non-asymptotic) results are hard to obtain $\longrightarrow$ limiting theorems based on model statistics.
+
+Typically desired under assumptions: $p$ fixed, $n\rightarrow \infty$ ``large sample theory".
+
+Classic MVA has a $p<10$.
+
+New challenge: BIG DATA!
+
+\begin{center}	\begin{tabular}{|l|c|c|r|}
+		\hline
+		 & $p$ & $n$ & $p/n$ \\
+		\hline
+		Portfolio & $\sim 50$ & $500$ & $0.1$ \\
+		\hline
+		Climate survey & $320$ & $600$ & $0.21$ \\
+		\hline
+		Speech analysis & $a\times 10^2$ & $b\times 10^2$ & $\sim 1$ \\
+		\hline
+		Face database & $1440$ & $320$ & $4.5$ \\
+		\hline
+		Micro-array & $1000$ & $100$ & $10$ \\
+		\hline
+	\end{tabular}
+\end{center}
+
+I shall define BIG DATA as \textbf{``data whereby the classic statistical paradigm \underline{no longer applies}}."\\
+
+\underline{Classic paradigm}:
+\begin{itemize}
+	\item dimension $p$ is small compared to the sample size $n$.
+	\item asymptotic theory assumes $n$ increases (very quickly to $\infty$) while dimension $p$ remains fixed.
+	\item At time $t$, we have all the data necessary for our analysis, i.e. the \underline{batch} case.
+\end{itemize}
+
+No longer applies means:
+
+\begin{itemize}
+	\item gives incorrect results.
+	\item bad approximation.
+	\item incorrect hypothesis rejection.
+	\item etc.
+\end{itemize}
+
+\hrule
+
+\underline{\textbf{Unique features of big data:}}
+
+(Quick overview as I haven't presented notation yet). [Fan, Han, Liu; 2014] and references therein.
+
+\begin{itemize}
+	\item \textbf{Heterogeneity:} With small data, data points from subpopulations are considered `outliers'. With large data sets, subpopulations might be large. $\implies$ Mixtures of Gaussians?
+	\item \textbf{Noise accumulation:} Errors accumulate when a decision or prediction rule depends on a large number of parameters. This effect becomes worse as the dimension increases, and may dominate the true signal. (See Fig 1)
+	\item \textbf{Spurious correlation:} High dimensionality can cause spurious correlations. That is, many uncorrelated random variables may have high sample correlation. (See Fig 2)
+	\item \textbf{Incidental endogeneity:} In regression setting, $$Y=\sum^p_{i=1}X_i+\epsilon$$
+		`endogeneity' means some features (predictors) correlate with the residual noise $\epsilon$.
+		That the residual noise $\epsilon$ is uncorrelated with all features is crucial. Called ``Exogenous assumption" that $\mathbb{E}[\epsilon X_i]=0$ for $i=1,\dots, p$.
+		Easily violated in high-dimensions.
+\end{itemize}
+
+\underline{Aim of the course}
+
+Go from classic $\longrightarrow$ cutting-edge
+\begin{itemize}
+	\item High dimensional ($p\approx n$ large or $p\gg n$)
+	\item \st{Streaming (sequentially revealed)}
+\end{itemize}
+
+We need to understand the classic case to see why new approaches are better.
+
+This is an active area of research: lots of open questions and new applications to find.\\
+
+\hrule
+
+\underline{Fundamental idea:} Study \textbf{Random Matrices}
+
+$$X=
+\begin{bmatrix}
+	x_{11} & x_{12} & \cdots & x_{1p}\\
+	x_{21} & x_{22} & \cdots & x_{2p}\\
+	\vdots &\vdots & \ddots & \vdots \\
+	x_{p1} & x_{p2} &\cdots & x_{pp}
+\end{bmatrix}, x_{ij}:\Omega\rightarrow\mathbb{R} (\text{or } \mathbb{C})
+$$
+
+\textbf{Q: What is a Random Matrix? [Diaconis 05]}
+
+``Everyone know" that a random variable is just a measurable function from our sample space $\Omega$.
+
+$$X:\Omega\rightarrow \mathcal{S}, \mathcal{S}=\mathbb{R},\mathbb{R}^2,\dots$$
+
+Take $\mathcal{S}=\mathbb{R}^{n\times n}$, i.e. $n\times n$ matrices with real entries.
+
+``That's not what it means to people working in probability".
+
+Think about \underline{picking} a matrix (with certain properties) at random with a certain probability.
+
+E.g. Pick a random covariance matrix.
+
+\boxed{\text{Matrix Properties}} + \boxed{\text{Randomness}} = \boxed{\text{Interesting Maths!}}\\
+
+\textbf{RMT} Quantum mechanics 40's - 50's
+\begin{itemize}
+	\item Energy levels of a system are described by eigenvalues of a hermitian operator on a Hilbert space.
+	\item Computationally you can't work on infinite-dimension objects...
+	\begin{itemize}
+		\item $\rightarrow$ discretization and truncation: keep only parts that are important to the problem under consideration.
+		\item $\rightarrow$ A finite but large random linear operator.
+	\end{itemize}
+	\item Semicircular law for Gaussian (or Wigner) matrix [Wigner 1955, 1958] $\rightarrow$ [Arnold 1967, 1971] [Grenander 1963]
+	\item Gaussian Wishart matrices (sample covariance matrices). [Marchenko/Pastur 1967] [Pastur 1972; 1973]. $\rightarrow$ Marchenko-Pastur law.
+	\item Asymptotic theory of large sample covariance matrices. [Bai et al 1986] [Grenander, Silverstein 1977] [Johansson 1982] (?) ...\\
+		Multivariate Fisher matrices ($QR^{-1}$), $Q\indep R$ sample covariance matrices.
+	\item Recently, $2^{\text{nd}}$-order theory: CLT for linear spectral statistics, limit distribution spectral spacings, extreme eigenvalues.
+\end{itemize}
+
+\underline{Sample covariance matrices.}
+
+$\mathbb{X}_1,\mathbb{X}_2,\dots,\mathbb{X}_n$ sample of random observations with dimension $p$.
+
+Population covariance matrix: $\sum=Cov(\mathbb{X}_i)$
+
+Sample covariance matrix: $\mathcal{S}_n=\frac1{n-1}\sum^n_{i=1}(\mathbb{X}_i-\mean{\mathbb{X}})(\mathbb{X}_i-\mean{\mathbb{X}})^*$
+
+Sample mean: $\mean{\mathbb{X}}=\frac1n\sum\mathbb{X}_i$
+
+Most results in MVA rely on $\mathcal{S}_n$: PCA, canonical correlation analysis, multivariate regression, one-sample or two-sample hypothesis testing, factor analysis.
+
+$\implies$ Understanding asymptotic properties of $\mathcal{S}_n$ extremely important in data analysis when $p$ becomes large with respect to sample size $n$.
+
+Generalized Variance and multiple correlation coefficient.
+
+$\implies$ overall measure of dispersion of the data, $\sigma_i^2$ measures $\mathbb{X}_i$, all variables together: generalized variance, ``measure of scatter".
+
+$p$ becomes large $\implies$ ``BIG DATA"
+
+RMT will become our tool to understand what is happening.\\
+\hrule
+\underline{\textbf{Review of some Matrix Algebra}}
+
+A \underline{complex number} is a number of the form $a+ib$ where $i$ satisfies $i^2=-1$.
+
+$$Re[a+ib]=a,\ Im[a+ib]=b$$
+
+The \underline{complex conjugate} of $z=a+ib\in\mathbb{C}$ is $\overline{z}:=a-ib$
+
+If $A$ is a $m\times n$ matrix with complex entries, then the $n\times m$ matrix $A^*$ is called the \underline{conjugate transpose} and is defined as 
+
+$$[A^*]_{ij}:=\overline{A_{ji}}\text{ or } A^*:=\left(\overline{A}\right)'=\overline{(A')}$$
+
+The matrix $A=(a_{ij})$ is \underline{Hermitian} if it is square with $a_j\in\mathbb{C}$ such that $A=A^*$. The matrix $A$ is \underline{symmetric} if $A=A'$ and \underline{orthogonal} if $A'A=AA'=I$ where $I$ is the identity matrix, equivalently $A'=A^{-1}$. A complex square matrix is called \underline{unitary} if $A^*A=AA^*=I$.
+
+The \underline{product} $AB$ of $m\times n$ matrix $A=(a_{ij})$ and $n\times k$ matrix $B=(b_{ij})$ is the $m\times k$ $C=(c_{ij})$ where
+
+$$c_{ij}=\sum^n_{l=1}a_{il}b_{lj},\ \forall i =1,2,\dots, m, j=1,2,\dots, k.$$
+
+The \underline{transpose} of a matrix $A$ is $A'$ such that $[A']_{ij}=[A]_{ji}$.
+
+The \underline{trace} of a $k\times k$ matrix $A=(a_{ij})$ is $tr(A)=\sum^k_{l=1}a_{ll}$.
+
+The \underline{determinant} of $A$, denoted $|A|$ or $\det(A)$, is the scalar $|A|=a_{11}$ if $k=1$ or $|A|=\sum^k_{j=1}a_{1j}|A_{1j}|(-1)^{1+j}$ if $k>1$ where $A_{1j}$ is the $(k-1)\times (k-1)$ matrix obtained by deleting the first row and $j$-th column of $A$.
+
+For $k\times k$ matrices $A$ and $B$, constant $c\in\mathbb{R}$, we have:
+
+\begin{itemize}
+	\item $(A+B)'=A'+B'$
+	\item $(AB)'=B'A'$
+	\item $\det(A')=\det(A)$
+	\item $(A')^{-1}=(A^{-1})'$
+	\item $tr(cA)=c\cdot tr(A)$
+	\item $tr(A\pm B)=tr(A)\pm tr(B)$
+	\item $tr(AB)=tr(BA)$
+	\item $tr(B^{-1}AB)=tr(B)$
+	\item $(AB)^{-1}=B^{-1}A^{-1}$
+	\item $tr(AA')=\sum^k_{i=1}\sum^k_{j=1}a_{ij}^2$
+	\item $\det(AB)=\det(A)\det(B)$
+	\item $\det(cA)=c^k\det(A)$
+\end{itemize}
+
+% **** THIS ENDS THE EXAMPLES. DON'T DELETE THE FOLLOWING LINE:
+
+\end{document}
+
+
+
+
+

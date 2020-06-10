@@ -1,0 +1,73 @@
+# Script that uses the bisect and newton functions to find the maximum
+# likelihood estimate for the "p" parameter of a binomial distribution,
+# given one observation, "x".  The "n" parameter is assumed to be known.
+#
+# Of course, we know that the MLE can actually be found analytically,
+# and is equal to x/n.  We can use that to check the results.
+
+source("newton.r")
+source("bisect.r")
+
+# The log likelihood function - not actually used, since we optimize
+# by solving for the derivative of the log likelihood being zero.
+
+binom_log_lik <- function (p, x, n) dbinom (x, n, p, log=TRUE)
+
+# The derivative of the log likelihood.
+
+binom_deriv <- function (p, x, n) x/p - (n-x)/(1-p)
+
+# The second derivative of the log likelihood.
+
+binom_deriv2 <- function (p, x, n) -x/p^2 - (n-x)/(1-p)^2
+
+# Find the maximum likelihood estimate using bisection.  To avoid
+# zero likelihoods, the range of the parameter is 0.01 to 0.99 rather
+# than 0 to 1.  We use the version of the bisect function that keeps
+# going until as accurate an answer as possible has been found.
+
+binom_mle_bisect <- function (x, n)
+    bisect2 (function (p) binom_deriv(p,x,n), 0.01, 0.99)
+
+# Find the maximum likelihood estimate using Newton iteration.  The
+# initial guess is the last argument.  The number of Newton iterations
+# defaults to 10.
+
+binom_mle_newton <- function (x, n, initial_p, n_iter=10) 
+    newton (function (p) binom_deriv(p,x,n), 
+            function (p) binom_deriv2(p,x,n), 
+            initial_p, n_iter)
+
+# Try these functions out...
+
+options(digits=17)  # Show as many digits of precision as are available
+
+x <- 7
+n <- 11
+
+cat("\nExample with x =",x,"and n =",n,"\n\n")
+
+cat("Bisection:\n")
+print (binom_mle_bisect(x,n))      # Bisection - slow but sure
+
+cat("Newton:\n")
+print (binom_mle_newton(x,n,0.1))  # Newton iteration, starting at 0.1
+
+print (binom_mle_newton(x,n,0.5))  # It turns out that starting at 0.5 always
+                                   # gives the exact answer in one iteration
+
+print (binom_mle_newton(x,n,0.00001,20)) # But from a bad starting point, many
+                                         # iterations are needed
+
+cat("Exact:\n")
+print (x/n)                        # The exact answer, as found analytically
+
+
+# An example where Newton iteration fails to converge.
+
+x <- 1
+n <- 200
+
+cat("\nExample with x =",x,"and n =",n,"\n\n")
+
+print (binom_mle_newton(x,n,0.1,100))

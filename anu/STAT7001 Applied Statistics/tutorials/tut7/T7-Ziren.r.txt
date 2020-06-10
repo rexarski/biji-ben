@@ -1,0 +1,182 @@
+#Last Updated: 20/09/2017
+rm(list=ls())
+library(Sleuth3)
+#Q3 in T6
+attach(case1102)
+IndSex=ifelse(Sex=='Female',1,0)
+Variable=c("Days","Tumor","Loss", "Weight", "IndSex")
+p=length(Variable)
+X=data.frame(Days,Tumor,Loss, Weight, IndSex)
+Y=log(Brain/Liver)
+detach(case1102)
+
+#a)
+library(leaps)
+Cpsel=leaps(X,Y,method="Cp",nbest=3) 
+plot(Cpsel$size,Cpsel$Cp)
+cbind(Cpsel$which, Cpsel$size, Cpsel$Cp)
+result=cbind(Cpsel$which, Cpsel$size, Cpsel$Cp)
+result=result[which(result[,7]==min(result[,7])),][1:p]
+
+#Selected Variables
+Variable[as.logical(result)]
+
+#b)
+r2sel=leaps(X,Y,method="adjr2",nbest=2) 
+plot(r2sel$size,r2sel$adjr2)
+cbind(r2sel$which, r2sel$size, r2sel$adjr2)
+result=cbind(r2sel$which, r2sel$size, r2sel$adjr2)
+result=result[which(result[,7]==max(result[,7])),][1:p]
+
+#Selected Variables
+Variable[as.logical(result)]
+
+#c)
+library(MASS)
+fit<-lm(Y~1,data=X)
+stepAIC(fit,direction="forward",scope=list(lower=~1,upper=~ Days+Tumor+Loss+Weight+IndSex))
+result=stepAIC(fit,direction="forward",scope=list(lower=~1,upper=~ Days+Tumor+Loss+Weight+IndSex))
+names(result)
+#Selected Variables
+names(result$coef)[-1]
+
+
+#(d)
+n=length(Y)
+fit<-lm(Y~.,data=X)
+stepAIC(fit,direction="backward",data=X,k=log(n))
+result=stepAIC(fit,direction="backward",data=X,k=log(n))
+names(result)
+#Selected Variables
+names(result$coef)[-1]
+
+
+
+
+
+
+
+#Q1
+Xf=ex1217[,3:17]
+Variablef=colnames(Xf)
+pf=length(Variablef)
+Y=ex1217$Mortality
+
+#Cp
+X=Xf[,1:12]
+Variable=colnames(X)
+p=length(Variable)
+
+
+Cpsel=leaps(X,Y,method="Cp",nbest=2) 
+plot(Cpsel$size,Cpsel$Cp)
+cbind(Cpsel$which, Cpsel$size, Cpsel$Cp)
+result=cbind(Cpsel$which, Cpsel$size, Cpsel$Cp)
+lengthr=length(result[1,])
+result=result[which(result[,lengthr]==min(result[,lengthr])),][1:p]
+
+#Selected Variables
+Variable[as.logical(result)]
+
+Svariable=Variable[as.logical(result)]
+
+Xn=cbind(X[,Svariable],log(Xf[,13:15]))
+fit=lm(Y~.,data=Xn)
+
+fitr=lm(Y~.,data=X[,Svariable])
+anova(fitr,fit,test='F')
+
+
+#Adj R2
+X=Xf[,1:12]
+Variable=colnames(X)
+p=length(Variable)
+
+
+Cpsel=leaps(X,Y,method="adjr2",nbest=2) 
+plot(Cpsel$size,Cpsel$adjr2)
+cbind(Cpsel$which, Cpsel$size, Cpsel$adjr2)
+result=cbind(Cpsel$which, Cpsel$size, Cpsel$adjr2)
+lengthr=length(result[1,])
+result=result[which(result[,lengthr]==max(result[,lengthr])),][1:p]
+
+#Selected Variables
+Variable[as.logical(result)]
+
+Svariable=Variable[as.logical(result)]
+
+Xn=cbind(X[,Svariable],log(Xf[,13:15]))
+fit=lm(Y~.,data=Xn)
+
+fitr=lm(Y~.,data=X[,Svariable])
+anova(fitr,fit,test='F')
+
+
+
+#Q2
+X=cbind(X,log(Xf[,13:15]))
+X2=X^2
+colnames(X2)=paste(colnames(X),'2',sep='')
+X=cbind(X,X2)
+Variable=colnames(X)
+p=length(Variable)
+
+
+#a) Cp
+Cpsel=leaps(X,Y,method="Cp",nbest=2) 
+plot(Cpsel$size,Cpsel$Cp)
+cbind(Cpsel$which, Cpsel$size, Cpsel$Cp)
+result=cbind(Cpsel$which, Cpsel$size, Cpsel$Cp)
+lengthr=length(result[1,])
+result=result[which(result[,lengthr]==min(result[,lengthr])),][1:p]
+
+#Selected Variables
+Variable[as.logical(result)]
+
+#Time
+system.time(leaps(X,Y,method="Cp",nbest=2))
+
+
+
+
+#b) BIC
+n=length(Y)
+fit<-lm(Y~1,data=X)
+name=''
+for (i in 1:(p-1)){
+  name=paste(name,colnames(X)[i],'+',sep='')
+}
+name=paste(name,colnames(X)[p],sep='')
+name
+
+stepAIC(fit,direction="forward",scope=list(lower=~1,upper=~ Precip+Humidity+JanTemp+JulyTemp+Over65+House+Educ+Sound+Density+NonWhite+WhiteCol+Poor+HC+NOX+SO2+Precip2+Humidity2+JanTemp2+JulyTemp2+Over652+House2+Educ2+Sound2+Density2+NonWhite2+WhiteCol2+Poor2+HC2+NOX2+SO22),k=log(n))
+result=stepAIC(fit,direction="forward",scope=list(lower=~1,upper=~ Precip+Humidity+JanTemp+JulyTemp+Over65+House+Educ+Sound+Density+NonWhite+WhiteCol+Poor+HC+NOX+SO2+Precip2+Humidity2+JanTemp2+JulyTemp2+Over652+House2+Educ2+Sound2+Density2+NonWhite2+WhiteCol2+Poor2+HC2+NOX2+SO22),k=log(n))
+names(result)
+#Selected Variables
+names(result$coef)[-1]
+
+#Time
+system.time(stepAIC(fit,direction="forward",scope=list(lower=~1,upper=~ Precip+Humidity+JanTemp+JulyTemp+Over65+House+Educ+Sound+Density+NonWhite+WhiteCol+Poor+HC+NOX+SO2+Precip2+Humidity2+JanTemp2+JulyTemp2+Over652+House2+Educ2+Sound2+Density2+NonWhite2+WhiteCol2+Poor2+HC2+NOX2+SO22),k=log(n)))
+
+
+
+
+
+#c) AIC
+fit<-lm(Y~.,data=X)
+stepAIC(fit,direction="both",data=X)
+result=stepAIC(fit,direction="both",data=X)
+names(result)
+#Selected Variables
+names(result$coef)[-1]
+
+#Time
+system.time(stepAIC(fit,direction="both",data=X))
+
+
+
+
+
+
+
+

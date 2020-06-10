@@ -1,0 +1,86 @@
+#Last Updated: 01/10/2017
+
+
+
+
+rm(list=ls())
+
+
+
+#Part I
+setwd('~/Desktop/Research/AppliedStat2017/L12')
+a=read.csv('anaesthetic.csv');a
+attach(a)
+tapply(Response, Concentration,sum)
+tapply(Response, Concentration,length)
+b=data.frame(Concentration=unique(Concentration),BinomialCount=tapply(Response, Concentration,sum),
+             TotalNumber=tapply(Response, Concentration,length));b
+detach(a)
+
+
+
+#Part II
+attach(b)
+Y=cbind(BinomialCount,TotalNumber-BinomialCount)
+fit=glm(Y~Concentration,family=binomial(link=logit))
+summary(fit)
+
+
+#drop in deviance test
+#reduced model 
+fitr=glm(Y~1,family=binomial(link=logit)) 
+anova(fitr,fit,test='Chisq')
+
+
+#Part III
+plot(Concentration,log(fit$fitted.values/(1-fit$fitted.values)),
+     xlab="concentration",ylab="fitted probabilities")
+
+Xnew=data.frame(Concentration=1.5)
+predict(fit,Xnew,type='response')
+
+Mnew=5
+Mnew*predict(fit,Xnew,type='response')
+round(Mnew*predict(fit,Xnew,type='response'),0)
+
+
+
+#Part IV
+proportion=BinomialCount/TotalNumber
+proportion=ifelse(proportion==0, 0.01, proportion)
+proportion=ifelse(proportion==1, 1-0.01, proportion)
+logitprop=log(proportion/(1-proportion))
+plot(Concentration,logitprop)
+
+Peares=residuals(fit,type="pearson")
+plot(Peares)
+abline(h=1.96,col='red') 
+abline(h=-1.96,col='red')
+
+summary
+summary=(summary(fit))
+1 - pchisq(summary$deviance, summary$df.residual)
+detach(b)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

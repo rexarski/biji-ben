@@ -1,0 +1,11 @@
+#chapter 5 algebraic and logical query languages
+
+2015-09-28
+
+##5.1 relational operations on bags
+
+suppose R and S are bags, tuple t appears n times in R and m times in S:
+
+- 
+
+##5.2 extended operators of relational algebra

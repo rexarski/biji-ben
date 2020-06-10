@@ -1,0 +1,49 @@
+\documentclass[a4paper, 11pt, twoside]{article}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\begin{document}
+\title{STAT6046 week 3 lecture 5}
+\author{Rui Qiu}
+
+\maketitle
+
+Recall what we learned last week, $\delta$ is the \textbf{force of interest rate.}
+
+Suppose we have $\$1$ amount of dollar, invested. And we know after 1 year, we have an amount of $S(1)$. \textbf{There could be multiple ways/paths from $S(0)$ to $S(1)$.}
+
+But note that the effective rate of interest is always $i=\frac{S(1)-1}{1}.$
+
+Why not $S'(t)$? The 1st derivative of $S(t)$ is not a good measurement of growth. (example)
+
+So we better use the force of interest:
+
+\[\frac{S'(t)}{S(t)}=\delta.\]\\
+
+\paragraph{1. Accumulated Value using $\delta$.}
+
+\[
+\delta_t=\frac{S'(t)}{S(t)}=\frac{d}{dt}\ln(S(t))
+\]
+
+\[S(n)=S(0)\cdot \exp(\int^n_0\delta_t dt)\]
+
+\textbf{Proof:}
+
+\[
+\begin{split}
+	\int^{t=n}_{t=0}\delta_t dt &= \int^n_0 \frac{d}{dt}\cdot \ln \bigg[S(t)\bigg] dt \\
+	&= \ln[S(n)] - \ln[S(0)]\\
+	S(n) &\implies S(0)\cdot \exp\bigg[\int^n_0\delta_t dt \bigg]
+\end{split}
+\]
+
+And some other review stuffs.
+
+\pagebreak
+
+\paragraph{Annuities}
+
+In this class we mainly focus on 3 types of annuities: \textbf{immediate annuity, annuity due and deferred annuity.}\\
+
+\paragraph{Immediate Annuity}
+\end{document}

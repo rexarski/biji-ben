@@ -1,0 +1,106 @@
+\documentclass[a4paper, 11pt, twoside]{article}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\begin{document}
+\title{MATH6222 week 3 lecture 9}
+\author{Rui Qiu}
+\date{2017-03-10}
+
+\maketitle
+
+Yesterday, $L_n$ be arrangement of $3n^2$ tiles obtained by removing the top right quadrant from a $2^n\times 2^n$ square.
+
+Let $P(n)$ be it is possible to L-tile $L_n$.
+
+We prove this statement by induction on $n$.
+
+It suffices to prove that:
+
+\begin{enumerate}
+	\item $P(1), P(2)$ are both true.
+	\item $P(n-2)\implies P(n)$ for all $n\in\mathbb{N}$.
+\end{enumerate}
+
+$P(1)$ is trivial, $P(2)$ is not hard as well. Base step checked.
+
+Just need to check $P(n-2)\implies P(n)$
+
+Observe that $L_n$ is obtained from $L_{n-2}$ by adding a band of width $2$ as illustrated below...
+
+By induction hypothesis, we may assume that $L_{n-2}$ admits an L-tiling. So it suffices to prove (for any $n\geq 3$) that this width $2$ band admits an l-tiling.
+
+We consider three cases when $n$ divisible by $3$, $n-1$ divisible by $3$, $n-2$ divisible by $3$.
+
+Since every integer $n$ satisfies one of these three conditions, this is sufficient  to solve our problem.
+
+We make one preliminary observation:
+
+If we let $R_n$ denote a $2\times n$ rectangle of squares, then $R_n$ admits an L-tiling whenever $n$ is divisible by $3$.
+
+Case 1: Note $n$ divisible by $3$ so that $2n-6$ divisible by $3$. So we may tile the band as follows...
+
+Case 2: Note $n-1$ divisible by $3$ so that $n-4$ divisible by $3$, $2n-8$ divisible by $3$. The band could be tiled as follows:...
+
+Case 3: Note $n-2$ divisible by $3$ so that $2n-4$ divisible by $3$\\
+
+\paragraph{Principles of Strong Induction:}
+
+We want to prove $\{P(k):k\in\mathbb{N}\}$. It suffices to prove:
+
+\begin{enumerate}
+	\item $P(1)$
+	\item If $P(i)$ is true for all $i< n$, then $P(n)$ is true.
+\end{enumerate}
+
+\paragraph{Proof:}\ \\
+
+Suppose not all $P(k)$ are true. $P(1), P(2), P(3), \dots, $
+
+Look at the minimal $k$ such that $P(k)$ is false.
+
+Note by $1.$ that $k\not=1.$
+
+By our choice of $k$ we know $P(1), P(2), \cdots, P(k-1)$ true.
+
+By $2.$ knowing that $P(1) \wedge P(2) \wedge P(3) \wedge \cdots \wedge P(k-1)$ implies $P(k)$. Contradiction!\\
+
+\paragraph{Game of Nim:}\ \\
+
+Each player takes a turn by removing some positive number of coins from some piles. The person who takes the last coin wins.
+
+Let $P(n)$ be the statement that player 2 has a winning strategy for this game, when the starting configuration consists of 2 piles of equal size $n$.
+
+$P(1)$ player 1 remove $1$ pile, then player 2 win by taking the second pile.
+
+Assume $P(1), \dots, P(n-1)$ true, must prove $P(n)$.
+
+Player 1 must start by taking $m$ coins from one pile ($m\leq n)$. Player 2 can respond by taking $m$ coins from other pile. (If $m\leq n$, player 2 wins.)
+
+Now player 1 and player 2 face the same game with a starting size of $n-m$. But buy induction hypothesis, $P(n-m)$ is true, so player 2 can win.\\
+
+Let $f: A \rightarrow B$ be a function. We say $f$ is \textbf{injective} for each $b\in B$ there is at most one $a\in A$ such that $f(a)=b.$ For all $a_1, a_2 \in A. (a_1\not= a_2), f(a_1)\not= f(a_2).$\\
+
+We say $f$ is \textbf{surjective} if for each $b\in B$, there is at least one $a\in A$ usch that $f(a)=b$.\\
+
+We say $f$ is \textbf{bijective} if it is both injective and surjective (also say $f$ is a one-to-one correspondence).\\
+
+If $f$ is bijective, we may define $f^{-1}: B\to A$ by setting $f^{-1}(b)$ to be the unique $a\in A$ such that $f(a)=b$.\\
+
+Let's consider $f(x)=x^2$ as a function from $\mathbb{R}\to\mathbb{R}$.
+
+Is it injective? $f(1)=f(-1)=1$. Not injective.
+
+Is it surjective? $\not\exists x \in \mathbb{R},$ such that $f(x)=-1$. Not surjective.
+
+$\mathbb{R}_{\geq 0} = \{x\in\mathbb{R}: x\geq 0\}$
+
+Now consider $f(x)=x^2$ as a function from $\mathbb{R}_{\geq 0}\to \mathbb{R}_{\geq 0}$. Now injective and surjective.
+
+Just need to say for any $y\in\mathbb{R}_{\geq 0}$ 
+
+There exists a unique positive real number such that...
+
+
+
+
+\end{document}

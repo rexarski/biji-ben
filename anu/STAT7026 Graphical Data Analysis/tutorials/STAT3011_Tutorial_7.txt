@@ -1,0 +1,22 @@
+RESEARCH SCHOOL OF FINANCE, ACTUARIAL STUDIES AND APPLIED STATISTICS
+Graphical Data Analysis
+Tutorial 7
+
+
+This tutorial is designed to introduce you to the analysis of time
+series data.
+
+1.  The annual number of lynx trappings in the Mackenzie River
+District  of North-West Canada from 1821 to 1934 are stored in a time
+series object called lynx.  Analyse this series.
+
+(Note: you will be unable to decompose this series using stl because
+stl expects data with more than one observation per year. If you try
+to use stl, you will get a cryptic message which means, simply, that
+stl cannot by used for annual data.)
+
+
+2.  Monthly observations on the carbon dioxide concentration in parts
+per million (ppm) at Mauna Loa from January 1959 to December 1990 are
+stored in a time series object called co2.  Analyse the components of
+this series.

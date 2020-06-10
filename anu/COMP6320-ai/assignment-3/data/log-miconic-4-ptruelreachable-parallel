@@ -1,0 +1,65 @@
+Starting SAT-based planner...
+Checking for plugins...
+Encodings registered:    3
+Solvers registered:      1
+Command line options:
+    Domain file:          benchmarks/miconic/domain.pddl
+    Problem file:         benchmarks/miconic/problem04.pddl
+    Experiment name:      miconic
+    Query strategy:        ramp, min_h = 15 max_h = 55 step_h = 6
+    Compute plangraph:     True
+    Plangraph constraints: reachable
+    Encoding:              basic
+    Solver                 precosat
+    SAT solver time out    None
+    Write debug CNF:       False
+    Remove tmp files:      True
+Command line arg processing time: 0.0023005008697509766
+Parsing the PDDL domain...
+Parsing the PDDL problem...
+Simplifying the problem representation...
+Parsing time: 0.056192636489868164
+Grounding the problem...
+Grounding time: 0.025531530380249023
+Simplifying the ground encoding...
+Simplify time: 0.004300832748413086
+Generating Plangraph invariants...
+Step: 0 1 2 3 4 5 
+Plangraph invariants time: 0.018953323364257812
+Planning...
+
+Step: 15
+-------------------------------------------------
+Generating base encoding: basic ...
+Encoding generation time: 0.21431708335876465
+Writing CNF file...
+Total variables: 1216
+Total clauses: 6925
+Writing time: 0.020068645477294922
+Solving...
+SAT
+Solution time:  0.09758305549621582
+Extracting the plan...
+Plan:
+0: up f0 f1
+1: board f1 p1
+1: board f1 p2
+2: up f1 f7
+3: board f7 p0
+3: depart f7 p2
+4: down f7 f1
+5: up f1 f6
+6: depart f6 p0
+7: down f6 f2
+8: board f2 p3
+9: up f2 f4
+10: depart f4 p3
+11: down f4 f1
+12: down f1 f0
+13: up f0 f3
+14: depart f3 p1
+Simulating plan for validation.
+Plan valid. 17 actions.
+Step time: 0.34458231925964355
+Total time: 0.4598407745361328
+

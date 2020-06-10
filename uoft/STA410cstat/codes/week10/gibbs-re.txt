@@ -1,0 +1,86 @@
+# Example of Gibbs sampling for a random effects model.  Unlike in a
+# practical example, the variance parameters are fixed, with only the
+# per-group means, mu_i, and the top-level mean, nu, being unknown. 
+# The model is therefor as follows:
+#
+#     x_ij | mu_i ~ N(mu_i,sigma^2),  i = 1..n, j = 1..m
+#     mu_i | nu   ~ N(nu,tau^2),      i = 1..n
+#     nu          ~ N(0,rho^2)
+
+
+sigma <- 1
+tau <- 2
+rho <- 10
+
+
+# Gibbs sampling for k iterations, with data and initial nu as given.
+# No initial values for the mu_i are needed because they are updated
+# first.  The result is a list with a matrix of values for mu, with
+# number of rows equal to the number of iterations, and a vector of
+# values for nu, of length equal to the number of iterations.
+
+
+gibbs_re <- function (x,initial_nu,k) {
+
+  n <- nrow(x)
+  m <- ncol(x)
+
+  results <- list (mu=matrix(nrow=k,ncol=n), nu=numeric(k))
+
+  nu <- initial_nu
+  mu <- numeric(n)
+
+  for (t in 1:k) {
+
+    for (i in 1:n) {
+      mu[i] <- rnorm (1, (nu/tau^2 + sum(x[i,])/sigma^2) / 
+                           (1/tau^2 + m/sigma^2),
+                         1/sqrt(1/tau^2 + m/sigma^2))
+    }
+
+    nu <- rnorm (1, (sum(mu)/tau^2) / (1/rho^2 + n/tau^2), 
+                    1/sqrt(1/rho^2 + n/tau^2))
+
+    results$mu[t,] <- mu
+    results$nu[t] <- nu
+  }
+
+  results
+}
+
+
+# Test gibss_re on a synthetic data set.
+
+gibbs_re_test <- function ()
+{
+  set.seed(1)
+
+  # Generate synthetic data.
+
+  m <- 3
+  k <- 150
+
+  x <- rbind (rnorm(m,18.7,sigma), 
+              rnorm(m,18.9,sigma), 
+              rnorm(m,19.3,sigma), 
+              rnorm(m,20.6,sigma),
+              rnorm(m,21.9,sigma),
+              rnorm(m,24.3,sigma))
+
+  # Run Gibbs sampling, and produce a trace plot.
+
+  r <- gibbs_re(x,0,k)
+
+  plot(NULL,xlim=c(1,k),ylim=range(c(r$nu,r$mu)))
+  for (i in 1:ncol(r$mu)) lines (r$mu[,i])
+  lines (r$nu, col="red")
+
+  # Discard first 10 iterations as burn-in (determined after looking at plot).
+
+  burn_in <- 10
+
+  # Print estimated posterior means and standard deviations of mu parameters.
+
+  print(rbind(colMeans(r$mu[(burn_in+1):k,]),
+              apply(r$mu[(burn_in+1):k,],2,sd)))
+}

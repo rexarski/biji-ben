@@ -1,0 +1,69 @@
+Starting SAT-based planner...
+Checking for plugins...
+Encodings registered:    3
+Solvers registered:      1
+Command line options:
+    Domain file:          benchmarks/depot/domain.pddl
+    Problem file:         benchmarks/depot/problem01.pddl
+    Experiment name:      depot_temp
+    Query strategy:        ramp, min_h = 15 max_h = 50 step_h = 5
+    Compute plangraph:     True
+    Plangraph constraints: fmutex
+    Encoding:              basic
+    Solver                 precosat
+    SAT solver time out    None
+    Write debug CNF:       False
+    Remove tmp files:      False
+Command line arg processing time: 0.0028579235076904297
+Parsing the PDDL domain...
+Parsing the PDDL problem...
+Simplifying the problem representation...
+Parsing time: 0.14242815971374512
+Grounding the problem...
+Grounding time: 0.030939817428588867
+Simplifying the ground encoding...
+Simplify time: 0.021759986877441406
+Generating Plangraph invariants...
+Step: 0 1 2 3 4 5 6 7 8 
+Plangraph invariants time: 0.06922125816345215
+Planning...
+
+Step: 15
+-------------------------------------------------
+Generating base encoding: basic ...
+PRE_EFF_COUNT:
+5850
+FRAME COUNT:
+1140
+INT MUTEX COUNT:
+4275
+FMUTEX COUNT:
+1074
+Encoding generation time: 0.30382609367370605
+Writing CNF file...
+Total variables: 1508
+Total clauses: 12379
+Writing time: 0.0173490047454834
+Solving...
+SAT
+Solution time:  0.05875420570373535
+Extracting the plan...
+Plan:
+0: drive truck1 depot0 distributor0
+0: lift hoist0 crate1 pallet0 depot0
+0: lift hoist1 crate0 pallet1 distributor0
+1: load hoist1 crate0 truck1 distributor0
+2: drive truck1 distributor0 depot0
+10: drive truck0 distributor1 depot0
+11: load hoist0 crate1 truck0 depot0
+12: drive truck1 depot0 distributor1
+12: drive truck0 depot0 distributor0
+13: unload hoist1 crate1 truck0 distributor0
+13: unload hoist2 crate0 truck1 distributor1
+14: drop hoist1 crate1 pallet1 distributor0
+14: drop hoist2 crate0 pallet2 distributor1
+Simulating plan for validation.
+Plan valid. 13 actions.
+Step time: 0.3829519748687744
+Total time: 0.6523292064666748
+

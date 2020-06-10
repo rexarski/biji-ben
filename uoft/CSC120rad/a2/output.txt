@@ -1,0 +1,14 @@
+The average of absolute value of the error of forecasting deaths with forecast_previous is  7.696771 
+The average of absolute value of the error of forecasting deaths with forecast_week_ago is  7.735085 
+The average of absolute value of the error of forecasting deaths with forecast_mean is  6.129379 
+The average of absolute value of the error of forecasting deaths with forecast_mean14 is  5.723825 
+The average of absolute value of the error of forecasting deaths with forecast_same_day_of_week is  6.131397 
+The average of absolute value of the error of forecasting deaths with forecast_same_month is  5.616239 
+The average of absolute value of the error of forecasting deaths with forecast_similar_tmax is  5.887793 
+The average of absolute value of the error of forecasting tmax with forecast_previous is  4.357417 
+The average of absolute value of the error of forecasting tmax with forecast_week_ago is  7.575807 
+The average of absolute value of the error of forecasting tmax with forecast_mean is  11.0506 
+The average of absolute value of the error of forecasting tmax with forecast_mean14 is  5.74134 
+The average of absolute value of the error of forecasting tmax with forecast_same_day_of_week is  11.07466 
+The average of absolute value of the error of forecasting tmax with forecast_same_month is  6.181639 
+The average of absolute value of the error of forecasting deaths with mixed forecast functions is  15.28382 

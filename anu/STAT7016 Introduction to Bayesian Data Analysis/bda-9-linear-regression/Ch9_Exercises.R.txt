@@ -1,0 +1,108 @@
+read.csv("achievement.csv",header=TRUE,sep=",")
+attach(achievement)
+names(achievement)
+head(achievement)
+n<-nrow(achievement)
+
+#a) the number of possible models depends on whether we include interaction terms and higher order terms or not.  Including only main 
+#effects, there are 2^5=32 possible models.
+
+#Bayesian model selection 
+source("regression_gprior.r")
+
+index<-sample(seq(1,109,1),80)
+train<-achievement[index,]
+test<-achievement[-index,]
+
+y<-train[,6]
+X<-train[,-6]
+X<-cbind(rep(1,length(y)),X)
+X<-as.matrix(X)
+
+y.te<-test[,6]
+X.te<-test[,-6]
+X.te<-cbind(rep(1,length(y.te)),X.te)
+X.te<-as.matrix(X.te)
+
+p<-dim(X)[2]
+n<-dim(X)[1]
+S<-10000
+BETA<-Z<-matrix(NA,S,p)
+z<-rep(1,dim(X)[2] ) #at the start - include all variables in the model
+lpy.c<-lpy.X(y,X[,z==1,drop=FALSE])
+
+for(s in 1:S)
+{
+  for(j in sample(1:p))
+  {
+    zp<-z ; zp[j]<-1-zp[j]
+    lpy.p<-lpy.X(y,X[,zp==1,drop=FALSE])
+    r<- (lpy.p - lpy.c)*(-1)^(zp[j]==0)
+    z[j]<-rbinom(1,1,1/(1+exp(-r)))
+    if(z[j]==zp[j]) {lpy.c<-lpy.p}
+  }
+  beta<-z;if(sum(z)>0){beta[z==1]<-lm.gprior(y,X[,z==1,drop=FALSE],S=1)$beta }
+  Z[s,]<-z
+  BETA[s,]<-beta
+
+  
+}
+par(mar=c(2.75,2.75,.5,.5),mgp=c(1.7,.7,0))
+
+beta.bma<-apply(BETA,2,mean,na.rm=TRUE)
+y.te.bma<-X.te%*%beta.bma
+mean( (y.te-y.te.bma)^2)
+
+layout( matrix(c(1,1,2),nrow=1,ncol=3) )
+
+plot(apply(Z,2,mean,na.rm=TRUE),xlab="regressor index",ylab=expression(
+  paste( "Pr(",italic(z[j] == 1),"|",italic(y),",X)",sep="")),type="h",lwd=2)
+
+#Bayesian model selection identifies IQ and read2 as important predictors of read1
+plot(y.te,y.te.bma,xlab=expression(italic(y)[test]),
+     ylab=expression(hat(italic(y))[test])) ; abline(0,1)
+
+#check backward selection
+
+vars<-bselect.tcrit(y,X,tcrit=1.67)
+vars
+#backwars selection procedure selects same predictors to be important
+
+
+#random permutation test
+yperm<-sample(y,n)
+
+
+S<-10000
+BETA<-Z<-matrix(NA,S,p)
+z<-rep(1,dim(X)[2] )
+lpy.c<-lpy.X(yperm,X[,z==1,drop=FALSE])
+
+for(s in 1:S)
+{
+  for(j in sample(1:p))
+  {
+    zp<-z ; zp[j]<-1-zp[j]
+    lpy.p<-lpy.X(yperm,X[,zp==1,drop=FALSE])
+    r<- (lpy.p - lpy.c)*(-1)^(zp[j]==0)
+    z[j]<-rbinom(1,1,1/(1+exp(-r)))
+    if(z[j]==zp[j]) {lpy.c<-lpy.p}
+  }
+  beta<-z;if(sum(z)>0){beta[z==1]<-lm.gprior(yperm,X[,z==1,drop=FALSE],S=1)$beta }
+  Z[s,]<-z
+  BETA[s,]<-beta
+  
+  
+}
+
+par(mar=c(2.75,2.75,.5,.5),mgp=c(1.7,.7,0))
+plot(apply(Z,2,mean,na.rm=TRUE),xlab="regressor index",ylab=expression(
+  paste( "Pr(",italic(z[j] == 1),"|",italic(y),",X)",sep="")),type="h",lwd=2)
+
+#no predictors are selected as important in this permutation
+
+#check backward selection
+
+vars<-bselect.tcrit(yperm,X,tcrit=1.65)
+vars
+#stepwise procedure also selects no predictors

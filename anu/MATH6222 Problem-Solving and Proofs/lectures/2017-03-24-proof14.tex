@@ -1,0 +1,73 @@
+\documentclass[a4paper, 11pt, twoside]{article}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\begin{document}
+\title{MATH6222 week 5 lecture 14}
+\author{Rui Qiu}
+\date{2017-03-24}
+
+\maketitle
+
+Last time we have:
+
+\[{n \choose k} = {n-1 \choose k-1} + {n-1 \choose k}\]\\
+
+Claim that ${n \choose k} := $ coefficient of $x^ky^{n-k}$ in $(x+y)^n$.
+
+The reasoning is: pick $k$ number of $x$'s from $n$ number of $(x+y)$'s, and automatically pick $n-k$ number of $y$'s from $n$ number of $(x+y)$'s.\\
+
+\paragraph{Pascal's Formula:} \[{n\choose k} = {n-1 \choose k} + {n-1 \choose k-1}\]
+
+\paragraph{Proof:}\ \\
+
+\begin{enumerate}
+	\item Formula (direct proof)
+	\[\frac{n!}{k!(n-k)!}=\frac{(n-1)!}{(n-1)!(n-1-k)!}+\frac{(n-1)!}{(n-1)!(n-k)!}\]
+	\item Recall ${n \choose k}$ is the number of bug paths to the coordinate $(n-k, k)$. Interpret it.
+	\item $(x+y)^n = \sum\limits^n_{k=0} {n \choose k} x^ky^{n-k} = y^n + nxy^{n-1} + {n \choose 2}x^2y^{n-2} + \cdots$\\
+	Recall $(x+y)^n = (x+y)(x+y)^{n-1}$ where $(x+y)^{n-1}$ again is equal to $\sum\limits^{n-1}_{k=0}{n-1 \choose k}x^ky^{n-1-k}$\\
+	\[\sum\limits^{n-1}_{k=0}{n-1 \choose k}x^{k+1}y^{n-1-k}+ \sum\limits^{n-1}_{k=0}{n-1 \choose k}x^ky^{n-k}\]
+	We claim that the first term is equal to:
+	\[\sum\limits^{n-1}_{k=0}{n-1 \choose k}x^{k+1}y^{n-1-k} = \sum\limits^n_{k=1}{n-1 \choose k-1}x^ky^{n-k}\]
+	So the original formula becomes:
+	\[
+	\begin{split}
+		\sum\limits^n_{k=1}{n-1 \choose k-1}x^ky^{n-k} + \sum\limits^{n-1}_{k=0}{n-1 \choose k}x^ky^{n-k} &= \sum\limits^n_{k=0}\bigg[{n-1 \choose k-1} + {n-1 \choose k}\bigg]x^ky^{n-k}\\
+	\end{split}
+	\]
+\end{enumerate}
+
+Define ${n \choose k}=0$ if $n,k$ do not satisfy $0\leq k\leq n.$\\
+
+\paragraph{Probability:} Given $n$ equally likely outcomes, an event is defined to be a subset of these outcomes, and the probability of an event is just by definition $\frac{|A|}{n}.$\\
+
+What is the probability of being dealt (for 5 cards):
+
+\begin{itemize}
+	\item a pair
+	\item a straight
+	\item a flush
+\end{itemize}
+
+We have ${52 \choose 5}$ possible hands. (in fact $2598960$)\\
+
+To get a pair, we make following choices:
+\begin{itemize}
+	\item choose a rank for which we have two cards: $13$.
+	\item choose two suits for the pair: ${4 \choose 2}$.
+	\item choose three ranks from my remaining set of $12$ ranks: ${12 \choose 3}$.
+	\item choose a suit three times: $4^3$.
+\end{itemize}
+
+Multiply them together, about $1098240$, so probability is around $42\%$.\\
+
+To get a straight,
+\begin{itemize}
+	\item choose the lowest rank: $9$ (consider A, 2, 3, 4, 5 as a non-straight)
+	\item choose one of $4$ suits $5$ times: $4^5$.
+	\item eliminate the number of straight flushes $4$.
+\end{itemize}
+
+$9\times(4^5-4)$, probability around $0.35\%$.
+
+\end{document}

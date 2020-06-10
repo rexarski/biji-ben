@@ -1,0 +1,134 @@
+######Q1
+loglik_1 = function(x,d,p){
+n = length(d)
+likelihood = 0
+temp = 0
+for (i in 1:n){
+	temp = integrate(function(y) dnorm(y,mean = x[1],sd = e^(x[2])),lower = d[i]-5*10^(-p-1),upper = d[i]+5*10^(-p-1))$value		
+	likelihood = likelihood+log(temp)
+	}
+likelihood
+}
+
+loglik_2 = function(x,d,p){
+n = length(d)
+likelihood = 0
+temp = 0
+for (i in 1:n){
+	temp = pnorm(mean = x[1],sd =e^(x[2]),d[i]+5*10^(-p-1))-pnorm(mean = x[1],sd =e^(x[2]),d[i]-5*10^(-p-1))		
+	likelihood = likelihood+log(temp)
+	}
+likelihood
+}
+
+rnd_norm_mle1 = function(data,d){
+nlm(function(x) -loglik_1(x,data,d),p=c(mean(data),log(sd(data))))
+}
+
+rnd_norm_mle2  = function(data,d){
+nlm(function(x) -loglik_2(x,data,d),p=c(mean(data),log(sd(data))))
+}
+
+set.seed(1); d1 <- 1; x1 <- round(rnorm(25,2.24,1),d1)
+set.seed(2); d2 <- 1; x2 <- round(rnorm(50,2.24,0.1),d2)
+set.seed(3); d3 <- 0; x3 <- round(rnorm(4000,2.24,0.8),d3)
+
+system.time(rnd_norm_mle1(x1,d1))
+system.time(rnd_norm_mle1(x2,d2))
+system.time(rnd_norm_mle1(x3,d3))
+system.time(rnd_norm_mle2(x1,d1))
+system.time(rnd_norm_mle2(x2,d2))
+system.time(rnd_norm_mle2(x3,d3))
+
+####Q2
+
+set.seed(1)
+n <- 40
+x1 <- rnorm(n); x2 <- rnorm(n); z <- rnorm(n)
+Xa <- cbind (x1, x2); Xb <- cbind (x1+0.5*z, x2+0.5*z)
+
+jd = function(x,sigma,rho){ 
+(1/(2*pi*sigma^2*sqrt(1-rho^2))) * exp(-(x[1]^2+x[2]^2-2*rho*x[1]*x[2])/(2*(1-rho^2)*sigma^2))
+}
+
+bvn_prior <- function(sigma,rho){
+e^(-sigma)/(4*abs(rho)^0.5)
+}
+
+ 
+bnv_likelihood = function(x,sigma,rho){
+loglike = prod(apply(x,1,function(y) jd(y,sigma,rho)))
+as.numeric(loglike)
+}
+
+lik_v = function(x,sigma,rho)  {
+res = numeric(length(sigma))
+for (i in 1:length(sigma))  res[i] = bnv_likelihood(x,sigma[i],rho)
+res
+}
+
+m_rho = function(data,rho){
+r = numeric(length(rho))
+for (i in 1:length(rho))
+{r[i] = integrate(function(x) lik_v(data,x,rho[i])*bvn_prior(x,rho[i]),lower = 0,upper = Inf)$value }
+r
+}
+
+lik_rho = function(data,rho){
+r = numeric(length(rho))
+for (i in 1:length(rho))
+{r[i] = integrate(function(x) lik_v(data,x,rho[i]),lower = 0,upper = Inf)$value }
+r
+}
+ 
+
+bvn_normalize = function(x){
+integrate(function(y) f(x,y),-1,0)$value + integrate(function(y) f(x,y),0,1)$value
+} 
+bvn_posterior_rho = function(x,rho){
+m_rho(x,rho)/bvn_normalize(x)}
+
+
+Ca = bvn_normalize(Xa)
+Cb = bvn_normalize(Xb)
+
+
+plot(function(rho) 1/(4*abs(rho)^0.5), xlim = c(-0.99,0.99),ylim = c(0,5),ylab = "",lty = 2,xlab = "rho",main = "Data = Xa")
+par(new = TRUE)
+plot(function(rho) m_rho(Xa,rho)/Ca, xlim = c(-0.99,0.99),ylim = c(0,5),ylab = "",lty = 1,xlab = "")
+par(new = TRUE)
+plot(function(rho) lik_rho(Xa,rho)/(2*Ca), xlim = c(-0.99,0.99),ylim = c(0,5),ylab = "",type = "p",xlab = "")
+abline(v = cor(Xa)[1,2])
+
+
+plot(function(rho) 1/(4*abs(rho)^0.5), xlim = c(-0.99,0.99),ylim = c(0,5),ylab = "",lty = 2,xlab = "rho",main = "Data = Xb")
+par(new = TRUE)
+plot(function(rho) m_rho(Xb,rho)/Cb, xlim = c(-0.99,0.99),ylim = c(0,5),ylab = "",lty = 1)
+par(new = TRUE)
+plot(function(rho) lik_rho(Xb,rho)/(4*Cb), xlim = c(-0.99,0.99),ylim = c(0,5),ylab = "",type = "p",xlab = "")
+abline(v = cor(Xb)[1,2])
+
+
+c =  1
+n_1 = 50
+n_2 = 100
+while (1){
+	print(n_2)
+	
+	set.seed(1)
+	x3 <- rnorm(n_2)
+	x4 <- rnorm(n_2) 
+	Xc <- cbind (x3, x4) 
+	c = bvn_normalize(Xc)
+	if (c  == 0){n_2 =round(n_1+(n_2-n_1)/2)
+		}
+	else {n_1 =n_2
+		n_2 = n_2*2
+		 }
+	if(n_2 - n_1 <= 10) {break}
+}
+
+
+
+
+

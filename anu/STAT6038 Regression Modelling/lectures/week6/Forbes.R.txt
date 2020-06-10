@@ -1,0 +1,168 @@
+# Example dataset 2 from the back of the lecture notes brick.
+
+# The Forbes data (a classic calibration problem)
+
+# Read in the data:
+
+Forbes <- read.csv("Forbes.csv")
+Forbes
+
+# Attach and plot the data:
+
+attach(Forbes)
+plot(Boiling.point, Pressure)
+
+# A SLR certainly looks plausible:
+
+Forbes.lm <- lm(Pressure ~ Boiling.point)
+
+# Add the model to the plot we created earlier:
+
+abline(Forbes.lm$coef)
+
+# Looks good, but we should check the plots:
+
+plot(Forbes.lm, which=1)
+
+# There is definite pattern to the residuals here, suggesting a violation
+# of the assumption that the errors are independent or uncorrelated.
+# We do not appear to have an appropriate model. We need to fix the 
+# model before we go any further.
+
+# Note that if we do just continue regardless, we would end up making 
+# some strong inferences with what is arguably an inapproriate model:
+
+plot(Forbes.lm)
+plot(Forbes.lm, which=4)
+
+anova(Forbes.lm)
+summary(Forbes.lm)
+
+# We could try modelling the relationship with a quadratic model
+# rather than a straight line - this takes us into the area of 
+# multiple regression models (covered later in this course).
+# Here is a "sneak" preview:
+
+Forbes.qm <- lm(Pressure ~ Boiling.point + I(Boiling.point^2))
+plot(Forbes.qm)
+plot(Forbes.qm, which=4)
+
+anova(Forbes.qm)
+summary(Forbes.qm)
+
+# Another possible solution is to try a transformation on one or both
+# of the variables (response and/or explanatory). Let's graph a few 
+# possible scale transformations in the power family:
+
+x <- 0:1000/10
+plot(x, x, type="l", ylab="transformed (x)")
+lines(x, x^2, lty=2)
+lines(x, sqrt(x), lty=3)
+lines(x, log(x), lty=4)
+lines(x, 1/x, lty=5)
+
+# There are some problems, if x can have negative values, x squared is
+# not a monotonic transformation. The inverse 1/x is monotonically
+# decreasing rather than increasing, so it reverses the data order.
+# log() and 1/x have problems with both negative values and zero values:
+
+x[1:12]
+log(x)[1:12]
+1/x[1:12]
+
+# There are no zero values of the Y variable in the Forbes data, so
+# we can try the transformation suggested by Forbes (see the
+# description of the data in the brick):
+
+Pressure
+log(Pressure)
+
+plot(Boiling.point, log(Pressure))
+Forbes.loglm <- lm(log(Pressure) ~ Boiling.point)
+abline(Forbes.loglm$coef)
+
+# Again, this looks like a good fit, but we should closely examine the
+# residual plots:
+
+plot(Forbes.loglm)
+plot(Forbes.loglm, which=4)
+
+# The transformation appears to have solved some of the problems, but
+# there is a still an obvious potential outlier (observation 12).
+# We can check what the model would look like without this data point:
+
+Forbes.loglm2 <- lm(log(Pressure[-12]) ~ Boiling.point[-12])
+plot(Forbes.loglm2)
+plot(Forbes.loglm2, which=4)
+
+# Most things looking better, but now there is hint that observation 1
+# is now a problem. This often happens when we don't have the right 
+# scale for the variables (i.e. we haven't yet found the scale on 
+# which the relationship is approximately linear). The qq plot 
+# suggests that the log() transformation may have been a little 
+# too "strong", so maybe we should try a sqrt() transformation:
+
+Forbes.sqrtlm <- lm(sqrt(Pressure[-12]) ~ Boiling.point[-12])
+plot(Forbes.sqrtlm)
+
+# Arguably there are still some problems and we are in real danger of
+# over-working a dataset with only 17 observations (16 once we have
+# excluding an outlier). We could keep going or simply chose the best
+# of a bad bunch of candidate models and see what light it can shed 
+# on the underlying research question.
+
+# There may be could good underlying scientific reasons that Forbes 
+# suggested the log model, though we probably do need to worry about
+# the obvious outlier, so let's take a closer look at the log model
+# excluding the outlier:
+
+Forbes.loglm2
+plot(Forbes.loglm2)
+plot(Forbes.loglm2, which=4)
+
+anova(Forbes.loglm2)
+summary(Forbes.loglm2)
+
+# So, if this is our best candidate model, it does seem to suggest
+# there is significant relationship between Pressure (on a log scale)
+# and Boiling Point, as suggested by Forbes, but excluding the effects
+# of observation 12 as a potential outlier - we can tell this from 
+# either the F=32485 on 1 and 14 degrees of freedom which has a 
+# p-value a lot lower than 0.05 or from the t statistic associated 
+# with Boiling.point of -41.2 on 14 df, with the same p-value.
+
+# Note if we want to evaluate this model on the original scale,
+# we will need to back-transform:
+
+plot(Boiling.point, Pressure)
+lines(Boiling.point[-12], exp(fitted(Forbes.loglm2)))
+
+# Note the slight curve to the line and the "glitch" around a
+# a Boiling point of 208 to 209 (note unlike the description in the
+# brick, these data are in degrees Fahrenheit, not Celsius), where
+# the data were not totally sorted in order:
+
+Boiling.point
+
+# We can do a better job by creating some sorted X values and using
+# the model to predict the Y values, but first we need to re-fit the
+# model as predict has trouble dealing with the exclusion of the 
+# outlier:
+
+bpoint <- Boiling.point[-12]
+lpressure <- log(Pressure[-12])
+Forbes.loglm3 <- lm(lpressure ~ bpoint)
+
+bpoints <- 190:215
+bpoints
+logpress <- predict(Forbes.loglm3, newdata=data.frame(bpoint=bpoints), interval="prediction")
+logpress
+class(logpress)
+
+plot(Boiling.point, Pressure)
+lines(bpoints, exp(logpress[,"fit"]))
+lines(bpoints, exp(logpress[,"lwr"]), lty=2)
+lines(bpoints, exp(logpress[,"upr"]), lty=2)
+
+# The 95% prediction intervals include all of the points actually 
+# used to fit the model, but do not include the outlier.

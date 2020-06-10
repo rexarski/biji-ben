@@ -1,0 +1,129 @@
+Starting SAT-based planner...
+Checking for plugins...
+Encodings registered:    3
+Solvers registered:      1
+Command line options:
+    Domain file:          benchmarks/blocks/domain.pddl
+    Problem file:         benchmarks/blocks/problem11.pddl
+    Experiment name:      blocks_temp
+    Query strategy:        ramp, min_h = 15 max_h = 50 step_h = 5
+    Compute plangraph:     True
+    Plangraph constraints: both
+    Encoding:              basic
+    Solver                 precosat
+    SAT solver time out    None
+    Write debug CNF:       False
+    Remove tmp files:      False
+Command line arg processing time: 0.002480030059814453
+Parsing the PDDL domain...
+Parsing the PDDL problem...
+Simplifying the problem representation...
+Parsing time: 0.06698298454284668
+Grounding the problem...
+Grounding time: 0.0298311710357666
+Simplifying the ground encoding...
+Simplify time: 0.07039380073547363
+Generating Plangraph invariants...
+Step: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 
+Plangraph invariants time: 0.45556211471557617
+Planning...
+
+Step: 15
+-------------------------------------------------
+Generating base encoding: basic ...
+PRE_EFF_COUNT:
+26730
+FRAME COUNT:
+4320
+INT MUTEX COUNT:
+152625
+REACH COUNT:
+1857
+FMUTEX COUNT:
+13589
+Encoding generation time: 13.142911911010742
+Writing CNF file...
+Total variables: 5934
+Total clauses: 199275
+Writing time: 0.29278993606567383
+Solving...
+UNSAT
+Solution time:  0.26109886169433594
+Step time: 13.700248718261719
+
+Step: 20
+-------------------------------------------------
+Generating base encoding: basic ...
+PRE_EFF_COUNT:
+35640
+FRAME COUNT:
+5760
+INT MUTEX COUNT:
+203500
+REACH COUNT:
+1857
+FMUTEX COUNT:
+15162
+Encoding generation time: 16.77082896232605
+Writing CNF file...
+Total variables: 7864
+Total clauses: 262073
+Writing time: 0.3629570007324219
+Solving...
+UNSAT
+Solution time:  0.7036638259887695
+Step time: 17.838990926742554
+
+Step: 25
+-------------------------------------------------
+Generating base encoding: basic ...
+PRE_EFF_COUNT:
+44550
+FRAME COUNT:
+7200
+INT MUTEX COUNT:
+254375
+REACH COUNT:
+1857
+FMUTEX COUNT:
+15162
+Encoding generation time: 20.101654767990112
+Writing CNF file...
+Total variables: 9794
+Total clauses: 323298
+Writing time: 0.4429171085357666
+Solving...
+UNSAT
+Solution time:  2.7959022521972656
+Step time: 23.343313932418823
+
+Step: 30
+-------------------------------------------------
+Generating base encoding: basic ...
+PRE_EFF_COUNT:
+53460
+FRAME COUNT:
+8640
+INT MUTEX COUNT:
+305250
+REACH COUNT:
+1857
+FMUTEX COUNT:
+15162
+Encoding generation time: 24.16599178314209
+Writing CNF file...
+Total variables: 11724
+Total clauses: 384523
+Writing time: 0.49567627906799316
+Solving...
+UNSAT
+Solution time:  17.89650297164917
+Step time: 42.56039094924927
+
+Step: 35
+-------------------------------------------------
+Generating base encoding: basic ...
+PRE_EFF_COUNT:
+62370
+FRAME COUNT:
+10080

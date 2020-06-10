@@ -1,0 +1,25 @@
+---
+title: Tutorial 3  
+author: STAT 3013/8027
+output: pdf_document
+---
+
+---
+\large
+
+1. Rice Chapter 5, questions 20, 21 (a).
+
+2. Outline and conduct a Monte Carlo approximation to the following integral:
+
+  $$I = \int_0^{\infty} 25 x^2 cos(x^2) exp(-25 x) dx$$
+
+
+3.  Let $U \sim \textrm{uniform}(0,1)$. 
+
+    a. Show that both $-\log(U)$ and $-\log(1-U)$ are exponential random variables.
+    b. Show that $\log\left( \frac{u}{1-u} \right)$ is a logistic(0,1) random variable.
+    c. Show how to generate samples from a logistic($\mu$, $\beta$). 
+
+
+
+

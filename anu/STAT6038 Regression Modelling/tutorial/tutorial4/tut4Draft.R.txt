@@ -1,0 +1,4 @@
+# Q4
+savings <- read.csv('savings.csv', header=T)
+savings
+attach(savings)

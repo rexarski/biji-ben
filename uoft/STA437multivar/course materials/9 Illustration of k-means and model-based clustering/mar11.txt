@@ -1,0 +1,76 @@
+> source("EM.txt")
+> rr0 <- kmeans(xx,centers=2,nstart=10)
+> rr1 <- EM(xx,k=2,em.iter=1)
+> rr10 <- EM(xx,k=2,em.iter=10)
+> rr50 <- EM(xx,k=2,em.iter=50)
+> rr50$mu  # estimated cluster centres
+[[1]]
+        x           
+ 2.987359 -3.038040 
+
+[[2]]
+          x             
+-0.01364098 -0.06683224 
+> rr50$cov # estimated cluster covariance matrices
+[[1]]
+          x          
+x  1.153431 -1.136822
+  -1.136822  2.000205
+
+[[2]]
+          x          
+x 0.9669319 0.9329694
+  0.9329694 1.8173515
+>
+> # Plotting density contours - this can be done by an eigen-decomposition
+> # of the covariance matrices and the R function plotellipse
+> eigen(rr50$cov[[1]])
+$values
+[1] 2.7899221 0.3637145
+
+$vectors
+           [,1]       [,2]
+[1,] -0.5705212 -0.8212829
+[2,]  0.8212829 -0.5705212
+> eigen(rr50$cov[[2]])
+$values
+[1] 2.417439 0.366844
+
+$vectors
+          [,1]       [,2]
+[1,] 0.5409628 -0.8410465
+[2,] 0.8410465  0.5409628
+> # The eigenvalues are proportional to the squares of the radii of the
+> # axes of the ellipses. The orientation of the ellipses can be 
+> # determined by the arc-cosine of the first component of the first
+> # eigenvector. The centres of the ellipses are simply the estimated
+> # mean vectors.
+> acos(-0.5705212)*180/pi # convert from radians to degrees
+[1] 124.7866
+> acos(0.5409628)*180/pi
+[1] 57.2508
+> library(shape) # This library contains the function plotellipse
+> plot(xx,col=ifelse(rr50$delta[,1]>0.5,"blue","red"),pch=20)
+> plotellipse(rx=2.5*sqrt(2.7899221),ry=2.5*sqrt(0.3637145),
++  mid=c(2.987359,-3.038040),angle=124.7866,lcol="blue")
+> plotellipse(rx=2*sqrt(2.7899221),ry=2*sqrt(0.3637145),
++  mid=c(2.987359,-3.038040),angle=124.7866,lcol="blue")
+> plotellipse(rx=1.5*sqrt(2.7899221),ry=1.5*sqrt(0.3637145),
++  mid=c(2.987359,-3.038040),angle=124.7866,lcol="blue")
+> plotellipse(rx=sqrt(2.7899221),ry=sqrt(0.3637145),
++  mid=c(2.987359,-3.038040),angle=124.7866,lcol="blue")
+> plotellipse(rx=2.5*sqrt(2.417439),ry=2.5*sqrt(0.366844),
++  mid=c(-0.01364098,-0.06683224),angle=57.2508,lcol="red")
+> plotellipse(rx=2*sqrt(2.417439),ry=2*sqrt(0.366844),
++  mid=c(-0.01364098,-0.06683224),angle=57.2508,lcol="red")
+> plotellipse(rx=1.5*sqrt(2.417439),ry=1.5*sqrt(0.366844),
++  mid=c(-0.01364098,-0.06683224),angle=57.2508,lcol="red")
+> plotellipse(rx=sqrt(2.417439),ry=sqrt(0.366844),
++  mid=c(-0.01364098,-0.06683224),angle=57.2508,lcol="red")
+> title(main="Estimated density contours for clusters")
+
+
+
+
+
+

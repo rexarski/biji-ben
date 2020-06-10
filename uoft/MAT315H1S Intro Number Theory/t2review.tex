@@ -1,0 +1,227 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{amsmath}
+
+\newenvironment{nscenter}
+ {\parskip=0pt\par\nopagebreak\centering}
+ {\par\noindent\ignorespacesafterend}
+
+\title{MAT315 Intro to Number Theory Test 2 Review}
+\author{Rui Qiu}
+\date{March 2015}
+
+\begin{document}
+\maketitle
+
+Since this is my very first time writing in "formal" \LaTeX, there might be some stupid mistakes there, almost surely.
+
+\section{Mersenne Prime}
+
+{\bf Proposition 14.1.} If $a^n - 1$ is prime for some numbers $a \geqslant 2$ and $n \geqslant 2$, then $a$ must equal $2$ and $n$ must be a prime. \\\\
+{\bf Definition:} Primes of the form $2^p - 1$ are called {\it Mersenne primes}, where $p$ is a prime.
+
+\section{Mersenne Primes and Perfect Numbers}
+
+{\bf Definition:} Sum of proper divisors of $n$ is equal to $n$ itself, such $n$ is called a {\it perfect number}. \\\\
+{\bf Theorem 15.1} (Euclid's Perfect Number Formula). If $2^p -1$ is a prime number, then $2^{p-1}(2^p-1)$ is a {\it perfect number}. \\\\
+{\bf Theorem 15.2} (Euclid's Perfect Number Theorem). If $n$ is an even perfect number, then $n$ looks like
+\begin{nscenter}
+\bfseries $n=2^{p-1}(2^p-1)$
+\end{nscenter}
+where $2^p-1$ is a {\it Mersenne prime}. \\\\
+{\bf Definition:}: $\sigma(n) =$ sum of all divisors of $n$ (including $1$ and $n$)\\\\
+{\bf Theorem 15.3} (Sigma Function Formulas) \\
+{\bf (a)} If $p$ is a prime and $k \geqslant 1$, then 
+\begin{nscenter}
+\bfseries $\sigma(p^k) = 1 + p + p^2 + ... + p^k = \frac{p^{k+1}-1}{p-1}.$
+\end{nscenter}
+{\bf (b)} If $gcd(m, n) = 1$, then
+\begin{nscenter}
+\bfseries $\sigma(mn) = \sigma(m)\sigma(n).$
+\end{nscenter}\\\\
+Note that a number $n$ is perfect exactly when $\sigma(n)=2n$.
+
+\section{Powers Modulo $m$ and Successive Squaring}
+
+{\bf Algorithm 16.1} (Successive Squaring to Compute $a^k$ (mod $m$)). The following steps compute the value of $a^k$ (mod $m$):
+
+\begin{enumerate}
+\item Write $k$ as a sum of powers of $2$,
+\begin{nscenter}
+\bfseries $k = u_0 + u_1 \cdot 2 + u_2 \cdot 4 + u_3 \cdot 8 + ... + u_r \cdot 2^r$,
+\end{nscenter}
+where each $u_i$ is either $0$ or $1$. (This is called the binary expansion of $k$.)
+\item Make a table of powers of a modulo $m$ using successive squaring.
+\begin{nscenter}
+$a^1 \equiv A_0 $ (mod $m$)\\
+$a^2 \equiv (a^1)^2 \equiv A_0^2 \equiv A_1$ (mod $m$)\\
+$a^4 \equiv (a^2)^2 \equiv A_1^2 \equiv A_2$ (mod $m$)\\
+$a^8 \equiv (a^4)^2 \equiv A_2^2 \equiv A_3$ (mod $m$)\\
+\ldots\\
+$a^{2^r} \equiv (a^{2^{r-1}})^2 \equiv A_{r-1}^2 \equiv A_r$ (mod $m$)\\
+\end{nscenter}
+Note that to compute each line of the table you only need to take the number at the end of the previous line, square it, and then reduce it modulo $m$. Also note that the table has $r+1$ lines, where $r$ is the highest exponent of $2$ appearing in the binary expansion of $k$ in Step 1.
+\item The product
+\begin{nscenter}
+$A_0^{u_0}\cdot A_1^{u_1}\cdot A_2^{u_2} \cdot \ldots \cdot A_r^{u_r} $ (mod $m$)
+\end{nscenter}
+will be congruent to $a^k$ (mod $m$). Note that all the $u_i$'s are either $0$ or $1$, so this number is really the product of those $A_i$'s for which $u_i$ equals $1$.
+\end{enumerate}
+
+\section{Computing $k^{th}$ Roots Modulo $m$}
+{\bf Algorithm 17.1} (How to Compute $k^{th}$ Roots Modulo $m$). Let $b, k$, and $m$ given integers that satisfy
+\begin{center}
+$gcd(b,m) = 1$ and $gcd(k, \phi(m)) = 1$
+\end{center}
+The following steps give a solution to the congruence
+\begin{enumerate}
+\item Compute $\phi(m)$. (See Chapter 11. Note that $\phi(m) = \#\{a:1\leqslant a \leqslant m \text{ and } gcd(a, m)=1\}$.)
+\item Find positive integers $u$ and $v$ satisfy $ku-\phi(m)v=1$. [See Chapter 6. Another way to say this is that $u$ is a positive integer satisfying $ku\equiv 1$ (mod $\phi(m)$), so $u$ is actually the inverse of $k$ modulo $\phi(m)$.]
+\item Compute $b^u \pmod m$ by successive squaring. (See Chapter 16.) The value obtained gives the solution $x$.
+\end{enumerate}
+
+\section{Powers, Roots, and "Unbreakable" Codes}
+
+How do we decode the message when we receive it? We have been sent the numbers $b_1, b_2, \ldots, b_r$, and we need to recover the numbers $a_1, a_2, \ldots, a_r$. Each $b_i$ is congruent to $a_i^k \pmod m$, so to find $a_i$ we need to solve the congruence $x^k \equiv b_i \pmod m$. This is exactly the problem we solved in the last chapter, assuming we were able to calculate $\phi(m)$. But we know the values of $p$ and $q$ with $m=pq$, so we easily compute
+\begin{center}
+$\phi(m)=\phi(p)\phi(q)=(p-1)(q-1)=pq-p-q+1=m-p-q+1$
+\end{center}
+Now we just need to apply the method used in Chapter 17 to solve each of the congruence $x^k \equiv b_i \pmod m$. The solutions are the numbers $a_1, a_2, \ldots, a_r$ and then it is easy to take this string of digits and recover the original message.
+
+\section{Primality Testing and Carmichael Numbers}
+\textbf{Definition:} A \textit{Carmichael number} is a composite number $n$ with the property that
+\begin{center}
+$a^n \equiv a \pmod n$ for every integer $1\leqslant a\leqslant n.$
+\end{center}
+In other words, a Carmichael number is a composite number that can masquerade as a prime, because there are no witnesses to its composite nature. The smallest Carmichael number is $561$.
+
+\textbf{Assertion:}
+
+(A) Every Carmichael number is odd.
+
+(B) Every Carmichael number is a product of distinct primes.
+
+\section{Squares Modulo $p$}
+\textbf{Definition:} A nonzero number that is congruent to a square modulo $p$ is called a \textit{quadratic residue modulo $p$}. (QR) \\\\
+\textbf{Definition:} A nonzero number that is not congruent to a square modulo $p$ is called a \textit{(quadratic) nonresidue modulo $p$}. (NR) \\\\
+\textbf{Theorem 20.1} Let $p$ be an odd prime. Then there are exactly $\frac{p-1}{2}$ quadratic residues modulo $p$ and exactly $\frac{p-1}{2}$ nonresidues modulo $p$.\\\\
+\textbf{Theorem 20.2} (Quadratic Residue Multiplication Rule). (Version 1) Let $p$ be an odd prime. Then:
+\begin{center}
+\begin{enumerate}
+\item The product of two quadratic residues modulo $p$ is a quadratic residue.
+\item The product of a quadratic residue and a nonresidue is a nonresidue.
+\item The product of two nonresidues is a quadratic residue.
+\end{enumerate}
+\end{center}
+These three rules can be summarized symbolically by the formulas
+\begin{center}
+$QR \times QR =QR, QR \times NR=NR, NR\times NR= QR.$
+\end{center}
+\textbf{Definition:} The \textit{Legendre symbol} of $a \bmod p$ is
+\[ \left(\frac{a}{p}\right)= \left\{
+    \begin{array}{l l}
+    1 & \quad \text{if $a$ is a quadratic residue modulo $p$,}\\
+    -1 & \quad \text{if $a$ is a nonresidue modulo $p$.}
+    \end{array} \right.\]\\
+\textbf{Theorem 20.3} (Quadratic Residue Multiplication Rule). (Version 2) Let $p$ be an odd prime. Then
+\begin{center}
+$\left(\frac{a}{p}\right)\left(\frac{b}{p}\right)=\left(\frac{ab}{p}\right)$.
+\end{center}
+
+\section{Is $-1$ a Sqaure Modulo $p$? Is $2$?}
+
+\textbf{Theorem 21.1} (Euler's Criterion). Let $p$ be an odd prime. Then
+\begin{center}
+$a^{\frac{p-1}{2}} \equiv \left(\frac{a}{p}\right) \pmod p$.
+\end{center}
+\textbf{Theorem 21.2} (Quadratic Reciprocity). (Part I) Let $p$ be an odd prime. Then -1 is a quadratic residue modulo $p$ if $p\equiv 1\pmod 4$, and -1 is a nonresidue modulo $p$ if $p\equiv3 \pmod 4$.\\
+In other words, using the Legendre symbol,
+\[ \left(\frac{-1}{p}\right)= \left\{
+    \begin{array}{l l}
+    1 & \quad \text{if $p\equiv 1\pmod4$,}\\
+    -1 & \quad \text{if $p\equiv 3\pmod4$.}
+    \end{array} \right.\]\\\\
+\textbf{Theorem 21.3} (Primes 1 (Mod 4) Theorem). There are infinitely many primes that are congruent to 1 modulo 4.\\\\
+\textbf{Theorem 21.4} (Quadratic Reciprocity). (Part II) Let $p$ be an odd prime. Then 2 is a quadratic residue modulo $p$ if $p$ is congruent to 1 or 7 modulo 8, and 2 is a nonresidue modulo $p$ if $p$ is congruent to 3 or 5 modulo 8. In terms of the \textit{Legendre symbol},
+\[ \left(\frac{2}{p}\right)= \left\{
+    \begin{array}{l l}
+    1 & \quad \text{if $p\equiv1 \text{ or } 7\pmod 8$,}\\
+    -1 & \quad \text{if $p\equiv3 \text{ or } 5\pmod 8$.}
+    \end{array} \right.\]\\
+
+\section{Quadratic Reciprocity}
+
+\textbf{Theorem 22.1} (Law of Quadratic Reciprocity). Let $p$ and $q$ be distinct odd primes.
+\[ \left(\frac{-1}{p}\right)= \left\{
+    \begin{array}{l l}
+    1 & \quad \text{if $p\equiv 1\pmod4$,}\\
+    -1 & \quad \text{if $p\equiv 3\pmod4$.}
+    \end{array} \right.\]\\
+\[ \left(\frac{2}{p}\right)= \left\{
+    \begin{array}{l l}
+    1 & \quad \text{if $p\equiv1 \text{ or } 7\pmod 8$,}\\
+    -1 & \quad \text{if $p\equiv3 \text{ or } 5\pmod 8$.}
+    \end{array} \right.\]\\
+\[ \left(\frac{q}{p}\right)= \left\{
+    \begin{array}{l l}
+    \left(\frac{p}{q}\right) & \quad \text{if $p\equiv1\pmod4 \text{ or } q\equiv1\pmod4$,}\\
+    -\left(\frac{p}{q}\right) & \quad \text{if $p\equiv3\pmod4 \text{ and } q\equiv3\pmod4$.}
+    \end{array} \right.\]\\
+\textbf{Theorem 22.2} (Generalized Law of Quadratic Reciprocity). Let $a$ and $b$ be odd positive integers.
+\[ \left(\frac{-1}{b}\right)= \left\{
+    \begin{array}{l l}
+    1 & \quad \text{if $b\equiv 1\pmod4$,}\\
+    -1 & \quad \text{if $b\equiv 3\pmod4$.}
+    \end{array} \right.\]\\
+\[ \left(\frac{2}{b}\right)= \left\{
+    \begin{array}{l l}
+    1 & \quad \text{if $b\equiv1 \text{ or } 7\pmod 8$,}\\
+    -1 & \quad \text{if $b\equiv3 \text{ or } 5\pmod 8$.}
+    \end{array} \right.\]\\
+\[ \left(\frac{a}{b}\right)= \left\{
+    \begin{array}{l l}
+    \left(\frac{b}{a}\right) & \quad \text{if $a\equiv1\pmod4 \text{ or } b\equiv1\pmod4$,}\\
+    -\left(\frac{b}{a}\right) & \quad \text{if $a\equiv b\equiv3\pmod4$.}
+    \end{array} \right.\]\\
+
+\section{Which Primes Are Sums of Two Squares?}
+
+\textbf{Theorem 24.1} (Sum of Two Squares Theorem for Primes). Let $p$ be a prime. Then $p$ is a sum of two squares exactly when
+\begin{center}
+$p\equiv1\pmod4 \quad (\text{or }p=2)$.
+\end{center}
+The Sum of Two Squares Theorem really consists of two statements.\\\\
+\textbf{Statement 1.} If $p$ is a sum of two squares, then $p\equiv1\pmod4$.\\\\
+\textbf{Statement 2.} If $p\equiv1\pmod4$, then $p$ is a sum of two squares.\\\\
+\textbf{Algorithm: Descent Procedure}
+\begin{enumerate}
+\item $p$ any prime $\equiv 1\pmod4$
+\item Write $A^2 + B^2 = Mp$ with $M < p$
+\item Choose numbers $u$ and $v$ with $u\equiv A\pmod M)$, $v \equiv B \pmod M$, $\frac{1}{2}M \leqslant u, v \leqslant \frac{1}{2}M$
+\item Observe that $u^2 + v^2 \equiv A^2 + B^2 \equiv 0 \pmod M$
+\item So we can write $u^2+v^2 = Mr, A^2+B^2=Mp$ (for some $1\leqslant r < M$)
+\item Multiply to get $(u^2+v^2)(A^2+B^2)=M^2rp$.
+\item Use the identity $(u^2+v^2)(A^2+B^2)=(uA+vB)^2+(vA-uB)^2$.
+\item $(uA+vB)^2+(vA-uB)^2 = M^2rp$.
+\item Divide by $M^2$. $\left(\frac{uA+vB}{M}\right)^2 + \left(\frac{vA-uB}{M}\right)^2=rp$ This gives a smaller multiple of $p$ written as a sum of two squares. 
+\item Repeat the process until $p$ itself is written as a sum of two squares.
+\end{enumerate}
+
+\section{Which Numbers Are Sums of Two Squares?}
+\textbf{Divide:} Factor $m$ into a product of primes $p_1p_2\ldots p_r$.\\\\
+\textbf{Conquer:} Write each prime $p_i$ as a sum of two squares.\\\\
+\textbf{Unify:} Use the identity $(u^2+v^2)(A^2+B^2)=(uA+vB)^2+(vA-uB)^2$ repeatedly to write $m$ as a sum of two squares.\\\\
+\textbf{Theorem 25.1} (Sum of Two Squares Theorem). Let $m$ be a positive integer.\\\\
+\textbf{(a)} Factor $m$ as
+\begin{center}
+$m = p_1p_2\ldots p_rM^2$
+\end{center}
+with distinct prime factors $p_1, p_2, \ldots, p_r$. Then $m$ can be written as a sum of two squares exactly when every $p_i$ is either 2 or is congruent to 1 modulo 4.\\\\
+\textbf{(b)} The number $m$ can be written as a sum of two squares $m=a^2 +b^2$ with $gcd(a,b)=1$ if and only if it satisfies one of the following two conditions:
+\begin{enumerate}
+\item $m$ is odd and every prime divisor of $m$ is congruent to 1 modulo 4.
+\item $m$ is even, $\frac{m}{2}$ is odd, and every prime divisor of $\frac{m}{2}$ is congruent to 1 modulo 4.
+\end{enumerate}
+\end{document}

@@ -1,0 +1,188 @@
+# Example 6 on multicollinearity from page 27 of chapter 2
+# of the lecture notes:
+
+# Two examples for opposite ends of the spectrum:
+
+pred1_x1 <- c(10,10,10,10,15,15,15,15)
+pred1_x2 <- c(10,10,15,15,10,10,15,15)
+predictor_set1 <- cbind(pred1_x1,pred1_x2)
+
+pred2_x1 <- c(10.0,11.0,11.9,12.7,13.3,14.2,14.7,15.0)
+pred2_x2 <- c(10.0,11.4,12.2,12.5,13.2,13.9,14.4,15.0)
+predictor_set2 <- cbind(pred2_x1,pred2_x2)
+
+# Now let's randomly generate some Y or response variable:
+
+random_y <- rnorm(n=8,mean=50,sd=15)
+random_y
+
+# Note that each time we do this, we will get a different
+# Y variable, but in this artificial example, we are not 
+# really interested in Y - what we are interested is the
+# relationships between the X variables - the predictors.
+
+# The two variables in predictor set 1 are uncorrelated:
+
+cor(predictor_set1)
+
+# But the two variables in predictor set 2 are highly
+# correlated.
+
+cor(predictor_set2)
+
+# Let's quickly look at doing a multiple regression 
+# analysis with both sets of predictor and the random Y
+# variable.
+
+# Predictor set 2 gives correlations and pair-wise
+# scatterplot matrix similar to what we are used to 
+# seeing with observational data:
+
+cor(cbind(predictor_set2,random_y))
+pairs(cbind(predictor_set2,random_y))
+
+# However, predictor set 1 gives different results:
+
+cor(cbind(predictor_set1,random_y))
+pairs(cbind(predictor_set1,random_y))
+
+# Predictor set 1 is more typical of a designed experiment
+# where we have set (controlled) the levels for the X 
+# (factor) variables and observed the response variable. 
+# We also have a balanced experimental design
+# in that we observed all 4 combinations of the X variables
+# 2 times each:
+
+factor(pred1_x1)
+levels(factor(pred1_x1))
+
+factor(pred1_x2)
+levels(factor(pred1_x2))
+
+# Now to fit the multiple regression models - firstly
+# using predictor set 1:
+
+pred1.lm1 <- lm(random_y ~ pred1_x1 + pred1_x2)
+anova(pred1.lm1)
+
+pred1.lm2 <- lm(random_y ~ pred1_x2 + pred1_x1)
+anova(pred1.lm2)
+
+# Note that the order in which we include the X variables 
+# in the model is NOT important when we have uncorrelated
+# predictors ("orthogonal contrasts").
+
+# We do not have orthogonal contrasts with predictor set 2
+# and so order IS important:
+
+pred2.lm1 <- lm(random_y ~ pred2_x1 + pred2_x2)
+anova(pred2.lm1)
+
+pred2.lm2 <- lm(random_y ~ pred2_x2 + pred2_x1)
+anova(pred2.lm2)
+
+# As we noted when discussing influence measures, the 
+# inverse of the XtX matrix is (like the related hat
+# matrix), a very useful matrix - we could calculate this
+# directly for the two predictor sets:
+
+model.matrix(pred1.lm1)
+solve(t(model.matrix(pred1.lm1))%*%model.matrix(pred1.lm1))
+
+model.matrix(pred2.lm1)
+solve(t(model.matrix(pred2.lm1))%*%model.matrix(pred2.lm1))
+
+# Note, the same matrices are actually stored for us as part
+# of the model summary:
+
+names(summary(pred1.lm1))
+summary(pred1.lm1)$cov.unscaled
+summary(pred2.lm1)$cov.unscaled
+
+# This inverse matrix will not exist (i.e. the XtX matrix
+# will be singular) if we have perfect multicollinearity,
+# which would happen if the two X variables were perfectly
+# correlated. 
+
+# The XtX matrix is closely related to the correlation 
+# matrix of the X variables (see the longer argument in 
+# lecture notes). If we invert this matrix, we get another
+# interesting matrix:
+
+cor(predictor_set1)
+cor(predictor_set2)
+
+# For predictor set 1, the two variables are totally 
+# uncorrelated (which typically only happens with designed 
+# experiments) and so the inverse matrix is also an 
+# identity matrix:
+
+solve(cor(predictor_set1))
+
+# Predictor set 2 is an example of what can frequently occur
+# with observational data, we have two closely related 
+# variables, which are not perfectly correlated:
+
+solve(cor(predictor_set2))
+
+# The diagonal elements of the inverse of the correlation 
+# matrix are called the variance inflation factors (VIF), 
+# which are a measure of how much the collinearity of the 
+# X variables will "inflate" the variance estimate. Recall
+# that the standard errors of the coefficents are to the 
+# square root of the diagonal elements of the XtX matrix
+# multiplied by the estimated error variance, so if this
+# value is large, the t test on the corresponding partial
+# regression coefficient (which has this standard error 
+# in the denominator) is more likely to be small and the
+# test statistic less likely to be significant.
+
+diag(solve(cor(predictor_set1)))
+diag(solve(cor(predictor_set2)))
+
+# In any given set of X variables, each X variable will
+# an associated VIF, which is given by the corresponding
+# element on the diagonal of the above matrix, but 
+# these also can be derived by regressing each X variable
+# on the other X variables:
+
+pred1.xvarslm1 <- lm(pred1_x1 ~ pred1_x2)
+summary(pred1.xvarslm1)$r.squared
+1/(1 - summary(pred1.xvarslm1)$r.squared)
+
+pred1.xvarslm2 <- lm(pred1_x2 ~ pred1_x1)
+summary(pred1.xvarslm2)$r.squared
+1/(1 - summary(pred1.xvarslm2)$r.squared)
+
+pred2.xvarslm1 <- lm(pred2_x1 ~ pred2_x2)
+summary(pred2.xvarslm1)$r.squared
+1/(1 - summary(pred2.xvarslm1)$r.squared)
+
+pred2.xvarslm2 <- lm(pred2_x2 ~ pred2_x1)
+summary(pred2.xvarslm2)$r.squared
+1/(1 - summary(pred2.xvarslm2)$r.squared)
+
+# The faraway library associated with the text by
+# Faraway, contains a useful function for calculating 
+# VIFs, but it is a fairly simple matter to write one:
+
+vif <- function(xmatrix) {
+  if (class(xmatrix) == "matrix" | class(xmatrix) == "data.frame")
+    diag(solve(cor(xmatrix))) 
+  else  
+    diag(solve(cor(model.matrix(xmatrix)[,-1])))
+    # assuming a linear model object, if not a matrix
+}
+
+vif(predictor_set1)
+vif(pred1.lm1)
+
+vif(predictor_set2)
+vif(pred2.lm1)
+
+# Only trouble is now that whenever we want to use this
+# function, we are going to have to reissue the above 
+# code or keep using the same .RData file, so that we
+# have access to the above version. You can begin to 
+# see why people create libraries of useful code and
+# data that they want to keep using.

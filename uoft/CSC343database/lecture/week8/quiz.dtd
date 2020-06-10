@@ -1,0 +1,16 @@
+<!ELEMENT quiz (questions, class-responses)>
+<!ELEMENT questions ((mc-question | tf-question)+)>
+<!ELEMENT mc-question (question, option+)>
+<!ATTLIST mc-question qid ID #REQUIRED>
+<!ATTLIST mc-question solution CDATA #REQUIRED>
+<!ELEMENT question (#PCDATA)>
+<!ELEMENT option (#PCDATA)>
+<!ELEMENT tf-question (question)>
+<!ATTLIST tf-question qid ID #REQUIRED>
+<!ATTLIST tf-question solution (True|False) #REQUIRED>
+<!ELEMENT class-responses (student+)>
+<!ELEMENT student (response+)>
+<!ATTLIST student sid ID #REQUIRED>
+<!ELEMENT response EMPTY>
+<!ATTLIST response qid IDREF #REQUIRED>
+<!ATTLIST response answer CDATA #REQUIRED>

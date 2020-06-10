@@ -1,0 +1,83 @@
+# Regression Diagnostics
+
+library(MASS)
+library(nnet)
+library(car)
+library(alr3)
+
+# First, we use the artificial data given in the file "caution.txt" 
+# to show how to draw a residual plot
+
+data(caution)
+names(caution)
+m1<-lm(y~x1+x2,data=caution)
+plot(predict(m1),residuals(m1),xlab="Fitted values",ylab="Residuals")
+# This is the usual plot of residuals versus fitted values.
+
+leverage <-hatvalues(m1)
+# "hatvalues" gets the diagonal elements of the hat matrix, i.e., the leverages.
+press<-residuals(m1)/(1-hatvalues(m1))
+# Compute the PRESS (predictive RSS) using cross-validation (Chapter 10)
+
+plot(predict(m1),residuals(m1,type="pearson"),xlab="Fitted values",ylab="Residuals")
+# Here residuals(m1,type="pearson") is the residuals for WLS. For OLS, 
+# the Pearson residuals and the ordinary residuals are the same, so this 
+# option can be used for all least squares models.
+
+abline(h=0,lty=3)
+
+# According to theory, if the mean function and other assumptions are 
+# correct, then all possible residual plots of residuals versus any 
+# function of the terms should be resemble a null plot, so many plots of 
+# residuals should be examined. Usual choices include plots verse each 
+# of the terms and versus fitted values, as shown in Figure 8.5 in 
+# textbook for the consumption data.
+
+data(fuel2001)
+f <- fuel2001
+f$Dlic <- 1000*f$Drivers/f$Pop
+f$Fuel <- 1000*f$FuelC/f$Pop
+f$Income <- f$Income/1000
+f$logMiles <- logb(f$Miles,2)
+m1<-lm(Fuel~Tax+Dlic+Income+logMiles,data=f)
+
+par(mfrow=c(3,2))
+plot(f$Tax,residuals(m1),xlab="Tax",ylab="Residuals")
+abline(h=0,lty=3)
+# Similarly, we can get the plots verse Dlic, Income and logMiles.
+plot(f$Dlic,residuals(m1),xlab="Dlic",ylab="Residuals")
+abline(h=0,lty=3)
+plot(f$Income,residuals(m1),xlab="Income",ylab="Residuals")
+abline(h=0,lty=3)
+plot(f$logMiles,residuals(m1),xlab="log(Miles)",ylab="Residuals")
+abline(h=0,lty=3)
+plot(predict(m1),residuals(m1),xlab="Fitted values",ylab="Residuals")
+abline(h=0,lty=3)
+# This is the plot of residuals versus fitted values.
+plot(predict(m1),f$Fuel,xlab="Fitted values",ylab="Fuel")
+abline(lm(f$Fuel~predict(m1)))
+# This is the plot of Fuel versus fitted values.
+
+# Test can be computed to help decide if residual plots are null plots 
+# or not. One helpful test looks for curvature in this plot.
+# One can mannually fit model with the quadratic term, where I(.) is to protect math operation
+m2<-lm(Fuel~Tax+Dlic+Income+logMiles+I(Tax^2),data=f)
+summary(m2)
+# Similarly, we can test Dlic^2, Income^2 and logMiles^2.
+
+# The command "residualPlots" implements the curvature tests describe 
+# in section 8.2 of textbook. For example, all the plots in Figure 8.5 
+# except for part (f), along with a fitted quadratic curve, and the 
+# curvature tests, are obtained using 
+residualPlots(m1)
+
+# The "qqnorm" command is used to draw normal probability plots.
+data(heights)
+m1<-lm(Dheight~Mheight,heights)
+data(transact)
+t1<-lm(Time~T1+T2,transact)
+par(mfrow=c(2,1))
+qqnorm(residuals(m1),xlab="(a) Heights data")
+qqline(residuals(m1))
+qqnorm(residuals(t1),xlab="(a) Transaction data")
+qqline(residuals(t1))

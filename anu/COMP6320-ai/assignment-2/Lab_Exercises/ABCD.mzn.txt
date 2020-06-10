@@ -1,0 +1,13 @@
+var int: Able;
+var int: Baker;
+var int: Charlie;
+var int: Dog;
+
+constraint Able > 0;
+constraint Baker < 7;
+constraint Charlie > 3;
+constraint Dog < Able + Baker;
+constraint Dog * 2 > Able + Baker + Charlie;
+constraint Baker - Charlie > Able;
+
+solve satisfy;

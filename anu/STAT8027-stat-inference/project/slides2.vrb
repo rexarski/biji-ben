@@ -1,0 +1,16 @@
+\frametitle{replication - 07-08 Serie A data}
+
+\begin{itemize}
+\item
+  data:
+  \href{https://github.com/jokecamp/FootballData/tree/master/football-data.co.uk}{jokecamp/FootballData}
+  (raw data), wikipedia page (result table)
+\item
+  tool: pymc
+\item
+  setup for mcmc: \texttt{iter=200,000,\ burnin=40,000,\ thin=20}
+\item
+  Note: simplification
+  \(att_t\sim N(0,\tau_{att}), def_t\sim N(0,\tau_{def})\)
+\end{itemize}
+

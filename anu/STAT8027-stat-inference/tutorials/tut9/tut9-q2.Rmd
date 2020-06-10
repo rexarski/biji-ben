@@ -1,0 +1,68 @@
+---
+title: "Tutorial 9"
+author: "Rui Qiu"
+date: '2018-05-03'
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Q2
+
+```{r}
+data <- read.table('Data.txt', header=T)
+set.seed(8027)
+x <- data$age
+y <- data$fledged
+
+mll <- function(beta, y, x){
+    sum(dpois(y, lambda=exp(beta[1]+x*beta[2]+x^2*beta[3]),log=TRUE))
+}
+(out <- optim(c(1,1,1), mll, hessian = TRUE,
+      control=list(fnscale=-1), method="BFGS", y=y, x=x))
+
+beta0 <- out$par[1]
+beta1 <- out$par[2]
+beta2 <- out$par[3]
+```
+
+So $\hat{\beta}_0=0.2757469,\ \hat{\beta}_1=0.6825819,\  \hat{\beta}_2=-0.1346644$.
+
+The estimated asymptotic variances are:
+
+```{r}
+diag(solve(-out$hessian))
+```
+
+```{r}
+n <- nrow(data)
+B <- 1000
+beta0.hat <- rep(0, B)
+beta1.hat <- rep(0, B)
+beta2.hat <- rep(0, B)
+
+for (b in 1:B){
+    data.star <- data[sample(1:n,replace=TRUE),]
+    x <- data.star$age
+    y <- data.star$fledged
+    mll <- function(beta, y, x){
+        sum(dpois(y, lambda=exp(beta[1]+x*beta[2]+x^2*beta[3]),log=TRUE))
+        }
+    out <- optim(c(1,1,1), mll, hessian = TRUE,
+      control=list(fnscale=-1), method="BFGS", y=y, x=x)
+    beta0.hat[b] <- out$par[1]
+    beta1.hat[b] <- out$par[2]
+    beta2.hat[b] <- out$par[3]
+}
+
+(bias.beta0.hat <- mean(beta0.hat)-beta0)
+(bias.beta1.hat <- mean(beta1.hat)-beta1)
+(bias.beta2.hat <- mean(beta2.hat)-beta2)
+var(beta0.hat)
+var(beta1.hat)
+var(beta2.hat)
+```

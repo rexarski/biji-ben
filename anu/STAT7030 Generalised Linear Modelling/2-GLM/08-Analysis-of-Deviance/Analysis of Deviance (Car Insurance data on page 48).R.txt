@@ -1,0 +1,277 @@
+# The following R code demonstrates a modified approach to examining the Analysis of Deviance table
+# for a GLM, using the Car Insurance example on page 48 of the brick:
+
+# First read in and organise the data, as per page 49 of the brick:
+
+carins <- read.table("CarIns.txt", header=T)
+carins
+attach(carins)
+levels(agegp)
+levels(dist)
+levels(engsz)
+range(clms)
+range(pols)
+rtes <- clms/pols
+
+# Note for just examining the ANODEV table, we can let R do the necessary coding of the factors:
+
+carins.glm <- glm(rtes ~ agegp*dist*engsz, family=poisson, weights=pols)
+
+# Note the number of iterations is no longer a problem as it was in older versions of S-Plus, but
+# we do get a series of warning about supposed Poisson count data which are not actually counts!
+summary(carins.glm)$iter
+warnings()
+
+# A slightly different approach to modelling Poisson counts is to specify the denominator of the
+# Poisson rate as an offset, see:
+
+help(offset)
+help(Insurance)
+
+# However, despite the warnings, the old S-Plus approach shown in the brick still works in R:
+
+anova(carins.glm)
+summary(carins.glm)
+
+# Note the above table is almost identical to the one on page 50 of the brick, but the estimated 
+# coefficients of the model are different (as the default parameterisation in the old versions 
+# of S-Plus was applied in the brick - helmert contrasts).
+
+help(contrasts)
+help(contr.helmert)
+
+# For a Poisson GLM, we can get R to assign appropriate p-values to each line of the ANODEV 
+# table by using:
+
+anova(carins.glm, test="Chisq")
+
+# Note R has calculated Chisq p-values for each of the unscaled changes in deviance.  We really
+# should scale these deviances by dividing by the dispersion factor before testing, however with the 
+# binomial and Poisson families, once we have adjusted the weights (where necessary), the dispersion
+# factor is assumed to be 1, so the scaled deviances will be the same as the unscaled deviances. 
+
+# We can now use these p-values to interpret the model - for example, the Chisq calculation for the
+# three way interaction is equivalent to doing:
+
+1 - pchisq(27.2897, 27)
+  
+# As the explanatory variables are obviously labels, not numbers, R (and S-Plus) will correctly treat 
+# them as factors, without having to use the factor() function, however, it will order the levels in 
+# "alpha-numeric order".  If we want to use dummy variable coding and choose the order in which R 
+# codes the levels, then sometimes the easiest way is to do the coding ourselves, as shown on page 49
+# of the brick:
+
+age2 <- ifelse(agegp=="25-29",1,0)
+age3 <- ifelse(agegp=="30-35",1,0)
+age4 <- ifelse(agegp==">35",1,0)
+ages <- cbind(age2,age3,age4)
+
+dst2 <- ifelse(dist=="D2",1,0)
+dst3 <- ifelse(dist=="D3",1,0)
+dst4 <- ifelse(dist=="D4",1,0)
+dsts <- cbind(dst2,dst3,dst4)
+
+esz2 <- ifelse(engsz=="1-1.5L",1,0)
+esz3 <- ifelse(engsz=="1.5-2L",1,0)
+esz4 <- ifelse(engsz==">2L",1,0)
+eszs <- cbind(esz2,esz3,esz4)
+
+carins.glm <- glm(rtes ~ ages * dsts * eszs, family=poisson, weights=pols)
+
+# Note that older versions of S-Plus had a real problem with getting this model to coverge. This is not a problem
+# with R which instead produces a weird warning message complaining that the Poisson data are not counts - 
+# given we are dealing with Poisson rates, this is correct, but not really an issue - the models estimated using R
+# are also identical to the S-Plus models! Though it is not usually good practice to simply ignore warning messages 
+# from any software, this is what I will do in this instance!
+
+anova(carins.glm, test="Chisq")
+summary(carins.glm)$coef
+
+# Lots of terms, but the Analysis of Deviance table suggests we can forget about the higher order interactions:
+
+carins.glm1 <- glm(rtes ~ ages + eszs + dsts, family=poisson, weights=pols)
+anova(carins.glm1, test="Chisq")
+summary(carins.glm1)$coef
+
+# The example in the brick then proceeds to attempt further refinement of this model, by collapsing some of
+# the categories:
+
+carins.glm2 <- glm(rtes ~ ages + eszs + dst4 + cbind(dst2,dst3), family=poisson, weights=pols)
+anova(carins.glm2, test="Chisq")
+summary(carins.glm2)$coef
+
+carins.glm3 <- glm(rtes ~ ages + eszs + dst4, family=poisson, weights=pols)
+anova(carins.glm3, test="Chisq")
+summary(carins.glm3)$coef
+
+# It also tries to make "additional" use of the info included in the repsonse variable, which is very
+# similar to specifying an offset, but allowing the offset to have a variable coefficent:
+
+carins.glm4 <- glm(rtes ~ ages + eszs + dst4 + log(pols), family=poisson, weights=pols)
+anova(carins.glm4, test="Chisq")
+summary(carins.glm4)$coef
+qt(0.975, 64-9)
+2 * (1 - pt(abs(-0.3018909), 55))
+
+# Note the author of this bit of R code obviously had something against Student's t distribution and R 
+# produces asymptotic Z statistics and normally distributed p-values - fine when the sample size is large,
+# but I would prefer some adjustment in the smaller sample situation - still assuming approximate normality
+# and using Student's t is one approach, but we should be very cautious in such situations, especially if 
+# there are problems with the underlying assumptions!
+
+carins.glm5 <- glm(rtes ~ ages + eszs + dst4, family=binomial, weights=pols)
+anova(carins.glm5, test="Chisq")
+summary(carins.glm5)$coef
+
+# Note the warning messages in R disappear when assuming the data are binomial proportions rather than
+# Poisson rates!
+
+# Residual plot for the preferred model, as shown on page 55 of the brick:
+ 
+plot(carins.glm3$linear.predictors, residuals(carins.glm3, "pearson"), xlab="Linear Predictors", ylab="Pearson Residuals", main="(a) - Pearson Residual Plot for Proper Model")
+
+carins.glm6 <- glm(rtes ~ ages + dst4, family=poisson, weights=pols)
+anova(carins.glm6, test="Chisq")
+summary(carins.glm6)$coef
+plot(carins.glm6$linear.predictors, residuals(carins.glm6, "pearson"), xlab="Linear Predictors", ylab="Pearson Residuals", main="(b) - Pearson Residual Plot for Model w/o Engine Size")
+
+# Note if you want a deviance residual plot, you can use "deviance" instead of "pearson" or look at the
+# first page of the 4 page output produced by default by the generic plot() function (we will discuss the
+# differences between these two sorts of residuals in a later example):
+
+plot(carins.glm3)
+plot(carins.glm6)
+
+# Note these default plots use the back-transformed fitted values rather than the linear predictors
+# (which are the fitted values on the link transformed scale) - as we are assuming the model is linear
+# on the link transformed scale, the linear predictors, as suggested in the brick, are probably the
+# better choice. We can always make our own choices and produce our own plots and many of the things
+# we need are stored as part of the various output options from the model:
+
+carins.glm3
+names(carins.glm3)
+
+anova(carins.glm3, test="Chisq")
+names(anova(carins.glm3, test="Chisq"))
+
+summary(carins.glm3)
+names(summary(carins.glm3))
+
+# So the linear predictors are stored in:
+
+carins.glm3$linear.predictors
+
+# Note that any unambiguous abbreviation will also work:
+
+carins.glm3$lin
+
+# Similarly the fitted values can be extracted using either of the following:
+
+carins.glm3$fitted
+fitted(carins.glm3)
+
+# Where fitted() is a generic function that works on model objects, like plot, summary, residuals etc.
+# For details, see:
+
+help(fitted)
+help(fitted.glm)
+
+# No special method for glms, it simply returns the contents of model$fitted! We can also check the 
+# relationship between the fitted values and the linear predictors - in this instance the link function
+# was the log() transformation:
+
+log(carins.glm3$fitted)
+carins.glm3$linear.predictors
+
+# So, to produce the main residual plots (i.e. the ones I prefer):
+
+plot(carins.glm3$linear.predictors, residuals(carins.glm3, "deviance"), xlab="Linear Predictors", ylab="Deviance Residuals", main="Residual Plot", sub="glm(rtes ~ ages + eszs + dst4, family=poisson, weights=pols)")
+abline(h=0, lty=2) 
+
+qqnorm(residuals(carins.glm3, "pearson"), ylab="Pearson Residuals Quantiles", main="Normal Quantile Plot", sub="glm(rtes ~ ages + eszs + dst4, family=poisson, weights=pols)")
+qqline(residuals(carins.glm3, "pearson"))
+# Note that help(qqline) informs you that qqline actually draws a line joining the first and third 
+# quartiles of the data, whilst you might prefer to use a y=x line - in this instance, given the 
+# standardised scales for both axes, this can be achieved using:
+abline(0,1, lty=2) 
+
+# Using R, we can also easily produce a bar chart of Cook's Distance's - in S-Plus this is not as easy
+# for GLMs as it is with ordinary LMs. R uses the same plotting methods for GLMs as it does for LMs and 
+# therefore has the same six default plots as S-Plus produces for an ordinary LM (including the Cook's D
+# bar chart). By default, R only plots 4 of the six - a different 4 plots than are the default for
+# plot.glm() in S-Plus. In R, you can get the Cook's D plot as follows:
+
+plot(carins.glm3, which=4) 
+# note this works in R, but produces the normal quantile plot in recent versions of S-Plus!
+
+# We can follow the discussion on page 57 of the brick and check to see if there are a number of small
+# fitted counts, which may cause over-dispersion in the residual plot, by converting the fitted values 
+# back to counts (only 1 of which is less than 2):
+
+fitted(carins.glm3)*pols
+sort(fitted(carins.glm3)*pols)
+
+# So, how do this model compare with the "rule of thumb" for significant over-dispersion discussed on
+# page 57 of the brick?
+
+anova(carins.glm3)
+
+# The assumed dispersion is stored in:
+
+summary(carins.glm3)$dispersion
+
+# The alternative estimate of the dispersion is found as follows:
+
+carins.glm3$deviance
+carins.glm3$df.residual
+carins.glm3$dev/carins.glm3$df.residual 
+# Note model$df is an acceptable abbreviation in S-Plus, but not in R!
+
+# The "rule of thumb" for over-dispersion from the brick is:
+
+1 + 3*sqrt(2/carins.glm3$df.residual)
+
+# In this instance (as it doesn't go negative), we could apply use a similar "rule of thumb"
+# for under-dispersion:
+
+1 - 3*sqrt(2/carins.glm3$df.residual)
+
+# Or better yet, we could conduct a "formal" test for under- or over-dispersion using the fact 
+# that the scaled residual deviance will have an approximate Chi-square distribution with the 
+# residual df (similar to our Chi-square tests on the scaled changes in deviance in the analysis
+# of deviance table). For a Poisson model, the scaling factor (the assumed dispersion) is 1, so we 
+# simply need to compare the residual deviance with a Chi-square distribution:
+
+carins.glm3$deviance
+carins.glm3$deviance/summary(carins.glm3)$dispersion
+qchisq(0.025, carins.glm3$df.residual)
+qchisq(0.975, carins.glm3$df.residual)
+
+# We don't get the same satisfactory results if we repeat the analysis for the model without engine sizes:
+
+plot(carins.glm6$linear.predictors, residuals(carins.glm6, "deviance"), xlab="Linear Predictors", ylab="Deviance Residuals", main="Residual Plot", sub="glm(rtes ~ ages + dst4, family=poisson, weights=pols)")
+abline(h=0, lty=2)
+
+qqnorm(residuals(carins.glm6, "pearson"), ylab="Pearson Residuals Quantiles", main="Normal Quantile Plot", sub="glm(rtes ~ ages  + dst4, family=poisson, weights=pols)")
+qqline(residuals(carins.glm6, "pearson"))
+abline(0,1,lty=2)
+
+fitted(carins.glm6)*pols
+sort(fitted(carins.glm6)*pols)
+
+# plot(carins.glm6, which=4)
+
+anova(carins.glm6)
+
+summary(carins.glm6)$dispersion
+carins.glm6$deviance
+carins.glm6$df.residual
+carins.glm6$dev/carins.glm6$df.residual
+1 + 3*sqrt(2/carins.glm6$df.residual)
+1 - 3*sqrt(2/carins.glm6$df.residual)
+
+carins.glm6$deviance
+qchisq(0.025, carins.glm6$df.residual)
+qchisq(0.975, carins.glm6$df.residual)
+
+# Now we have significant over-dispersion, which was induced by leaving out a significant explanatory factor!

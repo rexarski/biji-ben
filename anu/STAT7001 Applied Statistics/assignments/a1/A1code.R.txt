@@ -1,0 +1,130 @@
+#Last Updated: 16/09/2016
+setwd('~/Desktop/Research/AppliedStat2017/A1')
+rm(list=ls())
+library('Sleuth3')
+data=ex1225  
+
+#Q1 a)
+attach(data)
+Y=log(WeeklyEarnings)
+IMale=ifelse(Sex=="Male",1,0)
+IMarried=ifelse(MaritalStatus=="Married",1,0)
+fit=lm(Y~Age+IMale+IMarried+EdCode)
+round(fit$coef[5],4)
+
+#Q1 b)
+summary(fit)
+
+#Q1 c)
+X=cbind(Age,IMale,IMarried,EdCode)
+#install.packages('wle')
+library(wle) #need to load this library!
+###
+mle.stepwise(Y~X,f.in=4,f.out=4,type="Backward")
+detach(data)
+
+
+
+#Q2 a)
+attach(data)
+summary(fit)$r.squared
+
+#Q2 b)
+plot(fit$fitted.values,fit$residuals,main="residuals vs fitted values", xlab="fitted values",ylab="residuals")
+abline(h=0)
+
+#Q2 c)
+qqnorm(fit$residuals)
+qqline(fit$residuals)
+
+#Q2 d)
+CD=cooks.distance(fit) #Cook's distance
+plot(CD)
+abline(h=1,col='red')
+
+#Q2 e)
+result=which(CD==max(CD))
+names(result)=''
+result
+Rstd<-rstudent(fit) #Studentized residuals
+result=Rstd[which(CD==max(CD))]
+names(result)=''
+result
+
+#Q2 f)
+X=cbind(Age,IMale,IMarried,EdCode)
+lev=hat(X) #Leverage
+result=lev[which(CD==max(CD))]
+names(result)=''
+result
+
+n=length(Y)
+k=4
+2*(k+1)/n
+detach(data)
+
+
+
+
+
+
+#Q3 a)
+attach(data)
+IMidwest=ifelse(Region=="Midwest",1,0)
+INortheast=ifelse(Region=="Northeast",1,0)
+ISouth=ifelse(Region=="South",1,0)
+
+IMetropolitan=ifelse(MetropolitanStatus=="Metropolitan",1,0)
+INotMetropolitan=ifelse(MetropolitanStatus=="Not Metropolitan",1,0)
+
+IFedGov=ifelse(JobClass=="FedGov",1,0)
+ILocalGov=ifelse(JobClass=="LocalGov",1,0)
+IStateGov=ifelse(JobClass=="StateGov",1,0)
+
+#Q3 b)
+fit=lm(Y~Age+IMale+IMarried+EdCode+IMidwest+INortheast+ISouth+
+IMetropolitan+INotMetropolitan+IFedGov+ILocalGov+IStateGov)
+summary(fit)
+
+#Q3 c)
+fitr=lm(Y~Age+IMale+IMarried+EdCode+IMidwest+INortheast+ISouth+
+IMetropolitan+INotMetropolitan)
+#extra-sums-of-squares test 
+anova(fitr,fit,test='F')
+
+#Q3 d)
+fitNew=lm(Y~Age+IMale+IMarried+EdCode+IMidwest+INortheast+ISouth+
+IMetropolitan+INotMetropolitan+IFedGov+ILocalGov+IStateGov
++IMale*IMarried)
+deviance(fit)
+deviance(fitNew)
+
+#Q3 e)
+summary(fitNew)
+detach(data)
+
+
+#Q4
+rm(list=ls())
+beta0=2;beta1=1;beta2=-1
+X1=1:100 
+n=length(X1)
+set.seed(1)
+X2=rt(n,3)
+Y=rep(0,n)                
+numsamp=1000         
+CIl=rep(0,numsamp)
+CIu=rep(0,numsamp)
+x0=data.frame(X1=2.5,X2=0)
+for(i in 1:numsamp) {
+  errors=rnorm(n)     	   
+  Y=beta0+beta1*X1+beta2*X2+errors         
+  MLRfit=lm(Y~X1+X2)          
+  CI=predict(MLRfit,x0,interval='confidence',level=0.95)
+  CIl[i]=CI[2]
+  CIu[i]=CI[3]
+} 
+MeanResponse=beta0+beta1*x0$X1+beta2*x0$X2
+Count=ifelse(CIl<=MeanResponse & CIu>=MeanResponse, 1,0)
+sum(Count)
+

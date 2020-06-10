@@ -1,0 +1,34 @@
+des <- function(time) {
+        homer <- 0
+        marge <- 0
+        draw <- 0
+        i <- 1
+        round1 <- 0; round2 <- 0
+        while (i<= time) {
+                round1 <- sample(1:6, replace = T, 1)
+                if (round1 >= 5) {
+                        homer <- homer + 1
+                        i <- i + 1
+                        round1 <- 0; round2 <- 0
+                }
+                else if (round1 == 1 & round2 == 1) {
+                        draw <- draw + 1
+                        i <- i + 1
+                        round1 <- 0; round2 <- 0
+                }
+                else {
+                        round2 <- sample(1:6, replace = T, 1)
+                        if (round2 >= 5) {
+                                marge <- marge + 1
+                                i <- i + 1
+                                round1 <- 0; round2 <- 0
+                        }
+                        else if (round2 == 1 & round1 == 1) {
+                                draw <- draw + 1
+                                i <- i + 1
+                                round1 <- 0; round2 <- 0
+                        }
+                }
+        }
+        print(paste("Homer:", homer, " Marge:", marge, " Draw:", draw))
+}

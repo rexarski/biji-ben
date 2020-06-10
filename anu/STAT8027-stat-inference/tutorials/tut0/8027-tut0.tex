@@ -1,0 +1,208 @@
+\documentclass[12pt]{article}
+
+\usepackage{fancyhdr}
+\usepackage{extramarks}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{tikz}
+\usepackage[plain]{algorithm}
+\usepackage{algpseudocode}
+\usepackage{graphicx}
+
+\usetikzlibrary{automata,positioning}
+
+%
+% Basic Document Settings
+%
+
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=6.5in
+\textheight=9.0in
+\headsep=0.25in
+
+\linespread{1.1}
+
+\pagestyle{fancy}
+\lhead{\hmwkAuthorName}
+\chead{\hmwkClass\ \hmwkTitle}
+\rhead{\firstxmark}
+\lfoot{\lastxmark}
+\cfoot{\thepage}
+
+\renewcommand\headrulewidth{0.4pt}
+\renewcommand\footrulewidth{0.4pt}
+
+\setlength\parindent{0pt}
+
+%
+% Create Problem Sections
+%
+
+\newcommand{\enterProblemHeader}[1]{
+    \nobreak\extramarks{}{Problem \arabic{#1} continued on next page\ldots}\nobreak{}
+    \nobreak\extramarks{Problem \arabic{#1} (continued)}{Problem \arabic{#1} continued on next page\ldots}\nobreak{}
+}
+
+\newcommand{\exitProblemHeader}[1]{
+    \nobreak\extramarks{Problem \arabic{#1} (continued)}{Problem \arabic{#1} continued on next page\ldots}\nobreak{}
+    \stepcounter{#1}
+    \nobreak\extramarks{Problem \arabic{#1}}{}\nobreak{}
+}
+
+\setcounter{secnumdepth}{0}
+\newcounter{partCounter}
+\newcounter{homeworkProblemCounter}
+\setcounter{homeworkProblemCounter}{1}
+\nobreak\extramarks{Problem \arabic{homeworkProblemCounter}}{}\nobreak{}
+
+%
+% Homework Problem Environment
+%
+% This environment takes an optional argument. When given, it will adjust the
+% problem counter. This is useful for when the problems given for your
+% assignment aren't sequential. See the last 3 problems of this template for an
+% example.
+%
+\newenvironment{homeworkProblem}[1][-1]{
+    \ifnum#1>0
+        \setcounter{homeworkProblemCounter}{#1}
+    \fi
+    \section{Problem \arabic{homeworkProblemCounter}}
+    \setcounter{partCounter}{1}
+    \enterProblemHeader{homeworkProblemCounter}
+}{
+    \exitProblemHeader{homeworkProblemCounter}
+}
+
+%
+% Homework Details
+%   - Title
+%   - Date
+%   - Class
+%   - Instructor
+%   - Author
+%
+
+\newcommand{\hmwkTitle}{Tutorial\ \#0}
+\newcommand{\hmwkDate}{23 Feb, 2018}
+\newcommand{\hmwkClass}{STAT8027}
+\newcommand{\hmwkAuthorName}{\textbf{Rui Qiu u6139152}}
+
+%
+% Title Page
+%
+
+\title{
+    \vspace{2in}
+    \textmd{\textbf{\hmwkClass:\ \hmwkTitle}}\\
+    \normalsize\vspace{0.1in}\small{\hmwkDate}\\
+    \vspace{3in}
+}
+
+\author{\hmwkAuthorName}
+\date{}
+
+\renewcommand{\part}[1]{\textbf{\large Part \Alph{partCounter}}\stepcounter{partCounter}\\}
+
+%
+% Various Helper Commands
+%
+
+% New QED symbol
+\renewcommand{\qedsymbol}{$\blacksquare$}
+
+% Useful for algorithms
+\newcommand{\alg}[1]{\textsc{\bfseries \footnotesize #1}}
+
+% For derivatives
+\newcommand{\deriv}[1]{\frac{\mathrm{d}}{\mathrm{d}x} (#1)}
+
+% For partial derivatives
+\newcommand{\pderiv}[2]{\frac{\partial}{\partial #1} (#2)}
+
+% Integral dx
+\newcommand{\dx}{\mathrm{d}x}
+
+% Alias for the Solution section header
+\newcommand{\solution}{\textbf{\large Solution}}
+
+% Probability commands: Expectation, Variance, Covariance, Bias
+\newcommand{\E}{\mathrm{E}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\Bias}{\mathrm{Bias}}
+
+\begin{document}
+
+\maketitle
+
+\pagebreak
+
+\begin{homeworkProblem}[3]
+
+\textbf{(a) Solution:}\\
+
+Since $x>0, y=x^2>0$
+
+\[\begin{split}
+F_Y(y)&=P(Y\leq y)=P(x^2\leq y)=P(0\leq x\leq\sqrt{y})=F_x(\sqrt{y})	\\
+f_Y(y)&=F'_Y(y)\\
+&=F'_X(\sqrt{y})\cdot\frac12 y^{-\frac12}\\
+&=f_X(\sqrt{y})\cdot\frac12 y^{-\frac12}\\
+&=\sqrt{\frac{2}{\pi}}\exp\left(-\frac12 y\right)\frac12 \frac1{\sqrt{y}}, y>0\\
+&=\frac1{\sqrt{2y}\cdot\sqrt{\pi}}\exp\left(-\frac12 y\right)
+\end{split}
+\]
+
+\textbf{(b) Solution:}\\
+
+As $\Gamma(\frac12)=\sqrt{\pi}$, the PDF of $Y$ can be written as:
+
+\[\frac1{\sqrt{2y}}\frac1{\Gamma(\frac12)}\exp\left(-\frac12 y\right)=\frac{y^{-\frac12}\frac12^{\frac12}e^{-\frac12 y}}{\Gamma(\pi)}\]
+
+So $Y\sim \text{Gamma}(\alpha=\frac12,\lambda=\frac12).$
+
+\end{homeworkProblem}
+
+\begin{homeworkProblem}[4]
+
+\textbf{Proof:}\\
+
+Suppose $A=\{(u_1,u_2): g_1(u_1,u_2)\leq y_1, g_2(u_1,u_2)\leq y_2\}, A_h=\{(v_1,v_2):v_1\leq y_1,v_2\leq y_2\}.$
+
+And by definition, we have
+
+\[\begin{split}
+	v_1&=g_1(u_1,u_2), v_2=g_2(u_1,u_2)\\
+	u_1&=h_1(v_1,v_2), u_2=h_2(v_1,v_2)
+\end{split}\]
+
+The CDF of joint distribution of $Y_1,Y_2$ can be written as:
+
+\[
+\begin{split}
+	F_{Y_1Y_2}(y_1,y_2)=P(A_h)&=P(u_1\leq h_1(y_1,y_2),u_2\leq h_2(y_1,y_2))\\
+	&=F_{X_1X_2}(h_1(y_1,y_2),h_2(y_1,y_2))\\
+	&=\int\int_A f_{X_1X_2}(u_1,u_2)du_1du_2\\
+	&=\int\int_{A_h}f_{X_1X_2}(h_1(v_1,v_2),h_2(v_1,v_2))\mid J(v_1,v_2)\mid dv_1dv_2
+\end{split}
+\]
+
+Therefore, the PDF of joint distribution of $Y_1,Y_2$
+
+\[
+\begin{split}
+	f_{Y_1Y_2}(y_1,y_2)&=f_{X_1X_2}(h_1(y_1,y_2),h_2(y_1,y_2))\mid J(y_1,y_2)\mid\\
+	&\text{where } J(y_1,y_2) \text{is the Jacobian matrix.}
+\end{split}
+\]
+
+\qed
+
+\end{homeworkProblem}
+
+\end{document}

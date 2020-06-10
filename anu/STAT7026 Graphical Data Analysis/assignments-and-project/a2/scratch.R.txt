@@ -1,0 +1,11 @@
+########################################################################
+
+# smooth with moving average (kernel smoothing)
+coalSMA3 <- SMA(coal,n=3)
+coalSMA5 <- SMA(coal,n=5)
+coalSMA7 <- SMA(coal,n=7)
+par(mfrow=c(3,1))
+plot.ts(coalSMA3)
+plot.ts(coalSMA5)
+plot.ts(coalSMA7)
+par(mfrow=c(1,1))

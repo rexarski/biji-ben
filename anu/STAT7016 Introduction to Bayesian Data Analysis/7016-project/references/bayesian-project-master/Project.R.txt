@@ -1,0 +1,302 @@
+setwd("C:/Users/Ton/OneDrive/Document/STAT3016/Project")
+bank<-read.csv("bank.csv",header =T,sep=";")
+#attach(bank)
+age<-bank$age
+marital<-bank$marital
+housing<-bank$housing
+balance<-bank$balance
+
+#create indicator variable for marital
+m.married<-ifelse(marital=="married",1,0)
+m.single<-ifelse(marital=="single",1,0)
+marital.indicator<-cbind(m.single,m.married)
+
+#indicator variable for housing
+h.yes<-ifelse(housing=="yes",1,0)
+
+#interaction term of housing and marital
+marital_h.yes<-marital.indicator*h.yes
+colnames(marital_h.yes)<-c("m.single:h.yes","m.married:h.yes")
+
+#intercation between age and housing
+age_h.yes<-age*h.yes
+
+#interaction between age and marital
+age.marital<-age*marital.indicator
+colnames(age.marital)<-c("age:m.single","age:m.married")
+
+#three-way interaction between age, marital, and housing
+age.housing.marital<-age*marital_h.yes
+colnames(age.housing.marital)<-c("age:m.single:h.yes","age:m.married:h.yes")
+
+#values of predictors
+X<-cbind(rep(1,nrow(bank)),age,marital.indicator,h.yes,
+         age_h.yes,age.marital,marital_h.yes,age.housing.marital)
+#values of the response variable
+y<-balance
+
+#check whether the dummy variables are created correctly
+coef(lm(y~-1+X))
+coef(lm(balance~age*housing*marital))
+
+#Bayesian model comparison
+
+z<-matrix(data = rep(c(1,rep(0,11)),18), ncol = 12, byrow = T)
+
+#Null model
+z[,1]
+
+#balance~age
+z[2,2]<-1
+
+#balance~marital
+z[3,c(3,4)]<-1
+
+#balance~house
+z[4,c(4,5)]<-1
+
+#balance~age+marital
+z[5,c(2,3,4)]<-1
+
+#balance~marital+house
+z[6,c(3,4,5)]<-1
+
+#balance~age+house
+z[7,c(2,5)]<-1
+
+#balance~age+marital+age:marital
+z[8,c(2,3,4,7,8)]<-1
+
+#balance~marital+house+marital:house
+z[9,c(3,4,5,9,10)]<-1
+
+#balance~age+house+age:house
+z[10,c(2,5,6)]<-1
+
+#balance~age+house+marital
+z[11,c(2,3,4,5)]<-1
+
+#balance~age+house+marital+age:house
+z[12,c(2,3,4,5,6)]<-1
+
+#balance~age+house+marital+age:marital
+z[13,c(2,3,4,5,7,8)]<-1
+
+#balance~age+house+marital+marital:house
+z[14,c(2,3,4,5,9,10)]<-1
+
+#balance~age+house+marital+age:house+age:marital
+z[15,c(2,3,4,5,6,7,8)]<-1
+
+#balance~age+house+marital+age:house+marital:house
+z[16,c(2,3,4,5,6,9,10)]<-1
+
+#balance~age+house+marital+age:marital+marital:house
+z[17,c(2,3,4,5,7,8,9,10)]<-1
+
+#balance~age+house+marital+age:marital+marital:house+age:house+age:marital:house
+z[18,]<-rep(1,12)
+
+for(i in 1:nrow(z)){
+  cat("(")
+  for(j in 1:(ncol(z)-1)){
+    cat(z[i,j],",",sep="")
+  }
+  cat(z[i,ncol(z)],")\n",sep="")
+}
+
+# #function from regression_gprior(Hoff)
+# lpy.X<-function(y,X,
+#                 g=length(y),nu0=1,s20=try(summary(lm(y~-1+X))$sigma^2,silent=TRUE))
+# {
+#   n<-dim(X)[1] ; p<-dim(X)[2]
+#   if(p==0) { s20<-mean(y^2) }
+#   H0<-0 ; if(p>0) { H0<- (g/(g+1)) * X%*%solve(t(X)%*%X)%*%t(X) }
+#   SS0<- t(y)%*%( diag(1,nrow=n)  - H0 ) %*%y
+# 
+#   -.5*n*log(2*pi) +lgamma(.5*(nu0+n)) - lgamma(.5*nu0)  - .5*p*log(1+g) +
+#     .5*nu0*log(.5*nu0*s20) -.5*(nu0+n)*log(.5*(nu0*s20+SS0))
+# }
+
+# lpy.X(y,X[,z[1,],drop=FALSE])
+# Error: cannot allocate vector of size 15.2 Gb
+
+
+## change the split of matrix multiplication
+
+lpy.X3<-function(y,X,
+                 g=length(y),nu0=1,s20=try(summary(lm(y~-1+X))$sigma^2,silent=TRUE)) 
+{
+  n<-dim(X)[1] ; p<-dim(X)[2] 
+  if(p==0) { s20<-mean(y^2) }
+  SS0<-t(y)%*%y-(g/(g+1))*(t(y)%*%X)%*%(solve(t(X)%*%X)%*%(t(X)%*%y))
+  -.5*n*log(2*pi) +lgamma(.5*(nu0+n)) - lgamma(.5*nu0)  - .5*p*log(1+g) +
+    .5*nu0*log(.5*nu0*s20) -.5*(nu0+n)*log(.5*(nu0*s20+SS0))
+}
+
+lm.gprior3<-function(y,X,g=dim(X)[1],nu0=1,s20=try(summary(lm(y~-1+X))$sigma^2,silent=TRUE),S=1000)
+{
+  
+  n<-dim(X)[1] ; p<-dim(X)[2]
+  SSRg<-t(y)%*%y-(g/(g+1))*t(y)%*%X%*%solve(t(X)%*%X)%*%(t(X)%*%y)
+  
+  s2<-1/rgamma(S, (nu0+n)/2, (nu0*s20+SSRg)/2 )
+  
+  Vb<- g*solve(t(X)%*%X)/(g+1)
+  Eb<- Vb%*%t(X)%*%y
+  
+  E<-matrix(rnorm(S*p,0,sqrt(s2)),S,p)
+  beta<-t(  t(E%*%chol(Vb)) +c(Eb))
+  
+  list(beta=beta,s2=s2)                                
+}   
+
+###  Marginal probabilities of the data under 18 different models  ###
+lpy.p3<-NULL
+for (i in 1:nrow(z))
+{
+  z.use<-z[i,]
+  lpy.p3<-c(lpy.p3,lpy.X3(y,X[,z.use==1,drop=FALSE]))
+  
+}
+#subtract mean(lpy.p) for computation stability
+# pz<-NULL
+# for(i in 1:length(lpy.p3)){
+#   pz<-c(pz,round(1/sum(exp(lpy.p3-lpy.p3[i])),4))
+# }
+round(exp(-mean(lpy.p3)+lpy.p3)/sum(exp(-mean(lpy.p3)+lpy.p3)),4)
+#post confidence intervals for beta.post
+tmp<-lm.gprior3(y,X)
+beta.post<-tmp$beta
+apply(beta.post,2,function(x) quantile(x,c(0.025,0.975)))
+apply(beta.post,2,mean)
+#
+# Model Averaging
+#
+# Starting values and MCMC setup
+subset<-1:nrow(X)
+z<-rep(1,ncol(X))#Starting value for z
+BETA<-matrix(NA,S,ncol(X))
+lpy.c<-lpy.X3(y[subset],X[subset,z==1,drop=FALSE])
+S<-10000
+Z<-matrix(NA,S,ncol(X))
+#####
+
+#####Gibbs sampler
+###Takes long time
+for(s in 1:S){
+  if(s%%100==0){cat(s,"\n")}
+  for(j in sample(2:dim(X)[2])){
+    zp<-z; zp[j]<-1-zp[j]
+    lpy.p<-lpy.X3(y[subset],X[subset,zp==1,drop=FALSE])
+    r<-(lpy.p-lpy.c)*(-1)^(zp[j]==0)
+    z[j]<-rbinom(1,1,1/(1+exp(-r)))
+    if(z[j]==zp[j]){lpy.c<-lpy.p}
+  }
+  Z[s,]<-z
+}
+for(i in 1:nrow(Z)){
+  if(i%%100==0){cat(i,"\n")}
+   beta<-Z[i,]
+   beta[Z[i,]==1]<-lm.gprior3(y,X[,Z[i,]==1,drop=FALSE],S=1)$beta
+   BETA[i,]<-beta
+}
+apply(Z,2,mean)
+apply(BETA,2,function(x) quantile(x,probs=c(0.025,0.975)))
+#
+#
+#
+#
+##############
+#########################
+#################################################################
+##to be grouped
+g<-list(2,c(3,4),5,6,c(7,8),c(9,10),c(11,12))
+z<-rep(1,ncol(X))
+lpy.c<-lpy.X3(y,X[,z==1,drop=FALSE])
+S<-10000
+Z2<-matrix(NA,S,ncol(X))
+BETA2<-matrix(NA,S,ncol(X))
+#####
+
+#####Gibbs sampler
+###Takes long time
+for(s in 1:S){
+  if(s%%100==0){cat(s,"\n")}
+  for(j in sample(1:length(g))){
+    zp<-z; zp[g[[j]]]<-1-zp[g[[j]]]
+    lpy.p<-lpy.X3(y,X[,zp==1,drop=FALSE])
+    r<-(lpy.p-lpy.c)*(-1)^(zp[g[[j]]][1]==0)
+    z[g[[j]]]<-rep(rbinom(1,1,1/(1+exp(-r))),length(g[[j]]))
+    if(z[g[[j]]][1]==zp[g[[j]]][1]){lpy.c<-lpy.p}
+  }
+  Z2[s,]<-z
+}
+
+for(i in 1:nrow(Z2)){
+  if(i%%100==0){cat(i,"\n")}
+  beta<-Z2[i,]
+  beta[Z2[i,]==1]<-lm.gprior3(y,X[,Z2[i,]==1,drop=FALSE],S=1)$beta
+  BETA2[i,]<-beta
+}
+apply(Z2,2,mean)
+apply(BETA2,2,function(x) quantile(x,probs=c(0.025,0.975)))
+apply(BETA2,2,function(x) mean(x!=0))
+library(coda)
+apply(BETA2,2,effectiveSize)
+for(i in 1:ncol(BETA2)){
+  acf(BETA2[,i])
+}
+
+##### plot the confidence interval
+age.seq<-18:95
+n.age<-length(age.seq)
+z11<-c(rep(1,5),rep(0,7))
+beta.post11<-lm.gprior3(y,X[,z11==1])$beta
+balance.single.h<-balance.married.h<-balance.divorced.h<-NULL
+balance.single<-balance.married<-balance.divorced<-NULL
+for (i in 1: n.age){
+  balance.single.h<-rbind(balance.single.h,quantile(beta.post11[,1]+beta.post11[,2]*age.seq[i]
+                                  +beta.post11[,3]+beta.post11[,5],prob=c(0.025,0.5,0.975)))
+  balance.married.h<-rbind(balance.married.h,quantile(beta.post11[,1]+beta.post11[,2]*age.seq[i]
+                                   +beta.post11[,4]+beta.post11[,5],prob=c(0.025,0.5,0.975)))
+  balance.divorced.h<-rbind(balance.divorced.h,quantile(beta.post11[,1]+beta.post11[,2]*age.seq[i]
+                                    +beta.post11[,5],prob=c(0.025,0.5,0.975)))
+  balance.single<-rbind(balance.single,quantile(beta.post11[,1]+beta.post11[,2]*age.seq[i]
+                                +beta.post11[,3],prob=c(0.025,0.5,0.975)))
+  balance.married<-rbind(balance.married,quantile(beta.post11[,1]+beta.post11[,2]*age.seq[i]
+                                 +beta.post11[,4],prob=c(0.025,0.5,0.975)))
+  balance.divorced<-rbind(balance.divorced,quantile(beta.post11[,1]+beta.post11[,2]*age.seq[i]
+                                  ,prob=c(0.025,0.5,0.975)))
+}
+
+#plot 1: with housing loan
+intervals.h<-list(balance.single.h,balance.married.h,balance.divorced.h)
+colors3<-c("red","blue","black")
+plot(age.seq,balance.single.h[,3],type="l",lwd=2,lty=2,ylim=
+       c(min(c(balance.divorced.h[,1],balance.married.h[,1],balance.divorced.h[,1])),
+         max(c(balance.divorced.h[,3],balance.married.h[,3],balance.divorced.h[,3]))),
+     ylab="balance",xlab="age")
+for(i in 1:length(intervals.h)){
+  lines(age.seq,intervals.h[[i]][,1],type="l",lwd=2,lty=2,col = colors3[i])
+  lines(age.seq,intervals.h[[i]][,2],type="l",lwd=2,lty=1,col = colors3[i])
+  lines(age.seq,intervals.h[[i]][,3],type="l",lwd=2,lty=2,col = colors3[i])
+}
+legend("topleft",c("single","married","divorced"),lty=1,col=colors3)
+
+#plot 2: no housing loan
+intervals<-list(balance.single,balance.married,balance.divorced)
+plot(age.seq,balance.single.h[,3],type="l",lwd=2,lty=2,ylim=
+       c(min(c(balance.divorced[,1],balance.married[,1],balance.divorced[,1])),
+         max(c(balance.divorced[,3],balance.married[,3],balance.divorced[,3]))),
+     ylab="balance",xlab="age")
+for(i in 1:length(intervals)){
+  lines(age.seq,intervals[[i]][,1],type="l",lwd=2,lty=2,col = colors3[i])
+  lines(age.seq,intervals[[i]][,2],type="l",lwd=2,lty=1,col = colors3[i])
+  lines(age.seq,intervals[[i]][,3],type="l",lwd=2,lty=2,col = colors3[i])
+}
+legend("topleft",c("single","married","divorced"),lty=1,col=colors3)
+
+
+coef(lm(balance~marital))
+lm(age~marital)

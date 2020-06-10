@@ -1,0 +1,102 @@
+\documentclass[a4paper, 11pt, twoside]{article}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\begin{document}
+\title{MATH6222 week 12 lecture 15}
+\author{Rui Qiu}
+\date{2017-03-27}
+
+\maketitle
+
+Exam: Friday, April 21st, 6:30-9:30
+
+\textbf{One more counting problem:} How many ways to select $n$ objects from $k$ "types"? Equivalently, how many solutions in non-negative integers are there to $x_1+x_2+\dots + x_k=n$?\\
+
+e.g. apples, bananas, oranges, $x_1+x_2+x_3=5.$\\
+
+$k=1, \{c\}, x_1 =n$
+
+$k=2, \{c,v\}, x_1+x_2=n$
+
+$k=3, \{c,v,r\}, \dots$
+
+\[\sum\limits^{n+1}_{k=1}k=\frac{(n+1)(n+2)}{2}\]
+
+For $k,\ C(k)=\sum_{k=0}$ ???\\
+
+\textbf{Balls and Walls Bijection:}\\
+
+For $x_1+x_2+\dots +x_k=n$, take $n$ balls and $k-1$ walls, e.g. $x_1+x_2+x_3+x_4=8$
+
+\[\cdot\cdot|\cdot\cdot\cdot||\cdot\cdot\cdot\]
+
+One-to-one between solutions $\implies$ \{arrangements of $n$ balls divided by $k-1$ walls\}
+
+Consider $n+k-1$ "objects", choose $k-1$ of them to be walls. Also
+
+\[{n+k-1\choose k-1} = {n+k-1\choose n}\]\\
+
+\pagebreak
+
+\paragraph{Number Theory}\ \\
+
+Question: What distances can we measure with a stick of length $15$ meters and a one of length $6$ meters?\\
+
+We can get all multiples of $3$!\\
+
+can get $3=15-6-6$.\\
+
+Given 2 fixed integers $a,b$, what integers can be represented in the form
+
+\[ma+nb,\ m,n\in\mathbb{Z}.\]\\
+
+Given fixed integers $a,b,c\in\mathbb{Z}$, when does $ax+by=c$ have a solution in integer?\\
+
+$15x+6y=c$ has integer solution $\iff$ $c$ is a multiple of $3$.\\
+
+$12x+5y=c$ for all $c$.\\
+
+\paragraph{Def:} Given $d,n\in\mathbb{Z}$, we write $d|n$ if $n=dk$ for some $k\in\mathbb{Z}$.\\
+
+Remarks:
+\begin{enumerate}
+	\item If $d|n$ and $d|m$, then $d|(n+m)$.
+	\item If $d|n$ and $m\in\mathbb{Z}$, then $d|mn$.
+\end{enumerate}
+
+\textbf{Proof1:} $n=k_1d, m=k2_d, n+m=d(k_1+k_2)$, thus $d|(n+m)$.\\
+
+\paragraph{Def:} Greatest common divisor (GCD). Given $m,n\in\mathbb{Z}, \gcd(m,n)$ to be the largest integer $d$ such that $d|m$ and $d|n$.
+
+
+\pagebreak
+
+\textit{Missed today's lecture. The following notes are mainly textbook-based.}
+
+\begin{itemize}
+	\item walls and balls method for proving the number of ways to select $n$ objects from $k$ types is ${n+k-1 \choose k-1}$. (See Theorem 5.23 on page 107.)
+	\item The distances can be measured if one has only one rope of length of $15$ and one of length $6$ to work with, and concluded that the answer is all multiple of $3$. (page 123-126, Theorem 6.12)
+\end{itemize}
+
+\paragraph{Theorem:} With repetition allowed, there are ${n+k-1\choose k-1}$ ways to select $n$ objects from $k$ types. This also equals the number of nonnegative integer solutions to $x_1+x_2+\dots +x_k=n.$
+
+\textbf{Proof:} Selections are determined by how many objects are chosen of each type. Let $x_i$ be the number chosen of type $i$. This establishes a one-to-one correspondence between the selections and the nonnegative integer solutions to $x_1+\dots +x_k=n.$
+
+We model these solutions as arrangements of $n$ dots and $k-1$ vertical separating bars. We represent selecting $x_1$ items of type $1$ by recording $x_1$ dots and marking the end with a bar before continuing to the next type. Doing this for each type forms an arrangement of dots and bars.
+
+We have $n$ dots and $k-1$ bars.
+
+Given an arrangement of $n$ dots and $k-1$ bars, we can invert the process to obtain $x_i$; it equals the number of dots in the $i$th group. This establishes a one-to-one correspondence between solutions to $x_1+\dots +x_k=n$ and arrangements of $n$ dots and $k-1$ bars. These arrangements are determined by choosing the locations for the bars in a list of length $n+k-1$, so there are ${n+k-1\choose k-1}$ of them. We have counted the solutions to the equation and hence also the selections of $n$ objects from $k$ types.\\
+
+\paragraph{Divisibility}
+
+\paragraph{Theorem:} The set of integer combinations of $a$ and $b$ is the set of multiples of $\gcd(a,b)$.
+
+\textbf{Proof:} Let $d=\gcd(a,b)$. The set of integer combinations of $a$ and $b$ is $S=\{ra+sb: r,s \in \mathbb{Z}\}$. Let $T$ denotes the set of multiples of $d$.
+
+We first prove $S\subseteq T$. Since $d$ divides both $a$ and $b$, there are integers $k$ and $l$ such that $a=kd$ and $b=ld$. The distributive law now yields $ma+nb=mkd+nld=(mk+nl)d$, and thus $d$ also divides $ma+nb$. Since this holds for every integer combination, we have $S\subseteq T$.
+
+To prove $T\subseteq S$, we express each multiple of $d$ as an integer combination of $a$ and $b$. Since the integers $a\backslash d$ and $b\backslash d$ are relatively prime, by Lemma that if $a\backslash d$ and $b\backslash d$ are relatively prime, then there exists integer $m$ and $n$ such that $m(a\backslash d)+n(b\backslash d)=1$. Thus $ma+nb=d$. For $k\in \mathbb{Z}$, we now have $(mk)a+(nk)b=kd$. Thus $T\subseteq S$.
+
+
+\end{document}

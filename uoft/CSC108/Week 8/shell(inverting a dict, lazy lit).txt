@@ -1,0 +1,124 @@
+Python 2.7.2 (v2.7.2:8527427914a2, Jun 11 2011, 14:13:39) 
+[GCC 4.0.1 (Apple Inc. build 5493)]
+Type "help", "copyright", "credits" or "license" for more information.
+
+>>> phone = {'555-7632': 'Paul', '555-9832': 'Andrew', '555-6677': 'Dan', \
+'555-9823': 'Michael', '555-6342' : 'Karen', '555-2222': 'Paul',\
+ '555-7343' : 'Anna'}
+>>> phone
+{'555-7632': 'Paul', '555-9832': 'Andrew', '555-7343': 'Anna', '555-9823': 'Michael', '555-6342': 'Karen', '555-6677': 'Dan', '555-2222': 'Paul'}
+
+>>> # we want Paul's phone numbers
+
+>>> phone.values()
+['Paul', 'Andrew', 'Anna', 'Michael', 'Karen', 'Dan', 'Paul']
+>>> for name in phone.values():
+	# no easy way to get num associated with name
+	print name
+
+Paul
+Andrew
+Anna
+Michael
+Karen
+Dan
+Paul
+>>> # Instead loop over keys
+>>> for number in phone:
+	if phone[number] == 'Paul':
+		print number
+
+555-7632
+555-2222
+>>> paul = []
+>>> for key in phone:
+	if phone[key] == 'Paul':
+		paul.append(key)
+
+>>> paul
+['555-7632', '555-2222']
+
+>>> # Invert the dictionary
+>>> # Goal: new dict with names as keys, numbers as values
+>>> new_phone = {}
+>>> phone
+{'555-7632': 'Paul', '555-9832': 'Andrew', '555-7343': 'Anna', '555-9823': 'Michael', '555-6342': 'Karen', '555-6677': 'Dan', '555-2222': 'Paul'}
+>>> phone.items()
+[('555-7632', 'Paul'), ('555-9832', 'Andrew'), ('555-7343', 'Anna'), ('555-9823', 'Michael'), ('555-6342', 'Karen'), ('555-6677', 'Dan'), ('555-2222', 'Paul')]
+>>> for (number, name) in phone.items():
+	new_phone[name] = number
+
+>>> new_phone
+{'Dan': '555-6677', 'Michael': '555-9823', 'Andrew': '555-9832', 'Karen': '555-6342', 'Paul': '555-2222', 'Anna': '555-7343'}
+>>> new_phone = {}
+>>> for (number, name) in phone.items():
+	if name in new_phone:
+		new_phone[name].append(number)
+	else:
+		new_phone[name] = [number]
+
+>>> new_phone
+{'Dan': ['555-6677'], 'Michael': ['555-9823'], 'Andrew': ['555-9832'], 'Karen': ['555-6342'], 'Paul': ['555-7632', '555-2222'], 'Anna': ['555-7343']}
+>>> [3]
+[3]
+>>> x = 78
+>>> [x]
+[78]
+>>> x = 'hello'
+>>> [x]
+['hello']
+
+>>> phone
+{'555-7632': 'Paul', '555-9832': 'Andrew', '555-7343': 'Anna', '555-9823': 'Michael', '555-6342': 'Karen', '555-6677': 'Dan', '555-2222': 'Paul'}
+>>> for (number, name) in phone.items():
+	if name in new_phone:
+		new_phone[name].append(number)
+	else:
+		new_phone[name] = [number]
+
+[evaluate lazy_lit_complete.py]
+Which training file? alice.txt
+ Alice the Mock Turtle, who might like it,' said the back. At this morning I've got up a trial, dear Sir, With no use in reply. `Idiot!' said the table. `Have some minutes to herself, `I thought Alice, who seemed to himself: `"WE KNOW IT TO LEAVE THE LITTLE larger, it must manage to be ashamed of the first she might belong to beat time with them, but on the jury-box,' thought Alice, that she might be managed? I say it saw in without being held it didn't much pleasanter at first, and their slates, `SHE doesn't matter worse. You see the right size for bringing these three gardeners instantly threw themselves up his teacup in time there was out in without being so she came upon it. And Alice could not otherwise than three.' `Your hair wants cutting,' said the Gryphon, and some noise and she was in their never-ending meal, and when she got entangled together. Alice kept fanning herself down the song, perhaps?' `I've none of the Duchess's voice sounded promising, certainly: Alice thoughtful
+ly: `but I suppose so,' said Alice, as well enough; don't seem to see you?' said the less than she set Dinah at her, listening: so easily offended!' `You'll get on one elbow against the whole thing, you would be said. (Which he spoke, and in another question. `Why the different sizes in an uncomfortably sharp little pattering of sight, they would be a remarkable in the Gryphon. `We indeed!' said Alice. `And how he said the court; but frowning and burning with the house opened, and then the Lory, who had a good terms with an undertone, `important--unimportant-- unimportant--important--' as he said. At this young lady tells us get in curving it in my right size, that they came upon her head! Off--' `Nonsense!' said Alice, `to pretend to be getting late.' So she thought this morning? I can find a dance to her to be like them!' `And so yet,' said the Queen turned to the paper. `If everybody laughed, `Let us dry leaves, and felt sure it saw the Hatter, with such a mineral, I can listen to b
+e worth the newspapers, at last, and not feel very busily stirring a frog; and then he sneezes: He got to get hold of the cat.) `I wonder if the pool as hard indeed a daisy-chain would only sobbing,' she was now and she soon came an extraordinary ways of laughter. `Oh, I've said in a little door was walking away. She carried it to say `I never ONE respectable person!' Soon her hands, how old woman-- but no chance to sing this:-- `Beautiful Soup! `Beautiful Soup, so she remembered how she bore it IS his claws, And the book written down: but was her brother's Latin Grammar, `A likely to you play with passion. She was to say again!' repeated thoughtfully. `They couldn't have you like,' said the birds and take us three or drink something better now,' she had to herself;
+
+[evaluate lazy_lit_complete.py]
+Which training file? a2_w12.txt
+ Due Date: Tuesday, March 6th, 2012, 10:00 pm Battleship starter code. An overview of ints) -> int The parameter is what is working. Once the corresponding element of hits remaining to run the values are 0 (inclusive) and the functions have to thoroughly test your functions in the Battleship starter code. However, you could add a board's "cell", where each cell to thoroughly test your marks. Formatting style: Make sure that board. Return a small error in the assignment statement), rather than 10. The first two (human) player and column, and it is initially has the type-checks fail: Look carefully at the game progresses, the instructions on the instructions on CDF, so that can play the second list. get_num_moves: (list of lists of lists of strs Return a vacant cell to change the ships from the ships from SHIPS Each player also has the assignment, we later decide to determine whether that the values from the cell VACANT: the symbol representing a board's "cell", where the course website.
+ Remember also that they can be used for fun, not mean that programmers know not include any calls to the last parameter is a set of filenames, including the size of ints are 0 or return -1. update_board: (int, int, list of strs) -> NoneType The other functions you should also has passed. Therefore, it is a docstring comment for correctness. Submit a2.py file must not to you should be stored in the cell at that location in the same values are giving you could add a single portion of lists of hits remaining to thoroughly test cases to refer to Hand In this handout and in a2.py. All verification code, the width and not for the deadline. For the "symbol board" is column 0. What to media.choose_file or more of hits remaining to see great docstrings and column. The "view board" is assigned the number of list of the VACANT cells. As the largest single player will form either a row and your submission. Marking These are called multiple times. What to use constants simplifies code functions ar
+e 0 (inclusive) and Run it. If the constant values. They are passed as SIZES and which is up for the following function definitions. Include a hidden cell to signify constants, as the assignment specification. Fix your A2 constants, so they can be entirely hidden: the VACANT cells. As the other enhancements (this is used to receive zero for each. Function name: (Parameter types) -> bool Return the list of the functions should perform as helpers. You may depend on CDF, so that code is a list are between 0 and column 5. The first two (human) player also test your code functions given name. (See the row 0 and which values as above. Remember also that the fourth is a board's "cell", where each function definitions that can be used to the functions you should be meaningful and the cell at the last thing you need to be stored in an if both
+
+>>> "Today is Friday!".split()
+['Today', 'is', 'Friday!']
+>>> "Today is Friday!".split('d')
+['To', 'ay is Fri', 'ay!']
+
+[evaluate lazy_lit.py]
+Which training file? alice.txt
+Alice followed 
+was followed Alice
+beginning followed was
+to followed beginning
+get followed to
+very followed get
+tired followed very
+hours followed many
+a followed hours
+day followed a
+did followed day
+you followed did
+do followed you
+lessons?' followed do
+said followed lessons?'
+Alice, followed said
+in followed Alice,
+a followed in
+hurry followed a
+
+# I cut out most of the output from the lecture notes.
+
+[evaluate lazy_lit.py]
+Which training file? alice_short.txt
+{'': ['Alice'], 'and': ['of', 'stupid),', 'picking'], 'own': ['mind'], 'stupid),': ['whether'], 'tired': ['of'], 'feel': ['very'], 'when': ['suddenly'], 'into': ['the'], 'mind': ['(as'], 'it': ['had'], 'getting': ['up'], 'reading,': ['but'], 'as': ['she'], 'pink': ['eyes'], 'in': ['it,', 'her'], 'close': ['by'], 'White': ['Rabbit'], 'eyes': ['ran'], 'picking': ['the'], 'sleepy': ['and'], 'considering': ['in'], 'what': ['is'], 'her': ['sister', 'sister', 'own', 'feel'], 'bank,': ['and'], 'would': ['be'], 'pictures': ['or', 'or'], 'sitting': ['by'], 'had': ['peeped', 'no'], 'daisy-chain': ['would'], 'day': ['made'], 'do:': ['once'], 'to': ['get', 'do:'], 'hot': ['day'], 'book': ['her'], 'Rabbit': ['with'], "book,'": ['thought'], 'was': ['beginning', 'reading,', 'considering'], 'is': ['the'], '`without': ['pictures'], 'be': ['worth'], 'it,': ['`and'], "conversation?'": ['So'], 'up': ['and'], 'get': ['very'], 'very': ['tired', 'sleepy'], 'conversations': ['in'], 'daisies,': ['when'], 'use'
+: ['of'], 'Alice': ['was', '`without'], 'but': ['it'], 'ran': ['close'], 'So': ['she'], 'making': ['a'], 'nothing': ['to'], 'trouble': ['of'], 'beginning': ['to'], 'by': ['her', 'her.'], 'peeped': ['into'], 'a': ["book,'", 'daisy-chain', 'White'], 'on': ['the'], 'sister': ['on', 'was'], 'made': ['her'], 'for': ['the'], '`and': ['what'], 'whether': ['the'], 'of': ['sitting', 'having', 'a', 'making', 'getting'], 'worth': ['the'], 'no': ['pictures'], 'well': ['as'], 'could,': ['for'], 'having': ['nothing'], 'thought': ['Alice'], 'twice': ['she'], 'she': ['had', 'was', 'could,'], 'pleasure': ['of'], 'the': ['bank,', 'book', 'use', 'hot', 'pleasure', 'trouble', 'daisies,'], '(as': ['well'], 'with': ['pink'], 'or': ['twice', 'conversations', "conversation?'"], 'suddenly': ['a'], 'once': ['or']}
+None

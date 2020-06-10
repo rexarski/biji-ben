@@ -1,0 +1,131 @@
+# The Black Cherry tree example from the back of the STAT2008 notes (see Example 4 in the Appendix
+# on Issues and Example Datasets).
+
+# The data in the file cherry.txt is from Hand et al (1994) A handbook of small data sets
+# (London: Chapman and Hall). The data consists of measurements of the diameter (inches), 
+# height (feet) and timber volume (cubic feet) for a sample of 31 black cherry trees. 
+# Diameter and height of trees are easily measured, but volume is more difficult to measure.
+
+cherry <- read.table("Cherry.txt", header=T)
+names(cherry)
+
+# To explore this data in R, we can draw a scatterplot matrix and do a few summary calculations:
+
+pairs(cherry)
+
+c(mean(cherry$diameter), mean(cherry$height), mean(cherry$volume)) 
+var(cherry)
+cor(cherry)
+
+# Coefficients of variation:
+
+c(sd(cherry$diameter)/mean(cherry$diameter), sd(cherry$height)/mean(cherry$height), sd(cherry$volume)/mean(cherry$volume))
+
+# If we now attach the data we can access each of the various columns by name (avoid having to use cherry$):
+
+attach(cherry)
+
+# Some more detailed plots of the data:
+
+plot(c(0,max(diameter)), c(0,max(volume)), type="n", main="Sample of 31 Cherry Trees", xlab="Diameter (inches)", ylab="Timber Volume (cubic feet)")
+points(diameter, volume)
+
+plot(c(0,max(height)), c(0,max(volume)), type="n", main="Sample of 31 Cherry Trees", xlab="Height (feet)", ylab="Timber Volume (cubic feet)")
+points(height, volume)
+
+# A naive first linear model:
+
+cherry.lm <- lm(volume ~ diameter + height)
+anova(cherry.lm)
+summary(cherry.lm)
+
+# The diagnostic plots, however, suggest there are problems with this model:
+
+plot(cherry.lm)
+
+# The underlying relationship is probably not linear! The bulk of timber volume in a tree is in the tree trunk.
+# Tree trunks are somewhere between conical and cylindrical in shape:
+
+plot(c(0,max((diameter/24)^2*height)), c(0,max(volume)), type="n", main="Sample of 31 Cherry Trees", xlab="Radius (feet) squared * Height (feet)", ylab="Timber Volume (cubic feet)")
+points((diameter/24)^2*height, volume)
+
+# The following model is still linear in the coefficients (though no longer linear wrt radius):
+
+radiusft <- diameter/24
+radftsqd <- radiusft^2
+cherry.lm2 <- lm(volume ~ radiusft + radftsqd + height)
+anova(cherry.lm2)
+summary(cherry.lm2)
+
+plot(cherry.lm2)
+
+# But this linear model fitted to transformed variables arguably both linearises the relationship and 
+# stabilises the error variance:
+
+cherry.lm3 <- lm(log(volume) ~ log(radiusft) + log(height))
+anova(cherry.lm3)
+
+plot(cherry.lm3)
+
+summary(cherry.lm3)
+summary(cherry.lm3)$coef
+cherry.lm3$df.residual
+
+# Note coefficient of ln(radiusft) is not significantly different from 2:
+
+coef(cherry.lm3)[2]
+summary(cherry.lm3)$coef[2,2]
+(coef(cherry.lm3)[2] - 2)/summary(cherry.lm3)$coef[2,2]
+qt(c(0.025,0.975), cherry.lm3$df)
+2*pt((coef(cherry.lm3)[2] - 2)/summary(cherry.lm3)$coef[2,2], cherry.lm3$df)
+
+# Coefficient of ln(height) is also not significantly different from 1:
+
+coef(cherry.lm3)[3]
+summary(cherry.lm3)$coef[3,2]
+(coef(cherry.lm3)[3] - 1)/summary(cherry.lm3)$coef[3,2]
+qt(c(0.025,0.975), cherry.lm3$df)
+2 * (1 - pt((coef(cherry.lm3)[3] - 1)/summary(cherry.lm3)$coef[3,2],cherry.lm3$df))
+
+# The intercept coefficient is not significantly different from what you would expect if tree trunks were perfect 
+# cones, i.e. ln(pi/3), or from what you would expect if tree trunks were perfect cylinders, i.e ln(pi)!
+
+# conical tree trunks:
+
+summary(cherry.lm3)$coef
+
+coef(cherry.lm3)[1]
+log(pi/3) 
+
+exp(coef(cherry.lm3)[1])
+pi/3
+
+summary(cherry.lm3)$coef[1,2]
+(coef(cherry.lm3)[1] - log(pi/3))/summary(cherry.lm3)$coef[1,2]
+qt(c(0.025,0.975), cherry.lm3$df)
+2*pt((coef(cherry.lm3)[1] - log(pi/3))/summary(cherry.lm3)$coef[1,2],cherry.lm3$df)
+
+# cylindrical tree trunks:
+
+summary(cherry.lm3)$coef
+
+coef(cherry.lm3)[1]
+log(pi)
+
+exp(coef(cherry.lm3)[1])
+pi
+
+(coef(cherry.lm3)[1] - log(pi))/summary(cherry.lm3)$coef[1,2]
+qt(c(0.025,0.975), cherry.lm3$df)
+2*pt((coef(cherry.lm3)[1] - log(pi))/summary(cherry.lm3)$coef[1,2],cherry.lm3$df)
+
+# Finally a plot of the data and the model to assess the fit of the model:
+
+plot(c(0,max(2*log(radiusft) + log(height))), c(0,max(log(volume))), type="n", main="Sample of 31 Cherry Trees", xlab="2*ln(Radius in feet) + ln(Height in feet)", ylab="ln(Tree Volume in cubic feet)")
+points(2*log(radiusft) + log(height), log(volume))
+lines(sort(2*log(radiusft) + log(height)), sort(fitted(cherry.lm3)))
+
+# Plotting of the model doesn't really work here, as the sorting order has turned out slightly
+# different for the data and the fitted values - we should be seeing a line or at least
+# a smooth curve - we will examine better ways of plotting the model and the data later in the
+# course.

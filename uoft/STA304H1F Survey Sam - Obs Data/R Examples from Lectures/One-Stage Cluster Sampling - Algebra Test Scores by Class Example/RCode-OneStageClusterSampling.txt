@@ -1,0 +1,77 @@
+###############################
+# One-Stage Cluster Sampling- #
+#   Algebra Test Scores       #
+#    by Class Example         # 
+#         R Code              #
+###############################
+
+> library(Sampling)
+
+# Read data from csv file
+> algebra <- read.csv("algebra.csv")
+
+> algebra
+    class Mi score
+1      23 20    57
+2      23 20    90
+3      23 20    56
+.
+.
+298   108 26    89
+.
+.
+.
+
+# One-Stage Cluster sample of 10 classes  
+> cl = cluster(algebra, c="class", 10, method="srswor")
+
+> getdata(algebra,cl)
+    Mi score class ID_unit      Prob
+7   20    62    23       7 0.8333333
+1   20    57    23       1 0.8333333
+2   20    90    23       2 0.8333333
+.
+.
+.
+
+# Get the data from the sample and then attach it
+>attach(getdata(algebra,cl))
+
+
+# Sample cluster totals / class totals in the sample
+> yi <- tapply(score,class,sum)
+
+> yi
+  23   38   39   41   44   46   51   58   62  108
+1230 1402 1972 1508 1816 1048 2308  989 1398 1746
+
+# Total score in the sample
+> sum(yi)
+[1] 15417
+
+# Number of scores in the sample from each class 
+> mi <- tapply(score,class,length)
+> mi
+ 23  38  39  41  44  46  51  58  62 108
+ 20  24  34  26  28  19  32  17  21  26
+
+# Total sample size
+> sum(mi)
+[1] 247
+
+# Cluster / class averages
+> ybari <- yi/mi
+> ybari
+      23       38       39       41       44       46       51       58       62      108
+61.50000 58.41667 58.00000 58.00000 64.85714 55.15789 72.12500 58.17647 66.57143 67.15385
+
+# Ratio estimate for the mean
+> ybar_r = (sum(mi*ybari)) / sum(mi)
+> ybar_r
+[1] 62.417
+
+# (n-1) * s^2_r
+> sum ((yi-ybari*mi)^2)
+[1] 193470.1
+
+

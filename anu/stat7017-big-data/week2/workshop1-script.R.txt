@@ -1,0 +1,4 @@
+load(file = "simpleExample.rda")
+
+d <- mahalanobis(dat, colMeans(dat), cov(dat))
+barplot(d, main="Mahalanobis")

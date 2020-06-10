@@ -1,0 +1,169 @@
+#Exercise 2: Comparison of Frequentist and Bayesian confidence interval
+a<-1  ; b<-1   #prior
+n<-10 ; y<-2   #data
+qbeta(c(0.025,0.975),a+y,b+n-y)
+0.2+1.96*sqrt(0.2*0.8/10)
+0.2-1.96*sqrt(0.2*0.8/10)
+
+
+
+pdf("Fig6.pdf",family="Times",height=3.5,width=7)
+par(mar=c(3,3,1,1),mgp=c(1.75,.75,0))
+
+
+theta.support<-seq(0,1,length=100)
+plot(theta.support, dbeta(theta.support, a+y, b+n-y), type="l",
+     xlab=expression(theta),ylab=expression(paste(italic("p("),theta,"|y)"))) 
+abline(v=qbeta( c(.025,.975), a+y,b+n-y))
+dev.off()
+
+pdf("Fig7.pdf",family="Times",height=3.5,width=7)
+par(mar=c(3,3,1,1),mgp=c(1.75,.75,0))
+
+theta.support<-seq(0,1,length=5000)
+plot(theta.support, dbeta(theta.support, a+y, b+n-y), type="l",
+     xlab=expression(theta),ylab=expression(paste(italic("p("),theta,"|y)"))) 
+pth<-dbeta(theta.support, a+y, b+n-y)
+pth<-pth
+ord<- order(-pth)
+xpx<-cbind(theta.support[ord], pth[ord])
+
+#Highest posterior density region function
+hpd<-function(x,dx,p){
+  md<-x[dx==max(dx)] - mode
+  px<-dx/sum(dx) - normalise density
+  pxs<--sort(-px)  ##or sort(px,decreasing=TRUE, so highest value is first)
+  ct<-min(pxs[cumsum(pxs)< p]) # find threshold density at which cumulative density exceeds p
+  list(hpdr=range(x[px>=ct]),mode=md) } #obtain HPD - range of theta values whose density exceed cutoff
+
+tmp<-hpd(xpx[,1],xpx[,2],.5)$hpdr
+lines( x=c(tmp[1],tmp[1],tmp[2],tmp[2]),
+       y=dbeta(c(0,tmp[1],tmp[2],0),a+y,b+n-y)  ,col=gray(.75),lwd=2   )
+tmp<-hpd(xpx[,1],xpx[,2],.75)$hpdr
+lines( x=c(tmp[1],tmp[1],tmp[2],tmp[2]),
+       y=dbeta(c(0,tmp[1],tmp[2],0),a+y,b+n-y)  ,col=gray(.5),lwd=2   )
+tmp<-hpd(xpx[,1],xpx[,2],.95)$hpdr
+lines( x=c(tmp[1],tmp[1],tmp[2],tmp[2]),
+       y=dbeta(c(0,tmp[1],tmp[2],0),a+y,b+n-y)  ,col=gray(0),lwd=2   )
+
+tmp<-qbeta( c(.025,.975), a+y,b+n-y)
+lines( x=c(tmp[1],tmp[1],tmp[2],tmp[2]),
+       y=dbeta(c(0,tmp[1],tmp[2],0),a+y,b+n-y)  ,col=gray(0),lwd=2 ,lty=2  )
+
+
+legend(.5, 2.75, c("50% HPD","75% HPD","95% HPD","95% quantile-based"), 
+       col=c(gray(.75),gray(.5),
+             gray(0),gray(0)),lty=c(1,1,1,2),lwd=c(2,2,2,2),
+       bty="n")
+
+dev.off()
+
+#Exericse 5a - birth rates
+# p r i o r parameters
+a<-2 ; 
+b<-1 
+n1<-111 ; 
+sy1<-217 # data in group 1
+n2<-44 ; 
+sy2<-66 # data in group 2
+#Group 1
+( a+sy1 ) / ( b+n1 ) # p o s t e r i o r mean
+( a+sy1 -1)/(b+n1 ) # p o s t e r i o r mode
+qgamma( c (0.025 , 0.975 ) , a+sy1 , b+n1 ) # p o s t e r i o r 95% CI
+
+theta1.post<-rgamma(1000,a+sy1 , b+n1 )
+
+#Group 2
+( a+sy2 ) / ( b+n2 )
+( a+sy2 -1)/(b+n2 )
+qgamma( c ( 0.025,0.975 ) , a+sy2 , b+n2 )
+theta2.post<-rgamma(1000,a+sy2 , b+n2 )
+
+sum(theta1.post>theta2.post)/1000
+
+pdf("Fig4.pdf")
+theta<-seq(0,5,0.001)
+plot(theta,dgamma(theta,2,1),type="l",lty=2,ylim=c(0,3),ylab="p(theta|y)",
+     xlab="theta")
+lines(theta,dgamma(theta,a+sy1,b+n1),type="l",lwd=2,col="grey")
+lines(theta,dgamma(theta,a+sy2,b+n2),type="l",lwd=2)
+legend(3,2,c("prior","Posterior-group1","Posterior-group2"),col=c("black","grey",
+                                                                  "black"), lty=c(2,1,1),lwd=c(1,2,2),cex=0.8)
+dev.off()
+
+#Exericse 5b - birth rates
+
+y<-0:10
+d<-rbind(dnbinom(y , (a+sy2) , mu=(a+sy2) / (b+n2) ),dnbinom(y ,a+sy1 , mu=(a+sy1) / (b+n1 )))
+
+
+y1.pred<-rnbinom(1000 ,a+sy1 , mu=(a+sy1) / (b+n1 ))
+y2.pred<-rnbinom(1000 ,a+sy2 , mu=(a+sy2) / (b+n2 ))
+sum(y1.pred>y2.pred)/1000
+sum(y1.pred==y2.pred)/1000
+
+pdf("Fig5.pdf")
+par(mar=c(3,3,1,1),mgp=c(1.75,.75,0))
+par(mfrow=c(1,2))
+a<-2
+b<-1
+xtheta<-seq(0,5,length=1000)
+plot(xtheta,dgamma(xtheta,a+sy1,b+n1),type="l",col=gray(.5),xlab=expression(theta),
+     ylab=expression(paste(italic("p("),theta,"|",y[1],"...",y[n],")",sep="")))
+lines(xtheta,dgamma(xtheta,a+sy2,b+n2),col=gray(0),lwd=2)
+lines(xtheta,dgamma(xtheta,a,b),type="l",lty=2,lwd=2)
+abline(h=0,col="black")
+barplot(d,beside=TRUE,ylab=expression(paste(italic("p("),y[n+1],"|",y[1],"...",y[n],")",sep="")),xlab=expression(y[n+1]))
+legend(14,0.15,cex=0.8,c("less than BA","higher than BA"),lty=c(1,1),col=c("grey","black"))
+dev.off()
+
+#alternative code
+theta1.post<-rgamma(1000,a+sy1,b+n1)
+theta2.post<-rgamma(1000,a+sy2,b+n2)
+y1.pred<-rpois(1000,theta1.post)
+y2.pred<-rpois(1000,theta2.post)
+sum(y1.pred>y2.pred)/1000
+sum(y1.pred==y2.pred)/1000
+
+
+library(plotrix)
+l<-list(y1.pred,y2.pred)
+multhist(l)
+
+
+#Exercise 9 - Mixtures of conjugate priors.  
+
+a1<-15
+b1<-5
+a2<-9
+b2<-11
+n<-168
+y<-91
+gamma<-0.5
+
+A<-gamma*beta(a1+y,b1+(n-y))/beta(a1,b1)+(1-gamma)*beta(a2+y,b2+(n-y))/beta(a2,b2)
+
+gamma_star<-gamma*beta(a1+y,b1+(n-y))/beta(a1,b1)/A
+p<-seq(0,1,0.01)
+
+gprior<-gamma*dbeta(p,a1,b1)+(1-gamma)*dbeta(p,a2,b2)
+gpost<-gamma_star*dbeta(p,a1+y,b1+(n-y))+(1-gamma_star)*dbeta(p,a2+y,b2+(n-y))
+
+gpost<-gpost/(sum(gpost))
+pdf("Fig8.pdf")
+par(mfrow=c(1,1))
+plot(p,gprior,type="l",ylab="density",ylim=c(0,max(gpost*1.1)),lwd=2,lty=2,col="gray", main="Mixture of conjugate priors - example",cex.main=0.8,cex.axis=0.8)
+lines(p,gpost,lwd=2)
+legend(0,0.04,c("prior","posterior"),lwd=c(2,2),lty=c(2,1),bty="n",cex=0.8,col=c("gray","black"))
+dev.off()
+
+1-pnorm(1.08)
+
+#hypothesis test
+#frequentist
+zstat<-(y/n-0.5)/sqrt(0.5*0.5/n)
+1-pnorm(zstat)
+
+#bayesian
+p.samp<-sample(p,1000,replace=TRUE,prob=gpost)
+mean(p.samp>0.5)

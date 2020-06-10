@@ -1,0 +1,46 @@
+## ------------------------------------------------------------------------
+## GDP
+gdp2013 <- read.table("gdp2013.txt", header=TRUE)
+D <- gdp2013
+D <- na.omit(D)
+gdp <- D$Y2013
+
+## ------------------------------------------------------------------------
+## visual display
+hist(gdp, col="yellow")
+
+## ------------------------------------------------------------------------
+## visual display
+hist(log(gdp), col="yellow")
+
+## ------------------------------------------------------------------------
+log.gdp <- log(gdp)
+summary(log.gdp)
+
+## ------------------------------------------------------------------------
+##
+Q <- quantile(log.gdp, prob=c(0.25, 0.5, 0.75), type=6) 
+Q
+
+IQR <- unname(Q[3]-Q[1]) 
+IQR
+
+
+## ------------------------------------------------------------------------
+##
+high.outliers <- log.gdp[log.gdp > Q[3] + 1.5*IQR]
+low.outliers <- log.gdp[log.gdp < Q[1] - 1.5*IQR]
+
+high.outliers
+low.outliers
+
+# let's find the countries that have high outliers
+D[log.gdp >= min(high.outliers),1]
+
+# let's find the countries that have high outliers
+D[log.gdp <= max(low.outliers),1]
+
+
+# let's make a boxplot.
+boxplot(log.gdp, col="yellow")
+

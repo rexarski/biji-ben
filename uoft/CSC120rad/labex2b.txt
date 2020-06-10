@@ -1,0 +1,38 @@
+# CSC 120, Spring 2016, Solution to lab exercise 2 (second part).
+
+temp <- scan("http://www.cs.utoronto.ca/~radford/csc120/temp.txt")
+deaths <- scan("http://www.cs.utoronto.ca/~radford/csc120/deaths.txt")
+
+day_of_year <- rep(1:365,3)
+year_col <- c(rep("red",365),rep("green",365),rep("blue",365))
+
+par(mfrow=c(2,2))
+
+plot(day_of_year,temp,col=year_col,pch=20)
+plot(day_of_year,deaths,col=year_col,pch=20)
+
+# Make predictions for deaths and plot on top of actual deaths.  Values
+# for a, b, and s below were fiddled manually to get a good fit.
+
+a <- 47
+b <- 5
+s <- 20
+prediction <- a + b*cos((day_of_year-s)*2*pi/365)
+
+points(day_of_year,prediction,col="black",pch=20)
+
+# Plot deaths versus temperature.  One can see a negative correlation (more
+# deaths at low temperatures).
+
+plot(temp,deaths,col=year_col,pch=20)
+
+# Plot error in predicting deaths versus temperature.  There is little or
+# no correlation visible, showing that time of year explains the variation
+# in deaths seen, with temperature not helping much (or at all).  So at least
+# in Toronto, in 1993, 1994, and 1995, day-to-day temperature variation does
+# not explain variation in deaths that same day.  (We haven't checked whether
+# there might be an effect some days later, however, nor done lots of other 
+# statistical analysis that one would want to do before drawing any real 
+# conclusions.)
+
+plot(temp,deaths-prediction,col=year_col,pch=20)

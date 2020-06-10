@@ -1,0 +1,95 @@
+# This is basically just Bronwyn Loong's R code to accompany her slides on 
+# Logistic Regression for Binary Responses with a few modifications by Ian McDermid
+
+# .libPaths("H:/R")
+library(arm)
+logit
+invlogit
+
+p <-seq(0,1,0.01)
+plot(p,logit(p),type="l")
+
+logit(0.5)
+logit(0.01)
+logit(0.99)
+
+y<-seq(-6,6,0.01)
+plot(y,invlogit(y),type="l")
+
+invlogit(0)
+invlogit(0.2)
+invlogit(-2)
+
+data_bk<-read.table("bird.csv",header=T,sep=",")
+data_bk
+attach(data_bk)
+names(data_bk)
+
+y<-ifelse(LC=="LUNGCANCER",1,0)
+bk<-ifelse(BK=="BIRD",1,0)
+m1<-glm(y~AG+bk, family=binomial,data_bk)
+summary(m1)
+plot(AG,y,ylab="LUNGCANCER")
+curve(invlogit(cbind(1,x,1)%*%coef(m1)),add=TRUE,lty=1)
+curve(invlogit(cbind(1,x,0)%*%coef(m1)),add=TRUE,lty=2)
+legend(40,0.6,c("bird","no bird"),lty=c(1,2))
+
+m2<-glm(y~AG+bk, family=binomial(link=probit),data_bk)
+curve(pnorm(cbind(1,x,1)%*%coef(m2)),add=TRUE,lty=1,col="blue")
+curve(pnorm(cbind(1,x,0)%*%coef(m2)),add=TRUE,lty=2,col="blue")
+
+m3<-glm(y~SEX+AG+SS+YR+BK, family=binomial,data_bk)
+
+m4<-glm(y~SEX+AG+SS+YR, family=binomial,data_bk)
+summary(m4)
+deviance(m4)-deviance(m3)
+df.residual(m4)-df.residual(m3)
+pchisq(deviance(m4)-deviance(m3),df.residual(m4)-df.residual(m3),lower=FALSE)
+
+pchisq(deviance(m3),df.residual(m3),lower=FALSE)
+
+#scatter plot
+plot(AG,CD,pch=unclass(BK),ylab="cigarettes per day",xlab="age")
+points(AG[LC=="LUNGCANCER"&BK=="BIRD"],CD[LC=="LUNGCANCER"&BK=="BIRD"],pch=16,col="blue")
+points(AG[LC=="LUNGCANCER"&BK=="NOBIRD"],CD[LC=="LUNGCANCER"&BK=="NOBIRD"],pch=17,col="red")
+legend(40,40,c("Bird and LC","No Bird and LC"),col=c("blue","red"), pch=c(16,17))
+
+y<-ifelse(LC=="LUNGCANCER",1,0)
+y1<-sum(y[CD==0])/length(CD[CD==0])
+y2<-sum(y[CD>=1&CD<=20])/length(CD[CD>=1&CD<=20])
+y3<-sum(y[CD>=21& CD<=30])/length(CD[CD>=21& CD<=30])
+y4<-sum(y[CD>=31& CD<=40])/length(CD[CD>=31& CD<=40])
+y5<-sum(y[CD>=41& CD<=50])/length(CD[CD>=41& CD<=50])
+
+#grouping
+sample.log<-c(log(y1/(1-y1)),log(y2/(1-y2)),log(y3/(1-y3)),log(y4/(1-y4)),log(y5/(1-y5)))
+cd.mid<-c(0,10,25,35,45)
+plot(cd.mid,sample.log,xlab="Years smoked (midpt of interval)",ylab="log(odds) cancer")
+
+#residual plot
+pred.m3 <- m3$fitted.values
+
+plot(c(0,1), c(-1,1), xlab="Estimated  Pr (lung cancer)", ylab="Observed - estimated", type="n", main="Residual plot", mgp=c(2,.5,0))
+abline (0,0, col="gray", lwd=.5)
+points (pred.m3, y-pred.m3, pch=20, cex=.2)
+
+#binned residual plot
+a<-predict(m3)
+b<-resid(m3)
+binnedplot(a,b)
+
+#identifiability and separation
+## Generating the variables
+
+x <- rnorm(60, mean =1, sd = 2)
+y <- ifelse(x<2,0,1)
+
+## Fit the model
+
+fit.0 <- glm (y ~ x, family=binomial(link="logit"))
+
+## Plot
+
+plot (x, y, xlab="x", ylab="y", xlim=c(-6,6), pch=20)
+curve (invlogit (coef(fit.0)[1] + coef(fit.0)[2]*x), add=TRUE)
+

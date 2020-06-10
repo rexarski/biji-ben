@@ -1,0 +1,19 @@
+#Last Updated: 14/07/2017
+rm(list=ls())
+
+#H:\AppliedStat2017\L1
+
+setwd('H:/AppliedStat2017/L1')
+
+#setwd('H:/AppliedStat2017/today lecture')
+
+oldfaith<-read.table("oldfaithful.csv",header=TRUE,sep=",")
+
+plot(oldfaith$DURATION,oldfaith$INTERVAL,ylab="Interval (mins)",xlab="Duration (mins)", main="Old Faithful Data")
+fit<-lm(oldfaith$INTERVAL~oldfaith$DURATION)
+abline(fit)
+
+names(fit)
+fit$coefficients
+head(fit$fitted.values)
+head(fit$residuals)

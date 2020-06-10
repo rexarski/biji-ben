@@ -1,0 +1,153 @@
+Python 2.7.2 (v2.7.2:8527427914a2, Jun 11 2011, 14:13:39) 
+[GCC 4.0.1 (Apple Inc. build 5493)]
+Type "help", "copyright", "credits" or "license" for more information.
+>>> # Strings are immutable.
+>>> s = 'hello'
+>>> id(s)
+17220864
+>>> s = s[2:]
+>>> s
+'llo'
+>>> id(s)
+16939536
+>>> len('hello')
+5
+
+>>> # String methods
+>>> dir(str)
+['__add__', '__class__', '__contains__', '__delattr__', '__doc__', '__eq__', '__format__', '__ge__', '__getattribute__', '__getitem__', '__getnewargs__', '__getslice__', '__gt__', '__hash__', '__init__', '__le__', '__len__', '__lt__', '__mod__', '__mul__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__rmod__', '__rmul__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '_formatter_field_name_split', '_formatter_parser', 'capitalize', 'center', 'count', 'decode', 'encode', 'endswith', 'expandtabs', 'find', 'format', 'index', 'isalnum', 'isalpha', 'isdigit', 'islower', 'isspace', 'istitle', 'isupper', 'join', 'ljust', 'lower', 'lstrip', 'partition', 'replace', 'rfind', 'rindex', 'rjust', 'rpartition', 'rsplit', 'rstrip', 'split', 'splitlines', 'startswith', 'strip', 'swapcase', 'title', 'translate', 'upper', 'zfill']
+>>> help(str.lower)
+Help on method_descriptor:
+
+lower(...)
+    S.lower() -> string
+    
+    Return a copy of the string S converted to lowercase.
+
+>>> s = "What a WONDERFUL morning"
+>>> s.lower()
+'what a wonderful morning'
+>>> s
+'What a WONDERFUL morning'
+>>> s.lower()   # lower is a str method
+'what a wonderful morning'
+>>> s = s.lower()
+>>> s
+'what a wonderful morning'
+>>> lower(s)   #   Error.  lower is a method, not a function
+Traceback (most recent call last):
+  File "<string>", line 1, in <fragment>
+NameError: name 'lower' is not defined
+>>> "This is CSC???".replace('???', '108')
+'This is CSC108'
+>>> 'This is CSC108'.count('i')
+2
+>>> 'This is CSC108'.count('p')
+0
+>>> 'This is CSC108'.count('is')
+2
+>>> s = "yabababa daba do!"
+>>> s.count("aba")
+3
+>>> help(str.count)
+Help on method_descriptor:
+
+count(...)
+    S.count(sub[, start[, end]]) -> int
+    
+    Return the number of non-overlapping occurrences of substring sub in
+    string S[start:end].  Optional arguments start and end are interpreted
+    as in slice notation.
+
+>>> s.count("aba", 0, 5)
+1
+>>> "This is CSC108".find("is")
+2
+>>> "This is CSC108".rfind("is")
+5
+>>> "This is CSC108".find("is")
+2
+>>> "This is CSC108".find("is", 3)
+5
+>>> "This is CSC108".find("is", 6)
+-1
+>>> "This is CSC108".find("is", 2)
+2
+>>> help(str.find)
+Help on method_descriptor:
+
+find(...)
+    S.find(sub [,start [,end]]) -> int
+    
+    Return the lowest index in S where substring sub is found,
+    such that sub is contained within s[start:end].  Optional
+    arguments start and end are interpreted as in slice notation.
+    
+    Return -1 on failure.
+
+>>> "This is CSC108".find("the")
+-1
+>>> s = "    A    line   with many   spaces.    "
+>>> s.lstrip()
+'A    line   with many   spaces.    '
+>>> s.rstrip()
+'    A    line   with many   spaces.'
+>>> s.strip()
+'A    line   with many   spaces.'
+
+
+# Escape sequences
+>>> '''This is a string
+that spans
+multiples lines.'''
+'This is a string\nthat spans\nmultiples lines.'
+>>> # \n is newline
+>>> # \ is the escape character
+>>> 'Jen's'
+Traceback (most recent call last):
+  File "<string>", line 1, in <fragment>
+invalid syntax: <string>, line 1, pos 6
+>>> 'Jen\'s'
+"Jen's"
+>>> 'Jen\\Campbell'
+'Jen\\Campbell'
+>>> print 'Jen\\Campbell'
+Jen\Campbell
+>>> print 'Jen\'s CSC108 lecture sections:\nL0101\tL5101'
+Jen's CSC108 lecture sections:
+L0101	L5101
+
+
+# Conversion specifiers
+>>> a1 = 89
+>>> a2 = 76
+>>> a3 = 91
+>>> print "The maximum of the three grades (", a1, ",", a2, "and", a3, ") is", max(a1, a2, a3)
+The maximum of the three grades ( 89 , 76 and 91 ) is 91
+>>> print "The maximum of the three grades (" + a1 + "," + a2 + "and" + a3 + ") is" + max(a1, a2, a3)
+Traceback (most recent call last):
+  File "<string>", line 1, in <fragment>
+TypeError: cannot concatenate 'str' and 'int' objects
+>>> print "The maximum of the three grades (" + str(a1) + ", " + str(a2) + " and" + str(a3) + ") is" + str(max(a1, a2, a3))
+The maximum of the three grades (89,76and91) is91
+>>> print "The maximum of the three grades (" + str(a1) + ", " + str(a2) + " and " + str(a3) + ") is " + str(max(a1, a2, a3))
+The maximum of the three grades (89, 76 and 91) is 91
+>>> print "The maximum of the three grades (%d, %d and %d) is %d" % (a1, a2, a3, max(a1, a2, a3))
+The maximum of the three grades (89, 76 and 91) is 91
+>>> # % operator is overloaded.  Also used for modulus.
+>>> print '%d' % (342)
+342
+>>> # %d: decimal integer (base 10 int)
+>>> print '%f' % (45.89)
+45.890000
+>>> import math
+>>> print '%f' % (math.pi)
+3.141593
+>>> print '%.2f' % (math.pi)
+3.14
+>>> print '%.12f' % (math.pi)
+3.141592653590
+>>> print '%s' % ('hello')
+hello
+>>> print "Hi %s" % ('Nathan')
+Hi Nathan

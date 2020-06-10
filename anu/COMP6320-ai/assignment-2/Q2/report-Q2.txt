@@ -1,0 +1,81 @@
+a) 
+
+In this question, all instances are still (luckly) solvable within 1 min.
+
+* 5-3: 57msec
+* 8-4: 43msec
+* 12-4: 61msec
+* 21-8: 257msec.
+-----------------------------------------------------------------------------
+
+b)
+
+The solutions I had are pretty satisfying, but I will share some detailed improvement I made in the discussion below.
+-----------------------------------------------------------------------------
+
+c)
+=================
+[[EXPLAINATION:]]
+=================
+
+The general idea of my implementaion in Q2 is to use previous constraints filter the possible solutions ahead, then put them together at a new array, then use newly defined constraints to trim candidates and get a solution finally.
+
+The core of my design is an array called `a_seq` (a.k.a. "a sequence"), whose first index is the identity of a truck, and the second index is, depending its "mod 5" value, a customer-specific related information. In details, if we have a certain truck with index `t`, and a customer index `c`, then
+
+* a_seq[t,c-4] stores `truck_id` (here I am using the component alias from handout where an output format is provided).
+* a_seq[t,c-3] stores `time_step_id`
+* a_seq[t,c-2] stores `customer_id`
+* a_seq[t,c-1] stores `chilled_goods_units_delivered`
+* a_seq[t,c] stores `ambient_goods_units_delivered`
+
+NB: In fact, a valid solution should have `truck_id`==t and `customer_id`==c.
+
+=============
+[[REMARK 1:]]
+=============
+
+When creating the new array `a_seq`, I set a soft "ceiling" for the domain of elements in this array, which is equal to the sum of the number of trucks, the number of customers and the max capacity a truck could has. Why? Because our new array stores information from different aspect, we don't know if the stored customer_id will exceed the MAXCAP, etc.. Hence one safe way is to set the domain from 0 to the sum of these possible values.
+
+=============
+[[REMARK 2:]]
+=============
+
+For new constraints created, I modifed the customer domain from 0..C to 1..C as we are not interested "what the depot has ordered" in the end.
+
+=============
+[[REMARK 3:]]
+=============
+
+For the last three new constraints created to deal with `time_step_id`, i.e. the visiting sequence of a truck. Here are some points I want to address:
+
+* The first constraint makes those trucks stay at the depot if nothing is ordered.
+* The second constraint initiates the "sequence"/"visiting order" of a truck if it is the first time that a truck delivers cargo.
+* The third constraint is an updating constraint, so that if a truck indeed delivers before, this time the `time_step_id` will increase by 1.
+
+NB: I tried to combine the second and the third into one constraint, and it did work, only with some warnings. Not sure how to deal with it, so I kept them separate.
+
+NB2: Since c traverses from 1 to C, I don't worry about "visiting the same customer twice".
+
+=============
+[[REMARK 4:]]
+=============
+
+In the output, use two "empty" output to filter the result so that we can speed up the calculation.
+
+(Without them, it is still solvable, but it takes about 70 seconds to run.)
+
+=============
+[[REMARK 5:]]
+=============
+
+Hmm, final remark. At the very beginning, I originally called my result array `seq` instead of `a_seq`. The first 3 instances are solvable like now but the 21-8 case took really long time. And out of sudden I decided to change the variable name, then the runtime has been dramatically decreased!
+
+Turns out that the variable names of those 3 arrays matter!
+
+Still not sure why but it seems that the `seq` array should be alphabetically before those `chilled` and `ambient`. Therefore, I call them
+
+- a_seq
+- ambient_goods_units_delivered
+- chilled_goods_units_delivered
+
+Now it can solve 21-8 case in within a second.

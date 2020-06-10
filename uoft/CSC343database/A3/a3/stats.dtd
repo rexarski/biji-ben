@@ -1,0 +1,4 @@
+<!ELEMENT Stats (Bar*)>
+<!ELEMENT Bar EMPTY>
+<!ATTLIST Bar category CDATA #REQUIRED>
+<!ATTLIST Bar count CDATA #REQUIRED>

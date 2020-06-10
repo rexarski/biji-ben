@@ -1,0 +1,210 @@
+#Tutorial 8 plus Assignment 1
+
+#Tutorial 8
+
+setwd("C:/Users/u5708538/Desktop")
+
+DMD=read.table("DMD.csv",header=T,sep=",")
+CK=DMD$CK
+H=DMD$H
+group=DMD$GROUP
+
+#a)
+plot(log(CK[group==group[1]]),H[group==group[1]],xlab="log(CK)",ylab="H")
+points(log(CK[group==group[83]]),H[group==group[83]],pch="*")
+#clear separation between Control and Treatment signifies that two variables should provide a good way of distinguishing between two groups.
+
+#b)
+DMD.logit1=glm(group~CK+I(CK^2),family=binomial(link=logit))
+summary(DMD.logit1)
+
+#Equation is logit(group) = 4.18-0.058CK+0.00005(CK)^2
+
+logCKsqr=(log(CK))^2
+DMD.logit2=glm(group~log(CK)+logCKsqr,family=binomial(link=logit))
+summary(DMD.logit2)
+
+#Equation is logit(group) = -9.83-8.568logCK-1.435log(CK)^2
+
+DMD.logit3=glm(group~log(CK)+H,family=binomial(link=logit))
+summary(DMD.logit3)
+
+#Equation is logit(group) = -28.9-4.02logCK-0.14H
+
+
+#Assignment 1
+
+#Last Updated: 16/09/2016
+
+install.packages("Sleuth3")
+library('Sleuth3')
+data=ex1225  
+
+#Q1 a)
+attach(data)
+Y=log(WeeklyEarnings)
+IMale=ifelse(Sex=="Male",1,0)
+IMarried=ifelse(MaritalStatus=="Married",1,0)
+fit=lm(Y~Age+IMale+IMarried+EdCode)
+round(fit$coef[5],4)
+
+#coefficient of education is 0.1121, meaning if education increases, log(earnings) increases.
+
+
+#Q1 b)
+summary(fit)
+
+#Ho: The coefficients of all the variables, except for the intercept, are zeros.
+#Ha : at least one of the coefficients is not zero.
+
+#p-value is smaller than 0.05. Hence we reject the null hypothesis.
+
+#Q1 c)
+X=cbind(Age,IMale,IMarried,EdCode)
+
+install.packages('wle')
+library(wle)
+mle.stepwise(Y~X,f.in=4,f.out=4,type="Backward")
+detach(data)
+
+#All four variables. R stops at the backward step for four variables, which corresponds to the start model for backward elimination. Hence, R returns nothing in the output.
+
+
+
+#Q2 a)
+attach(data)
+summary(fit)$r.squared
+
+#The regression model can explain 26.82% of the total response variation.
+
+#Q2 b)
+plot(fit$fitted.values,fit$residuals,main="residuals vs fitted values", xlab="fitted values",ylab="residuals")
+abline(h=0)
+# Yes. The assumptions in the multiple linear regression model are violated based on this plot.
+
+#Q2 c)
+qqnorm(fit$residuals)
+qqline(fit$residuals)
+#qq-plot of residuals has heavy/skewed tail.
+
+#Q2 d)
+CD=cooks.distance(fit) #Cook's distance
+plot(CD)
+abline(h=1,col='red')
+#No, there are no influential observations. 
+#Because a rough “rule of thumb” cut-off for Cook’s distance is 1. 
+#In the plot, there are no Cook’s distances larger than 1.
+
+#Q2 e)
+result=which(CD==max(CD))
+names(result)=''
+result
+
+#or
+identify(CD)
+
+#observation number 6242
+
+Rstd<-rstudent(fit) #Studentized residuals
+Rstd[6242]
+
+#observation number 6242 has studentized residual of -14.08946. 
+#which is smaller than the cut-off -1.96 (or -2). Hence this observation is an outlier. 
+#We should omit the observation and proceed to use the left observations for model fitting.
+
+#Q2 f)
+X=cbind(Age,IMale,IMarried,EdCode)
+lev=hat(X) #Leverage
+lev[6242]
+
+#leverage is 0.0004889895. 
+
+n=length(Y)
+k=4
+2*(k+1)/n
+
+#cuttoff = 0.001016777
+
+#Leverage is smaller than the cut-off 2(k + 1)/n, Hence this observation does not have distant explanatory variable values.
+
+
+
+#Q3 a)
+IMidwest=ifelse(Region=="Midwest",1,0)
+INortheast=ifelse(Region=="Northeast",1,0)
+ISouth=ifelse(Region=="South",1,0)
+
+IMetropolitan=ifelse(MetropolitanStatus=="Metropolitan",1,0)
+INotMetropolitan=ifelse(MetropolitanStatus=="Not Metropolitan",1,0)
+
+IFedGov=ifelse(JobClass=="FedGov",1,0)
+ILocalGov=ifelse(JobClass=="LocalGov",1,0)
+IStateGov=ifelse(JobClass=="StateGov",1,0)
+
+#base indicator should be Private Government
+
+#Q3 b)
+fit=lm(Y~Age+IMale+IMarried+EdCode+IMidwest+INortheast+ISouth+
+IMetropolitan+INotMetropolitan+IFedGov+ILocalGov+IStateGov)
+summary(fit)
+
+#Fed Government significant. Local and State Government insignificant.
+
+#Q3 c)
+fitr=lm(Y~Age+IMale+IMarried+EdCode+IMidwest+INortheast+ISouth+
+IMetropolitan+INotMetropolitan)
+#extra-sums-of-squares test 
+anova(fitr,fit,test='F')
+
+#the test statistic is 18.86 and the corresponding p-value is 3.419 × 10-12. 
+#Hence we reject the null hypothesis and conclude that at least one of categories of “FedGov”, “StateGov”
+#and “LocalGov” has a sigfinicantly different level of the mean of log(WeeklyEarnings),
+#compared to the category of “Private”, when other variables are held constant.
+
+#Q3 d)
+fitNew=lm(Y~Age+IMale+IMarried+EdCode+IMidwest+INortheast+ISouth+
+IMetropolitan+INotMetropolitan+IFedGov+ILocalGov+IStateGov
++IMale*IMarried)
+deviance(fit)
+deviance(fitNew)
+
+#The model with the interaction term has a smaller SSE.
+
+#Q3 e)
+summary(fitNew)
+#the interaction is significant.
+#Interpretation of interaction coefficient: 
+
+
+#Q4
+
+#a)
+rm(list=ls())
+beta0=2;beta1=1;beta2=-1
+X1=1:100 
+n=length(X1)
+set.seed(1)
+X2=rt(n,3)
+Y=rep(0,n)                
+CIl=rep(0,1000)
+CIu=rep(0,1000)
+x0=data.frame(X1=2.5,X2=0)
+for(i in 1:1000) {
+  errors=rnorm(n)     	   
+  Y=beta0+beta1*X1+beta2*X2+errors         
+  MLRfit=lm(Y~X1+X2)          
+  CI=predict(MLRfit,x0,interval='confidence',level=0.95)
+  CIl[i]=CI[2]
+  CIu[i]=CI[3]
+}
+
+#b)
+MeanResponse=beta0+beta1*x0$X1+beta2*x0$X2
+Count=ifelse(CIl<=MeanResponse & CIu>=MeanResponse, 1,0)
+sum(Count)
+
+#947
+
+#c) The 95% confidence interval for the mean of response means that if we use R to obtain
+#1,000 confidence intervals for 1,000 repeated samples, then around 950 confidence
+#intervals will cover the mean of response.

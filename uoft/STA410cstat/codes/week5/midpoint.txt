@@ -1,0 +1,37 @@
+# UNIVARIATE INTEGRATION USING THE MIDPOINT RULE.  The arguments are the
+# function to integrate, the low and high bounds, and the number of points
+# to use.  Additional arguments to pass to the function being integrated
+# can follow.
+
+midpoint_rule <- function(f,a,b,n,...)
+{ 
+    h <- (b-a)/n
+    s <- 0
+
+    for (i in 1:n) s <- s + f(a+h*(i-0.5),...)
+
+    h*s
+}
+
+
+# TEST ROUTINE.  The argument is a vector of values for 'n' argument to
+# midpoint_rule (giving the number of points to use for the integration).
+# The output must be checked manually to see whether the error is going
+# down at a suitable rate.
+
+test_midpoint_rule <- function (n_vals=c(10,100,1000,10000))
+{
+    cat("\nIntegrate x^2 from -1 to 2; correct answer is 3\n")
+
+    for (n in n_vals) {
+        r <- midpoint_rule (function(x) x^2, -1, 2, n)
+        cat("n:",n,"  result:",r,"\n")
+    }
+
+    cat("\nIntegrate sin(x/a) from 0 to a*pi with a=10; correct answer is 20\n")
+
+    for (n in n_vals) {
+        r <- midpoint_rule (function(x,a) sin(x/a), 0, 10*pi, n, 10)
+        cat("n:",n,"  result:",r,"\n")
+    }
+}

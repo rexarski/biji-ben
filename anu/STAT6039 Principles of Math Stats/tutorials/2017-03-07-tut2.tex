@@ -1,0 +1,87 @@
+\documentclass[a4paper, 11pt, twoside]{article}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\begin{document}
+
+\title{STAT6039 week 3 tutorial 2 notes}
+\author{Rui Qiu}
+
+\maketitle
+
+\paragraph{Q4}
+
+Basically you have 10 minutes (2min to transfer, 8min to find the donor). Define:\\
+
+$A:$ a donor with the right blood is found within 8 minutes.\\
+
+$A_i:$ the $i$th person is the first identified with correct blood type. $i=1,2,3,4.$\\
+
+$A_i$'s are disjoint $\rightarrow A_i\cap A_J = \emptyset$ i.e. $A_i$'s are mutually exclusive.\\
+
+$A = A_1\cup A_2\cup A_3\cup A_4.$\\
+
+If $A_1$ and $A_2$ are disjoint, then $P(A_1\cup A_2)= P(A_1)+P(A_2).$\\
+
+So $P(A)=P(A_1\cup A_2\cup A_3\cup A_4) = P(A_1)+P(A_2)+P(A_3)+P(A_4)=0.4+0.6\times0.4+0.6^2\times 0.4 + 0.6^3\times 0.4 = 0.8704.$\\
+
+The other way to think it is that:\\
+
+\[
+\begin{split}
+	P(A) &= 1 - P(\overline{A})\\
+	&=1-(0.6)^4\\
+	&=1-0.1296\\
+	&=0.8704\\
+\end{split}
+\]
+
+Consider $A^*$ as the event that if all 4 blood type test fail, just pick a random 5th person without testing and do the blood donation.\\
+
+\[
+\begin{split}
+	P(A^*) &= 1 - P(\overline{A^*})\\
+	&= 1- (0.6)^5\\
+	&= 0.9222\\
+\end{split}
+\]
+
+And there is also a assumption underlying that there is a very large (or infinite) population, so that picking one out does not affect the probability of $40\%$ (success rate).\\
+
+\paragraph{Q3}
+
+pump with 3 components, will stop iff all 3 fail. each has a prob of 0.1 failure rate (independent).\\
+
+$A:$ event that the pump fails\\
+
+$C_i = i$th component is functional, $i=1,2,3.$\\
+
+$C_i$'s are independent of each other.\\
+
+$A = C_1\cup C_2\cup C_3$\\
+
+$P(A)= 1 - P(\overline{A})=1-P(\overline{C_1})P(\overline{C_2})P(\overline{C_3})=0.999$\\
+
+$P(\overline{C_1}|A)$\\
+
+Note that \[P(A|B)=\frac{P(AB)}{P(B)}\]\\
+
+\[P(AB)=P(A|B)P(B)\]\\
+
+\[
+\begin{split}
+	P(\overline{C_1}|A) &= 1- P(C_1|A)\\
+	&=1- \frac{P(A|C_1)P(C_1)}{P(A)}\\
+	&=1- \frac{1\cdot 0.9}{0.999}\\
+	&= 1- \frac{100}{111}\\
+	&= \frac{11}{111}\\
+\end{split}
+\]
+
+\paragraph{Q2} 
+
+(a) \[P(\text{Two nondefectives}) = \frac{{16 \choose 2}{4 \choose 0}}{{20\choose 2}}=\frac{12}{19}\]\\
+
+(b) \[P(\text{At least one nondefective}) = 1 - P(\text{No nondefectives}) = 1 - \frac{{16 \choose 0}{4 \choose 2}}{{20\choose 2}} = \frac{92}{95}\]\\
+
+(c) \[P(\text{Two nondefectives, given at least one nondefective}) = P(A|B) = \frac{P(AB)}{P(B)}=\frac{\frac{12}{19}}{\frac{92}{95}}=\frac{15}{23}.\]\\
+\end{document}

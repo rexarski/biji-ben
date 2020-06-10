@@ -1,0 +1,66 @@
+Starting SAT-based planner...
+Checking for plugins...
+Encodings registered:    3
+Solvers registered:      1
+Command line options:
+    Domain file:          benchmarks/blocks/domain.pddl
+    Problem file:         benchmarks/blocks/problem04.pddl
+    Experiment name:      blocks_temp
+    Query strategy:        ramp, min_h = 15 max_h = 50 step_h = 5
+    Compute plangraph:     True
+    Plangraph constraints: fmutex
+    Encoding:              basic
+    Solver                 precosat
+    SAT solver time out    None
+    Write debug CNF:       False
+    Remove tmp files:      False
+Command line arg processing time: 0.0019800662994384766
+Parsing the PDDL domain...
+Parsing the PDDL problem...
+Simplifying the problem representation...
+Parsing time: 0.04340219497680664
+Grounding the problem...
+Grounding time: 0.015282869338989258
+Simplifying the ground encoding...
+Simplify time: 0.0055999755859375
+Generating Plangraph invariants...
+Step: 0 1 2 3 
+Plangraph invariants time: 0.02731180191040039
+Planning...
+
+Step: 15
+-------------------------------------------------
+Generating base encoding: basic ...
+PRE_EFF_COUNT:
+3420
+FRAME COUNT:
+750
+INT MUTEX COUNT:
+3420
+FMUTEX COUNT:
+402
+Encoding generation time: 0.049430131912231445
+Writing CNF file...
+Total variables: 880
+Total clauses: 8020
+Writing time: 0.010474920272827148
+Solving...
+SAT
+Solution time:  0.04007601737976074
+Extracting the plan...
+Plan:
+1: pick-up b
+5: stack b c
+6: unstack b c
+7: stack b c
+8: unstack b c
+9: stack b a
+10: pick-up c
+12: stack c b
+13: pick-up d
+14: stack d c
+Simulating plan for validation.
+Plan valid. 10 actions.
+Step time: 0.10283398628234863
+Total time: 0.19726896286010742
+

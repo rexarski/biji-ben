@@ -1,0 +1,127 @@
+# Data on the average body weight (in kg) and the average brain weight (in g) for
+# sixty-two species of mammals.
+
+# Note the original of these data are from the package alr4 which is associated 
+# with what used to be the text for this course, Sandy Weisberg's Applied Linear 
+# Regression, now in its fourth edition - the following commands will access
+# this package:
+# install.packages("alr4")
+# library(alr4)
+
+# Or we could just download the csv file from Wattle and read it in, but I'll
+# call it something slightly different to distinguish it from the original:
+mammals <- read.csv("brains.csv",header=T,row.names=1)
+mammals
+attributes(mammals)
+
+attach(mammals)
+
+# Suppose we would like to try and model the brain weights of these mammals in 
+# terms of their body weights. We could start with some exploratory data analysis
+# and try a plot of these two variables:
+
+plot(body, brain)
+identify(body, brain, labels = attributes(mammals)$row.names)
+
+# Not a very promising plot if we are hoping to fit a linear model. We could try
+# changing the scale of either the body weights or the brain weights:
+
+plot(log(body), brain)
+
+plot(body, log(brain))
+
+# Both a little better, but still not really a linear relationship, so we could try
+# also try rescaling both variables at the same time:
+
+plot(log(body), log(brain))
+
+# This looks a lot more promising and we could try fitting a simple linear 
+# regression model to these data. Note that in doing so, we are assuming that
+# there is a linear relationship, not between the original variables body and
+# brain, but between the transformed variables log(body) and log(brain):
+
+mammals.lm <- lm(log(brain) ~ log(body))
+
+# Note this is a linear model, linear in the intercept and slope coefficents,
+# not necessarily linear in the original variables, brain and body.
+
+anova(mammals.lm)
+summary(mammals.lm)
+
+# To check the assumptions underlying this simple linear regression model, 
+# plotting the model object will produce a number of the usual regression 
+# diagnostic plots:
+
+plot(mammals.lm) 
+
+# For a linear model object, the plot() function in R produces default 4 plots,
+# which you can see one plot at time (you can do things to change this, once you
+# know what you are doing). :
+# (Plot 1) a residuals vs fitted values plot with an added smoother shown as a 
+#          red line - if this red line is close to the horizontal axis, it 
+#          suggests no real problems with the independence assumption;
+# (Plot 2) a normal quantile plot of the residuals;
+# (Plot 3) a transformed version of the residual plot, which is trying to diagnose
+#          departures from the assumption of constant variance (i.e. when the 
+#          smoother is not a horizontal line). I am not convinced that this plot
+#          helps to find problems that would not be fairly obvious in plot 1.           
+# (Plot 5) is a radically different approach to detecting potential outliers. 
+#          It graphs the standardised residuals against the leverage values
+#          (a measure of how influential each observation was in determining the
+#          fit of the model). As Cook's D is a function of the measures on the
+#          two axes (the standardised residuals and the leverage values), a 
+#          cut-off value for Cook's D can be shown as a limit on this graph. 
+#          However, this means that R is making an assumption about what is an 
+#          appropriate maximum value for Cook's D - like the use of summary
+#          measures, rather than significance tests, I personally feel this is a
+#          little arbitrary. I prefer to use the hidden plot 4 (see below) and 
+#          then examine any observation which has a value of Cook's D that is
+#          largerelative to the other observations - you could use this plot and
+#          examine observations which appeared to be outlying, i.e. points which 
+#          were away from the rest, rather than just assuming points were OK if 
+#          they are within the Cook's D limits and not okay if they are outside.
+
+# The diagnostic plots look okay (with a couple of caveats, which I will discuss
+# later), and are certainly better than the results than we would have got trying 
+# to fit a simple linear regression model to the raw (untransformed) data:
+
+mammals.rawlm <- lm(brain ~ body)
+plot(mammals.rawlm)
+
+# These plots are definitely not okay - there are numerous problems.
+
+# Now back to the log transformed model - a simpler plot to detect outliers than plot 5
+# is plot 4, which is produced by the default plotting method for linear models, 
+# plot.lm(), but is not shown by default. We can get this plot with a little help
+# from the help files:
+
+help(plot.lm)
+plot(mammals.lm, which=4)
+
+# The observation that appears to stand out on this plot is observation 32:
+
+mammals[32, ]
+
+# So the mammal that stands out as being different are the humans with brains 
+# too big for our bodies. Are we a genuine special case? 
+
+# As we will see later in the course after we have considered the use of 
+# indicator variables, a useful test is to include an indicator variable for the
+# suspected special case in the model and see if it turns out to be significant.
+
+# I have included the code for doing this below, but I will leave the 
+# interpretation of the output until later in the course (as this is, strictly
+# speaking, a multiple regression model and therefore the subject of chapter 2
+# of the lecture notes):
+
+human <- rep(0, length(body))
+human[32] <- 1
+human
+
+cbind(mammals, human)
+
+mammals.newlm <- lm(log(brain) ~ log(body) + human)
+plot(mammals.newlm)
+
+anova(mammals.newlm)
+summary(mammals.newlm)

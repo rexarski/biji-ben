@@ -1,0 +1,64 @@
+
+#IMPORTANT: If you want to reproduce your results, 
+# you will have to set the seed of the random number generator.
+# There is an R function set.seed()
+# TO DO: rum the set.seed(1) in the following code and see what happens
+#        to the result in calculating the mean and var for L1 and L2
+
+set.seed(1)
+
+# Claim two vector with names L1 and L2
+L1=L2=NULL
+
+
+#------------------------Simulation 1---------------------------------
+# loop with 1000 iterations
+for(i in 1:1000)
+{
+x=rpois(20,5)  # generates n=20 from poisson with lambda=5 and assigns it to x. Try: > ?rpois() 
+L1[i]=mean(x)  # assigns mean of x to L1 for each iteration
+L2[i]=mean((x-mean(x))^2) # assigns sum(x[i]-mean(x))/n (MSE)  to L2
+}
+mean(L1) # mean of the vector with length 1000, L1
+var(L1)  # variance of the vector with length 1000 ,L1
+mean(L2)
+var(L2)
+
+#------------------------Simulation 2---------------------------------
+L1=L2=NULL
+for(i in 1:1000)
+{x=rpois(20,10)  #simulated 20 data points from poisson with lambda=10
+L1[i]=mean(x)
+L2[i]=mean((x-mean(x))^2)
+}
+mean(L1)
+var(L1)
+mean(L2)
+var(L2)
+
+
+#------------------------Simulation 3---------------------------------
+L1=L2=NULL
+for(i in 1:1000)
+{x=rpois(100,5)
+L1[i]=mean(x)
+L2[i]=mean((x-mean(x))^2)
+}
+mean(L1)
+var(L1)
+mean(L2)
+var(L2)
+
+
+#------------------------Simulation 4---------------------------------
+L1=L2=NULL
+for(i in 1:1000)
+{x=rpois(100,10)
+L1[i]=mean(x)
+L2[i]=mean((x-mean(x))^2)
+}
+mean(L1)
+var(L1)
+mean(L2)
+var(L2)
+

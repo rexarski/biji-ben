@@ -1,0 +1,72 @@
+# STA 410/2102, Fall 2015, Script for Assignment #2, Problem 2.
+
+source("ass2p2-funs.r")
+
+
+# Known information.
+
+n_species <- 10
+n_genera <- 4
+
+species_genus <- c(1,1,1,2,2,3,3,4,4,4)
+
+sd_log_mass <- 0.08
+sd_log_ratio <- 0.10
+
+
+# Read and plot data, showing swamp by colour (blue in swamp, red not), and 
+# how much is known about the species by symbol (*=nothing, abcd=genus, 
+# 1234567890=species).
+
+data <- read.table("ass2-data",head=TRUE)
+
+plot (data$mass, data$ratio, col=c("darkred","darkblue")[1+data$swamp],
+      pch = ifelse (is.na(data$genus), "*",
+                     ifelse(is.na(data$species), c("a","b","c","d")[data$genus],
+                             as.character(data$species%%10))))
+
+title("DATA: blue=swamp, abcd=genus, 1234567890=species")
+
+# Run EM.
+
+initial <- list (mu = rep(mean(log(data$mass)),n_species),
+                 nu = rep(mean(log(data$ratio)),n_species),
+                 rho = rep(mean(data$swamp),n_species),
+                 alpha = rep(1/n_species,n_species))
+
+options(digits=17)
+mle <- beetles_em(data,initial,140)
+
+cat("\nESTIMATES USING EM\n\n")
+print(mle)
+cat("\nLog likelihood for MLE:",beetles_log_lik(data,mle),"\n")
+
+
+# Add estimates to data plot, as large symbols for species (0=10), with
+# blue for symbol if rho>2/3, pink if rho<1/3, grey otherwise, with black
+# outline.
+
+points(exp(mle$mu), exp(mle$nu), 
+       col="black",
+       pch=as.character((1:10)%%10), cex=2.4)
+
+points(exp(mle$mu), exp(mle$nu), 
+       col=c("pink","grey","lightblue")[1+(mle$rho>=1/3)+(mle$rho>2/3)],
+       pch=as.character((1:10)%%10), cex=2)
+
+
+# Compare with estimates from only beetles whose species is known.
+
+sdata <- data[!is.na(data$species),]
+
+sest <- list (mu=numeric(), nu=numeric(), rho=numeric(), alpha=numeric())
+
+for (s in 1:n_species) {
+    sest$mu[s] <- mean(log(sdata$mass[sdata$species==s]))
+    sest$nu[s] <- mean(log(sdata$ratio[sdata$species==s]))
+    sest$rho[s] <- mean(sdata$swamp[sdata$species==s])
+    sest$alpha[s] <- mean(sdata$species==s)
+}
+
+cat("\nSIMPLE ESTIMATES BASED ON BEETLES WITH KNOWN SPECIES\n\n")
+print(sest)

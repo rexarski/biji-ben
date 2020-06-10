@@ -1,0 +1,37 @@
+\relax 
+\select@language{english}
+\@writefile{toc}{\select@language{english}}
+\@writefile{lof}{\select@language{english}}
+\@writefile{lot}{\select@language{english}}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Methodology}{1}}
+\newlabel{2.1}{{2.1}{1}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Model Comparison}{1}}
+\newlabel{parametrisation}{{1}{2}}
+\newlabel{full-model}{{2}{2}}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces The candidate models and their $\bm  {z}$'s}}{2}}
+\newlabel{table-z}{{1}{2}}
+\newlabel{marginalp1}{{3}{3}}
+\newlabel{marginalp2}{{4}{3}}
+\newlabel{marginalp3}{{5}{3}}
+\newlabel{SSR1}{{6}{3}}
+\newlabel{SSR2}{{7}{3}}
+\newlabel{lpy.p}{{8}{4}}
+\newlabel{2.2}{{2.2}{4}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Model Averaging}{4}}
+\newlabel{results}{{3}{7}}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Results }{7}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Confidence interval of balance for contacts with housing loan}}{8}}
+\newlabel{fig:intervals_h}{{1}{8}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Confidence interval of balance for contacts without housing loan}}{9}}
+\newlabel{fig:intervals}{{2}{9}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Conclusions}{10}}
+\newlabel{Self-Criticism}{{5}{11}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Self-Criticism}{11}}
+\@writefile{toc}{\contentsline {section}{\numberline {6}Appendices - R code for the project}{11}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Setup and creating indicator variables}{11}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Bayesian model comparison}{12}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}Model averaging}{15}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.4}Confidence interval}{16}}
+\bibcite{faraway}{1}
+\bibcite{hoff}{2}

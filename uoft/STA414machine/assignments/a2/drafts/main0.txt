@@ -1,0 +1,13 @@
+library(grid)
+
+train <- as.matrix(read.csv(file="./digitstrain.txt", header=FALSE, sep=","))
+test <- as.matrix(read.csv(file="./digitstest.txt", header=FALSE, sep=","))
+
+colnames(train) <- NULL
+colnames(test) <- NULL
+plot(as.raster(matrix(train[1, 1:64], ncol = 8, nrow = 8)))
+plot(as.raster(matrix(test[64, 1:64], ncol = 8, nrow = 8)))
+
+# One can use the previous command to plot any 'digit' in either training or 
+# test sets. The only thing need to do is to change the set name and the 
+# certain index of the 'digit'.

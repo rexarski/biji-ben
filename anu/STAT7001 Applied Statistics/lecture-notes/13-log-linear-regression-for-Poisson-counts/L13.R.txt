@@ -1,0 +1,53 @@
+#Last Updated: 30/09/2017
+
+
+
+
+rm(list=ls())
+
+
+
+#Part I
+setwd('~/Desktop/Research/AppliedStat2017/L13')
+library(Sleuth3)
+elephant=case2201;elephant
+
+
+
+#Part II
+attach(elephant)
+elephant.pois=glm(Matings~Age,family=poisson(link=log))
+summary(elephant.pois)
+#drop in deviance test
+#reduced model 
+elephant.poisr=glm(Matings~1,family=poisson(link=log))
+anova(elephant.poisr,elephant.pois,test='Chisq')
+
+
+#Part III
+plot(Age,Matings)
+lines(Age,elephant.pois$fitted.values)
+
+Xnew=data.frame(Age=31)
+predict(elephant.pois,Xnew,type='response')
+
+round(predict(elephant.pois,Xnew,type='response'),0)
+
+#Part IV
+
+MatingsNonZero=ifelse(Matings==0, 0.5, Matings)
+plot(Age,MatingsNonZero)
+
+Peares=residuals(elephant.pois,type="pearson")
+plot(Peares)
+abline(h=1.96,col='red') 
+abline(h=-1.96,col='red')
+
+summaryfit=(summary(elephant.pois))
+summaryfit
+
+summaryfit$deviance
+summaryfit$df.residual
+
+1 - pchisq(summaryfit$deviance, summaryfit$df.residual)
+detach(elephant)

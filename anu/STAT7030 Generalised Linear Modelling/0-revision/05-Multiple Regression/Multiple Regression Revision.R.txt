@@ -1,0 +1,121 @@
+# As a quick revision of the modelling fitting approach used for multiple regression the following is a 
+# very brief analysis of the squid data previously used in STAT2008 (see page 5 of chapter 2 of
+# the STAT2008 lecture notes.)
+
+squid <- read.table("Squid.txt",header=T)
+squid
+
+
+# If we now attach the data we can access each of the various columns by name:
+
+attach(squid)
+
+
+# To explore this data in R, we can draw a scatterplot matrix:
+
+pairs(squid)
+
+
+# The relationships between the response variable, weight and the various x variables all appear roughly
+# linear with some possible curvature in some of the relationships. Note there are also strong relationships
+# between the various x variables. A initial model could plausibly be:
+
+squid.lm <- lm(weight ~ x1 + x2 + x3 + x4 + x5)
+
+
+# The diagnostic plots, however, suggest there are problems with this model:
+
+plot(squid.lm)
+
+# Note, if we want the "classic" Cook's D bar plot, a search through the R help files for the plot.lm() function, 
+# reveals that all we have to do is modify the defaults slightly:
+
+plot(squid.lm, which=4)
+
+
+# Thinking about the data, the x variables are all measurements of length and the response variable is more
+# closely related to the overall size (volume) of the squid.  Like multiplying the sides of a rectangular prism
+# to find the volume, I would expect a multiplicative relationship between the x variables and the weight.  
+# Applying a log transformation to all variables can transform this multiplicative relationshp to an additive one
+# (and is often used in this type of situation):
+
+squid.lm2 <- lm(log(weight) ~ log(x1) + log(x2) + log(x3) + log(x4) + log(x5))
+
+
+# The diagnostic plots suggest a linear model fitted on the transformed scale is much closer to being an 
+# appropriate model for this data: 
+
+plot(squid.lm2)
+
+
+# The ANOVA table, however, suggests that there are some extraneous terms in this model (probably because all of 
+# the x variables are closely related) and so the model is not yet adequate and can be futher refined:
+
+anova(squid.lm2)
+
+
+# Note which order we choose to fit the variables makes a difference, not to the overall fit of the model
+# (the plots are unchanged), but to which variables we consider important: 
+
+squid.lm2a <- lm(log(weight) ~ log(x2) + log(x3) + log(x4) + log(x5) + log(x1))
+plot(squid.lm2a)
+anova(squid.lm2a)
+
+
+# Now, not being able to check with the people who collected this data (and unfortunately the STAT2008 brick
+# doesn't contain any references, so we can't even examine the original source of this data), I would GUESS 
+# that the larger measurements are the easier ones to take. Both the means and medians suggest that the most 
+# accessible variables are probably x1, x2, x4, x3 and x5 in that order:
+
+apply(squid,2,mean)
+apply(squid,2,median)
+
+
+# Fitting the model with the x variables in this order gives:
+
+squid.lm2b <- lm(log(weight) ~ log(x1) + log(x2) + log(x4) + log(x3) + log(x5))
+anova(squid.lm2b)
+
+
+# Applying step-wise refinement and deleting the variable which appears to add least to the model:
+
+squid.lm3 <- lm(log(weight) ~ log(x1) + log(x2) + log(x3) + log(x5))
+anova(squid.lm3)
+
+
+# Repeat this process a couple of times:
+
+squid.lm4 <- lm(log(weight) ~ log(x1) + log(x3) + log(x5))
+anova(squid.lm4)
+squid.lm5 <- lm(log(weight) ~ log(x1) + log(x3))
+anova(squid.lm5)
+
+
+# This last one appears to be our final model, but we should check that we haven't managed to do something
+# strange to the diagnostic plots when refining the model:
+
+plot(squid.lm5)
+
+
+# The diagnostic plots suggest this model is both appropriate (there appears to be no obvious problems with
+# the assumptions underlying the model) and the ANOVA table suggests it is adequate in that there are no 
+# extraneous variables (all the remaining variables are significant in their effects on the response variable).
+# We could proceed to examine the coefficients of the model, but given all the guesses and assumptions I have 
+# made so far, I would prefer not to proceed, without first checking with my clients exactly which hypotheses
+# they would like me to test.
+
+# Note that this is not an automated step-wise refinement process of the type found on page 14 of the reading
+# GLMs course notes brick. In considering any statistical model we are aiming to balance the significance of
+# the predictors with important considerations about the underlying research question. Here we have 
+# considered the ease of measurement, which may well not be an important consideration - who knows if we 
+# can't check with the clients? By fitting the predictors in order of ease of measurement and not fitting in
+# other orders we are showing our desire to have the easiest predictors to measure to be the most significant.
+
+# Using an automated step-wise process would generate x1 and x5 as the most significant predictors,
+# however the model would not be significantly different to the above (in terms of residual error)
+# and there are some concerning results in terms of the normality of the residuals.
+
+squid.lm6 <- lm(log(weight) ~ log(x1) + log(x5))
+anova(squid.lm6)
+plot(squid.lm6)
+

@@ -1,0 +1,52 @@
+# set up!
+train1x <- as.matrix(read.table("./train1x", header=F))
+train1y <- as.matrix(read.table("./train1y", header=F))
+testx <- as.matrix(read.table("./testx", header=F))
+testy <- as.matrix(read.table("./testy", header=F))
+
+# divide!
+section <- function(train1x, train1y, i) {
+  x_test <- train1x[((i-1)*50+1):(i*50),]
+  x_train <- train1x[-(((i-1)*50+1):(i*50)),] 
+  y_test <- as.matrix(train1y[((i-1)*50+1):(i*50)])
+  y_train <- as.matrix(train1y[-(((i-1)*50+1):(i*50))])
+  return(list(x_test,x_train,y_test,y_train))
+}
+
+# covariance functions!
+K1 <- function(i,j) {
+  return(100^2*(i%*%j))
+}
+
+K2 <- function(gamma,rho,x,y) {
+  return(100^2+gamma^2*exp(-(rho^2)*sum((x-y)^2)))
+}
+
+# cross-validation!
+cv <- function(gamma, rho, train1x, train1y) {
+  MSE <- matrix(0,1,5)
+  for (k in 1:5) {
+    x_test <- section(train1x,train1y,k)[1][[1]]
+    x_train <- section(train1x,train1y,k)[2][[1]]
+    y_test <- section(train1x,train1y,k)[3][[1]]
+    y_train <- section(train1x,train1y,k)[4][[1]]
+    C <- matrix(0,200,200)
+    for (i in 1:200) {
+      for (j in 1:200) {
+        C[i,j] <- K2(gamma,rho,x_train[i,],x_train[j,])
+      }
+    }
+    C <- C + diag(200)
+    predict <- matrix(0,1,50)
+    for (i in 1:50) {
+      t <- matrix(0,1,200)
+      for (j in 1:200) {
+        t[j] <- K2(gamma,rho,x_train[j,],x_test[i,])
+      }
+      predict[i] <- t%*%solve(C)%*%y_train
+    }
+    MSE[k] <- sum((t(y_test) - predict)^2)
+  }
+  return(sum(MSE))
+}
+

@@ -1,0 +1,58 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE People SYSTEM "people.dtd">
+<People>
+<Person PID="person_1" gender="male" dob="8-16-1954">
+<Name>
+<First>James</First>
+<Last>Cameron</Last>
+</Name>
+<Oscar OID="oscar_4"/>
+<Oscar OID="oscar_5"/>
+<Oscar OID="oscar_6"/>
+</Person>
+<Person PID="person_2" gender="male" dob="8-2-1976" pob="UK">
+<Name>
+<First>Sam</First>
+<Last>Worthington</Last>
+</Name>
+</Person>
+<Person PID="person_3" gender="female" dob="6-19-1978" pob="USA">
+<Name>
+<First>Zoe</First>
+<Last>Saldana</Last>
+</Name>
+</Person>
+<Person PID="person_4" gender="female" dob="10-8-1949" pob="USA">
+<Name>
+<First>Sigourney</First>
+<Last>Weaver</Last>
+</Name>
+<Oscar OID="oscar_9"/>
+</Person>
+<Person PID="person_5" gender="male" dob="11-11-1974" pob="USA">
+<Name>
+<First>Leonardo</First>
+<Last>DiCaprio</Last>
+</Name>
+<Oscar OID="oscar_10"/>
+</Person>
+<Person PID="person_6" gender="female" dob="10-5-1975" pob="UK">
+<Name>
+<First>Kate</First>
+<Last>Winslet</Last>
+</Name>
+<Oscar OID="oscar_11"/>
+</Person>
+<Person PID="person_7" gender="male" dob="06-27-1966" pob="USA">
+<Name>
+<First>JJ</First>
+<Last>Abrams</Last>
+</Name>
+</Person>
+<Person PID="person_8" gender="male" dob="08-26-1980" pob="USA">
+<Name>
+<First>Chris</First>
+<Last>Pine</Last>
+</Name>
+</Person>
+</People>

@@ -1,0 +1,46 @@
+Starting SAT-based planner...
+Checking for plugins...
+Encodings registered:    3
+Solvers registered:      1
+Command line options:
+    Domain file:          benchmarks/depot/domain.pddl
+    Problem file:         benchmarks/depot/problem06.pddl
+    Experiment name:      depot
+    Query strategy:        ramp, min_h = 15 max_h = 55 step_h = 6
+    Compute plangraph:     True
+    Plangraph constraints: fmutex
+    Encoding:              basic
+    Solver                 precosat
+    SAT solver time out    None
+    Write debug CNF:       False
+    Remove tmp files:      True
+Command line arg processing time: 0.0025467872619628906
+Parsing the PDDL domain...
+Parsing the PDDL problem...
+Simplifying the problem representation...
+Parsing time: 0.10882925987243652
+Grounding the problem...
+Grounding time: 0.09304594993591309
+Simplifying the ground encoding...
+Simplify time: 0.9040460586547852
+Generating Plangraph invariants...
+Step: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 
+Plangraph invariants time: 4.768537759780884
+Planning...
+
+Step: 15
+-------------------------------------------------
+Generating base encoding: basic ...
+Encoding generation time: 38.95882797241211
+Writing CNF file...
+Total variables: 29562
+Total clauses: 18391832
+Writing time: 21.8504581451416
+Solving...
+UNSAT
+Solution time:  4.116086721420288
+Step time: 65.17577242851257
+
+Step: 21
+-------------------------------------------------
+Generating base encoding: basic ...

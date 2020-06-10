@@ -1,0 +1,88 @@
+library(ggplot2)
+library(reshape2) # data cleaning
+library(plyr)
+library(wesanderson) 
+
+pal <- wes_palette("Zissou", 100, type = "continuous")
+
+load("./classdata.RData")
+attach(singers)
+
+# melt the data
+heights <- melt(singers, measure.vars=c("soprano.1","soprano.2","alto.1","alto.2","tenor.1","tenor.2","bass.1","bass.2"))
+
+heights <- as.data.frame.list(heights)
+heights <- cbind(heights, c(rep("F",127),rep("M",101)))
+colnames(heights) <- c("value","voice","gender")
+
+# class() returns data structure type
+# typeof() returns data type
+
+# DENSITY PLOT BY GENDER
+# cheights <- ddply(heights,"gender",summarise,h.mean=mean(value))
+# cheights
+# ggplot(heights,aes(x=value,fill=gender)) +
+#   geom_histogram(binwidth=1, alpha=.5, position="identity") +
+#   geom_vline(data=cheights, aes(xintercept=h.mean, colour=gender),
+#              linetype="dashed", size=1) +
+#   theme_minimal() +
+#   ggtitle("Height Density Plot by Gender") +
+#   theme(plot.title = element_text(hjust = 0.5, size = 20, face = "bold"))+
+#   theme(axis.text=element_text(size=12),
+#         axis.title=element_text(size=14,face="bold"))
+
+# BOXPLOT BY GENDER
+ggplot(heights, aes(gender, value)) +
+  geom_boxplot(aes(fill=gender)) + geom_jitter(width = 0.2) +
+  scale_fill_manual(values=wes_palette(n=2, name="Zissou")) + 
+  # scale_fill_grey() + theme_classic()
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, size = 20, face = "bold"))+
+  theme(axis.text=element_text(size=12),
+        axis.title=element_text(size=14,face="bold"))+
+  ggtitle("Height Distribution Boxplot by Gender")
+
+  
+
+# reorder the data frame by certain voice pitch order
+target <- c("soprano.1", "soprano.2", "alto.1", "alto.2", "tenor.1", "tenor.2", "bass.1", "bass.2")
+heights[match(target, heights$voice),]
+heights$voice <- factor(heights$voice, levels=unique(heights$voice))
+
+# (BETTER) DENSITY PLOT BY VOICE
+ggplot(heights,aes(value)) + 
+  geom_histogram(binwidth = 1,aes(fill=..count..)) +
+  facet_wrap(~voice,ncol=2) +
+  scale_fill_gradientn(colours = pal) +
+  ylab("frequency") +
+  xlab("height (inches)") +
+  theme_minimal() +
+  # theme_dark() + 
+  theme(plot.title = element_text(hjust = 0.5, size = 20, face = "bold"))+
+  theme(axis.text=element_text(size=12),
+        axis.title=element_text(size=14,face="bold"))+
+  ggtitle("Height Density Plot by Voice")
+
+# BOXPLOT BY VOICE
+ggplot(heights, aes(voice, value)) +
+  geom_boxplot(aes(fill=gender)) + geom_jitter(width = 0.2)+
+  scale_fill_manual(values=wes_palette(n=2, name="Zissou")) + 
+  # scale_fill_grey() + theme_classic()
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, size = 20, face = "bold"))+
+  theme(axis.text=element_text(size=12),
+        axis.title=element_text(size=14,face="bold"))+
+  ggtitle("Height Distribution Boxplot by Voice")
+
+# -------------------------------------------------------
+# (Maybe a) HEATMAP
+heights.counts <- ddply(heights,.(value,voice),nrow)
+colnames(heights.counts) <- c("value","voice","count")
+
+ggplot(heights.counts, aes(x = heights.counts$value, y = heights.counts$voice, fill = heights.counts$count)) +
+  geom_tile() + 
+  scale_fill_gradientn(colours = pal) + 
+  scale_x_discrete(expand = c(0, 0)) +
+  scale_y_discrete(expand = c(0, 0)) + 
+  coord_equal() +
+  geom_text(aes(label=count))

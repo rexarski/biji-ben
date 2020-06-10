@@ -1,0 +1,10 @@
+# An algorithm for mergesort.
+
+def mergesort(L):
+   if len(L) < 2:
+      return L
+   divide L into two halves, L1 and L2
+   mergesort(L1)
+   mergesort(L2)
+   merge L1 and L2 into a completely sorted list
+   return that list

@@ -1,0 +1,549 @@
+%
+% This is a borrowed LaTeX template file for lecture notes for CS267,
+% Applications of Parallel Computing, UCBerkeley EECS Department.
+% Now being used for CMU's 10725 Fall 2012 Optimization course
+% taught by Geoff Gordon and Ryan Tibshirani.  When preparing 
+% LaTeX notes for this class, please use this template.
+%
+% To familiarize yourself with this template, the body contains
+% some examples of its use.  Look them over.  Then you can
+% run LaTeX on this file.  After you have LaTeXed this file then
+% you can look over the result either by printing it out with
+% dvips or using xdvi. "pdflatex template.tex" should also work.
+%
+
+\documentclass[twoside]{article}
+\setlength{\oddsidemargin}{0.25 in}
+\setlength{\evensidemargin}{-0.25 in}
+\setlength{\topmargin}{-0.6 in}
+\setlength{\textwidth}{6.5 in}
+\setlength{\textheight}{8.5 in}
+\setlength{\headsep}{0.75 in}
+\setlength{\parindent}{0 in}
+\setlength{\parskip}{0.1 in}
+
+%
+% ADD PACKAGES here:
+%
+
+\usepackage{amsmath,amsfonts,graphicx,soul}
+
+%
+% The following commands set up the lecnum (lecture number)
+% counter and make various numbering schemes work relative
+% to the lecture number.
+%
+\newcounter{lecnum}
+\renewcommand{\thepage}{\thelecnum-\arabic{page}}
+\renewcommand{\thesection}{\thelecnum.\arabic{section}}
+\renewcommand{\theequation}{\thelecnum.\arabic{equation}}
+\renewcommand{\thefigure}{\thelecnum.\arabic{figure}}
+\renewcommand{\thetable}{\thelecnum.\arabic{table}}
+
+\newcommand*\conj[1]{\bar{#1}}
+\newcommand*\mean[1]{\bar{#1}}
+\newcommand{\indep}{\rotatebox[origin=c]{90}{$\models$}}
+%
+% The following macro is used to generate the header.
+%
+\newcommand{\lecture}[4]{
+   \pagestyle{myheadings}
+   \thispagestyle{plain}
+   \newpage
+   \setcounter{lecnum}{#1}
+   \setcounter{page}{1}
+   \noindent
+   \begin{center}
+   \framebox{
+      \vbox{\vspace{2mm}
+    \hbox to 6.28in { {\bf STAT7017 Big Data Statistics
+	\hfill Semester 2 2018} }
+       \vspace{4mm}
+       \hbox to 6.28in { {\Large \hfill Lecture #1: #2  \hfill} }
+       \vspace{2mm}
+       \hbox to 6.28in { {\it Lecturer: #3 \hfill Scribes: #4} }
+      \vspace{2mm}}
+   }
+   \end{center}
+   \markboth{Lecture #1: #2}{Lecture #1: #2}
+
+   {\bf Note}: {\it LaTeX template courtesy of UC Berkeley EECS dept.}
+
+   {\bf Disclaimer}: {\it These notes have not been subjected to the
+   usual scrutiny reserved for formal publications.  They may be distributed
+   outside this class only with the permission of the Instructor.}
+   \vspace*{4mm}
+}
+%
+% Convention for citations is authors' initials followed by the year.
+% For example, to cite a paper by Leighton and Maggs you would type
+% \cite{LM89}, and to cite a paper by Strassen you would type \cite{S69}.
+% (To avoid bibliography problems, for now we redefine the \cite command.)
+% Also commands that create a suitable format for the reference list.
+\renewcommand{\cite}[1]{[#1]}
+\def\beginrefs{\begin{list}%
+        {[\arabic{equation}]}{\usecounter{equation}
+         \setlength{\leftmargin}{2.0truecm}\setlength{\labelsep}{0.4truecm}%
+         \setlength{\labelwidth}{1.6truecm}}}
+\def\endrefs{\end{list}}
+\def\bibentry#1{\item[\hbox{[#1]}]}
+
+%Use this command for a figure; it puts a figure in wherever you want it.
+%usage: \fig{NUMBER}{SPACE-IN-INCHES}{CAPTION}
+\newcommand{\fig}[3]{
+			\vspace{#2}
+			\begin{center}
+			Figure \thelecnum.#1:~#3
+			\end{center}
+	}
+% Use these for theorems, lemmas, proofs, etc.
+\newtheorem{theorem}{Theorem}[lecnum]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newenvironment{proof}{{\bf Proof:}}{\hfill\rule{2mm}{2mm}}
+
+% **** IF YOU WANT TO DEFINE ADDITIONAL MACROS FOR YOURSELF, PUT THEM HERE:
+
+\newcommand\E{\mathbb{E}}
+
+\begin{document}
+%FILL IN THE RIGHT INFO.
+%\lecture{**LECTURE-NUMBER**}{**DATE**}{**LECTURER**}{**SCRIBE**}
+\lecture{6}{27 August}{Dr Dale Roberts}{Rui Qiu}
+%\footnotetext{These notes are partially based on those of Nigel Mansell.}
+
+% **** YOUR NOTES GO HERE:
+
+% Some general latex examples and examples making use of the
+% macros follow.  
+%**** IN GENERAL, BE BRIEF. LONG SCRIBE NOTES, NO MATTER HOW WELL WRITTEN,
+%**** ARE NEVER READ BY ANYBODY.
+
+\textbf{\underline{Central Limit Theorem}}
+
+Recall that Central limit theorems (CLTs) describe how the sum of random variables fluctuates around some quantity (e.g. the mean).
+
+The \underline{classic} CLT case is to consider a sequence $X_1,X_2,\dots$ of I.I.D. random variables with $\mathbb{E}[X_i]=\mu$ and $Var[X_i]=\sigma^2<\infty$, then the (Lindeberg-Levy) CLT says if $S_n:=\sum^n_{k=1}X_k$ then
+
+$$\sqrt{n}(S_n-\mu)\overset{d}\rightarrow N(0,\sigma^2).$$
+
+This lecture we will look at some equivalent statements in our random matrix setting. In particular of linear spectral statistics of the form
+
+$$T_n=\frac{1}{p}\sum^p_{k=1}\phi(\lambda_k)=\int\phi(x)dF^{\mathbf{A}_n}(x):=F^{\mathbf{A}_n}(\phi).$$
+
+of some sample matrix $\mathbf{A}_n$, e.g.
+
+$$\mathbf{A}_n=\begin{cases}
+	\mathbf{S}_n,\text{ sample covariance matrix}.\\
+	\mathbf{F}_n,\text{ Fisher matrix}.
+\end{cases}$$
+
+Some examples that we will see later in the course are:
+
+\underline{Example 1:} The \underline{generalized variance} is
+
+$$T_n=\frac{1}{p}\log\lvert S_n\rvert =\frac{1}{p}\sum^p_{k=1}\log(\lambda_k).$$
+
+$$\phi(x)=\log(x)$$
+
+\underline{Example 2}: Later in the course, we shall look at testing equality of sample covariance matrices. To test the hypothesis $H_0:\sum=\mathbf{I}_p$, we shall look at the log-likelihood ratio statistic
+
+$$LRT_1=tr\mathbf{S}_n-\log\lvert\mathbf{S}_n\rvert - p =\sum^p_{k=1}(\lambda_k-\log(\lambda_k)-1).$$
+
+i.e. $\phi(x)=x-\log(x)-1$.
+
+\underline{Example 3:} We shall also look at the two-sample test of the hypothesis $H_0:\sum_1=\sum_2$ that two populations have a common covariance matrix
+
+$$LRT_2=-\log\lvert\mathbf{I}_p+\alpha_n\mathbf{F}_n\rvert = -\sum^p_{k=1}(1+\alpha_n\log(\lambda_k))$$
+
+where $\alpha_n$ is same constant.
+
+$$\phi(x)=-\log(1-\alpha_n x).$$\\
+
+\underline{\textbf{CLT for Linear Spectral Statistics of $\mathbf{S}_n$}}
+
+We shall consider simple case
+
+$$\mathbf{S}_n=\frac{1}{n}\sum^n_{i=1}\mathbf{x}_i\mathbf{x}_i^*$$
+
+where these are ``independent vectors without cross-correlation".
+
+In other words, the data matrix $\mathbf{X}=(\mathbf{x}_1,\mathbf{x}_2,\dots, \mathbf{x}_n)=(x_{ij})$ of size $p\times n$ has IID entries with $\mathbb{E}[x_{ij}]=0,\mathbb{E}\lvert x_{ij}\rvert^2=1.$
+
+$$\mathbf{S}_n=\frac{1}{n}\mathbf{X}\mathbf{X}^*.$$
+
+The LSD of $\mathbf{S}_n$ is the Marchenko-Pastur law $F_y$ where $y=\lim\frac{p}{n}$: This means, $F^{\mathbf{S}_n}(\phi)\to F_y(\phi)$ for any continuous function $\phi$.
+
+Making an analogy to the class CLT, we would like to understand how $F^{\mathbf{S}_n}(\phi)$ fluctuates around $F_y(\phi)$ as $n\to\infty (p\to \infty)$. 
+
+From RMT, we know that $F^{\mathbf{S}_n}(\phi)$ fluctuates around its mean in such a way that $P[F^{\mathbf{S}_n}(\phi)-\mathbb{E}(F^{\mathbf{S}_n}(\phi))]\sim$ Normal.
+
+We can decompose
+
+$$P[F^{\mathbf{S}_n}(\phi)-F_y(\phi)]=P[F^{\mathbf{S}_n}(\phi)-\mathbb{E}F^{\mathbf{S}_n}(\phi)]+P[\mathbb{E}[F^{\mathbf{S}_n}(\phi)]-F_y(\phi)]=\text{Normal + Bias}$$
+
+The ``bias" term is often a function of $y_n-y=\frac{p}{n}-y.$
+
+$y_n$ is called the dimension-to-sample ratio and the difference to $y$ can be of any order. For example, if
+
+$$y_n-y\approx p^{-\alpha}, \alpha>0$$
+
+then the bias term behaves like $p^{-1-\alpha}$ and the value depends on $\alpha$. If $\alpha$ small then $p^{1-\alpha}$ can blow-up and if $\alpha$ large then $p^{1-\alpha}$ converges to zero or constant, as $p\to\infty$.
+
+We need more restrictions on $y_n-y$.
+
+We also need to accurately estimate $\mathbb{E}F^{\mathbf{S}_n}(\phi)$. One way is to estimate $\mathbb{E}F^{\mathbf{S}_n}(\phi)\approx F_{y_n}(\phi)$. ``finite horizon proxy".
+
+We saw last week that the ST $\underline{S}$ of $\underline{F}_y:=(1-y)\delta_0+yF_y$ satisfies the equation that we found for the Generalized MP ($H=\delta_1$):
+
+$$Z=-\frac{1}{\underline{S}}+\frac{y}{1+\underline{S}}, Z\in\mathbb{C}.$$
+
+Let $\beta=\mathbb{E}\lvert x_{ij}\rvert^4-1-k, h =\sqrt{y}.$ (????)
+
+Set $k=2$ if entries of $\mathbf{X}$ are real and $k=1$ if complex values.
+
+If entries are Gaussian, $\beta=0$.
+
+The following theorem quantifies the fluctuations of 
+
+$$P(F^{\mathbf{S}_n}(\phi)-F_{y_n}(\phi)).$$
+
+\begin{theorem}
+	[Bai \& Silverstein; 2004] Assume $p\times n$ data matrix $\mathbf{X}=(\mathbf{x}_1,\mathbf{x}_2,\dots,\mathbf{x}_n)$ has IID entires $\mathbb{E}x_{ij}=0, \mathbb{E}\lvert x_{ij}\rvert ^2=1, \mathbb{E}\lvert x_{ij}\rvert ^4 =\beta+1+k<\infty.$
+	
+	Also, $p\to\infty,n\to\infty,p/n\to y>0.$
+	
+	Let $f_1,f_2,\dots, f_k$ be analytic functions on an open region containing support of $F_y$.
+	
+	The random vector $(X_n(f_1),X_n(f_2),\dots, X_n(f_k))$ where 
+	
+	$$X_n(f):=P(F^{\mathbf{S}_n}(f)-\mathbf{F}_{y_n}(f))$$
+	
+	converges weakly to a Gaussian vector
+	
+	$$(X_{f_1},\dots, X_{f_k})$$
+	
+	with mean $$\mathbb{E}X_f=(k-1)I_1(f)-\beta I_2(f)$$
+	
+	and
+	
+	$$Cov(X_{f}, X_g)=kJ_1(f,g)+\beta J_2(f,g).$$
+	
+	where
+	
+	$$I_1(f)=-\frac{1}{2\pi i}\oint\frac{y(\underline{S}/(1+\underline{S})^3(z)f(z)}{[\mathbf{1}-y(\underline{S}/(1+\underline{S}))^2]^2}dz.$$
+	
+	$$I_2(f)=-\frac{1}{2\pi i}\oint \frac{y(\underline{S}/(1+\underline{S}))^3(z)f(z)}{\mathbf{1}-y(\underline{S}/(1+\underline{S}))}dz.$$
+	
+	and
+	
+	$$J_1(f,g)=-\frac{1}{4\pi^2}\oint\oint\frac{f(z_1)f(z_2)}{(\underline{S}(z_1)-\underline{S}(z_2))^2}\underline{S}'(z_1)\underline{S}'(z_2)dz_1dz_2.$$
+	
+	$$J_2(f,g)=-\frac{y}{4\pi^2}\oint f(z_1)\frac{\partial}{\partial z_1}\left(\frac{\underline{S}}{1+\underline{S}}(z_1)\right)dz_1\times \oint g(z_2)\frac{\partial}{\partial z_2}\left(\frac{\underline{S}}{1+\underline{S}}(z_2)\right)dz_2$$
+	
+	where the integrals are over contours enclosing the support of $F_y$.
+\end{theorem}
+
+\underline{Remarks:} \begin{itemize}
+	\item The asymptotic mean $\mathbb{E}[X_f]$ is non-null and depends on fourth moment.
+	\item This theorem is difficult to use in practice because the limiting parameters are integrals on contours that are not given explicitly.
+	\item This theorem, from 2004, was a big breakthrough as it gave explicit formulas for the limiting mean and covariance.
+\end{itemize}
+
+A more explicit version of this theorem can be obtained:
+
+\begin{proposition}
+	We have
+	
+	$$I_1(f)=\lim_{r \downarrow 1}I_1(f,r)$$
+	$$I_2(f)=\frac{1}{2\pi i}\oint_{\lvert\xi\rvert =1}f(\lvert1+h\xi\rvert^2)\frac{1}{\xi^3}d\xi$$
+	
+	$$J_1(f,g)=\lim_{r\downarrow 1}J_1(f,g,r)$$
+	
+	$$J_2(f,g)=-\frac{1}{4\pi^2}\oint_{\lvert\xi_1\rvert =1}\frac{f(\lvert 1+h\xi_1\rvert^2)}{\xi_1^2}d\xi_1\oint_{\lvert\xi_2\rvert =1}\frac{g(\lvert 1+h\xi_2\rvert ^2)}{\xi_2^2}d\xi_2$$
+	
+	with 
+	
+	$$I_1(f,r)=\frac{1}{2\pi i}\oint_{\lvert \xi\rvert=1}f(\lvert 1+ h\xi\rvert^2)\left[\frac{\xi}{\xi^2-r^{-2}}-\frac{1}{\xi}\right]d\xi$$
+	
+	$$I_2(f,g,r)=-\frac{1}{4\pi^2}\oint_{\lvert \xi_1\rvert =1}\oint_{\lvert \xi_2\rvert =1}\frac{f(\lvert 1+h\xi_1\rvert ^2)g(\lvert 1+h\xi_2\rvert ^2)}{(\xi_1-r\xi_2)^2}d\xi_1d\xi_2$$
+\end{proposition}
+
+\begin{proof}
+	We are just going to look at the simplest case of $I_2(f)$.
+	
+	The idea is to perform change of variable $z=1+hr\xi _ hr^{-1}\bar{\xi}+h^2$ with $r>1$ but close to $1$, and $\lvert \xi\rvert = 1, h=\sqrt{y}.$
+	
+	As $\xi$ runs anticlockwise, $z$ runs on contour $c$ encloses support $[a,b]=[(1\pm h)^2]$.
+	
+	Since $z=-\frac{1}{\underline{S}}+\frac{y}{1+\underline{S}}, z\in\mathbb{C}^+$. We have $\underline{S}=-\frac{1}{1+hr\xi}$ and $dz=h(r-r^{-1}\xi^{-2})d\xi$.
+	
+	Applying this to $I_2(f)$ in theorem:
+	
+	$$I_2(f)=\lim_{r\downarrow 1}\frac{1}{2\pi i}\oint_{\lvert\xi\rvert =1}f(z)\frac{1}{\xi^3}\frac{r\xi^2-r^{-1}}{r(r^2\xi^2-1)}d\xi=\frac{1}{2\pi i}\oint_{\lvert \xi\rvert =1}f(\lvert 1+h\xi\rvert ^2)\frac{1}{\xi^3}d\xi.$$
+	
+	as
+	
+	\begin{equation}
+		\begin{split}
+			\lvert 1+h\xi\rvert^2&=(1+h\xi)\overline{(1+h\xi)}\\
+			&=(1+h\xi)(1+h\bar{\xi})\\
+			&=1+h\xi+h\bar{\xi}+h^2\lvert\xi\rvert\\
+			&=1+h\xi+h\bar{\xi}+h^2.
+		\end{split}
+	\end{equation}
+\end{proof}
+
+\textbf{\underline{An example application of CLT}}
+
+\begin{proposition}
+	Consider two linear spectral statistics
+	
+	$$\sum^p_{i=1}\log(\lambda_i), \sum^p_{i=1}\lambda_i$$
+	
+	where $(\lambda_i)$ are eigenvalues of sample covariance $\mathbf{S}_n$. Then, under assumptions of Theorem, the vector
+	
+	$$\begin{pmatrix}
+		\sum^p_{i=1}\log(\lambda_i)-pF_{y_n}(\log x)\\
+		\sum^p_{i=1}\lambda_i-pF_{y_n}(x)
+	\end{pmatrix}\overset{d}\to N(\mu_1, \mathbf{Q}_1)$$
+	
+	$$\mu_1=\begin{pmatrix}
+		\frac{k-1}{2}\log(1-y)-\frac{1}{2}\beta y\\
+		0
+	\end{pmatrix}$$
+	
+	$$\mathbf{Q}_1=\begin{pmatrix}
+		-k\log(1-y)+\beta y & (\beta + k)y\\
+		(\beta+k)y & (\beta+k)y\\
+	\end{pmatrix}$$
+	
+	$$F_{y_n}(x)=1, F_{y_n}(\log x)=\frac{y_n-1}{y_n}\log(1)-y_n-1.$$
+\end{proposition}
+
+\begin{proof}
+	In the Theorem, take $k=2$ with
+	
+	$$f(x)=\log(x), g(x)=x, x>0.$$
+	
+	and we are going to consider the vector $(X_f,X_g)$.
+	
+	$$\mathbb{E}[X_f]=(k-1)I_1(f)+\beta I_2(f),\mathbb{E}[X_g]=(k-1)I_1(g)+\beta I_2(g)$$ etc. We shall use the proposition to calculate
+	
+	\begin{equation}
+		\begin{split}
+			I_1(f,r)&=\frac{1}{2\pi i}\oint_{\lvert \xi\rvert =1}f(\lvert 1+h\xi\rvert ^2)\left[\frac{\xi}{\xi^2-r^{-2}}-\frac1{\xi}\right]d\xi\\
+			&=\frac{1}{2\pi i}\oint_{\lvert \xi\rvert =1}\log(\lvert 1+h\xi\rvert ^2)\left[\frac{\xi}{\xi^2-r^{-2}}-\frac1{\xi}\right]d\xi\\
+		\end{split}
+	\end{equation}
+	
+	Recall
+	
+	$$\lvert 1+h\xi\rvert ^2=(1+h\xi)(1+h\bar{\xi})=(1+h\xi)(1+h\frac1{\xi})$$
+	
+	$$\lvert \xi\rvert = 1\implies \bar{\xi}=e^{-i\theta}=\frac{1}{\xi}.$$
+	
+	continued (6.2)
+	
+	\begin{equation}
+		\begin{split}
+			&=\frac{1}{2\pi i}\oint_{\lvert \xi\rvert =1}\left[\log(1+h\xi)+\log(1+h/\xi)\right]\left[\frac{\xi}{\xi^2-r^{-2}}-\frac{1}{\xi}\right]d\xi\\
+			&=\frac{1}{2\pi i}\left[\oint_{\lvert\xi\rvert =1}\log(1+h\xi)\frac{\xi}{\xi^2-r^{-2}}d\xi-\oint_{\lvert \xi\rvert =1}\log(1+h\xi)\frac1\xi d\xi+\oint_{\lvert\xi\rvert =1}\log(1+h\xi^{-1})\frac{\xi}{\xi^2-r^{-2}}d\xi - \oint_{\lvert\xi\rvert=1}\log(1+h\xi^{-1})\frac1\xi d\xi \right]
+		\end{split}
+	\end{equation}
+	
+	For the first integral, the poles are $\pm\frac{1}{r}$.
+	
+	\begin{equation}
+		\begin{split}
+			\frac{1}{2\pi i }\oint_{\lvert\xi\rvert =1}\log(1+h\xi)\frac{\xi}{\xi^2-r^{-2}}d\xi&=\frac{\log(1+h\xi)\xi}{\xi-r^{-1}}\Bigg\lvert_{\xi=-r^{-1}}+\frac{\log(1+h\xi)\xi}{\xi+r^{-1}}\Bigg\lvert_{\xi=r^{-1}}\\
+			&=\frac{1}{2}\log\left(1-\frac{h^2}{r^2}\right).
+		\end{split}
+	\end{equation}
+	
+	For the second integral, singularity at $\xi=0$.
+	
+	$$\frac{1}{2\pi i}\oint_{\lvert\xi\rvert =1}\log(1+h\xi)\frac{1}{\xi}d\xi=\log(1+h\xi)\Bigg\lvert_{\xi=0}=0.$$
+	
+	For third integral, we perform a change of variable $z=\frac{1}{\xi}$, so $d\xi=-z^{-2}dz$.
+	
+	\begin{equation}
+		\begin{split}
+			\frac{1}{2\pi i}\oint_{\lvert\xi\rvert =1}\log(1+h\xi^{-1})\frac{\xi}{\xi^2-r^{-2}}d\xi&=-\frac{1}{2\pi i}\oint_{\lvert z\rvert =1}\log(1+hz)\frac{z^{-1}}{z^{-2}-r^{-2}}\frac{-1}{z^{2}}dz\\
+			&=\frac{1}{2\pi i }\oint_{\lvert z\rvert =1}\frac{\log(1+hz)r^2}{z(z+r)(z-r)}dz\\
+			&=\frac{\log(1+hz)r^2}{(z+r)(z-r)}\Bigg\lvert_{z=0}\\
+			&=0
+		\end{split}
+	\end{equation}
+	
+	Fourth integral: $z=\xi^{-1}, d\xi =-z^{-2}dz.$
+	
+	\begin{equation}
+		\begin{split}
+			\frac{1}{2\pi i}\oint_{\lvert\xi\rvert=1}\log(1+h\xi^{-1})\frac{1}{\xi}d\xi&=-\frac{1}{2\pi i}\oint_{\lvert z\rvert =1}\log(1+hz)\frac{-z}{z^2}dz\\
+			&=\log(1+hz)\Bigg\lvert_{z=0}=0
+		\end{split}
+	\end{equation}
+	
+	Collecting all terms gives $I_1(f,r)=\frac{1}{2}\log(1-h^2/r^2)$.
+	
+	$$I_1(g,r)=\frac{1}{2\pi i}\oint_{\lvert\xi\rvert=1}g(1\lvert 1+h\xi\rvert ^2)\cdot\left[\frac{\xi}{\xi^2-r^{-2}}-\frac1\xi\right]d\xi
+	=\frac{1}{2\pi i}\oint_{\lvert\xi\rvert =1}\lvert 1+h\xi\rvert ^2\left[\frac{\xi}{\xi^2-r^{-2}}-\frac1\xi\right]d\xi$$
+	
+	and
+	
+	$$\lvert 1+h\xi\rvert ^2=(1+h\xi)(1+h\bar{\xi})=1+h\xi^{-1}+h\xi+h^2=\frac{\xi+h+h\xi^2+h^2\xi}{\xi}$$
+	
+	so (continued)
+	
+	$$=\frac{1}{2\pi i}\oint_{\lvert\xi\rvert =1}\frac{\xi+h+h\xi^2+h^2\xi}{\xi}\times \frac{\xi}{\xi^2-r^{-2}}d\xi-\frac{1}{2\pi i}\oint_{\lvert\xi\rvert =1}\frac{\xi+h+h\xi^2+h^2\xi}{\xi}\frac{1}{\xi}d\xi.$$
+	
+	The first integral
+	
+	\begin{equation}
+		\begin{split}
+			\frac{1}{2\pi i }\oint_{\lvert\xi\rvert = 1}\frac{\xi+h+h\xi^2+h^2\xi}{(\xi-r)(\xi+r)}d\xi&=\frac{\xi+h+h\xi^2+h^2\xi}{\xi-r}\Bigg\lvert_{\xi=-r^{-1}}+\frac{\xi+h+h\xi^2+h^2\xi}{\xi+r}\Bigg\lvert_{\xi=r^{-1}}\\
+			&=1+h^2
+		\end{split}
+	\end{equation}
+	
+	and second integral (2nd order pole at $\xi=0$.)
+	
+	\begin{equation}
+		\begin{split}
+			\frac{1}{2\pi i}\oint_{\lvert\xi\rvert=1}\frac{\xi+h+h\xi^2+h^2\xi}{\xi^2}d\xi&=\frac{\partial}{\partial \xi}(\xi+h+h\xi^2+h\xi)\Bigg\lvert_{\xi=0}\\
+			&=1+h^2
+		\end{split}
+	\end{equation}
+	
+	Hence $I_1(g,r)=0$.
+	
+	\begin{equation}
+		\begin{split}
+			I_2(f)&=\frac{1}{2\pi i}\oint_{\lvert\xi\rvert=1}\log(\lvert1+h\xi\rvert^2)\frac{1}{\xi^3}d\xi\\
+			&=\frac{1}{2\pi i}\left[\oint_{\lvert\xi\rvert=1}\frac{\log(1+h\xi)}{\xi^3}d\xi+\oint_{\lvert\xi\rvert=1}\frac{\log(1+h\xi^{-1}}{\xi^3}d\xi\right].
+		\end{split}
+	\end{equation}
+	
+	First integral (3rd order pole):
+	
+	$$\frac{1}{2\pi i }\oint_{\lvert \xi\rvert = 1}\frac{\log(1+h\xi)}{\xi^3}d\xi=\frac12\frac{\partial^2}{\partial\xi^2}\log(1+h\xi)\Bigg\lvert_{\xi=0}=-\frac{1}{2}h^2.$$
+	
+	Second integral: $z=\xi^{-1},d\xi=-z^{-2}dz.$
+	
+	$$\frac{1}{2\pi i}\oint_{\lvert\xi\rvert=1}\frac{\log(1+h\xi^{-1})}{\xi^3}d\xi=-\frac{1}{2\pi i}\oint_{\lvert z\rvert=1}\frac{\log(1+hz)}{z^{-3}}\frac{-1}{z^2}dz=\log(1+hz)\Bigg\rvert_{z=0}=0.$$
+	
+	Now for the covariance terms:
+	
+	\begin{equation}
+		\begin{split}
+			J_1(f,g,r)&=-\frac{1}{4\pi^2}\oint_{\lvert\xi_1\rvert=1}\oint_{\lvert\xi_2\rvert=1}\frac{\log(\lvert1+h\xi_1\rvert^2)\lvert1+h\xi_2\rvert^2}{(\xi_1-r\xi_2)^2}d\xi_1d\xi_2\\
+			&=\frac{1}{2\pi i}\oint_{\lvert\xi_1\rvert=1}\frac{\log(\lvert 1+h\xi_1\rvert^2)}{(\xi_1-r\xi_2)^2}d\xi_1\cdot \frac{1}{2\pi i}\oint_{\lvert\xi_2\rvert=1}\lvert 1+h\xi_2\rvert^2d\xi_2.
+		\end{split}
+	\end{equation}
+	
+	First integral,
+	
+	$$\frac{1}{2\pi i}\oint_{\lvert\xi_1\rvert=1}\frac{\log(\lvert 1+h\xi_1\rvert^2)}{(\xi_1-r\xi_2)^2}d\xi_1=\frac{1}{2\pi i}\left[\oint_{\lvert\xi_1\rvert=1}\frac{\log(1+h\xi)}{(\xi_1-r\xi_2)^2}d\xi_1+\oint_{\lvert\xi_1\rvert=1}\frac{\log(1+h\xi^{-1})}{(\xi_1-r\xi_2)^2}d\xi_1\right]=\frac{1}{2\pi i}[A+B].$$
+	
+	Notice for $A$, for $\lvert \xi_2\rvert =1$ fixed, $\lvert r\xi_2\rvert>1$ so $r\xi_2$ not a pole.
+	
+	$$A=0, z=\frac{1}{\xi_1}, d\xi_1=-z^{-2}dz.$$
+	
+	\begin{equation}
+		\begin{split}
+			B&=\frac{1}{2\pi i}\oint_{\lvert\xi_1\rvert=1}\frac{\log(1+h\xi_1^{-1}}{(\xi_1-r\xi_2)^2}d\xi_1\\
+			&=-\frac{1}{2\pi i}\oint_{\lvert z\rvert=1}\frac{\log(1+hz)}{(z^{-1}-r\xi_2)^2}\frac{-1}{z^2}dz\\
+			&=\frac{1}{2\pi i}\frac{1}{(r\xi_2)^2}\oint_{\lvert z\rvert=1}\frac{\log(1+hz)}{(z-\frac{1}{r\xi_2})^2}dz\ \ \ \text{ 2nd order at $z=\frac{1}{r\xi_2}$}\\ 
+			&=\frac{1}{(r\xi_2)^2}\frac{\partial}{\partial z}(\log(1+hz))\Bigg\lvert_{z=\frac{1}{r\xi_2}}\\
+			&=\frac{h}{r\xi_2(r\xi_2+h)}
+		\end{split}
+	\end{equation}
+	
+	Now,
+	
+	\begin{equation}
+		\begin{split}
+			J_1(f,g,r)&=\frac{1}{2\pi i}\oint_{\lvert\xi_1\rvert=1}\frac{\log(\lvert 1+h\xi_1\rvert^2)}{(\xi_1-r\xi_2)^2}d\xi_1\cdot\frac{1}{2\pi i}\oint_{\lvert\xi_2\rvert=1}\lvert 1+h\xi_2\rvert^2d\xi_2\\
+			&=\frac{h}{2\pi ir^2}\oint_{\lvert\xi_2\rvert=1}\frac{(1+h\xi_2)(1+h\bar{\xi}_2)}{\xi_2(\xi_2+hr^{-1})}d\xi_2\\
+			&=\frac{h}{2\pi ir^2}\oint_{\lvert\xi_2\rvert=1}\frac{\xi_2+h\xi_2^2+h+h^2\xi_2}{\xi_2^2(\xi_2+hr^{-1})}d\xi_2\\
+			&=\frac{h}{2\pi ir^2}\left[\oint_{\lvert\xi_2\rvert=1}\frac{1+h^2}{\xi_2(\xi_2+hr^{-1})}d\xi_2+\oint_{\lvert\xi_2\rvert=1}\frac{h}{(\xi_2+hr^{-1})}d\xi_2+\oint_{\lvert\xi_2\rvert=1}\frac{h}{\xi_2^2(\xi_2+hr^{-1})}d\xi_2\right]\\
+			&=\frac{h}{2\pi i r^2}\left[0+2\pi ih + 0\right]\\
+			&=\frac{h^2}{r^2}.\\
+			J_1(f,f,r)&=\frac{1}{2\pi i}\oint_{\lvert\xi_2\rvert=1}f(\lvert 1+h\xi_2\rvert^2)\cdot \frac{1}{2\pi i}\oint_{\lvert\xi_1\rvert=1}\frac{f(\lvert 1+h\xi_2\rvert^2)}{(\xi_1-r\xi_2)^2}d\xi_1d\xi_2\\
+			&=\frac{1}{2\pi i}\oint_{\lvert\xi_2\rvert=1}f(\lvert 1+h\xi_2\rvert^2)\frac{h}{r\xi_2(r\xi_2+h)}d\xi_2\\
+			&= \frac{h}{2\pi ir^2}\oint_{\lvert\xi_2\rvert=1}\frac{\log(1+h\xi_2)}{\xi_2\left(\frac{h}r+\xi_2\right)}d\xi_2+\frac{h}{2\pi ir^2}\oint_{\lvert\xi_2\rvert=1}\frac{\log(1+h\xi_2^{-1})}{\xi_2\left(\frac{h}r +\xi_2\right)}d\xi_2\\
+			&=A+B.\\
+			A&=\frac{h}{r^2}\left[\frac{\log(1+h\xi_2)}{\frac{h}{r}+\xi_2}\Bigg\lvert_{\xi_2=0}+\frac{\log(1+h\xi_2)}{\xi_2}\Bigg\lvert_{\xi_2=-\frac{h}{r}}\right]\\
+			&=-\frac{1}{r^2}\log\left(1-\frac{h^2}{r}\right).\\
+			B&=\frac{-h}{2\pi ir^2}\oint_{\lvert z\rvert=1}\frac{\log(1+hz)}{z^{-1}\left(\frac{h}{r}+z^{-1}\right)}\frac{-1}{z^2}dz\\
+			&=\frac{1}{2\pi ir}\oint_{\lvert z\rvert=1}\frac{\log(1+hz)}{z+rh^{-1}}dz=0\ \text{not a pole since $\lvert r/h\rvert >1$}\\
+		\end{split}
+	\end{equation}
+	
+	Hence, $J_1(f,f,r)=-\frac{1}{r}\log(1-\frac{h^2}{r}).$
+	
+	
+	$$J_1(g,g,r)=\frac{1}{2\pi i}\oint_{\lvert\xi_2\rvert=1}\lvert 1+h\xi_2\rvert^2\cdot \frac{1}{2\pi i}\oint_{\lvert\xi_1\rvert=1}\frac{\lvert 1+h\xi\rvert ^2}{(\xi_1-r\xi_2)^2}d\xi_1d\xi_2.$$
+	
+	and
+
+\begin{equation}
+	\begin{split}
+		\frac{1}{2\pi i}\oint_{\lvert\xi_1\rvert=1}\frac{\lvert 1+h\xi_1\rvert^2}{(\xi_1-r\xi_2)^2}d\xi_1&=\frac{1}{2\pi i}\oint_{\lvert\xi_1\rvert=1}\frac{\xi_1+h\xi_1^2+h+h^2\xi_1}{\xi_1(\xi_1-r\xi_2)}d\xi_1\\
+		&=\frac{1}{2\pi i}\left[\oint_{\lvert\xi_1\rvert=1}\frac{1+h^2}{(\xi_1-r\xi_2)^2}d\xi_1+\oint_{\lvert\xi_1\rvert=1}\frac{h\xi_1}{(\xi_1-r\xi_2)^2}d\xi_1+\oint_{\lvert\xi_1\rvert=1}\frac{h}{\xi_1(\xi_1-r\xi_2)^2}d\xi_1\right]\\
+		&=\frac{1}{2\pi i}\left[0+0+\frac{2\pi ih}{r^2\xi_2^2}\right]\\
+		&=\frac{h}{r^2\xi_2^2}.
+	\end{split}
+\end{equation}
+
+since $2\pi i \frac{h}{(\xi_1-r\xi_2)^2}\Bigg\lvert_{\xi_1=0}=\frac{2\pi ih}{r^2\xi_2^2}$.
+
+Therefore,
+
+\begin{equation}
+	\begin{split}
+		J_1(g,g,r)&=\frac{h}{2\pi ir^2}\oint_{\lvert\xi_2\rvert=1}\frac{\xi_2+h\xi_2+h+h^2\xi_2}{\xi_2^2}d\xi_2\\
+		&=\frac{h}{2\pi ir^2}\left[\oint_{\lvert\xi_2\rvert=1}\frac{1+h^2}{\xi_2^2}d\xi_2+\oint_{\lvert\xi_2\rvert=1}\frac{h}{\xi_2}d\xi_2+\oint_{\lvert\xi_2\rvert=1}\frac{h}{\xi_2^3}d\xi_2\right]\\
+		&=\frac{h^2}{r^2}.
+	\end{split}
+\end{equation}
+
+Now we have to calculate all the $J_2$ terms:
+
+$$J_2(f,g), J_2(f,f), J_2(g,g).$$
+
+
+$$J_2(F,G)=-\frac{1}{4\pi^2}\oint_{\lvert\xi_1\rvert=1}\frac{F(\lvert 1+h\xi_1\rvert^2)}{\xi_1^2}d\xi_1\oint_{\lvert\xi_2\rvert=1}\frac{G(\lvert 1+h\xi_2\rvert ^2)}{\xi_2^2}d\xi_2$$
+
+First notice that
+
+\begin{equation}
+	\begin{split}
+		\frac{1}{2\pi i}\oint_{\lvert\xi_1\rvert=1}\frac{\log(1+h\xi_1\rvert^2)}{\xi_1^2}d\xi_1&=\frac{1}{2\pi i}\oint_{\lvert\xi_1\rvert=1}\frac{\log(1+h\xi_1)+\log(1+h\xi_1^{-1})}{\xi_1^2}d\xi_1\\
+		&=\frac{1}{2\pi i}\left[2\pi i\left[\frac{\partial}{\partial\xi_1}\log(1+h\xi_1)\right]\bigg\rvert_{\xi_1=0}-\oint_{\lvert z\rvert=1}\frac{\log(1+hz)}{z^{-2}}\frac{-1}{z^2}dz\right]\\
+		&=h-0\\
+		&=h
+	\end{split}
+\end{equation}
+
+And we have
+
+\begin{equation}
+	\begin{split}
+		\frac{1}{2\pi i}\oint_{\lvert\xi_2\rvert=1}\frac{g(\lvert 1+h\xi_2\rvert^2)}{\xi_2^2}d\xi_2&=\frac{1}{2\pi i}\oint_{\lvert\xi_2\rvert=1}\frac{\xi_2+h\xi_2^2+h+h^2\xi_2}{\xi_2^3}d\xi_2=h\\
+		J_2(f,g)&=\frac{1}{2\pi i}\oint_{\lvert\xi_1\rvert=1}\frac{f(\lvert 1+h\xi_2\rvert^2)}{\xi_1^2} d\xi_1\cdot \frac{1}{2\pi i}\oint_{\lvert\xi_2\rvert=1}\frac{g(\lvert 1+h\xi_2\rvert^2)}{\xi_2^2}d\xi_2=h^2\\
+		J_2(f,f)&=\frac{1}{2\pi i}\oint_{\lvert\xi_1\rvert=1}\frac{f(\lvert 1+h\xi_2\rvert^2)}{\xi_1^2}d\xi_1\cdot \oint_{\lvert\xi_2\rvert=1}\frac{f(\lvert 1+h\xi_2\rvert^2)}{\xi_2^2}d\xi_2=h^2\\
+		J_2(g,g,)&=\frac{1}{2\pi i}\oint_{\lvert\xi_1\rvert=1}\frac{g(\lvert 1+h\xi_1\rvert^2)}{\xi_1^2}d\xi_1\cdot\frac{1}{2\pi i}\oint_{\lvert\xi_2\rvert=1}\frac{g(\lvert 1+h\xi_2\rvert ^2}{\xi_2^2}d\xi_2=h^2
+	\end{split}
+\end{equation}
+\end{proof}
+\end{document}
+
+
+
+
+

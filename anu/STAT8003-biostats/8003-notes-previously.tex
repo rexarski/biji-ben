@@ -1,0 +1,220 @@
+\documentclass[a4paper, 11pt, twoside]{article}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\begin{document}
+\title{Golden Braids of Biostats}
+\author{Rui Qiu}
+\date{2018-03-05}
+
+\maketitle
+
+\section{Life Table}
+$l_x$: number of persons alive at age $x$.\\
+$d_x$: number of persons dying between ages $x$ and $x+1$.\\
+$p_x$: prob a person aged $x$ survives to age $x+1$.\\
+$q_x$: prob a person aged $x$ dies before age $x+1$.\\
+${}_tp_x$: prob a person aged $x$ survives to age $x+t$.\\
+${}_tq_x$: prob a person aged $x$ dies before age $x+t$.\\
+\\\textbf{Mutual expressions:}
+\[\begin{split}
+	{}_tp_x&=\frac{l_{x+t}}{l_x}\\
+	d_x &= l_x-l_{x+1}\\
+	d_{x+1} &=l_{x+1}-l_{x+2}\\
+	&\vdots\\
+	d_{x+T}&=l_{x+T}-l_{x+T+1}=0\\
+	l_x&=d_x+d_{x+1}+\cdots +d_{x+T}=\sum^T_{t=0}d_{x+T}\\
+	q_x&=1-p_x=\frac{d_x}{l_x}\\
+	{}_tq_x&=1-{}_tp_x=\frac{l_x-l_{x+t}}{l_x}
+\end{split}\]
+
+\section{The Force of Mortality}
+$\mu_x$ is the \textbf{instantaneous} rate of mortality at age $x$, as an annualized rate ($l_x$ is continuous and differentiable)
+
+\[\mu_x=-\frac1{l_x}\frac{d}{dx}l_x=-\frac{d}{dx}\log(l_x)\]
+
+By definition of derivative,
+
+\[\begin{split}
+\mu_x &= -\frac1{l_x}\frac{dl_x}{dx}\\
+&=-\frac1{l_x}\lim_{h\to 0}\frac{l_{x+h}-l_x}{h}\\
+&\approx -\frac1{l_x}\cdot\frac{l_{x+h}-l_x}{h}\\
+&=\frac{1}{h}\frac{l_x-l_{x+h}}{l_x}\\
+&=\frac1h(1-{}_hp_x)\\
+&=\frac1h{}_hq_x\\
+&=\frac{{}_hq_x}{h}	
+\end{split}
+\]
+
+\textbf{Use force of mortality to compute survival time}
+\[\begin{split}
+\mu_{x+s}&=-\frac{d\ln l_{x+s}}{ds}\\
+\implies \int^n_0\mu_{x+s}ds&=\int^n_0-\frac{d\ln l_{x+s}}{ds}ds\\
+&=[-\ln l_{x+s}]\Bigg\rvert^n_0\\
+&=-\ln l_{x+n}+\ln l_x\\
+&=-\ln\frac{l_{x+s}}{l_x}=-\ln({}_np_x)\\
+\implies {}_np_x&=\exp\left(-\int^n_0\mu_{x+s}ds\right)	
+\end{split}
+\]
+
+\textbf{Use force of mortality to compute ${}_nq_x$}
+
+\[\begin{split}
+	\mu_{x+s}&= -\frac{dl_{x+s}}{ds}\frac{1}{l_{x+s}}\\
+	\frac{dl_{x+s}}{ds}&=-l_{x+s}\mu_{x+s}\\
+	\int^n_0\frac{dl_{x+s}}{ds}ds&=-\int^n_0 l_{x+s}\mu_{x+s}ds\\
+	&=\left[l_{x+s}\right]\Bigg\rvert^n_0=l_{x+n}-l_x\\
+	&=-\int^n_0l_{x+s}\mu_{x+s}ds\\
+	-\frac{l_{x+n}-l_x}{l_x}&=\int^n_0\frac{l_{x+s}}{l_x}\mu_{x+s}ds\\
+	{}_nq_x&=\int^n_0{}_sp_x\mu_{x+s}ds\\
+	l_x-l_{x+1}&=d_x=\int^1_0l_{x+s}\mu_{x+s}ds \text{ when $n=1$.}
+\end{split}
+\]
+
+\textbf{Stats notation}\\
+
+$T$ is survival time, the distribution of $T$ can be characterized by 3 equivalent quantities:
+
+1. survival function $S(t)=P(T>t)$, but no censored observations in reality, so we use $\hat{S}(t)=\frac{\text{number of persons surviving longer than }t}{\text{total number of persons}}$
+
+2.p.d.f. $f(t)=\frac{\lim_{\Delta t\to 0}P(\text{life dies in }(t,t+\Delta t)}{\Delta t}$
+
+3.hazard function $\mu(t) \equiv \mu_t$:
+
+\[\mu(t)=\frac{\lim_{\Delta t\to 0}P(\text{life dies in }(t,t+\Delta t),\text{ given alive at }t)}{\Delta t}\]\\
+
+\textbf{Notation conversions}\\
+
+\[\begin{split}
+	{}_tq_x&=\frac{l_x-l_{x+t}}{l_x}=P(T_x\leq t)=F_{T_x}(t)\\
+	{}_tp_x&=\frac{l_{x+t}}{l_x}=P(T_x\geq t)=S_{T_x}(t)\\
+	\mu_{x+t}&=-\frac1{l_{x+t}}\frac{dl_{x+t}}{dt}=\mu(t)=\frac{f(t)}{S(t)}
+\end{split}
+\]
+
+Note the difference between $f(t)$ and $\mu(t)$, where the hazard function is a conditional rate, but $f(t)$ is an unconditional failure rate.
+
+\[
+\begin{split}
+	f(t)=\frac{dF(t)}{dt}&=\lim_{\Delta t\to 0}\frac{F(t+\Delta t)-F(t)}{\Delta t}\\
+	&=\lim_{\Delta t\to 0}\frac{P(\text{dies in } (t,t+\Delta t))}{\Delta t}\\
+	\mu(t)=\frac{f(t)}{S(t)}&=\lim_{\Delta t\to 0}\left(\frac{P(\text{dies in }(t,\Delta t+t))}{\Delta t\cdot S(t)}\right)\\
+	&=\lim_{\Delta t\to 0}\left(\frac{\frac{P(\text{dies in }(t,t+\Delta t))}{P(\text{survives longer than }t)}}{\Delta t}\right)\\
+	&=\lim_{\Delta t\to 0}\frac{P(\text{dies in }(t, t+\Delta t) \mid \text{survives longer than }t)}{\Delta t}
+\end{split}
+\]
+
+\section{Force of Mortality (continued)}
+We know, from last lecture, that the force of mortality (also known as the hazard function), can be expressed in terms of the survival function $S(t)$ and the p.d.f. $f(t)$:
+
+\[\mu(t)=\mu_T(t)=\lambda_T(t)=\frac{f(t)}{S(t)}=\frac{F'(t)}{S(t)}=\frac{-(1-F(t))'}{S(t)}=\frac{-S'(t)}{S(t)}\]
+
+where $S(t)$ is the prob alive at time $t$.
+
+\paragraph{Example:} $T$ follows an exponential distribution with $f(t)=\lambda\exp(-\lambda t)$ express $S(t)$ in terms of $\mu(t)$.
+
+\[
+\begin{split}
+	\mu(t)&=-\frac{S'(t)}{S(t)}\\
+	\implies\frac{d}{dt}\log(S(t))&=-\mu(t)\\
+	\implies \left[\log(S(r))\right]^t_0&=-\int^t_0\mu(r)dr\\
+	\log\frac{S(t)}{1}&=-\int^t_0\mu(r)dr\\
+	S(t)&=\exp\left(-\int^t_0\mu(r)dr\right)\\
+	\mu(t)&=\frac{f(t)}{S(t)}=\frac{\lambda\exp(-\lambda t)}{\exp(-\lambda t)}=\lambda\\&\text{a constant force of mortality, which is unreal in real life}
+\end{split}
+\]
+
+\textbf{Some "Laws" of Mortality}
+
+\paragraph{Gompertz Law:} $\mu(t)=B\times C^t\implies \frac{\mu(t+1)}{\mu(t)}=C$ constant percentage increase. One of the way to estimate the parameter $B$ and $C$ is:
+
+\[\log(\mu(t))=\log(B)+t\log(C)\]
+
+If Gompertz law is appropriate, should have a linear relationship between $\log(\mu(t))$ and $t$.
+
+\paragraph{Makehams Law:} $\mu(t)=A+B\times C^t$ adds the fixed component $A$ causes of death due to chance.
+
+But note that both Gompertz and Makehams only work over relatively small age ranges.
+
+\section{Complete vs Curtate Expected Future Lifetime}
+
+A standard definition:
+
+\[e^o_x=E[T_x]=\int^\infty_0tf(t)dt\]
+
+is the \textbf{complete expected future lifetime} of person aged $x$. Another derivation of $e^o_x$ using ${}_tp_x$ is below:
+
+\[
+\begin{split}
+	f(t)&={}_tp_x\mu(x+t)\\
+	{}_nq_x&=\int^n_0{}_tp_x\mu(x+t)dt\\
+	&=F_{T_x}(n)\\
+	&=\int^n_0f(t)dt\ \ \ \ \text{prob dies in $n$ years}\\
+	\mu(x+t)&=\frac{1}{l_{x+t}}\cdot\frac{dl_{x+t}}{dt}=\frac{-\frac{dl_{x+t}}{l_x}/dt}{\frac{l_{x+t}}{l_x}}\\
+	&=\frac{-d_tp_x/dt}{{}_tp_x}\\
+	\therefore\ e^o_x&=\int^\infty_0tf(t)dt=\int^\infty_0t\cdot_tp_x\frac{-d_tp_x/dt}{{}_tp_x}dt=\int^\infty_0t\left(\frac{-d_tp_x	}{dt}\right)dt,\ \ \text{ integrate by parts}\\
+	&=\int^\infty_0{}_tp_xdt
+\end{split}
+\]
+
+A rather non-standard expected future lifetime (\textbf{curtate expected future lifetime}):
+
+\[e_x=E[K_x]=\sum^\infty_{k=0}kP(K_x=k)\]
+
+where $K_x$ is the random variable representing the whole number of future years lived by a person aged $x$, i.e. $K_{20}=\lfloor T_{20}\rfloor$.\\
+
+\textbf{Derivation of }$P(K_x=k)=_kp_x\times q_{x+k}$ and $e_x=\sum^\infty_{k=1}{}_kp_x$.
+
+\[
+\begin{split}
+	e_x&=\sum^\infty_{k=0}k\cdot P(K_x=k)\\
+	&=\sum^\infty_{k=0}k\cdot_kp_x\cdot q_{x+k}\\
+	&=1\cdot p_x\cdot q_{x+1} + {}_2p_xq_{x+2} + {}_3p_xq_{x+3}+\cdots\\
+	&+{}_2p_xq_{x+2}+{}_3p_xq_{x+3}+\cdots\\
+	&+{}_3p_xq_{x+3}+\cdots\\
+	&=\sum^\infty_{j=1}{}_jp_xq_{x+j}+\sum^\infty_{j=2}{}_jp_xq_{x+j}+\cdots\\
+	&=\sum^\infty_{k=1}\sum^\infty_{j=k}{}_jp_xq_{x+j}\\
+	&=\sum^\infty_{k=1}{}_kp_x
+\end{split}
+\]
+
+with this:
+
+\[
+\begin{split}
+	\sum^\infty_{j=k}{}_jp_xq_{x+j}&=\sum^\infty_{j=k}P(j\leq T_x < j+1)\\
+	&=P(k\leq T_x<k+1)+P(k+1\leq T_x < k+2)\\
+	&=P(T_x\geq k)\\
+	&={}_kp_x
+\end{split}
+\]
+
+Therefore, done.
+
+\section{miscellaneous related to force of mortality}
+
+\paragraph{Definition:} The probability that a life aged $x$ will survive for $n$ years but die during the subsequent $m$ years is called the deferred probability:
+
+\[{}_{n\mid m}q_x=P(n<T_x<n+m)=\frac{l_{x+n}-l_{x+n+m}}{l_x}\]
+
+For non-integer ages, we usually make one of the following assumptions about the trend in mortality rate between two whole ages:
+
+1. Method One Uniform Distribution of Deaths (UDD): ${}_tp_x\mu_{x+t}=f(t)$ is a constant for $0<t<1$.
+
+2. Method Two Constant Force of Mortality: $\mu_{x+t}=\mu=$ constant for $0<t<1$.
+
+\paragraph{Definition:} The central rate of mortality ($m_x$) is an alternative to the initial rate of mortality $q_x$ with
+
+\[m_x=\frac{d_x}{\int^1_0l_{x+t}dt}\]
+
+more appropriate when we have data on the number of people aged between $x$ and $x+1$.
+
+\section{Parametric estimation with Two methods}
+
+\subsection{Method of Moments (MOM)}
+
+The population moments for a random variable $X$ are $E(X^j)$ and the corresponding sample moments are $n^{-1}\sum^n_{i=1}x_i^j$.
+
+The standard way to find more than one estimated parameters is: For $n$ parameters we need $n$ equations, i.e. up to $n$-th sample moment.
+
+
+\end{document}

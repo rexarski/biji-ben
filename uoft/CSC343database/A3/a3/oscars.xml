@@ -1,0 +1,41 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE Oscars SYSTEM "oscars.dtd">
+<Oscars>
+<Oscar OID="oscar_1" year="2009">
+<Type>Best Achievement in Cinematography</Type>
+</Oscar>
+<Oscar OID="oscar_2" year="2009">
+<Type>Best Achievement in Visual Effects</Type>
+</Oscar>
+<Oscar OID="oscar_3" year="2009">
+<Type>Best Achievement in Art Direction</Type>
+</Oscar>
+<Oscar OID="oscar_4" year="1997">
+<Type>Best Picture</Type>
+</Oscar>
+<Oscar OID="oscar_5" year="1997">
+<Type>Best Director</Type>
+</Oscar>
+<Oscar OID="oscar_6" year="1997">
+<Type>Best Achievement in Visual Effects</Type>
+</Oscar>
+<Oscar OID="oscar_7" year="1997">
+<Type>Best Costume Design</Type>
+</Oscar>
+<Oscar OID="oscar_8" year="1997">
+<Type>Best Sound</Type>
+</Oscar>
+<Oscar OID="oscar_9" year="1988">
+<Type>Best Actress in a Leading Role</Type>
+</Oscar>
+<Oscar OID="oscar_10" year="2004">
+<Type>Best Performance by an Actor in a Leading Role</Type>
+</Oscar>
+<Oscar OID="oscar_11" year="2008">
+<Type>Best Performance by an Actress in a Leading Role</Type>
+</Oscar>
+<Oscar OID="oscar_12" year="2010">
+<Type>Best Achievement in Makeup</Type>
+</Oscar>
+</Oscars>
+

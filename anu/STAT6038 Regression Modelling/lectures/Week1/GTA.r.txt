@@ -1,0 +1,299 @@
+# Global Temperature Anomalies example using R
+
+# First change the Windows defaults (adjust the view options, which will depend on which
+# version of Windows you are using), so that you can see file extensions (such as .csv) and 
+# also so you can see hidden files such as .Rhistory files.
+
+# We are going to read the GTA data in from a .csv (comma separated variable) file.
+# First download the file from Wattle and put it in the folder (directory) where you 
+# you wish to store all the R analysis you do for this course - this could be the same
+# directory where you store this .R file of R commands or you could use different 
+# directories for different examples. If you open a stored .R file located in some folder 
+# or directory by double-clicking on the file, then that directory will be set as the
+# the working directory. You can check which is the current working directory using:
+
+getwd()
+
+# If this is the directory where the GTA1880to2014.csv file is stored, then you can simply
+# proceed to run the rest of the commands shown below:
+
+GTA <- read.csv("GTA1880to2017annual.csv", header=T)
+
+# If the working directory is not where the .csv file is stored then you can change the
+# working directory using setwd(), for example, if you have chosen to store the data file
+# in a different folder, then you will need to specify the full path name in the file name
+# (the bit in inverted commas in the above command), so that R knows where to find it.
+# Remember that R treats \ as a special control character, so when specifying any path names
+# in setwd() or in file names, you will need to use either \\ or / in place of each \.
+
+# The above read.csv command appears to have done nothing, if it has worked, as there is no 
+# default visible output in the command window, but it will generate an error message if it
+# has not worked.
+
+# If the command has worked, it will have created a new data object at the top of your 
+# search path:
+
+ls()
+
+# Simply type the name of the object to see what it contains:
+
+GTA
+
+summary(GTA)
+attributes(GTA)
+
+search()
+ls(pos=1)
+ls(pos=2)
+
+# Attach the data to make it easy to access (note this attachment is only temporary for 
+# remainder of your current R session):
+
+attach(GTA)
+
+search()
+ls(pos=2)
+
+Year
+Av_Value
+
+mean(Av_Value)
+var(Av_Value)
+sqrt(var(Av_Value))
+sd(Av_Value)
+
+mean(Year)
+sd(Year)
+
+# Now let's fit an ordinary linear model using the lm() function:
+
+?? "linear model"
+
+# If you already know the name of the function you are after, then you can go straight 
+# to the help file:
+
+help(lm)
+
+# Now to use the function:
+
+lm(Av_Value ~ Year)
+
+# Store this model as a new object:
+
+GTA.lm <- lm(Av_Value ~ Year)
+ls()
+GTA.lm
+attributes(GTA.lm)
+GTA.lm$coef
+GTA.lm$fitted
+GTA.lm$residuals
+GTA.lm$df
+
+# Now use the stored model to produce various summaries:
+
+summary(GTA.lm)
+attributes(summary(GTA.lm))
+help(summary.lm)
+names(summary(GTA.lm))
+summary(GTA.lm)$r.squared
+
+anova(GTA.lm)
+help(anova.lm)
+names(anova(GTA.lm))
+anova(GTA.lm)$"Sum Sq"
+TotalSS <- sum(anova(GTA.lm)$"Sum Sq")
+Totaldf <- sum(anova(GTA.lm)$"Df")
+TotalSS/Totaldf
+var(Av_Value)
+
+plot(GTA.lm)
+help(plot)
+help(plot.lm)
+plot(GTA.lm, which=4)
+
+# So, we can get all the same results using R that we got using Excel
+# (and a lot more, using just a few simple commands).
+
+# For instance, we could take a closer look at the F statistic from 
+# the ANOVA table for the GTA example:
+
+anova(GTA.lm)
+
+f <- c(0:4800)/10
+F <- df(f, 1, GTA.lm$df)
+plot(c(0,420), c(-0.04, 0.96), type="n", xaxp=c(0,400,10), yaxp=c(0,1,10), xlab="", ylab="", main="F pdf with 1, 136 df")
+lines(f, F, lwd=2)
+abline(0,0)
+abline(v=0)
+
+# Show the rejection region:
+cv <- qf(0.95, 1, GTA.lm$df)
+Fcv <- df(cv, 1, GTA.lm$df)
+polygon(c(cv,f[f>cv]), c(0,F[f>cv]), density=90)
+points(cv,0,pch=3)
+text(cv, -0.025, labels=as.character(round(cv,3)))
+
+# Show the observed test statistic:
+obsF <- anova(GTA.lm)$"F value"[1]
+polygon(c(obsF,f[f>obsF]), c(0,F[f>obsF]), density=60, angle=135)
+points(obsF,0,pch=3)
+text(obsF, -0.025, labels=as.character(round(obsF,3)))
+
+# Add the p-value:
+lines(c(obsF,500),c(0,0),lwd=4)
+
+# A slightly different (hypothetical) example for a different ANOVA table that makes the 
+# reason for some of the plot options a little more obvious:
+
+f <- c(0:2500)/100
+F <- df(f, 3, 100)
+plot(c(-0.04,24), c(-0.04, 0.75), type="n", xaxp=c(0,24,24), yaxp=c(0,0.7,7), xlab="", ylab="", main="F pdf with 3, 100 df")
+lines(f, F, lwd=3)
+abline(0,0)
+
+cv <- qf(0.95, 3, 100)
+Fcv <- df(cv, 3, 100)
+polygon(c(cv,f[f>cv]), c(0,F[f>cv]), density=30)
+points(cv,0,pch=3)
+text(cv, -0.025, labels=as.character(round(cv,3)))
+
+obsF <- 31083/1375
+polygon(c(obsF,f[f>obsF]), c(0,F[f>obsF]), density=60, angle=135)
+points(obsF,0,pch=3)
+text(obsF, -0.025, labels=as.character(round(obsF,3)))
+
+lines(c(obsF,25),c(0,0),lwd=4)
+
+# Now, before we finally leave this introductory example behind, we will have a
+# look at some of the things you can do with R:
+
+# First, a little exploration of the Central Limit Theorem; 
+# we will use data simulation to illustrate the CLT in action:
+
+z <- c(-400:400)/100
+Z <- dnorm(z)
+plot(z,Z)
+abline(0,0)
+
+sample <- rnorm(30)
+hist(sample)
+
+sample <- rnorm(300)
+hist(sample)
+
+sample <- rnorm(3000)
+hist(sample)
+
+sample <- rnorm(30000)
+hist(sample)
+
+# Let's automate this so we can repeatedly sample from the same distribution:
+
+CLTdemo <- function(n, samples){
+  means <- rep(0,samples)
+  for (i in 1:samples) {sample <- rnorm(n); means[i] <- mean(sample)}
+  hist(means)}
+
+CLTdemo(30, 30)
+CLTdemo(30, 300)
+CLTdemo(300, 300)
+CLTdemo(3000, 3000)
+
+# When sampling from a normal distribution, it makes sense that the normal distribution
+# will be a good model for the behaviour of the sample mean; but what about when we 
+# sample from a highly skewed distribution such as the F(3, 100) distribution we looked
+# at above:
+
+sample <- rf(30, 3, 100)
+hist(sample)
+
+sample <- rf(300, 3, 100)
+hist(sample)
+
+sample <- rf(3000, 3, 100)
+hist(sample)
+
+sample <- rf(30000, 3, 100)
+hist(sample)
+
+CLTdemo2 <- function(n, samples){
+  means <- rep(0,samples)
+  for (i in 1:samples) {sample <- rf(n, 3, 100); means[i] <- mean(sample)}
+  hist(means)}
+
+CLTdemo2(30, 30)
+CLTdemo2(30, 300)
+CLTdemo2(300, 300)
+CLTdemo2(3000, 3000)
+
+# A lot of the above R code is definitely beyond the scope of this introductory
+# course, but here is another quick regression example, that makes use of the
+# commands and functions we are going to use in the rest of the course:
+
+search()
+ls()
+ls(pos="package:datasets")
+women
+attributes(women)
+help(women)
+
+attach(women)
+search()
+ls(pos=2)
+plot(height, weight)
+lm(weight ~ height)
+reg <- lm(weight ~ height)
+abline(reg$coef)
+
+plot(fitted(reg), residuals(reg))
+abline(0,0)
+
+# A little house-keeping before we finish:
+
+rm(f)
+rm(F)
+rm(cv)
+rm(Fcv)
+rm(obsF)
+rm(z)
+rm(Z)
+rm(sample)
+rm(reg)
+
+# Never a good idea to create permanent objects with the same name as standard R functions!
+
+# And finally, a graphics demo courtesy of Dr Bill Venables of CSIRO in Queensland who has
+# written a function in R to draw the fractal object that made Professor Michael Barnsley 
+# (who is now a member of ANU's Mathematical Sciences Institute) famous:
+
+BarnsleysFern <- local({
+  barnsley <- structure(
+    list(a = c(0, 0.85, 0.2, -0.15),
+         b = c(0, 0.04, -0.26, 0.28),
+         c = c(0, -0.04, 0.23, 0.26),
+         d = c(0.16, 0.85, 0.22, 0.24),
+         e = c(0.0, 0.0, 0.0, 0.0),
+         f = c(0, 1.6, 1.6, 0.44),
+         p = c(0.01, 0.85, 0.07, 0.07)),
+    class = "data.frame",
+    row.names = c("f1", "f2", "f3", "f4"))
+  A <- as.matrix(subset(barnsley, select = a:d))
+  b <- t(as.matrix(subset(barnsley, select = e:f)))
+  p <- barnsley$p
+  dim(A) <- c(4,2,2)
+  A <- aperm(A, c(3,2,1))
+  
+  function(N = 100000, col = "dark green") {
+    X <- matrix(0, N, 2)
+    pn <- sample(1:4, size = N, replace = TRUE, prob = p)
+    for(n in 2:N) {
+      k <- pn[n]
+      X[n, ] <- A[,,k] %*% X[n-1, ] + b[, k]
+    }
+    plot(X, ann = FALSE, axes = FALSE, pch = 20, asp = 1,
+         cex = 0.45, col = col)
+    invisible(X)
+  }
+})
+
+BarnsleysFern()

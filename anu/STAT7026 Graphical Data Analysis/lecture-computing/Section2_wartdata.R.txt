@@ -1,0 +1,22 @@
+# 1. Preliminary exploration using QQplots.
+
+oldpars <- par()
+range(warts[[4]])
+# [1] 4.178 6.835
+range(warts[[1]])
+# [1] 3.814 5.523
+par(mfrow=c(2,3),oma=c(0,0,6,0))
+for (i in 1:6) {
+  qqnorm(warts[[i]],main=paste("Species",i),xlab="Gaussian Quantiles",
+         ylab="log(wart height)",ylim=c(3.8,7))
+  mtext("Quantile-Quantile Plots for the Log(Wart Height) Data",side=3,line=3,outer=T,cex=1.5)
+}
+
+# 2.  Density plots
+
+for (i in 1:6) {
+  plot(density(warts[[i]],window="c",width=0.7),
+       main=paste("Species",i),ylab="",xlab="log(wart height)",
+       xlim=c(3.4,7),ylim=c(0,2.1),type="l")
+  mtext("Densities for the Log(Wart Height) Data",side=3,line=3,outer=T,cex=1.5)
+}

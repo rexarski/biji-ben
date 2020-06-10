@@ -1,0 +1,62 @@
+## ------------------------------------------------------------------------
+    quad.form <- function(x1, x2, x3, x4){
+  
+    a <- x1 + x2 + x3 + x4
+    b <- (-x1 + x4 + 2*x2 + 2*x3)
+    c <- - 2*x4
+      
+      
+    sol1 <- (-b + sqrt(b^2 - 4*a*c))/(2*a)
+    sol2 <- (-b - sqrt(b^2 - 4*a*c))/(2*a)
+  
+    out <- c(sol1, sol2)
+    return(out)
+    }
+    
+    sol <- unname(quad.form(1997, 906, 904, 32))
+    sol
+    sol[sol>=0 & sol<=1]
+
+## ------------------------------------------------------------------------
+    X <- c(rep("starchy green", 1997), rep("starchy white", 906), 
+           rep("surgary green", 904), rep("surgary white", 32))
+    
+    table(X)       
+    n <- sum(table(X))
+      
+      
+    boot <- table(X[sample(1:n, n,  replace=TRUE)])      
+    x1 <- boot[1]
+    x2 <- boot[2]
+    x3 <- boot[3]
+    x4 <- boot[4]
+  
+    
+    sol <- unname(quad.form(x1, x2, x3, x4))
+    sol
+    sol[sol>=0 & sol<=1]
+
+## ------------------------------------------------------------------------
+    set.seed(2001)
+    S <- 10000
+    out <- rep(0,S)
+    
+    
+    for(s in 1:S){
+      
+    boot <- table(X[sample(1:n, n,  replace=TRUE)])      
+    x1 <- boot[1]
+    x2 <- boot[2]
+    x3 <- boot[3]
+    x4 <- boot[4]
+  
+    
+    sol <- unname(quad.form(x1, x2, x3, x4))
+    out[s] <- sol[sol>=0 & sol<=1]
+    }
+    
+    hist(out, col="azure3", main="Bootstrap for theta")
+    mean(out)
+    sd(out)
+    quantile(out, c(0.025, 0.975))
+

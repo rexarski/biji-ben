@@ -1,0 +1,79 @@
+# First step, to set working directory 
+#setwd('~~')
+
+Q1<-read.table('ex0727.csv',header=T,sep=',')  # import dataset
+Q1
+lm1<-lm(Q1$DISTANCE~Q1$VELOCITY-1)  # reference relevant objects by $
+lm1  # SLR without intercept
+summary(lm1) # summary table
+
+
+Q2<-read.csv('ex0729.csv')  # difference between read.csv and read.table
+Q2
+attach(Q2) #another way of referencing objects
+lm2<-lm(tcell~mass) 
+lm2  # model based on sample observations by using least square method
+predict(lm2,newdata=data.frame(mass=2)) #predicted y based on our model
+
+#extrapolation
+sort(mass,decreasing = F) #ascending the sample data of mass
+
+#Q3(a)
+Q3<-read.csv('ex0818.csv')
+attach(Q3)
+plot(SOIL,MUSHROOM,  
+     ylab="conc in mushrooms", 
+     xlab="conc in soil", 
+     main="conc mushrooms conc soil")  #plotting the sample data points
+identify(SOIL,MUSHROOM)  # identify the unusual point, remember to click 'esc' after clicking the point you want to identify
+
+#Q3(b)
+lm3<-lm(MUSHROOM~SOIL)
+lm3
+plot(SOIL,MUSHROOM, 
+     ylab="conc in mushrooms", 
+     xlab="conc in soil", 
+     main="conc mushrooms v conc soil")
+
+abline(lm3)  # put the fitted line on the plot
+
+#Q3(c)
+par(mfrow=c(2,1))  # create a graph contains two plots with the layout of 2 rows 1 column 
+lm3<-lm(MUSHROOM~SOIL)
+plot(SOIL,MUSHROOM, 
+     ylab="conc in mushrooms", 
+     xlab="conc in soil", 
+     main="conc mushrooms v conc soil")
+
+abline(lm3)
+
+lm4<-lm(MUSHROOM[-17]~SOIL[-17])  # SLR without point 17
+plot(SOIL[-17],MUSHROOM[-17], 
+     ylab="conc in mushrooms", 
+     xlab="conc in soil", 
+     main="conc mushrooms v conc soil (point 17 removed)")  # plot without point 17
+
+abline(lm4)
+
+#Q4
+#  1.randomly generate 100 samples (i.e. 100 pairs of x and y)  
+#  2.use these samples to estimate the mean response given x = 2.5
+#  3.repeat this process 1000 times
+#  4.hence we have 1000 estimated mean response given x = 2.5
+#  5.find out the histogram, mean and standard deviation of these 1000 estimated mean response
+x<-1:100
+n<-length(x)
+y<-rep(0,n)
+samn<-1000
+meanresponse<-rep(0,samn)
+xs<-2.5
+set.seed(1)  # set seed to get certain sequence of data
+for(i in 1:samn){
+  errors=rnorm(n)
+  y<-1+0*x+errors
+  SLRfit<-lm(y~x)
+  meanresponse[i]<-SLRfit$coef[1]+SLRfit$coef[2]*xs}
+hist(meanresponse)
+mean(meanresponse)
+sd(meanresponse)
+

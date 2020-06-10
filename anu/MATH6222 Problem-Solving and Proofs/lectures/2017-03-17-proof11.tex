@@ -1,0 +1,97 @@
+\documentclass[a4paper, 11pt, twoside]{article}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\begin{document}
+\title{MATH6222 week4 lecture 11}
+\author{Rui Qiu}
+\date{2017-03-17}
+
+\maketitle
+
+\textbf{Last time:}\\
+
+\begin{itemize}
+	\item a set $A$ is finite if $|A|=|[n]|$ for some $n\in\mathbb{N}$.
+	\item a set $A$ is countably infinite if $|A|=|\mathbb{N}|$.
+	\item a set $A$ is countable if finite or countably infinite.
+	\item a set $A$ is uncountable if not countable.
+\end{itemize}
+
+\paragraph{Thm:} $\mathbb{R}$ is uncountable.
+
+\paragraph{Proof:} Cantor's Diag. Argument.
+
+$12.999\dots$
+
+$13$
+$13.000\dots$
+$13.145\dots$
+
+\[317.389714\dots\]
+
+$\mathbb{R}\longleftrightarrow\{\text{Sequences of integers } \{0, \dots, 9\}\}$\\
+
+Let $S$ be the set of infinite sequences of $0$'s and $1$'s, i.e. an element of $S$ is given by $a_1, a_2, a_3,\dots$ each $a_i\in\{0,1\}$ such as 
+
+\[11000111\dots\]
+
+\paragraph{Claim:} $S$ is uncountable
+
+We want to show $\not\exists$ bijection $f:\mathbb{N}\to S$. Let's assume a bijection exists, and get a contradiction.
+
+
+\[1\ a_{11}\ a_{12}\ a_{13}\ a_{14}\ \dots\]
+\[2\ a_{21}\ a_{22}\ a_{23}\ a_{24}\ \dots\]
+\[3\ a_{31}\ a_{32}\ a_{33}\ a_{34}\ \dots\]
+\[4\ a_{41}\ a_{42}\ a_{43}\ a_{44}\ \dots\]
+
+Let $a_{i1}, a_{i2},\dots$ be $f(i)$. i.e. get contradiction, it suffices to produce one element of $S$ which is not in the image of $f$.
+
+Define $\bar{a_{ij}}=1-a_{ij}$
+
+\[
+\bar{a_{ij}}=
+\begin{cases}
+	0 & \text{ if } a_{ij}=1,\\
+	1 & \text{ if } a_{ij}=0.
+\end{cases}
+\]
+
+Consider the sequence
+
+\[\bar{a_{11}}, \bar{a_{22}}, \bar{a_{33}}, \bar{a_{44}}, \dots\]
+
+We claim this sequence is not in the image of $f$.
+
+For any integer, $f(i)$ has $a_{ii}$ in the $i$th place. Our sequence has $\bar{a_{ii}}$ in the $i$th place.\\
+
+Suppose $\exists$ a bijection $f:\mathbb{N}\to\mathbb{Q}$\\
+
+\[0.070707070707\dots\]
+\[0.13113113113\dots\]
+\[0.299972901010101\dots\]\\
+
+So far we have some questions:
+\begin{enumerate}
+	\item Infinite sets smaller than $\mathbb{N}$?
+	\item Does every infinite set $A$ satisfy $|A|=|\mathbb{N}|$ or $|A|=|\mathbb{R}|$?
+	\item What is a real number?\\
+\end{enumerate}
+
+We would like to say $|A|\leq |B|$ if there exists an injection from $A\to B$.\\
+
+\begin{enumerate}
+	\item \begin{enumerate}
+		\item Given an arbitrary infinite set $A$, define $\mathbb{N}\subset A$
+		\item Given an arbitrary subset $S \subseteq \mathbb{N}$, show $|S| = |\mathbb{N}|$\\
+		Define $f:\mathbb{N}\to S$\\
+		$1\to$ smallest member of $S$\\
+		$2\to$ second smallest member of $S$\\
+	\end{enumerate}
+	\item Is $\mathbb{R}^2 \overset{?}\to \mathbb{R}$\\
+	say $.x_1x_2x_3x_4\dots$\\
+	and $.y_1y_2y_3y_4\dots$\\
+	get $.x_1y_1x_2y_2x_3y_3\dots$\\
+	In fact, we have a bijection. \textbf{If we consider $\mathbb{R}^2$ as a set, dimensions are not even well-defined!}\\
+\end{enumerate}
+\end{document}

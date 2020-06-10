@@ -1,0 +1,5 @@
+source("A2.R")
+
+df1<-read.table("./ass2-data.txt",header=T)
+initial_matrix<-cbind(c(rep(0.5,10)),c(rep(0.5,10)),c(rep(0.5,10)),c(rep(0.5,10)))
+beetle_function(df1,initial_matrix,100)

@@ -1,0 +1,3 @@
+<!ELEMENT noplaylist (song*)>
+<!ELEMENT song EMPTY>
+<!ATTLIST song sid ID #REQUIRED>

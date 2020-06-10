@@ -1,0 +1,93 @@
+# The following is an R analysis of the used car trade-in data (example 3) described on pages 21 
+# and 22 of the brick. The S-Plus code shown on pages 22 to 25 of the brick, will still produce
+# the same results in R, but there are now easier ways to get those results.
+
+# For example, this code will produce factor plots for a two-way ANOVA similar to the ones
+# shown at the top of page 25 of the brick
+
+tradein <- read.table("Tradein.txt",header=T)
+tradein
+names(tradein)
+attach(tradein)
+
+cell.mns <- tapply(value, list(age,gender), mean)
+cell.mns
+
+matplot(3:1,cell.mns,type="b",pch="FM",xlab="Age: 1=Young, 2=Middle, 3=Elderly",ylab="Value $00")
+matplot(1:2,t(cell.mns),type="b",pch="EMY",xlab="Sex: 1=Female, 2=Male",ylab="Value $00")
+
+# The following is the S-Plus code from pages 22 and 23 of the brick that "manually" fits a two
+# way ANOVA model:
+
+tradein.aov <- aov(value ~ age + gender)
+summary(tradein.aov)
+tradein.aov <- aov(value ~ gender + age)
+summary(tradein.aov)
+
+gender1 <- ifelse(gender=="M",1,0)
+age1 <- ifelse(age=="Middle",1,0)
+age2 <- ifelse(age=="Elderly",1,0)
+tradein.lm <- lm(value ~ age1 + age2 + gender1)
+coefficients(tradein.lm)
+Xmat <- cbind(1,age1,age2,gender1)
+XtXi <- solve(t(Xmat)%*%Xmat)
+MSE <- sum(residuals(tradein.lm)^2)/32
+cc1 <- c(1,0,0,0)
+cc2 <- c(1,1,0,0)
+cc3 <- c(1,0,1,0)
+est1 <- t(cc1)%*%coefficients(tradein.lm)
+est2 <- t(cc2)%*%coefficients(tradein.lm)
+est3 <- t(cc3)%*%coefficients(tradein.lm)
+ests <- c(est1,est2,est3)
+sd1 <- sqrt(MSE)*sqrt(t(cc1)%*%XtXi%*%cc1)
+sd2 <- sqrt(MSE)*sqrt(t(cc2)%*%XtXi%*%cc2)
+sd3 <- sqrt(MSE)*sqrt(t(cc3)%*%XtXi%*%cc3)
+sds <- c(sd1,sd2,sd3)
+upper <- ests + (qt(0.975,32)*sds)
+lower <- ests - (qt(0.975,32)*sds)
+cbind(lower,ests,upper)
+
+# And here is some code for fitting and examining the models using sum contrasts and letting
+# R do the necessary coding of the underlying dummy variables (as an alternative to the
+# approach used on page 23):
+
+tradein.aovsum <- aov(value ~ age + gender, contrasts=list(age=contr.sum, gender=contr.sum))
+
+# Note if you examine the help file for plot.lm(), which the generic function plot() calls
+# to plot a lm() or aov() object, you find that there are additional optional plots, one of
+# which is a bar chart of Cook's Distances - alternatively you could use the function 
+# cooks.distance() to calculate the values and then plot them against the observation number.
+
+plot(tradein.aovsum, which=c(1:6))
+
+summary(tradein.aovsum)
+summary.lm(tradein.aovsum)
+
+# The coefficients of the model can be used to derive the various cell and factor means:
+
+cell.mns
+
+age.mns <- tapply(value, age, mean)
+age.mns
+
+gender.mns <- tapply(value, gender, mean)
+gender.mns
+
+mean(value)
+
+# Now the model with an interaction term:
+
+tradein.aovsum2 <- aov(value ~ age + gender + age:gender, contrasts=list(age=contr.sum, gender=contr.sum))
+
+# Note that you could have used "age*gender" instead of "age + gender + age:gender"!
+
+plot(tradein.aovsum2, which=c(1:6))
+
+summary(tradein.aovsum2)
+summary.lm(tradein.aovsum2)
+
+# In this instance, the interaction (crossing of the lines in the factor plots) is not
+# significant. The gender differences are also not significant, so the only effect that appears
+# to matter in the context of this model is age - the middle-aged get a significantly better
+# deal than the young or the elderly.
+

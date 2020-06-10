@@ -1,0 +1,148 @@
+source("a3.r")
+
+########## simple linear model ########## 
+t1 <- proc.time()
+
+mse <- function(m) { 
+  mse <- mean(m$residuals^2)
+  return(mse)
+}
+
+m1 <- lm(train1y~V1+V2+V3+V4+V5+V6+V7+V8, data=data.frame(train1x))
+summary(m1)
+mse(m1)
+
+## what if we drop V6?
+m2 <- lm(train1y~V1+V2+V3+V4+V5+V7+V8, data=data.frame(train1x))
+summary(m2)
+mse(m2)
+
+cat(" The MSE in terms of 8 covariates is ", mse(m1), "\n", 
+    "The MSE in terms of 7 covariates is ", mse(m2), "\n")
+
+## prediction
+y_predict <- predict(m2,newdata=data.frame(testx),interval='prediction')
+
+t2 <- proc.time()
+print(t2-t1)
+
+########## Gaussian process with linear covariance ##########
+t1 <- proc.time()
+C <- matrix(0,250,250)
+for (i in 1:250) {
+  for (j in 1:250) {
+    C[i, j] <- K1(train1x[i,],train1x[j,])
+  }
+}
+
+C <- C + diag(250)
+
+predict <- matrix(0,1,2500)
+for (i in 1:nrow(testy)) {
+  t <- matrix(0,1,250)
+  for (j in 1:250) {
+    t[j] <- K1(train1x[j,],testx[i,])
+  }
+  predict[i] <- t%*%solve(C,train1y)
+}
+
+MSE2 <- sum((t(testy) - predict)^2)/2500
+print(MSE2)
+t2 <- proc.time()
+print(t2-t1)
+
+########## Gaussian process with hyperparameters (non-scaling) ##########
+t1 <- proc.time()
+res <- matrix(0,3,400)
+num <- 1
+for (gamma in seq(0.1,10,0.5)) {
+  for (rho in seq(0.01,1,0.05)) {
+    res[1,num] <- cv(gamma,rho,train1x,train1y)
+    res[2,num] <- gamma
+    res[3,num] <- rho
+    num <- num + 1
+    # it's more like a progress tracking feature, not really need this
+    cat(num, res[1,num-1],res[2,num-1],res[3,num-1],"\n")
+  }
+}
+
+write.table(res, "./output1.txt", sep="\t")
+
+index <- which(res[1,] == min(res[1,]))
+gamma <- res[2,index]
+rho <- res[3,index]
+
+C <- matrix(0,250,250)
+for (i in 1:250) {
+  for (j in 1:250) {
+    C[i, j] <- K2(gamma,rho,train1x[i,],train1x[j,])
+  }
+}
+
+C <- C + diag(250)
+
+predict <- matrix(0,1,2500)
+for (i in 1:nrow(testy)) {
+  t <- matrix(0,1,250)
+  for (j in 1:250) {
+    t[j] <- K2(gamma,rho,train1x[j,],testx[i,])
+  }
+  predict[i] <- t%*%solve(C,train1y)
+}
+
+MSE3 <- sum((t(testy) - predict)^2)/2500
+print(MSE3)
+t2 <- proc.time()
+print(t2-t1)
+
+########## Gaussian process with hyperparameters (re-scaling) ##########
+
+t1 <- proc.time()
+
+trainxx <- train1x
+testxx <- testx
+trainxx[,1] <- trainxx[,1]/10
+trainxx[,7] <- trainxx[,7]/10
+testxx[,1] <- testxx[,1]/10
+testxx[,7] <- testxx[,7]/10
+
+res2 <- matrix(0,3,400)
+num2 <- 1
+for (gamma in seq(0.1,10,0.5)) {
+  for (rho in seq(0.01,1,0.05)) {
+    res2[1,num2] <- cv(gamma,rho,trainxx,train1y)
+    res2[2,num2] <- gamma
+    res2[3,num2] <- rho
+    num2 <- num2 + 1
+    cat(num2, res2[1,num2-1],res2[2,num2-1],res2[3,num2-1],"\n")
+  }
+}
+
+write.table(res2, "./output2.txt", sep="\t")
+
+index2 <- which(res2[1,] == min(res2[1,]))
+gamma <- res2[,index2][2]
+rho <- res2[,index2][3]
+
+C <- matrix(0,250,250)
+for (i in 1:250) {
+  for (j in 1:250) {
+    C[i, j] <- K2(gamma,rho,trainxx[i,],trainxx[j,])
+  }
+}
+
+C <- C + diag(250)
+
+predict2 <- matrix(0,1,2500)
+for (i in 1:nrow(testy)) {
+  t <- matrix(0,1,250)
+  for (j in 1:250) {
+    t[j] <- K2(gamma,rho,trainxx[j,],testxx[i,])
+  }
+  predict2[i] <- t%*%solve(C,train1y)
+}
+
+MSE4 <- sum((t(testy) - predict2)^2)/2500
+print(MSE4)
+t2 <- proc.time()
+print(t2-t1)

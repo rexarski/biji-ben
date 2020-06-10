@@ -1,0 +1,26 @@
+Type Height Length Cathedral
+Romanesque 75 502 Durham
+Romanesque 80 522 Canterbury
+Romanesque 68 425 Gloucester
+Romanesque 64 344 Hereford
+Romanesque 83 407 Norwich
+Romanesque 80 451 Peterborough
+Romanesque 70 551 "St. Albans"
+Romanesque 76 530 Winchester
+Romanesque 74 547 Ely
+Gothic 100 519 York
+Gothic 75 225 Bath
+Gothic 52 300 Bristol
+Gothic 62 418 Chichester
+Gothic 68 409 Exeter
+Gothic 86 425 Gloucester
+Gothic 57 370 Lichfield
+Gothic 82 506 Lincoln
+Gothic 82 506 Norwich
+Gothic 88 295 Ripon
+Gothic 55 273 Southwark
+Gothic 67 415 Wells
+Gothic 45 182 "St. Asaph"
+Gothic 103 530 Winchester
+Gothic 103 611 "Old St. Paul"
+Gothic 84 473 Salisbury

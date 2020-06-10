@@ -1,0 +1,30 @@
+#Last Updated: 25/09/2016
+
+
+
+
+rm(list=ls())
+setwd('~/Desktop/Research/AppliedStat2017/L9')
+a=read.csv('anaesthetic.csv')
+a
+
+attach(a)
+plot(Concentration, Response,ylim=c(-0.5,1))
+fit=lm(Response~Concentration)
+lines(Concentration,fit$fitted,lty=2)
+
+
+tapply(Response, Concentration,mean)
+
+tapply(Response, Concentration,var)
+
+
+#?glm
+#fitting the logistic regression
+ansth.logit=glm(Response~Concentration,family=binomial(link=logit))
+plot(Concentration,Response,xlab="concentration",ylab="fitted probability")
+lines(Concentration,ansth.logit$fitted.values,lty=2)
+detach(a)
+
+Xnew=data.frame(Concentration=1.5)
+predict(ansth.logit,Xnew,type='response')

@@ -1,0 +1,467 @@
+---
+title: "Statistical Inference"
+subtitle: "Lecture 10b"
+author: "ANU - RSFAS"
+date: '`r paste("Last Updated:", date())`'
+output: 
+    beamer_presentation:
+        theme: "AnnArbor"
+        colortheme: "ANU"
+        fonttheme: "structurebold"
+        incremental: false
+        includes:
+             in_header: mystyle.tex
+---
+
+
+
+## Bayesian Testing
+
+* Consider testing:
+
+$$H_0: \theta \in \Theta_0 \ \ \ \ \textrm{vs.} \ \ \ \ H_1: \theta \in \Theta_1$$
+
+*  The classical statistician considers $\theta$ a \tr{fixed} unknown, thus a hypothesis test is \tb{true} or \tb{false}.  Either $\theta$ is in $\Theta_0$ or $\Theta_1$!
+
+*  Bayesians however consider $\theta$ to be random and it is quite natural to consider:
+
+$$P(\theta \in \Theta_0 | \bs{x}) \ \ \ \ \textrm{vs.} \ \ \ \ P(\theta \in \Theta_1 | \bs{x})$$
+
+## Bayesian Testing 
+
+* One approach to Bayesian testing is to reject $H_0$ if:
+
+$$P(\theta \in \Theta_1 | \bs{x}) >  P(\theta \in \Theta_0 | \bs{x})$$
+
+## Bayesian Testing 
+
+**Example 8.2.7:**  $X_1,  \ldots, X_n \iid \textrm{normal} (\theta, \sigma^2)$.  Let $\theta \sim \textrm{normal} (\mu, \tau^2)$, where $\sigma^2, \mu, \tau^2$ are known.  Consider testing:
+
+$$H_0: \theta \leq \theta_0 \ \ \ \ \textrm{vs.} \ \ \ \ H_1: \theta > \theta_0$$
+
+$$[\theta | \bs{x}] \sim \textrm{normal} \left( \frac{\sigma^2 \mu + n \tau^2 \bar{x}}{\sigma^2 + n \tau^2}, \frac{\sigma^2 \tau^2}{\sigma^2 + n \tau^2} \right)$$
+
+* To compare we simply examine:
+
+$$\int_{-\infty}^{\theta_0} p(\theta | \bs{x}) d\theta \ \ \ \ \textrm{vs.} \ \ \ \ \int_{\theta_0}^{\infty} p(\theta | \bs{x}) d\theta$$
+
+## Bayesian Testing 
+
+*  Based on this Bayesian approach to hypothesis testing, what if we wanted to test:
+
+$$H_0: \theta = \theta_0 \ \ \ \ \textrm{vs.} \ \ \ \ H_1: \theta \not= \theta_0$$
+
+$$[\theta | \bs{x}] \sim \textrm{normal} \left( \frac{\sigma^2 \mu + n \tau^2 \bar{x}}{\sigma^2 + n \tau^2}, \frac{\sigma^2 \tau^2}{\sigma^2 + n \tau^2} \right)$$
+
+* $[\theta | \bs{x}]$ is a continuous distribution, so the probability of any single point (such as $\theta_0$) is zero.  This approach does not seem to work.
+
+## Bayesian Testing 
+
+*  Notice that when we test through a Bayesian approach, we model the parameter of interest (i.e. we put a prior on it).  
+*  If our scientific question concerns whether a parameter can be exactly $\theta_0$ or not, then we should model that:
+
+$$\theta \sim p \bs{1}_{\theta=\theta_0} + (1-p) \textrm{normal}( \mu, \tau^2)$$
+
+where $0 \leq p \leq 1$.
+
+* In a regression or GLM setting many times we are interested in testing whether $\beta = 0$ vs. $\beta \not=0$ and these priors or variants on them can be quite useful.
+
+## Bayesian Testing 
+
+*  Another approach that does allow for consideration of $\beta = 0$ is \tg{Bayes factors}.  Let's rephrase hypothesis testing as choosing between competing models:
+
+\begin{tabular}{l}
+Model 1 ($M_1$):  $y_i = \alpha + \epsilon_i \ \ \ \ \ \ \ \ \ \epsilon_i \iid \textrm{normal}(0, \sigma^2); \ \ \theta_1 = \{\alpha, \sigma^2 \}$ \\
+Model 2 ($M_2$):  $y_i = \alpha + \beta x_i + \epsilon_i \ \ \ \ \ \epsilon_i \iid \textrm{normal}(0, \sigma^2); \ \ \theta_2 = \{\alpha,\beta, \sigma^2 \}$ \\
+\end{tabular}
+
+## Bayesian Testing 
+
+*  Let's figure out the posterior probability for a given model $i$:
+
+$$\pi(M_i | \bs{x} ) = \frac{f(\bs{x} | M_i )\pi(M_i)}{m(\bs{x})}$$
+
+$$f(\bs{x} | M_i ) = \int_{\theta}  f(\bs{x} |\theta, M_i )\pi(\theta | M_i) d\theta_i$$
+
+$$m(\bs{x}) = \sum_{i=1}^2 f(\bs{x} | M_i )\pi(M_i)$$
+
+
+
+## Bayesian Testing 
+
+* Now consider the following ratio of the posterior model probabilities:
+
+
+\begin{eqnarray*}
+\frac{\pi(M_2 | \bs{x} )}{\pi(M_1 | \bs{x} )} &=& \frac{f(\bs{x} | M_2 )}{f(\bs{x} | M_1 )} \times \frac{\pi(M_2)}{\pi(M_1)} \\
+&=& BF(M_2; M_1) \times \frac{\pi(M_2)}{\pi(M_1)}
+\end{eqnarray*}
+
+Where $BF(M_2; M_1)$ is called the \tg{Bayes factor}.  
+
+*  Typically $\pi(M_2) = \pi(M_1)$, so the ratio of the posterior probabilities is the Bayes factor.
+*  The Bayes factor looks like a likelihood ratio.  However, the difference is that $\theta$ has been integrated out in both the numerator and denominator, so we have the marginal distribution of the data given the model. 
+
+
+## Bayesian Testing
+
+*  If $f(\bs{x} | M_2 ) > f(\bs{x} | M_1 )$ or $\frac{f(\bs{x} | M_2 )}{f(\bs{x} | M_1 )} > 1$ then we have support for $M_2$ against $M_1$.
+
+
+* Jeffreys, H. (1961 appendix B) suggested the following:
+
+\begin{center}
+\begin{tabular}{cc}
+$BF(M_2; M_1) = B_{21}$ & Evidence against model 1 $(H_0)$ \\ \hline
+1 to 3.2 & Not worth more than a bare mention \\
+3.2 to 10 & Substantial \\
+10 to 100 & Strong \\
+$> 100$ & Decisive \\
+\end{tabular}
+\end{center}
+
+
+
+## Bayesian Interval Estimation
+
+*  Suppose we have data $X_1, \ldots, X_n$ from density $f_X(x | \theta)$ along with a prior distribution $\pi(\theta)$.  As we saw we use Bayes' rule to update our `beliefs' about $\theta$ once we observe the data:
+
+\begin{eqnarray*}
+\pi(\theta | \bs{x}) &=& \frac{ L(\theta | \bs{x}) \pi(\theta)}{\int_{\theta \in \Theta} L(\theta | \bs{x}) \pi(\theta) d\theta} \\ \\
+&=& \frac{ L(\theta |\bs{x}) \pi(\theta)}{m(\bs{x})}
+\end{eqnarray*}
+
+*  So we have the whole distribution for
+$$\pi(\theta |\bs{x})$$
+
+*  This is different than the frequentist approach where find an estimator for $\theta$, say $\hat{\theta}$ and then try to determine the distribution of $\hat{\theta}$. 
+
+## Bayesian Interval Estimation
+
+
+*  To obtain an interval we simply consider:
+
+$$P{\pi(\theta|x)}(C) = \int_C \pi(\theta | \bs{x}) d \theta = 1-\alpha$$
+
+
+*  Be careful.  We are using $\alpha$ quite generically.  Recall that $\alpha$ does have a formal definition: The probability of a Type-I error.  This is based on repeated sampling.  For the Bayesian case we only think about one data set an infinite number of possible data sets.   
+
+
+*  There are quite a lot of choices for $C$.  We will consider the 3 most common.
+
+## Bayesian Interval Estimation
+
+
+*  Equal tailed:
+
+$$ \int_{-\infty}^{\theta_L} \pi(\theta | \bs{x}) d \theta = \alpha/2, \ \ \ \int_{\theta_U}^{\infty} \pi(\theta | \bs{x}) d \theta = \alpha/2$$
+
+*  Smallest length: We can choose $C$ to minimize $\theta_U - \theta_L$.
+
+## Bayesian Interval Estimation
+
+*  Highest posterior density region (HPD):  We define $C$ to be that set with posterior probability $1-\alpha$ which satisfies the criterion:
+
+$$\theta_1 \in C \ \ \ \textrm{and} \ \ \ \pi(\theta_2 | \bs{x}) > \pi(\theta_1 |\bs{x}) \Rightarrow \theta_2 \in C$$
+
+$C$ contains the values of $\theta$ which have the highest posterior density values, so that we can determine HPD regions as the set:
+
+
+$$C = \{\theta \in \Theta:  \pi(\theta | \bs{x}) > c_\alpha\}$$
+
+* If the posterior is unimodal then this will be the smallest length interval! 
+
+## Bayesian Interval Estimation
+
+**Example:** $X_1, \ldots, X_n \iid \textrm{exponential}(1/\theta)$ and $\pi(\theta) = \theta exp(-\theta)$.
+
+\begin{eqnarray*}
+\pi(\theta | \bs{x}) &\propto& \left\{ \prod_{i=1}^n \theta exp(-x_i \theta) \right\} \theta exp(-\theta) \\
+&& = \theta^n exp(-\sum x_i \theta) \theta exp(-\theta)  \\
+&& = \theta^{n+1} exp(- \theta (n\bar{x} + 1)) \\
+&& = \theta^{n+2-1} exp(- \theta (n\bar{x} + 1)) \\
+\end{eqnarray*}
+
+$$[\theta | \bs{x}] \sim gamma\left(n+2, \frac{1}{n\bar{x} + 1} \right)$$
+
+
+## Bayesian Interval Estimation
+
+* Let's plot the density for $n=10$ and $\bar{x}=1.247$.
+
+```{r, eval=FALSE}
+n=10; x.bar <- 1.247
+a.star <- n+2; b.star <- n*x.bar+1
+theta <- seq(0, 2, by=0.01)
+plot(theta, dgamma(theta, a.star, 
+                   scale=1/b.star), type="l", lwd=3)
+```
+
+## Bayesian Interval Estimation
+
+```{r, echo=FALSE}
+n=10; x.bar <- 1.247
+a.star <- n+2; b.star <- n*x.bar+1
+theta <- seq(0, 2, by=0.01)
+plot(theta, dgamma(theta, a.star, 
+                   scale=1/b.star), type="l", lwd=3)
+```
+
+## Bayesian Interval Estimation
+
+* An equal-tailed 95\% interval is given by $[\theta_l, \theta_u]$:
+
+\begin{eqnarray*}
+\int_0^{\theta_l} \pi(\theta|\bs{x}) &=& 0.025 \\
+F_{[\theta|\bs{x}]}(\theta_l) &=& 0.025
+\end{eqnarray*}
+
+\begin{eqnarray*}
+\int_0^{\theta_u} \pi(\theta|\bs{x}) &=& 1-0.025 = 0.975\\
+F_{[\theta|\bs{x}]}(\theta_u) &=& 0.975
+\end{eqnarray*}
+
+## Bayesian Interval Estimation
+
+```{r}
+theta.L <- qgamma(0.025,  a.star, scale=1/b.star)
+theta.U <- qgamma(0.975,  a.star, scale=1/b.star)
+
+c(theta.L, theta.U)
+```
+
+```{r, eval=FALSE}
+plot(theta, dgamma(theta, a.star, scale=1/b.star), type="l", lwd=3)
+abline(v=c(theta.L, theta.U), lwd=3, col="red")
+```
+
+## Bayesian Interval Estimation
+
+```{r, echo=FALSE}
+plot(theta, dgamma(theta, a.star, scale=1/b.star), type="l", lwd=3)
+abline(v=c(theta.L, theta.U), lwd=3, col="red")
+```
+
+## Bayesian Interval Estimation
+
+*  If we only have tables in front of us, we can relate the gamma distribution to a $\chi^2$ distribution as was discussed in tutorial the other week.
+
+*  If $[\theta | \bs{x}] \sim \textrm{gamma} (a^*, b^*)$ then
+
+\begin{eqnarray*}
+\left[\frac{2 \theta}{b^*} \bigg\vert \bs{x} \right] &\sim&  \textrm{gamma} (a^*, 2) \\
+ &\sim&  \chi^2_{p=2a^*} \\
+\end{eqnarray*}
+
+## Bayesian Interval Estimation
+
+*  Using probabilities to the left.  $p = 2a^* = 2n + 4$. 
+
+\begin{eqnarray*}
+\left[ \chi^2_{0.025,p} \leq \right. &\frac{2 \theta}{b^*} \bigg\vert \bs{x} & \left. \leq  \chi^2_{0.975,p} \right] \\
+\left[ \chi^2_{0.025,p} \leq \right. &2 \theta (n\bar{x} + 1) \vert \bs{x} & \left. \leq  \chi^2_{0.975,p} \right] \\
+\left[ \frac{\chi^2_{0.025,p}}{2 (n\bar{x} + 1)} \leq \right. & \theta \vert \bs{x} & \left. \leq  \frac{\chi^2_{0.975,p}}{2 (n\bar{x} + 1)} \right] \\
+\end{eqnarray*}
+
+\small
+
+```{r}
+p <- 2*n + 4
+theta.L <- qchisq(0.025, p)/(2*(n*x.bar+1))
+theta.U <- qchisq(0.975, p)/(2*(n*x.bar+1))
+
+c(theta.L, theta.U) 
+```
+
+## Bayesian Interval Estimation
+
+* Is the interval $[0.4603, 1.4612]$ a HPD (highest posterior density) interval (the posterior is unimodal)?
+
+* Recall:
+
+$$\theta_1 \in C \ \ \ \textrm{and} \ \ \ \pi(\theta_2 | \bs{x}) > \pi(\theta_1 |\bs{x}) \Rightarrow \theta_2 \in C$$
+
+*  Let's see the density with the equal-tailed interval again.
+
+## Bayesian Interval Estimation
+
+```{r, echo=FALSE}
+plot(theta, dgamma(theta, a.star, scale=1/b.star), type="l", lwd=3)
+abline(v=c(theta.L, theta.U), lwd=3, col="red")
+```
+
+## Bayesian Interval Estimation
+
+*  Note that the density seems to be higher for $\theta = 0.40$ than $\theta=1.4612$:
+
+```{r}
+dgamma(0.4, a.star, scale=1/b.star)
+dgamma(1.4612, a.star, scale=1/b.star)
+```
+
+* So the equal-tailed interval is not a HPD interval!
+
+## Bayesian Interval Estimation
+
+*  To get the HPD interval we take horizontal slices across the density till we get the appropriate probability.
+
+\footnotesize
+
+```{r, eval=FALSE}
+plot(theta, dgamma(theta, a.star, scale=1/b.star), type="l", lwd=3)
+abline(h=1.25, lwd=3, col="blue")
+
+##
+theta <- seq(0, 2, by=0.01)
+dens <- dgamma(theta, a.star, scale=1/b.star)
+
+##
+hpd.cut <- 1.25
+theta.L <- min(theta[dens>=hpd.cut])
+theta.U <- max(theta[dens>=hpd.cut])
+abline(v=c(theta.L, theta.U), lwd=3, col="blue")
+
+## interval probability
+pgamma(theta.U, a.star, scale=1/b.star) - 
+  pgamma(theta.L, a.star, scale=1/b.star)
+```
+
+## Bayesian Interval Estimation
+
+```{r, echo=FALSE}
+plot(theta, dgamma(theta, a.star, scale=1/b.star), type="l", lwd=3)
+abline(h=1.25, lwd=3, col="blue")
+
+##
+theta <- seq(0, 2, by=0.01)
+dens <- dgamma(theta, a.star, scale=1/b.star)
+
+##
+hpd.cut <- 1.25
+theta.L <- min(theta[dens>=hpd.cut])
+theta.U <- max(theta[dens>=hpd.cut])
+abline(v=c(theta.L, theta.U), lwd=3, col="blue")
+
+## interval probability
+pgamma(theta.U, a.star, scale=1/b.star) - pgamma(theta.L, a.star, scale=1/b.star)
+```
+
+## Bayesian Interval Estimation
+
+\small
+
+```{r}
+hpd.cut <- sort(seq(0.1, 1.25, by=0.0001), decreasing =TRUE)
+c <- 1
+cred.int <- 0.5063
+
+while(cred.int<0.95){
+theta.L <- min(theta[dens>=hpd.cut[c]])
+theta.U <- max(theta[dens>=hpd.cut[c]])
+
+## interval probability
+cred.int <- pgamma(theta.U, a.star, scale=1/b.star) - 
+  pgamma(theta.L, a.star, scale=1/b.star)
+c <- c+1
+}
+
+HPD <- c(theta.L,theta.U)
+HPD
+```
+
+## Bayesian Interval Estimation
+
+```{r, echo=FALSE}
+plot(theta, dgamma(theta, a.star, scale=1/b.star), type="l", lwd=3)
+abline(v=c(0.4603, 1.4612), lwd=3, col="red")
+abline(v=HPD, lwd=3, col="blue")
+abline(h=hpd.cut[c-1], lwd=3, col="blue")
+```
+
+## Bayesian Interval Estimation
+
+* Let's check the length of each interval:
+
+    +  equal-tailed:  $1.46 - 0.460  =  1.00$
+    +  HPD:  $1.41 - 0.42 = 0.99$
+    
+*  HPD is the shorter interval, but not by much.
+
+
+## Bayesian Inference: Properties
+
+**Definition 7.1:** A statistic $T(\bs{X})$ is **sufficient** for $\bs{\theta}$ \textit{if and only if} the posterior distribution of $\bs{\theta}$ given $\bs{X}$ is the same as the posterior distribution of $\bs{\theta}$ given $T(\bs{X})$.
+
+**Proof:** Note that Definitions 2.5 and 7.1 are the same!    
+
+Suppose that $T(\bs{X})$ satisfies Definition 2.5. Then:
+
+$$f(\bs{x}; \bs{\theta}) = g(\bs{x} | t , \bs{\theta}) h(t | \bs{\theta}) =  g(\bs{x} | t) h(t | \bs{\theta})$$
+
+* The posterior is
+
+\begin{eqnarray*}
+p(\bs{\theta}| \bs{x}) &\propto&  f(\bs{x}; \bs{\theta}) p(\bs{\theta}) \\
+&\propto&  h(t | \bs{\theta}) p(\bs{\theta}) \\
+&\propto&   p(\bs{\theta}| t)
+\end{eqnarray*}
+
+##
+
+* Now assume that $T(\bs{X})$ satisfies Definition 7.1.
+
+\begin{eqnarray*}
+f(\bs{x}| \bs{\theta}) &=& \frac{p(\bs{\theta} | \bs{x}) h(\bs{x})}{p(\bs{\theta})} \\
+&=& \frac{p(\bs{\theta} | t) h(\bs{x})}{p(\bs{\theta})} \\
+&=& K_1[t | \bs{\theta}] \ K_2[\bs{x}] 
+\end{eqnarray*}
+
+* From the **factorization theorem**, it follows that $T(\bs{X})$ is a sufficient statistic.
+
+## Bayesian Inference: Asymptotics - Rough Idea
+
+* Suppose we have $y_1, \ldots, y_n \sim p(y|\theta)$.
+
+* Let's consider the posterior distribution:
+
+\begin{eqnarray*}
+p(\theta | \bs{y}) &\propto& p(\bs{y}|\theta) \ p(\theta)  \\
+&& = exp\left[log \ p(\bs{y}|\theta) \right]  exp\left[log \ p(\theta) \right]
+\end{eqnarray*}
+
+* As $n \rightarrow \infty$ the posterior is dominated by the likelihood.   
+
+
+$$p(\theta | \bs{y}) \propto exp\left[log \ p(\bs{y}|\theta) \right]$$
+
+##
+
+* Thus to an approximation we have the following:
+
+\begin{eqnarray*}
+p(\theta | \bs{y}) &\propto& \propto exp\left[log \ p(\bs{y}|\theta) \right] \\
+&\propto& exp\left[ \ell(\theta) \right] \\
+&\propto& exp\left[\ell(\hat{\theta}) + (\theta - \hat{\theta}) \ell'(\hat{\theta}) + \frac{1}{2}(\theta - \hat{\theta})^2 \ell''(\hat{\theta})       \right] \\
+&\propto&  exp\left[\frac{1}{2}(\theta - \hat{\theta})^2 \ell''(\hat{\theta}) \right] \\
+\end{eqnarray*}
+
+
+
+* Where: $\hat{\theta}$ is the MLE.
+
+* Note: $\ell(\hat{\theta})$ is a constant.
+
+* Note: $\ell'(\hat{\theta}) = 0$
+
+##
+
+\begin{eqnarray*}
+p(\theta | \bs{y}) &\propto& exp \left[ \frac{1}{2}(\theta - \hat{\theta}) \ell''(\hat{\theta}) \right] \\
+&\propto& exp \left[ \frac{1}{2}(\theta - \hat{\theta})^2 \left[- I(\hat{\theta}) \right] \right] \\
+&\propto& exp \left[ - \frac{1}{2 \left[ I(\hat{\theta}) \right]^{-1}}(\theta - \hat{\theta})^2  \right] 
+\end{eqnarray*}
+
+* We see that this expression is proportional to a normal distribution.  So we have:
+
+$$ p(\theta | \bs{y}) \approx \textrm{normal}\left( \hat{\theta}, \left[I(\hat{\theta}) \right]^{-1} \right)$$
+

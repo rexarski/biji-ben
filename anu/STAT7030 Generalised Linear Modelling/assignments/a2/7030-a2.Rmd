@@ -1,0 +1,409 @@
+---
+title: "STAT7030 Assignment 2"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.path='Figs/', dev = 'pdf', 
+                      # out.height='500px', out.width='500px',
+                      fig.width=6, fig.height=6, dpi=200,
+                      echo=TRUE, warning=FALSE, message=FALSE, cache=T)
+```
+
+## Question 1
+
+### (a)
+Firstly we fit the model from the given webpage and generate some basic diagnostic plots as requested:
+
+```{r q1a, echo=FALSE}
+set.seed(7030)
+
+# ------------------------------- Q1 -------------------------------
+dat <- read.table("Earinf.txt",header=T)
+
+# ------------------------------- (a) -------------------------------
+inf.glm <- glm(Infections~Swimmer*Location*Age*Sex,data=dat,family=poisson)
+par(mfrow=c(2,2))
+plot(inf.glm,which=c(1,2,4,5))
+par(mfrow=c(1,1))
+```
+
+- The residuals vs fitted plot shows that the data has a clear overdispersion since the spread of data points are not constant.
+- The normal q-q plot demonstrates the sample is not a normal distribution, but this should not be a serious concern since we are fitting a generalized linear model here. 
+- In Cook’s distance plot, all of the values of Cook’s distances are not large (not exceeding $0.30$), and no relatively large value detected as well. So, there is no potential influential points shown in Cook’s distance plot. 
+- Also, no potential high-leverage points observed in Residuals vs Leverage plot since no points go beyond the Cook’s distance line.
+
+### (b)
+```{r q1b,echo=FALSE}
+# ------------------------------- (b) -------------------------------
+anova(inf.glm,test="Chi")
+```
+
+According to the ANOVA table output, we can calculate the dispersion $\phi=703.72/263=2.67574$, while the rule of thumb for over/underdispersion is $(0.7383876,1.2616124)$. Obviously, we have overdispersion.
+
+```{r,echo=TRUE}
+# rule of thumb for overdispersion
+inf.glm$deviance/inf.glm$df.residual
+c(1-3*sqrt(2/inf.glm$df.residual),1+3*sqrt(2/inf.glm$df.residual))
+```
+
+If we want to conduct a formal test for over/underdispersion,
+
+\[\begin{split}
+H_0: \phi=1 \text{ vs } H_a: \phi&\not=1.
+\end{split}\]
+
+```{r,echo=TRUE}
+# formal test for over/underdispersion
+inf.glm$deviance/summary(inf.glm)$dispersion # where summary(inf.glm)$dispersion==1
+c(qchisq(0.025, inf.glm$df.residual),qchisq(0.975, inf.glm$df.residual))
+```
+
+Using formal test for over/under-dispersion, as the observed deviance $703.7191$ lies outside the interval $(219.9720,309.8145)$, we would reject the null hypothesis, and conclude that there is evidence of significant over-dispersion.
+
+### (c)
+```{r,echo=FALSE}
+# ------------------------------- (c) -------------------------------
+```
+
+```{r}
+est.dispersion <- inf.glm$deviance/inf.glm$df.residual
+```
+
+By part (b), we believe there is evidence of significant overdispersion. Therefore, some modifications can be applied so that the dispersion is allowed to be larger than $1$. The detailed modifcation is to replace `dispersion` parameter in `anova()` command with the devaince of our model divided by the degrees of freedom of the model residuals.
+
+```{r q1c,echo=FALSE}
+anova(inf.glm,dispersion=est.dispersion,test="Chisq")
+```
+
+We can have the following finds from the Analysis of Deviance table above:
+
+- On one hand, the table shows very small p-values for `Swimmer` term and `Location` term and both are smaller than $0.05$, so we consider that the refined model can contain these two terms. For the interaction terms, the p-value for `Location*Sex` is smaller than $0.05$, but the variable `Sex` is not significant in the model (p-value = $0.6262242 < 0.05$), we do not contain this interaction term in the refined mode. For other variables and interactions, the p-values suggest their effect might be trivial as well. By the principal of parsimony, we could start from a simple model, i.e. with variables `Swimmer` and `Location` only. 
+
+To be specific, our refined model is:
+
+\[\log(\text{Infections}) = \beta_0 + \beta_1\cdot\text{Swimmer} + \beta_2\cdot\text{Location}\]
+
+```{r,echo=FALSE}
+c(703.72/263,1+3*sqrt(2/263))
+```
+
+- On the other hand, even after our modification, the problem of overdispersion still exists. The real problem (also for other Poisson regression) is excess zeros. So we can do the Zero-Inflation test using `testZeroInflation()` function in `DHARMa` package.
+
+```{r zero-inf,echo=FALSE}
+library(DHARMa)
+testZeroInflation(simulateResiduals(inf.glm,refit=T),plot=F)
+```
+
+The test result indicates that zero inflation does exist for our case, and this could be problematic as we are going to insist on fitting a GLM with poisson model. One possible solution is to fit other models such as negative binomial model or quasi-poisson. But nevertheless, this definitely needs further investigation.
+
+### (d)
+```{r q1d,echo=FALSE}
+# ------------------------------- (d) -------------------------------
+inf.glm2 <- glm(Infections~Swimmer+Location,data=dat,family=poisson(link=sqrt))
+```
+
+```{r,echo=FALSE}
+unique(inf.glm2$weights)
+```
+
+After fitting the model with refined model and new link function (`sqrt()`), the fitted variance weights are the same, which are all $4$. This makes sense, as mentioned in the *BRICK*,
+
+\[w_i^2=\frac{1}{V(\mu_i)g'(\mu_i)^2}=\frac1{\mu\cdot\left(\frac{1}{\mu\cdot\ln{e}}\right)^2}=\mu\]
+
+which is constant, so that `weights=` option is not required here.
+
+### (e)
+```{r q1e,echo=FALSE}
+# ------------------------------- (e) -------------------------------
+std.residuals <- function(model, type="deviance"){
+    # Function to standardise residuals from a GLM model object
+    # Produces standardised deviance residuals, unless type="pearson" requested
+    std.error <- sqrt(summary(model)$dispersion*(1-influence(model)$hat))
+    std.res <- residuals(model)/std.error
+    if (type=="pearson") std.res <- residuals(model,"pearson")/std.error
+    std.res
+}
+par(mfrow=c(2,2))
+plot(inf.glm2$linear.predictors,std.residuals(inf.glm2),type="n",
+     xlab="Linear Predictors", ylab="Studentised Deviance Residuals")
+abline(h=c(qt(0.025,inf.glm2$df.residual),0,qt(0.975,inf.glm2$df.residual)),lty=2)
+title("Standardised Residuals vs Fitted Values",
+      sub="Ear Infection data sqrt Poisson GLM: Infections~Swimmer+Location")
+points(inf.glm2$linear.predictors[dat$Swimmer=="Freq"&dat$Location=="Beach"],
+       std.residuals(inf.glm2)[dat$Swimmer=="Freq"&dat$Location=="Beach"])
+points(inf.glm2$linear.predictors[dat$Swimmer=="Occas"&dat$Location=="Beach"],
+       std.residuals(inf.glm2)[dat$Swimmer=="Occas"&dat$Location=="Beach"])
+points(inf.glm2$linear.predictors[dat$Swimmer=="Freq"&dat$Location=="NonBeach"],
+       std.residuals(inf.glm2)[dat$Swimmer=="Freq"&dat$Location=="NonBeach"])
+points(inf.glm2$linear.predictors[dat$Swimmer=="Occas"&dat$Location=="NonBeach"],
+       std.residuals(inf.glm2)[dat$Swimmer=="Occas"&dat$Location=="NonBeach"])
+qqnorm(std.residuals(inf.glm2), sub="Ear Infection data sqrt Poisson GLM: Infections~Swimmer+Location")
+qqline(std.residuals(inf.glm2),lty=2)
+abline(0,1)
+plot(inf.glm2,which=c(4,5))
+par(mfrow=c(1,1))
+
+# try(glm.diag.plot())
+```
+
+- The standardised residuals vs linear predictors actually tells nothing about the situation of overdispersion. But it indeed highlights the suspicion of overdispersion as we are familiar that residuals associated with fitted values less than 2 might cause distortion in plot. In this plot, all of our fitted values are quite small. Recall the Zero-Inflation test we conducted previously, it confirms our concern. We can do some analytic test to check it really holds an overdispersion. In fact, the refined model still has the problem of overdispersion as we can see the dispersion is beyond the critical range $767.0611>332.5759$.
+
+```{r,echo=FALSE}
+inf.glm2$deviance
+c(qchisq(0.025,inf.glm2$df.residual),qchisq(0.975,inf.glm2$df.residual))
+```
+
+- The modified normal q-q plot indicates some deviation from the assumption of normality, but this is totally okay.
+- The Cook's distance plot shows that the 31st, 47th, 249th data points have relative large values, and we may consider them as potential influential points.
+- The standardised residuals vs leverage plot raises no questions as well.
+
+Recall that we agree upon the existence of overdispersion, so naturally we do the transformation for `dispersion=` in `anova()` to display interpretable p-values. A summary table is also generated.
+
+```{r,echo=FALSE}
+(est.dispersion2 <- inf.glm2$deviance/inf.glm2$df.residual)
+anova(inf.glm2,dispersion=est.dispersion2,test="Chisq")
+```
+
+```{r,echo=FALSE}
+summary(inf.glm2,dispersion=inf.glm2$deviance/inf.glm2$df.residual)
+```
+
+By the R output above, we claim that both variables `Swimmer` and `Location` are significant. So this model seems adequate as a fitting model, but still we cannot rule out the fact that this Poisson GLM model is full of problems like zero-inflation, etc.
+
+### (f)
+```{r q1f,echo=FALSE}
+# ------------------------------- (f) -------------------------------
+Xnew=data.frame(Swimmer=c("Freq","Freq","Occas","Occas"),
+                Location=c("Beach","NonBeach","Beach","NonBeach"))
+temp <- predict(inf.glm2,newdata=Xnew,type="link",se.fit=T)
+add.ci <- function(object,fit.se,conf.level=0.95){
+    fit <- fit.se$fit
+    se.fit <- fit.se$se.fit
+    residual.scale <- fit.se$residual.scale
+    pi.se <- sqrt(residual.scale^2+se.fit^2) 
+    tquantile <- qt(1 -(1-conf.level)/2, object$df.residual)
+    ci.fit <- cbind(lower=fit-tquantile*se.fit,upper=fit+tquantile*se.fit)
+    pi.fit <- cbind(lower=fit-tquantile*pi.se,upper=fit+tquantile*pi.se)
+    list(fit=fit,se.fit=se.fit,residual.scale=residual.scale,ci.fit=ci.fit,pi.fit =pi.fit)
+}
+```
+
+Since we have two variables `Swimmer` and `Location`, and each of them has two unique values, so in all we have 4 combinations. We are going to print out the 95% confidence interval and 95% prediction interval in the following order:
+
+- `Freq` and `Beach`;
+- `Freq` and `NonBeach`;
+- `Occas` and `Beach`;
+- `Occas` and `NonBeach`.
+
+The 95% confidence interval is
+
+```{r,echo=FALSE}
+temp <- add.ci(inf.glm2,temp)
+(CI <- temp$ci.fit^2)
+```
+
+The 95% prediction interval is
+
+```{r,echo=FALSE}
+temp$pi.fit <- ifelse(temp$pi.fit<0,0,temp$pi.fit)
+(PI <- temp$pi.fit^2)
+```
+
+Note that, for PI, we set the lower bound of original PI to 0 if they are below 0. Since a negative value after taking power of 2 would result in a positive value, thus those small positive values near 0 would be left out of PI, e.g. if $(-0.5,0.2)$ takes square it becomes $(0.25,0.04)$ which does not make sense. So we have to compromise a little bit.
+
+According to the CI and PI above:
+
+- The safest situtaion would be a **frequent swimmer swimming near beach**.
+- The water quality at **non-beach** (rivers, etc.) places needs to be improved is , basically rivers.
+- The salt in sea water kills microorganisms and bacteria, so swimming in sea is generally safer than in river.
+- For frequent swimmers, they could gradually gain some immunity against those infections through more exposure under such circumstances. Additionally, frequent swimmers are more professional in the sense of protection, so they probably use earplugs. However, an occasional swimmer could consider that as an extra cost, so they are more likely to catch an ear infection.
+
+## Question 2
+
+### (a)
+```{r q2a,echo=FALSE}
+rm(list=ls())
+# ------------------------------- Q2 -------------------------------
+# ------------------------------- (a) -------------------------------
+titanic <- read.csv("titanic_combined2017.csv",header=T)
+which(titanic$Pclass==1&titanic$Class!="1st Class")
+which(titanic$Pclass==2&titanic$Class!="2nd Class")
+which(titanic$Pclass==3&titanic$Class!="3rd Class")
+```
+
+The passenger with mismatched class information is Mr Alfred Nourney. He boarded the Titanic at Cherbourg as a second class passenger but he was dissatisfied with the second class cabin. Therefore, he went to purser and asked to be transferred to first class. He was then assigned cabin D-38 (for about £38 surcharge). Thus it explains the discrepancy.
+
+### (b)
+
+Since we are going to fit the data into a binomial response GLM, we pick the binomial `family` and `logit` link function.
+
+For the variable selection, we start from 3 basic variables which are `Age`, `Sex` and `Class`. We beleive three of these quite accurately describes the feature of an individual on Titanic. Furthermore, we select `SibSp`, `ParCh` and `Fare` out of the remaining variables. `SibSp` and `ParCh` reflect an individual's family status on the boat, and `Fare` is a good complementary variable for `Class` although we highly suspects it might be overshadowed by `Class`.
+
+By far, we have a starting model with `Survived` as response (actually as link function) and `Age`, `Sex`, `Class` and no interactions as predictors. Also, we have full model with the same response but `Age`, `Sex`, `Class`, `SibSp`, `ParCh`, `Fare` and their mutual interactions as predictors. Note that the "full" model looks "too full" because we know that higher order interactions probably will not provide any useful information thus being redundant. But we are going to treat it as a "draft" and just leave the model to automatic model selection functions anyway.
+
+We use `step()` function, `AIC` as criterion, to do backward elimination from full model to reduced model. To save time, we also included some "not-so-full" full model to exclude those meaningless interactions. 
+
+The following is the model we manually picked out from (automatic) model selection step and we are going to further investigate its Analysis of Deviance table.
+
+Now the candidate model contains `Age`, `Sex`, `Class`, `SibSp`, `Age:Sex` and `Sex:Class`.
+
+```{r q2b,echo=FALSE}
+# ------------------------------- (b) -------------------------------
+train <- titanic[titanic$Kaggle_Set=="train",]
+test <- titanic[titanic$Kaggle_Set=="test",]
+
+library(MASS)
+
+ti.red <- glm(Survived~Age+factor(Sex)+factor(Class),
+              family=binomial(link=logit),data=train)
+ti.full1 <- glm(Survived~Age+factor(Sex)+factor(Class)+SibSp+ParCh+Fare,
+                family=binomial(link=logit),data=train)
+ti.full2 <- glm(Survived~Age*factor(Sex)*factor(Class)+Age*SibSp+Age*ParCh+Fare,
+                family=binomial(link=logit),data=train)
+ti.full3 <- glm(Survived~Age*factor(Sex)*factor(Class)*SibSp*ParCh*Fare,
+                family=binomial(link=logit),data=train)
+
+ti.select1 <- step(ti.full1,scope=ti.red,trace=F,direction="both")
+ti.select2 <- step(ti.full2,scope=ti.red,trace=F,direction="both")
+ti.select3 <- step(ti.full3,scope=ti.red,trace=F,direction="both")
+# anova(ti.red,ti.select1,ti.select2,ti.select3,test="Chisq")
+# anova(ti.select1,test="Chisq")
+# anova(ti.select2,test="Chisq")
+# anova(ti.select3,test="Chisq")
+ti.glm3 <- glm(Survived~Age+factor(Sex)+factor(Class)+SibSp+
+                   Age:factor(Sex)+factor(Sex):factor(Class),
+               family=binomial(link=logit),data=train)
+anova(ti.glm3,test="Chisq")
+```
+
+We also notice that the variable `ParCh` and `Fare` have already been erased and p-values for all terms except `Age` are pretty satisfying. Then we decide to reorder the terms so that `Age` can be significant. After several trials, we have finally reached a all-around candidate model:
+
+```{r,echo=FALSE}
+ti.glm4 <- glm(Survived~factor(Class)+factor(Sex)+SibSp+Age+
+                   factor(Sex):factor(Class)+Age:factor(Sex),
+               family=binomial(link=logit),data=train)
+anova(ti.glm4,test="Chisq")
+```
+
+So now the model is
+
+\[\text{logit(Survived)}=\beta_0+\beta_1\text{Class}+\beta_2\text{Sex}+
+\beta_3\text{SibSp}+\beta_4\text{Age}+\beta_5\text{Class}\cdot\text{Sex}+
+\beta_6\text{Sex}\cdot\text{Age}.\]
+
+and all variables `SibSp` (from Kaggle), `Class:Sex` (from original variables), `Sex:Age` (from original variables) are significant addition to the model.
+
+### (c)
+```{r q2c-diagnostics,echo=FALSE}
+# ------------------------------- (c) -------------------------------
+summary(ti.glm4)
+```
+
+Now we take a look at the summary table of our candidate model, and p-values of `2nd Class` and `2nd Class:male` are greater than $0.05$. Just keep in mind that there might be not such a huge difference between 1st and 2nd Class if holding other variables constant. Similarly, the interaction of 2nd Class and Male is not significant either. But generally the model here is legit, as we do emphasize the significant difference in survival status of the 3rd Class.
+
+Then a series of diagnostic plots are produced below.
+
+```{r,echo=FALSE}
+par(mfrow=c(2,2))
+library(arm)
+binnedplot(predict(ti.glm4),resid(ti.glm4))
+plot(ti.glm4,which=c(2,4,5))
+par(mfrow=c(1,1))
+```
+
+- In binned residual plot, we notice that some data points lie outside of the 95% confidence interval, but generally they are not far away from the shaded boundaries which can be considered as 2.5% and 97.5% quantiles. A further investigation is needed to determine if they are outliers. Also, a slight trend as a whole can be concluded from the plot that negative average residuals at the mid-lower end, and positive average residuals at the higher end.
+- The normal q-q plot suggests no problem.
+- The Cook's distance plot indicates the 298th data point seems to have a relatively large value in Cook's distance, it is a potential influential data point.
+- In residuals vs leverage plot, seems that 298th data does not seem to be high leverage point again. And nothing particular worth paying attention to.
+
+In conclusion, our candidate model has no big problems and we should stick with it.
+
+### (d)
+The Analysis of Deviance table was generated in part (b) already.
+
+There is no overdispersion for ungrouped data. The overdispersion is not possible if total number of groups is 1. If the response only takes valeu 0 and 1 (which is, in this case), then it must be distributed as Bernoulli($p_i$) and its variance is $p_i(1-p_i)$. Therefore, we should assume the `scale=1`, and not discuss overdispersion here at all.
+
+### (e)
+
+The fitted value of our model should range from 0 to 1 and means the probability of having survived which indicates the larger the fitted value is the more likely the passenger will have survived. 
+
+By comparing the numbers of predicted survivors and non-survivors with the observed true numbers of survival status, we shall have the *sensitivity, specificity* and *accuracy* of our candidate model with training data.
+
+```{r q2e,echo=FALSE}
+simple.cv <- function(model,mode) {
+ pred.surv <- logit(model$fitted.values)
+ pred.surv <- ifelse(pred.surv>0,1,0)
+ sens.train <- sum(pred.surv==1 & train$Survived==1)/sum(train$Survived==1)
+ spec.train <- sum(pred.surv==0 & train$Survived==0)/sum(train$Survived==0)
+ accu.train <- mean(pred.surv==train$Survived)
+ 
+ pred.surv2 <- logit(predict(model,test,type="response"))
+ pred.surv2 <- ifelse(pred.surv2>0,1,0)
+ sens.test <- sum(pred.surv2==1 & test$Survived==1)/sum(test$Survived==1)
+ spec.test <- sum(pred.surv2==0 & test$Survived==0)/sum(test$Survived==0)
+ accu.test <- mean(pred.surv2==test$Survived)
+ 
+ if (mode=="test") {
+     final <- cbind(c(sens.train,spec.train,accu.train),
+                    c(sens.test,spec.test,accu.test))
+     colnames(final) <- c("train","test")
+ } else if (mode=="train") {
+     final <- cbind(c(sens.train,spec.train,accu.train))
+     colnames(final) <- c("train")
+ }
+ rownames(final) <- c("sensitivity","specificity","accuracy")
+ return(final)
+}
+
+simple.cv(ti.glm4,"train")
+```
+
+### (f)
+
+The three prediction measurements are included in the table below. Also, the values of those from training data are also included for a direct comparison.
+
+```{r q2f,echo=FALSE}
+simple.cv(ti.glm4,"test")
+```
+
+All the *sensitivity*, *specificity* and *accuracy* in test data decrease a little bit in training data which is somehow inevitable. This is probably by chance, if we are really "unlucky" or "lucky" enough, the testing accuracy should fluctuate over the accuracy of training data. Meanwhile the decrease is not large and we believe the model is generally consistent. 
+
+Our model seems to be good at true negative rate, bad at true positive rate. This can be explained that it probably found the pattern (or deterministic cause) that a passenger did not survive, but failed on the other hand. Maybe the key features to determine the survivor is way too complicated.
+
+Addtionally, if we really want to see the "prediction" power of our GLM in training data, we can do a handy 10-fold cross validation.
+
+```{r cv}
+library(boot)
+cost_classification <- function(r, pi) mean(abs(r-pi) > 0.5)
+cv.res <- cv.glm(data=train,
+                 glmfit=glm(Survived~factor(Class)+factor(Sex)+SibSp+Age+
+                                factor(Sex):factor(Class)+Age:factor(Sex),
+                            family=binomial(link=logit),data=titanic),
+                 K=10,cost=cost_classification)
+cv.res$delta[1]
+```
+
+So the overall accuracy should be around 81%.
+
+About the competition: we are not confident enough to win, because the turned-in accuracy of other competitors on Kaggle are extremely high. Although we could not rule out the possibility that those algorithms (mostly machine learning approach) in fact overfit the data. Frankly speaking, a well-tuned machine learning algorithm still can beat our naïve GLM. This is probably due to the limitation of GLM, as a statistical approach, whose main concern is to infer parameters. But for machine learning approach, it focuses on prediction as an ultimate goal.
+
+Finally, we would like to elaborate on our candidate model selection. Without doubt, model selection is important, but the difference bewteen a "very good model" and a "pretty good model" could be trivial. Our model did well as a GLM, but some other models could have very similar performace. But again, the reason why we select ours, it's because we can interpret it with no trouble. The variables we keep in the end, low-order interactions included, are not hard to understand. Admittedly, one model with twenty or more variables might improve the accuracy by one or two percentages, but it **does not make sense** when talking about what these variables mean.
+
+And we would like to end this discussion with a quote from Megan Risdal, whose Titanic prediction project has the highest voting score on Kaggle:
+
+> When I submit the predicted survival data from various models that built in the course to Kaggle competition, i have got approximately the same score. Now I realize that why data scientist used to spend most of their time into feature engineering and exploratory analysis compare to actual model building. Model that we are using is definitely important, however more than that understanding our data and feature engineering is crucial.
+
+By the way, her model prediction accuracy for testing data is also around $0.7727273$.
+
+## References
+
+- Wikipedia page of Zero-Inflation, https://en.wikipedia.org/wiki/Poisson_regression#Overdispersion_and_zero_inflation.
+
+- Mr Alfred Nourney, Encyclopedia Titanic, https://www.encyclopedia-titanica.org/titanic-survivor/alfred-nourney.html.
+
+- Exploring Survival on the Titanic by Megan Risdal, https://www.kaggle.com/mrisdal/exploring-survival-on-the-titanic/notebook.
+
+## Appendix

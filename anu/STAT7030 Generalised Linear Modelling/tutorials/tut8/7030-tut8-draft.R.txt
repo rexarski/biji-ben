@@ -1,0 +1,15 @@
+conc <- c(45,47,46,46,45,43,41,37,34,28,21,16)
+temp <- c(rep("0",4),rep("10",4),rep("20",4))
+wks <- c(rep(c(2,4,6,8),3))
+tz1 <- ifelse(temp=="10",wks,0)
+tz2 <- ifelse(temp=="20",wks,0)
+bean.glm <- glm(conc~wks+tz1+tz2,family=Gamma(link=log))
+summary(bean.glm)$dispersion
+
+betas <- coef(bean.glm)
+betas
+betaT <- as.vector(c(betas[2],betas[2]+betas[3],betas[2]+betas[4]))
+halflife <- log(0.5)*betaT^(-1)
+halflife
+
+bean.glm2 <- glm(factor(conc))

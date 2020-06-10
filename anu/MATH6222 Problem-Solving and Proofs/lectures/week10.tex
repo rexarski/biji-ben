@@ -1,0 +1,251 @@
+\documentclass[a4paper, 11pt, twoside]{article}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\begin{document}
+\title{MATH6222 Week 10 Lecture Notes}
+\author{Rui Qiu}
+\date{2017-05-08}
+
+\maketitle
+
+\section{Monday's Lecture}
+
+$[15]$
+
+\paragraph{Qustion:} What's the largest possible subset of $[15]$ that does not have a triple of consecutive elements.
+
+$\{1, 2, 4, 5, 7, 8, 10, 11, 13, 14\}$
+
+\paragraph{Claim:} $10$ is largest. Need to show $11$ is impossible.\\
+
+If we take a subset of size $11$ one of these 5 groups must have at least $3$ elements.
+
+\paragraph{Pigeonhole Principle:} If more than $k\cdot n$ objects are divided into $n$ classes, then one class must have more than $k$ objects.
+
+\paragraph{Proof:} Suppose every class had $\leq k$ objects. Then the total number of objects would have to be $\leq n\cdot k$.\\
+
+Let's construct a large collection of integer points whose midpoints are not integer points (in $\mathbb{R}^2$).\\
+
+Given $(a,b)$ and $(c,d)$. When is their midpoint an integer point?\\
+
+\[\left(\frac{a+c}{2}, \frac{b+d}{2}\right)\]
+
+get an integer midpoint if $(a,c)$ have same parity, $(b,d)$ have same parity.\\
+
+\paragraph{Claim:} Given $5$ integer points on plane, some pair must have an integer midpoint.\\
+
+Divide integer points into $4$ classes. (even, even), (even, odd), (odd, even), (odd, odd).\\
+
+By PHP, one class must get two points. These two must have integer midpoint.\\
+
+\[8,4,7,5,1,9,3,6,2,10\]
+
+Can I rearrange to get rid of monotone subsequence of length $5$? Yes.
+
+What about $4$?
+
+\[3,2,1,6,5,4,9,8,7,10\]
+
+\paragraph{Theorem (Erdös, 1935):} Given a sequence of $n^2+1$ integers, there exists monotone subsequence of length $n+1$.\\
+
+Let $a_k: k =1, 2, \dots, n^2+1$ be our sequence of integers.
+
+Let $x_k:=$ length of the largest increasing subsequence ends at $a_k$.
+
+Let $y_k:=$ length of the largest decreasing subsequence ends at $a_k$.
+
+\begin{table}[htbp!] 
+	\centering
+	\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
+		\hline
+		$a_k$ & 7 & 4 & 8 & 5 & 1 & 9 & 3 & 6 & 2 & 10 \\
+		\hline
+		$x_k$ & 1 & 1 & 2 & 2 & 1 & 3 & 2 & 3 & 2 & \\
+		\hline
+		$y_k$ & 1 & 2 & 1 & 2 & 3 & 1 & 3 & 2 & 4 & \\
+		\hline
+	\end{tabular}
+\end{table}
+
+What I want to show is that one of these numbers $x_k, y_k$ must reach the value $n+1$.
+
+Suppose this doesn't happen. Then $x_k\leq n, y_k\leq n$, so I have at most $n^2$ possible pairs $(x_k, y_k)$. Since we have $n^2+2$ pairs, some pair must be repeated: $(x_i, y_i)=(x_j, y_j), i < j$. This is impossible.
+
+$a_i, a_j$
+
+$(x_i, y_i)=(x_j, y_j)$.
+
+|||||||||||||||||||||||||
+
+\section{Thursday's Lecture}
+
+Let$\phi(m):=$ number of $[m]$ relatively prime to $m$.
+
+$\phi(6)=2$, $\{1,5\}$
+
+$\phi(7)=6$, $\{1,2,3,4,5,6\}$
+
+\paragraph{Question:} How can we compute $\phi(m)$ efficiently?
+
+\[\phi(20), 20 = 2^2\cdot 5\]
+
+\[\phi(20)=20-\frac{20}{2}-\frac{20}{5}+\frac{20}{10}\]
+
+$10$ was excluded twice as both multiple of $2$ and multiple of $5$, so we have to add it back.
+
+\[m=p_1^{e_1}p_2^{e_2},\ \phi(m)=m-\frac{m}{p_1}-\frac{m}{p_2}+\frac{m}{p_1p_2}\]
+
+\[30=2\cdot 3\cdot 5\]
+
+\[\phi(30)=30-\frac{30}{2}-\frac{30}{3}-\frac{30}{5}+\frac{30}{2\cdot 3} + \frac{30}{2\cdot 5} + \frac{30}{3\cdot 5} - \frac{30}{2\cdot 3\cdot 5}=30-15-10-6+5+3+2-1=8\]\\
+
+Suppose $A_1,\dots A_n$ are subsets of a finite set $U$ (Universe). We want to count the number of elements in $U-(A_1\cup A_2\cup \cdots A_n)$
+
+$U=[m], m =p_1^{e_1}\cdots p_k^{e_k}$.
+
+$A_i=$ integers $\leq m$ that are multiples of $p_i$, $\phi(m)=|U-(A_1\cup \cdots A_k)|$.\\
+
+Example: $|U|-|A_1|-|A_2|-|A_3|+|A_1\cap A_2|+|A_1\cap A_3|+|A_2\cap A_3|-|A_1\cap A_2\cap A_3|$.
+
+\paragraph{Inclusion-Exclusion Formula:} For any subset $S=[n], A_S=\bigcap_{i\in S}A_i$,
+
+\[|U-(A_1\cup\cdots \cup A_n)|=\sum_{S\subseteq [n]}(-1)^{|S|}|A_S|\]
+
+where $A_{S}:=\cap_{i\in S}A_i$.
+
+\paragraph{Proof:} First, consider $x\in U-(A_1\cup \cdots \cup A_n)$, then $x$ contributes one to the total sum because $x\in A_{\varnothing}$.
+
+Second, consider $x\in (A_1\cup\cdots \cup A_n)$.\\
+
+Define $T\subseteq [n]$ by:
+
+\[i\in T \iff x \in A_i\]
+
+Then $x\in A_S\iff S\subseteq T$.
+
+$x$ contributes $+1$ to total sum for each $S\subseteq T$ such that $|S|=$ even 
+
+contributes $-1$ to total sum for each $S\subseteq T$ such that $|S|=$ odd\\
+
+The total contribution of $x$ to sum is zero.\\
+
+If $|$number subsets of $T$ with even size$|$ = $|$number subsets of $T$ with odd size$|$. Construct an explicit bijection.\\
+
+Compute $\phi(m):\ m=p_1^{e_1}\cdots p_k^{e_k},\ U = [m],\ A_i=$ integers $\leq m$ divisible by $p_i\ (i=1,\dots ,k)$.
+
+\[\phi(m)=|U-(A_1\cup\cdots \cup A_k)|\]
+
+\[A_S=\bigcap_{i\in S}A_i=\text{multiples of } \prod_{i\in S}p_i\]
+
+\[A_{\{1,2\}}=A_1\cap A_2 = \text{multiples of } p_1p_2\]
+
+\[\phi(m)=\sum_{S\subseteq[k]}(-1)^{|S|}|A_S|=\sum_{S\subseteq[k]}(-1)^{|S|}\frac{m}{(\prod_{i\in S}p_i)}=m\prod^k_{i=0}\left(1-\frac{1}{p_i}\right)\]
+
+\paragraph{Definition:} A derangement is a permutation with no fixed points.
+
+For 1,2,3: only 2,3,1 and 3,1,2 are derangements.
+
+\paragraph{Question:} How many derangements of $[n]$?
+
+$U=$permutations of $[n]$, $|U|=n!$.
+
+$A_1=$permutations fixing $1$.
+
+$A_2=$permutations fixing $2$.
+
+$\cdots$
+
+$A_n=$permutations fixing $n$.
+
+Number of derangements of $[n]=\sum_{S\subseteq [n]}(-1)^{|S|}(n-|S|)!=\sum^n_{k=0}(-1)^k{n\choose k}(n-k)!=\sum^n_{k=0}(-1)^k\frac{n!}{k!}=n!\sum^n_{k=0}\frac{(-1)^k}{k!}.s$
+
+\section{Friday's Lecture}
+Last time: $A_1,\dots, A_n\subseteq U$
+
+$|U-(A_1\cup\cdots\cup A_n)|=\sum_{S\subseteq [n]}(-1)^{|S|}|A_S|$
+
+\paragraph{Problem:} Roll a die $n$ times. What is the probability that every number 1 to 6 appears at least one?
+
+Counting problem... Then there are $6^n$ total possibilities. The probability of $1$ not appearing is $\left(\frac{5}{6}\right)^n$.
+
+Let $U=\{$ be the all possible rolls of $n$ dice, length in sequences $\{1,2,3,4,5,6\}\}$.
+
+$|U|=6^n$. Let $A_i$ be the set of rolls where $i$ never appears.
+
+\[|U-(A_1\cup A_2\cup A_3\cup A_4\cup A_5\cup A_6)|\]
+
+$|A_i|=S^n, A_{\{1,2\}}, A_S=\bigcap_{i\in S}A_i, |A_S|=(6-|S|)^n$
+
+\[|U-\cdots|=\sum_{S\subseteq [6]}(-1)^{|S|}(6-|S|)^n=\sum^6_{k=0}(-1){6\choose k}(6-k)^n\]
+
+which is $1-6\left(\frac{5}{6}\right)^n+15\left(\frac{4}{6}\right)^n-20\left(\frac{3}{6}\right)^n+15\left(\frac{2}{6}\right)^n-6\left(\frac{1}{6}\right)^n$.\\
+
+And the probability is this number divided by $6^n$.\\
+
+\textbf{(Incorrect) alternative thinking:} We have $6!$ ways to pick out $6$ out of $n$, then we don't care about the rest numbers here. Then we have
+
+\[6!{n \choose 6}6^{n-6}\]
+
+ways. But this has ``double-counting'' issue! Example: $123324415566$.\\
+
+|||||||||||||||||||||||||||||||||||
+
+\begin{table}[htbp!] 
+	\centering
+	\begin{tabular}{|c|c|c|c|c|c|}
+		\hline
+		a & a & b & b & c & d \\
+		\hline
+		f & g & e & e & c & d\\
+		\hline
+		f & g & i & j & l & l\\
+		\hline
+		h & h & i & j & m & m\\
+		\hline
+		n & o & q & q & r & r\\
+		\hline
+		n & o & p & p & s & s\\
+		\hline
+	\end{tabular}
+	\caption{a $6\times 6$ chessboard filled with $2\times 1$ domino tiles} % name of the table, automatically ordered
+\end{table}
+
+\textbf{Observation 1:} at least one of horizontal or vertical lines is not cut.\\
+
+\textbf{Observation 2:} a line is cut an even number of times.
+
+Suppose every line is cut, $10$ lines, it we need at least $2\times 10$ dominos to cut those lines, but we only have $18$. So we are done.\\
+
+\paragraph{A game:} Two choices, can take either Box1 or Box1 and Box2 together. Box2 has \$1,000 dollars. Box1 has a predictor (yesterday) predicted which of these two options you would choose:
+
+\begin{itemize}
+	\item If it thinks you are going to take both boxes, there's nothing in Box1.
+	\item If it thinks you are going to take only Box1, there's \$1,000,000 in Box1.
+\end{itemize}
+
+\begin{table}[htbp!] 
+	\centering
+	\begin{tabular}{|c|c|c|}
+		\hline
+		 & Predictor is right & Predictor is wrong \\
+		\hline
+		Box 1 & 1,000,000 & 0 \\
+		\hline
+		Box 1\&2 & 1,000 & 1,001,000 \\
+		\hline
+	\end{tabular}
+	\caption{A game} % name of the table, automatically ordered
+\end{table}
+
+Predictor is ``always'' right (99.99\% $\simeq$ = 100\%).
+
+expected pay-off of just take Box1: $99.99\%\times 10^6 + .001\%\times 0=999900$
+
+expected pay-off of taking Box1\&2: $99.99\%\times 10^3 + .001\%\times 1001000=1000$\\
+
+\[free will\]
+
+But the prediction was made yesterday, and we know there are money in two boxes, why don't we just take both boxes?
+
+\end{document}
+

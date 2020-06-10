@@ -1,0 +1,203 @@
+> x <- scan("track.txt",what=list("c",0,0,0,0,0,0,0,0))
+Read 55 records
+> country <- x[[1]]
+> m100 <- x[[2]]
+> m200 <- x[[3]]   
+> m400 <- x[[4]]
+> m800 <- x[[5]]
+> m1500 <- x[[6]]
+> m5000 <- x[[7]]
+> m10000 <- x[[8]]
+> mara <- x[[9]]
+> 
+> # attach the country code to each variable
+> attr(m100,"names") <- country
+> attr(m200,"names") <- country
+> attr(m400,"names") <- country
+> attr(m800,"names") <- country
+> attr(m1500,"names") <- country
+> attr(m5000,"names") <- country
+> attr(m10000,"names") <- country
+> attr(mara,"names") <- country
+> allrecords <- cbind(m100,m200,m400,m800,m1500,m5000,m10000,mara)
+> allrecords  # list of records for each country
+     m100  m200  m400 m800 m1500 m5000 m10000   mara
+ARG 10.39 20.81 46.84 1.81  3.70 14.04  29.36 137.72
+AUS 10.31 20.06 44.84 1.74  3.57 13.28  27.66 128.30
+OST 10.44 20.81 46.82 1.79  3.60 13.26  27.72 135.90
+BEL 10.34 20.68 45.04 1.73  3.60 13.22  27.45 129.95
+BER 10.28 20.58 45.91 1.80  3.75 14.68  30.55 146.62
+BRA 10.22 20.43 45.21 1.73  3.66 13.62  28.62 133.13
+BUR 10.64 21.52 48.30 1.80  3.85 14.45  30.28 139.95
+CAN 10.17 20.22 45.68 1.76  3.63 13.55  28.09 130.15
+CHI 10.34 20.80 46.20 1.79  3.71 13.61  29.30 134.03
+PRC 10.51 21.04 47.30 1.81  3.73 13.90  29.13 133.53
+COL 10.43 21.05 46.10 1.82  3.74 13.49  27.88 131.35
+COO 12.18 23.20 52.94 2.02  4.24 16.70  35.38 164.70
+COS 10.94 21.90 48.66 1.87  3.84 14.03  28.81 136.58
+CZE 10.35 20.65 45.64 1.76  3.58 13.42  28.19 134.32
+DEN 10.56 20.52 45.89 1.78  3.61 13.50  28.11 130.78
+DOM 10.14 20.65 46.80 1.82  3.82 14.91  31.45 154.12
+FIN 10.43 20.69 45.49 1.74  3.61 13.27  27.52 130.87
+FRA 10.11 20.38 45.28 1.73  3.57 13.34  27.97 132.30
+GDR 10.12 20.33 44.87 1.73  3.56 13.17  27.42 129.91
+FRG 10.16 20.37 44.50 1.73  3.53 13.21  27.61 132.23
+GBR 10.11 21.21 44.93 1.70  3.51 13.01  27.51 129.13
+GRE 10.22 20.71 46.56 1.78  3.64 14.59  28.45 134.60
+GUA 10.98 21.82 48.40 1.89  3.80 14.16  30.11 139.33
+HUN 10.26 20.62 46.02 1.77  3.62 13.49  28.44 132.58
+IND 10.60 21.42 45.73 1.76  3.73 13.77  28.81 131.98
+ISA 10.59 21.49 47.80 1.84  3.92 14.73  30.79 148.83
+IRE 10.61 20.96 46.30 1.79  3.56 13.32  27.81 132.35
+ISR 10.71 21.00 47.80 1.77  3.72 13.66  28.93 137.55
+ITA 10.01 19.72 45.26 1.73  3.60 13.23  27.52 131.08
+JAP 10.34 20.81 45.86 1.79  3.64 13.41  27.72 128.63
+KEN 10.46 20.66 44.92 1.73  3.55 13.10  27.38 129.75
+KOR 10.34 20.89 46.90 1.79  3.77 13.96  20.23 136.25
+PRK 10.91 21.94 47.30 1.85  3.77 14.13  29.67 130.87
+LUX 10.35 20.77 47.40 1.82  3.67 13.64  29.08 141.27
+MAL 10.40 20.92 46.30 1.82  3.80 14.64  31.01 154.10
+MAU 11.19 22.45 47.70 1.88  3.83 15.06  31.77 152.23
+MEX 10.42 21.30 46.10 1.80  3.65 13.46  27.95 129.20
+NET 10.52 20.95 45.10 1.74  3.62 13.26  27.61 129.02
+NEW 10.51 20.88 46.10 1.74  3.54 13.21  27.70 128.98
+NOR 10.55 21.16 46.71 1.76  3.62 13.34  27.69 131.48
+PNG 10.96 21.78 47.90 1.90  4.01 14.72  31.36 148.22
+PHI 10.78 21.64 46.24 1.81  3.83 14.74  30.64 145.27
+POL 10.16 20.24 45.36 1.76  3.60 13.29  27.89 131.58
+POR 10.53 21.17 46.70 1.79  3.62 13.13  27.38 128.65
+RUM 10.41 20.98 45.87 1.76  3.64 13.25  27.67 132.50
+SIN 10.38 21.28 47.40 1.88  3.89 15.11  31.32 157.77
+SPA 10.42 20.77 45.98 1.76  3.55 13.31  27.73 131.57
+SWE 10.25 20.61 45.63 1.77  3.61 13.29  27.94 130.63
+SWI 10.37 20.46 45.78 1.78  3.55 13.22  27.91 131.20
+TAI 10.59 21.29 47.60 1.79  3.77 14.07  30.07 139.27
+THA 10.39 21.09 47.91 1.83  3.84 15.23  32.56 149.90
+TUR 10.71 21.43 47.60 1.79  3.67 13.56  28.58 131.50
+USA  9.93 19.75 43.86 1.73  3.53 13.20  27.43 128.22
+USR 10.07 20.00 44.60 1.75  3.59 13.20  27.53 130.55
+WSA 10.82 21.86 49.00 2.02  4.24 16.28  34.71 161.83
+>  
+> # pairwise scatterplots
+> pairs(allrecords)
+> 
+> # correlation matrix to 3 decimal places
+> round(cor(allrecords),3)
+        m100  m200  m400  m800 m1500 m5000 m10000  mara
+m100   1.000 0.903 0.840 0.756 0.700 0.618  0.558 0.520
+m200   0.903 1.000 0.831 0.773 0.748 0.672  0.578 0.579
+m400   0.840 0.831 1.000 0.865 0.836 0.778  0.637 0.704
+m800   0.756 0.773 0.865 1.000 0.918 0.864  0.732 0.806
+m1500  0.700 0.748 0.836 0.918 1.000 0.928  0.747 0.866
+m5000  0.618 0.672 0.778 0.864 0.928 1.000  0.805 0.933
+m10000 0.558 0.578 0.637 0.732 0.747 0.805  1.000 0.793
+mara   0.520 0.579 0.704 0.806 0.866 0.933  0.793 1.000
+> 
+> # Compute principal components on the correlation matrix (cor=T)
+> r <- princomp(~m100+m200+m400+m800+m1500+m5000+m10000+mara,cor=T)
+> summary(r, loadings=T)
+Importance of components:
+                          Comp.1    Comp.2     Comp.3     Comp.4    Comp.5
+Standard deviation     2.5181531 0.9350348 0.55346085 0.39070917 0.3505904
+Proportion of Variance 0.7926369 0.1092863 0.03828986 0.01908171 0.0153642
+Cumulative Proportion  0.7926369 0.9019231 0.94021300 0.95929471 0.9746589
+                           Comp.6      Comp.7      Comp.8
+Standard deviation     0.29210371 0.270204335 0.210698218
+Proportion of Variance 0.01066557 0.009126298 0.005549217
+Cumulative Proportion  0.98532448 0.994450783 1.000000000
+
+Loadings:
+       Comp.1 Comp.2 Comp.3 Comp.4 Comp.5 Comp.6 Comp.7 Comp.8
+m100   -0.328 -0.543  0.226                0.703 -0.204       
+m200   -0.338 -0.469  0.141  0.555  0.140 -0.502  0.255       
+m400   -0.363 -0.251 -0.215 -0.528 -0.601 -0.344              
+m800   -0.376        -0.234 -0.418  0.572  0.147  0.490  0.204
+m1500  -0.378  0.128 -0.305         0.358 -0.131 -0.556 -0.541
+m5000  -0.369  0.308 -0.161  0.245               -0.359  0.737
+m10000 -0.326  0.348  0.829 -0.236        -0.148              
+mara   -0.347  0.436 -0.149  0.346 -0.382  0.272  0.462 -0.339
+>
+> # The first two principal components have a nice interpretation here:
+> # The first principal component describes the overall strength of the
+> # country while the second principal component gives a contrast between
+> # shorter events (100m, 200m, 400m) and longer events (1500m, 5000m, 
+> # 10000m, marathon)
+> 
+> # plot first two principal components
+> plot(r$scores[,1],r$scores[,2],type="n",xlab="First principal component",
++ ylab="Second principal component",main="First two principal components")
+> # type="n" means that no points are plotted; we use this option as
+> # we want to plot the 3 letter country code using the "text" function
+> 
+> text(r$scores[,1],r$scores[,2],label=country)
+> 
+> # plot first and third principal components
+> 
+> plot(r$scores[,1],r$scores[,3],type="n",xlab="First principal component",
++ ylab="Third principal component",main=
++ "First and third principal components")
+> text(r$scores[,1],r$scores[,3],label=country)
+> # Notice that KOR (South Korea) seems to be an outlier here
+> 
+> # Now rank countries according to their first principal component score
+> ord <- order(r$scores[,1],decreasing=T)
+> attributes(r$scores)$dimnames[[1]] <- country
+> cbind(score1=round(r$scores[ord,1],2),score2=round(r$scores[ord,2],2))
+    score1 score2
+USA   3.42   1.17
+ITA   2.71   1.05
+USR   2.60   0.82
+GDR   2.56   0.36
+FRG   2.53   0.47
+GBR   2.47  -0.41
+AUS   2.42   0.28
+FRA   2.16   0.55
+KEN   2.12  -0.47
+BEL   1.99  -0.21
+POL   1.98   0.52
+CAN   1.73   0.55
+FIN   1.64  -0.35
+SWI   1.61  -0.13
+SWE   1.57   0.03
+BRA   1.57   0.68
+NEW   1.55  -0.87
+NET   1.55  -0.69
+SPA   1.43  -0.45
+CZE   1.35   0.08
+HUN   1.19   0.20
+JAP   1.19  -0.36
+KOR   1.16  -1.14
+RUM   1.14  -0.48
+DEN   1.08  -0.32
+POR   0.83  -1.25
+IRE   0.82  -0.88
+NOR   0.75  -1.01
+OST   0.74  -0.43
+MEX   0.62  -0.80
+CHI   0.40   0.24
+GRE   0.35   0.64
+COL   0.33  -0.45
+IND   0.15  -0.65
+LUX  -0.23   0.33
+ARG  -0.26   0.39
+TUR  -0.31  -1.34
+PRC  -0.42  -0.32
+ISR  -0.46  -0.63
+BER  -0.68   1.80
+TAI  -1.13  -0.15
+DOM  -1.63   2.46
+MAL  -1.65   1.75
+PRK  -1.71  -1.52
+BUR  -1.96  -0.24
+PHI  -2.04   0.21
+COS  -2.38  -1.62
+THA  -2.64   1.67
+GUA  -2.70  -1.22
+ISA  -2.73   0.62
+SIN  -3.08   1.81
+PNG  -3.89  -0.06
+MAU  -4.23  -0.64
+WSA  -7.11   1.91
+COO -10.49  -1.48
+
+

@@ -1,0 +1,102 @@
+## ---- eval=FALSE---------------------------------------------------------
+## n=10; x.bar <- 1.247
+## a.star <- n+2; b.star <- n*x.bar+1
+## theta <- seq(0, 2, by=0.01)
+## plot(theta, dgamma(theta, a.star,
+##                    scale=1/b.star), type="l", lwd=3)
+
+## ---- echo=FALSE---------------------------------------------------------
+n=10; x.bar <- 1.247
+a.star <- n+2; b.star <- n*x.bar+1
+theta <- seq(0, 2, by=0.01)
+plot(theta, dgamma(theta, a.star, 
+                   scale=1/b.star), type="l", lwd=3)
+
+## ------------------------------------------------------------------------
+theta.L <- qgamma(0.025,  a.star, scale=1/b.star)
+theta.U <- qgamma(0.975,  a.star, scale=1/b.star)
+
+c(theta.L, theta.U)
+
+## ---- eval=FALSE---------------------------------------------------------
+## plot(theta, dgamma(theta, a.star, scale=1/b.star), type="l", lwd=3)
+## abline(v=c(theta.L, theta.U), lwd=3, col="red")
+
+## ---- echo=FALSE---------------------------------------------------------
+plot(theta, dgamma(theta, a.star, scale=1/b.star), type="l", lwd=3)
+abline(v=c(theta.L, theta.U), lwd=3, col="red")
+
+## ------------------------------------------------------------------------
+p <- 2*n + 4
+theta.L <- qchisq(0.025, p)/(2*(n*x.bar+1))
+theta.U <- qchisq(0.975, p)/(2*(n*x.bar+1))
+
+c(theta.L, theta.U) 
+
+## ---- echo=FALSE---------------------------------------------------------
+plot(theta, dgamma(theta, a.star, scale=1/b.star), type="l", lwd=3)
+abline(v=c(theta.L, theta.U), lwd=3, col="red")
+
+## ------------------------------------------------------------------------
+dgamma(0.4, a.star, scale=1/b.star)
+dgamma(1.4612, a.star, scale=1/b.star)
+
+## ---- eval=FALSE---------------------------------------------------------
+## plot(theta, dgamma(theta, a.star, scale=1/b.star), type="l", lwd=3)
+## abline(h=1.25, lwd=3, col="blue")
+## 
+## ##
+## theta <- seq(0, 2, by=0.01)
+## dens <- dgamma(theta, a.star, scale=1/b.star)
+## 
+## ##
+## hpd.cut <- 1.25
+## theta.L <- min(theta[dens>=hpd.cut])
+## theta.U <- max(theta[dens>=hpd.cut])
+## abline(v=c(theta.L, theta.U), lwd=3, col="blue")
+## 
+## ## interval probability
+## pgamma(theta.U, a.star, scale=1/b.star) -
+##   pgamma(theta.L, a.star, scale=1/b.star)
+
+## ---- echo=FALSE---------------------------------------------------------
+plot(theta, dgamma(theta, a.star, scale=1/b.star), type="l", lwd=3)
+abline(h=1.25, lwd=3, col="blue")
+
+##
+theta <- seq(0, 2, by=0.01)
+dens <- dgamma(theta, a.star, scale=1/b.star)
+
+##
+hpd.cut <- 1.25
+theta.L <- min(theta[dens>=hpd.cut])
+theta.U <- max(theta[dens>=hpd.cut])
+abline(v=c(theta.L, theta.U), lwd=3, col="blue")
+
+## interval probability
+pgamma(theta.U, a.star, scale=1/b.star) - pgamma(theta.L, a.star, scale=1/b.star)
+
+## ------------------------------------------------------------------------
+hpd.cut <- sort(seq(0.1, 1.25, by=0.0001), decreasing =TRUE)
+c <- 1
+cred.int <- 0.5063
+
+while(cred.int<0.95){
+theta.L <- min(theta[dens>=hpd.cut[c]])
+theta.U <- max(theta[dens>=hpd.cut[c]])
+
+## interval probability
+cred.int <- pgamma(theta.U, a.star, scale=1/b.star) - 
+  pgamma(theta.L, a.star, scale=1/b.star)
+c <- c+1
+}
+
+HPD <- c(theta.L,theta.U)
+HPD
+
+## ---- echo=FALSE---------------------------------------------------------
+plot(theta, dgamma(theta, a.star, scale=1/b.star), type="l", lwd=3)
+abline(v=c(0.4603, 1.4612), lwd=3, col="red")
+abline(v=HPD, lwd=3, col="blue")
+abline(h=hpd.cut[c-1], lwd=3, col="blue")
+

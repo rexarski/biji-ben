@@ -1,0 +1,78 @@
+%
+%    Enter your details below:
+%
+%    Name: Rui Qiu
+%    Student ID: u6139152
+%    Email: u6139152@anu.edu.au
+%
+
+int: C;					              % Number of customers
+int: T;                     		  % Number of trucks
+int: G;                     		  % Number of goods types 
+int: MAXCAP;                		  % Maximum truck capacity
+
+set of int: trucks = 1..T;    	     	    % Set of trucks
+set of int: customers = 0..C;        	  % Set of customers. Includes depot as customer 0
+set of int: goods = 1..G;            	  % Set of goods types
+int: chilled = 1;  int: ambient = 2; 	  % Good types
+set of int: times = 0..C+1;            	  % Enough time steps to visit each customer once and depot twice if needed
+
+array[trucks] of int: cap;	     	        % Capacity of trucks
+array[trucks] of bool: refrig;	     	    % Whether or not trucks are refrigerated
+array[goods,customers] of int: order;	  % Number of units of goods types ordered by customers
+array[trucks] of int: centsPerKm;          % Cost of running trucks (in cents per km)
+array[customers,customers] of int: D;  	    % Distances between customers (including the depot)
+
+
+var int: tot_cost;	      	   	  % Total cost of the solution
+
+
+% Insert your other variables and constraints here
+array[trucks,1..5*C] of var 0..C+T+MAXCAP: a_seq;
+array[trucks] of var times: visit_num; % new var, how many customers does this truck visit?
+
+% previous constraints
+constraint forall (t in trucks, c in 1..C)
+    (a_seq[t,5*c-4]=t); % truck_id matches
+constraint forall (t in trucks, c in 1..C)
+    (a_seq[t,5*c-2]=c); % customer_id matches
+constraint forall (t in trucks)
+    (sum(c in 1..C)(a_seq[t,5*c-1])+sum(c in 1..C)(a_seq[t,5*c]) <= cap[t]); % no exceeding capacity
+constraint forall (t in trucks, c in 1..C)
+    (if refrig[t]==false then a_seq[t,5*c-1]==0 else true endif); % non-refrig only carries ambient
+constraint forall (c in 1..C)
+    (sum(t in trucks)(a_seq[t,5*c-1])==order[1,c]); % chilled order fulfilled
+constraint forall (c in 1..C)
+    (sum(t in trucks)(a_seq[t,5*c])==order[2,c]); % ambient order fulfilled
+
+% new constraints
+% define visit_num
+constraint forall (t in trucks)
+    (visit_num[t]=sum(c in 1..C)(bool2int(a_seq[t,5*c-1]!=0 \/ a_seq[t,5*c]!=0)));
+constraint forall (t in trucks, c in 1..C)
+    (if (a_seq[t,5*c-1]!=0 \/ a_seq[t,5*c]!=0) 
+        then a_seq[t,5*c-3]>0 /\ a_seq[t,5*c-3]<=visit_num[t] /\ visit_num[t]<C
+        else a_seq[t,5*c-3]=0 endif);  % time_step_id should be bounded by 0 and visit_num[t]
+constraint forall (t in trucks)
+    (forall (i,j in 1..C 
+              where (a_seq[t,5*i-1]!=0 \/ a_seq[t,5*i]!=0) /\ 
+                    (a_seq[t,5*j-1]!=0 \/ a_seq[t,5*j]!=0) /\ i!=j)
+        (a_seq[t,5*i-3]!=a_seq[t,5*j-3])); % a sequence should not have two customers at the same time(step).
+
+constraint tot_cost=sum(t in trucks where visit_num[t]>0 /\ visit_num[t]<C+1)
+    (sum(c in 1..C where a_seq[t,5*c-3]==1)(centsPerKm[t]*D[0,c])+
+    sum(c1,c2 in 1..C where a_seq[t,5*c2-3]<=visit_num[t] /\ 
+        a_seq[t,5*c2-3]-a_seq[t,5*c1-3]==1 /\ 
+        a_seq[t,5*c1-3]>0)(centsPerKm[t]*D[c1,c2])+
+    sum(c in 1..C where a_seq[t,5*c-3]==visit_num[t])(centsPerKm[t]*D[c,0])) div 100;
+
+% In question Q3, we are optimising the total cost
+solve minimize tot_cost;
+
+
+% Write a Minizinc output item to print the solution in the desired format for Q3
+output
+    [show(T)++","++show(C)++","++show(tot_cost)++"\n"] ++
+	  [if fix(a_seq[t,5*c-1])!=0 \/ fix(a_seq[t,5*c]!=0)
+	      then show(a_seq[t,5*c-4])++","++show(a_seq[t,5*c-3])++","++show(a_seq[t,5*c-2])++","++show(a_seq[t,5*c-1])++","++show(a_seq[t,5*c])++"\n"
+	      else "" endif | t in trucks, c in 1..C];

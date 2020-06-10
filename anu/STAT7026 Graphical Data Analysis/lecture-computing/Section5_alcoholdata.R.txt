@@ -1,0 +1,219 @@
+alcohol
+# [1] 1405 1606 1518 1446 1423 1569 1466 1375 1428 1673 1512 1480 1483 1752 1589
+# [16] 1533 1573 1602 1491 1402 1460 1707 1557 1487 1521 1797 1597 1545 1577 1816
+# [31] 1639 1578 1557 1808 1565 1514 1558 1763 1502 1459 1472 1732 1567 1497 1510
+# [46] 1778 1581 1488 1491 1730 1529 1429 1479 1748 1569 1453 1463 1713 1549 1535
+# [61] 1578 1813 1587 1524
+
+plot(seq(1974.75,1990.5,0.25),alcohol,type="b",
+     main="Plot of Quarterly Private Expenditure on Alcohol in Australia from 1974 to 1990",
+     ylab="10^6 AUD in 1984/85 prices",
+     xlab="Quarter")
+
+library(MASS)
+
+z <- ts(alcohol,start=c(1974,3),frequency=4)
+
+plot(z,type="b",pch="*",
+       main="Plot of Quarterly Private Expenditure on Alcohol in Australia from 1974 to 1990",
+       ylab="10^6 AUD in 1984/85 prices",
+       xlab="Quarter")
+lines(lowess(time(z),z))
+
+plot(log(z),type="b",pch="*",
+       main="Plot of log(Quarterly Private Expenditure) on Alcohol in Australia from 1974 to 1990",
+       ylab="log(10^6 AUD) in 1984/85 prices",
+       xlab="Quarter")
+lines(lowess(time(z),log(z)))
+
+
+plot(z,type="b",pch="*",
+       main="Plot of Quarterly Private Expenditure on Alcohol in Australia from 1974 to 1990",
+       ylab="10^6 AUD in 1984/85 prices",
+       xlab="Quarter",
+       sub="Linear trend fitted")
+abline(rlm(z~time(z)))
+
+fit <- rlm(z~cbind(time(z),time(z)^2))
+plot(z,type="b",pch="*",
+       main="Plot of Quarterly Private Expenditure on Alcohol in Australia from 1974 to 1990",
+       ylab="10^6 AUD in 1984/85 prices",
+       xlab="Quarter",
+       sub="Quadratic trend fitted")
+lines(as.vector(time(z)),cbind(1,time(z),time(z)^2) %*% fit$coef)
+
+x <- time(z)-1982
+fit <- rlm(z~cbind(x,x^2,x^3))
+plot(z,type="b",pch="*",
+       main="Plot of Quarterly Private Expenditure on Alcohol in Australia from 1974 to 1990",
+       ylab="10^6 AUD in 1984/85 prices",
+       xlab="Quarter",
+       sub="Cubic trend fitted")
+lines(as.vector(time(z)),cbind(1,x,x^2,x^3) %*% fit$coef)
+
+plot(c(1:64),fit$resid,type="b",pch="*",
+     main="Plot of Detrended Quarterly Private Expenditure on Alcohol in Australia from 1974 to 1990",
+     ylab="10^6 AUD in 1984/85 prices",
+     xlab="Quarter",
+     sub="Cubic trend removed")
+abline(h=0)
+
+plot(diff(z),type="b",pch="*",
+       main="Plot of First Differenced Quarterly Private Expenditure on Alcohol in Australia from 1974 to 1990",
+       ylab="10^6 AUD in 1984/85 prices",
+       xlab="Quarter")
+
+plot(diff(z,1,2),type="b",pch="*",
+       main="Plot of Second Differenced Quarterly Private Expenditure on Alcohol in Australia from 1974 to 1990",
+       ylab="10^6 AUD in 1984/85 prices",
+       xlab="Quarter")
+
+plot(diff(z,1,3),type="b",pch="*",
+       main="Plot of Third Differenced Quarterly Private Expenditure on Alcohol in Australia from 1974 to 1990",
+       ylab="10^6 AUD in 1984/85 prices",
+       xlab="Quarter")
+
+v <- Factor(c(3,4,rep(c(1,2,3,4),15),1,2))
+v1 <- cbind(1 - apply(v,1,sum),v)
+apply(v1,2,sum)
+# 2  3  4
+# 16 16 16 16
+
+quarters <- c("First","Second","Third","Fourth")
+par(mfrow=c(2,2),oma=c(6,0,6,0))
+
+for (i in 1:4){
+  if(i <= 2){
+    plot(c(1:17),c(NA,fit$resid[v1[,i]==1]),
+         type="b",pch="*",axes=F,ylim=range(fit$resid),xlim=c(1,17),
+         main=paste(quarters[i]),
+         ylab="10^6 AUD in 1984/85 prices",
+         xlab="")
+  }
+  else{
+    plot(c(1:17),c(fit$resid[v1[,i]==1],NA),
+         type="b",pch="*",axes=F,ylim=range(fit$resid),xlim=c(1,17),
+         main=paste(quarters[i]),
+         ylab="10^6 AUD in 1984/85 prices",
+         xlab="")
+  }
+  box()
+  axis(2)
+  axis(1,at=c(1,3,5,7,9,11,13,15,17),labels=c("1974","1976","1978","1980","1982","1984","1986","1988","1990"))
+}
+
+mtext("Seasonal subseries for the Alcohol data",
+      side=3,line=2,outer=T,cex=1.5)
+mtext("Cubic trend removed",
+      side=1,line=2,outer=T)
+par(mfrow=c(1,1),oma=c(0,0,0,0))
+
+h=stl(z,s.window="periodic",t.window=41)
+plot(h)
+
+par(mfrow=c(1,1))
+monthplot(h,ylab="10^6 AUD in 1984/85 prices",main="Seasonal Expenditure on Alcohol in Australia from 1974 to 1990")
+
+fits <- rlm(z~cbind(x,x^2,x^3,v))
+plot(z,type="b",pch="*",
+       main="Plot of Quarterly Private Expenditure on Alcohol in Australia from 1974 to 1990",
+       ylab="10^6 AUD in 1984/85 prices",
+       xlab="Quarter",
+       sub="Cubic trend and constant seasonal fitted")
+lines(as.vector(time(z)),cbind(1,x,x^2,x^3,v) %*% fits$coef,lty=2)
+
+plot(c(1:64),fits$resid,type="b",pch="*",
+     main="Plot of Detrended & Deseasonalised Quarterly Private Expenditure on Alcohol in Australia from 1974 to 1990",
+     ylab="10^6 AUD in 1984/85 prices",
+     xlab="Quarter",
+     sub="Cubic trend and constant seasonal removed")
+abline(h=0)
+
+fits$coef
+# x                             2         3        4
+# 1576.202 -2.816048 -1.449791 0.2351384 -68.03641 -46.76892 183.4931
+
+plot(fits$resid[1:63],fits$resid[2:64],
+     main="Irregular for Quarterly Private Expenditure on Alcohol in Australia from 1974 to 1990 \n Scatterplot of Value against Lagged Value",
+     ylab="10^6 AUD in 1984/85 prices",
+     xlab="Lagged Value",
+     sub="Cubic trend and constant seasonal removed")
+identify(fits$resid[1:63],fits$resid[2:64],c(1:63))
+
+fin <- Raic(fits$resid)
+
+par(mfrow=c(1,1),oma=c(4,0,6,0))
+
+c1 <- 2/sqrt(length(fits$resid))
+plot(fin$k,diag(fin$coef),ylim=range(diag(fin$coef),c1,-c1),type="b",lty=2,
+     main="Robust PACF",
+     xlab="Autoregression Order",
+     ylab="Robust PACF")
+box(lty = 1)
+abline(h = c(-c1, c1), lty = 2)
+abline(h=0)
+segments(fin$k,0,fin$k,diag(fin$coef))
+
+mtext("Identification for the Irregular Component of the Alcohol Data",3,1,outer=T,cex=1.5)
+mtext("Cubic trend and constant seasonal effects removed",1,1,outer=T)
+
+res <- fin$resid[,1]
+fv <- fits$resid[-1] - res
+
+par(mfcol=c(2,2),oma = c(6,0,6,0))
+
+plot(c(1:63),res,type="b",
+     main="Residual Series",
+     xlab="Time",
+     ylab="Residuals")
+
+qqnorm(res,
+       main="Quantile-Quantile Plot",
+       xlab="Gaussian Quantiles",
+       ylab="Residuals")
+
+id <- qqnorm(res,plot=F)
+identify(id$x,id$y,c(1:64))
+
+plot(fv,res,
+     main="Residual Plot",
+     xlab="Lagged Irregular Values",
+     ylab="Residuals")
+
+plot(fv,abs(res),
+     main="Absolute Residual Plot",
+     xlab="Lagged Irregular Values",
+     ylab="Absolute Residuals")
+lines(lowess(fv,abs(res)))
+
+
+mtext("Diagnostics for the Alcohol data",
+      side=3,line=2,outer=T,cex=1.5)
+mtext("Markov model fitted after removing cubic trend and constant seasonal effect",
+      side=1,line=2,outer=T,cex=1.5)
+
+fin2 <- Raic(res)
+
+par(mfrow=c(1,1),oma=c(4,0,6,0))
+
+c1 <- 2/sqrt(length(res))
+plot(fin2$k,diag(fin2$coef),ylim=range(diag(fin2$coef),c1,-c1),type="b",lty=2,
+     main="Robust PACF",
+     xlab="Autoregression Order",
+     ylab="Robust PACF")
+box(lty=1)
+abline(h = c(-c1, c1), lty = 2)
+abline(h=0)
+segments(fin2$k,0,fin2$k,diag(fin2$coef))
+
+mtext("Identification for the Residual Series from the Alcohol Data",3,1,outer=T,cex=1.5)
+mtext("Markov model fitted after removing cubic trend and constant seasonal effect"
+      ,1,1,outer=T)
+
+fits$coef
+# x                             2         3        4
+# 1576.202 -2.816048 -1.449791 0.2351384 -68.03641 -46.76892 183.4931
+
+
+fin$coef[1,1]
+# [1] 0.6136781

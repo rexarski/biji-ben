@@ -1,0 +1,13 @@
+library(fastICA) # you will first need to download this package
+track <- scan("track.txt",what=list("c",0,0,0,0,0,0,0,0))
+country <- track[[1]]
+x <- cbind(track[[2]],track[[3]],track[[4]],track[[5]],track[[6]],track[[7]],
+           track[[8]],track[[9]])
+r <- fastICA(x,n.comp=8,fun="logcosh",row.norm=T,alg.typ="deflation")
+pairs(r$S) # pairwise scatterplots of 8 independent components
+par(mfrow=c(2,1))
+plot(r$S[,1],r$S[,2],xlab="Comp 1",ylab="Comp 2",type="n")
+text(r$S[,1],r$S[,2],label=country)
+plot(r$S[,2],r$S[,3],xlab="Comp 2",ylab="Comp 3",type="n")
+text(r$S[,2],r$S[,3],label=country)
+

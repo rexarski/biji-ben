@@ -1,0 +1,102 @@
+# Q1
+# (a)
+moorhen <- read.csv('moorhen.csv', header = TRUE)
+attach(moorhen)
+head(moorhen)
+
+pairs(moorhen)
+cor(moorhen)
+
+# (b) & (c)
+moorhen.lm <- lm(Shield ~ Weight + Stern + Hb + TandT + Adult)
+moorhen.loglm <- lm(log(Shield) ~ Weight + Stern + Hb + TandT + Adult)
+layout(matrix(c(1,2), 1, 2, byrow = TRUE))
+plot(moorhen.lm, which=1)
+plot(moorhen.loglm, which=1)
+
+# (d)
+anova(moorhen.loglm)
+summary(moorhen.loglm)
+
+anova(lm(log(Shield) ~ Stern + Adult + Weight + Hb + TandT))
+# Analysis of Variance Table
+# 
+# Response: log(Shield)
+#           Df Sum Sq Mean Sq  F value    Pr(>F)
+# Stern      1 1.4262  1.4262  24.8711 1.468e-05 ***
+# Adult      1 6.3003  6.3003 109.8661 1.253e-12 ***
+# Weight     1 0.0402  0.0402   0.7016    0.4076
+# Hb         1 0.0001  0.0001   0.0014    0.9702
+# TandT      1 0.0129  0.0129   0.2254    0.6377
+# Residuals 37 2.1218  0.0573
+# ---
+# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+(0.0402 + 0.0001 + 0.0129)/3/0.0573 # 0.3094823
+(0.0001 + 0.0129)/2/0.0573 # 0.113438
+(0.0129)/0.0573 # 0.2251309
+qf(0.95, 3, 37) # 2.858796
+
+# (e)
+moorhen.loglm2 <- lm(log(Shield) ~ Adult + Stern)
+par(mfrow=c(2,2))
+plot(fitted(moorhen.loglm2), rstandard(moorhen.loglm2), cex=1.5)
+abline(0,0, lty=2)
+title("Internally Studentised Residuals vs. Fitted Values")
+plot(moorhen.loglm2, which=c(2, 4), cex=1.5)
+
+# (f)
+par(mfrow=c(1,1))
+plot(Shield ~ Stern,
+     xlab = "Stern (unit unknown)",
+     ylab = "Shield Area (mm^2)",
+     #ylim = c(0, 600),
+     pch = c(16, 17)[as.numeric(Adult)+1],
+     main = "Prediction Intervals of Adult and Juvenile Moorhens",
+     col = c("red", "blue")[as.numeric(Adult)+1],
+     data = moorhen,
+     cex = 1.5)
+adults.sterns <- moorhen[moorhen$Adult==1,]$Stern
+c(min(adults.sterns), max(adults.sterns)) # [1] 57.60 69.33
+adults.sterns2 <- 576:694/10
+adults.input <- data.frame(Shield=mean(Shield), Weight=mean(Weight),
+                           Stern=adults.sterns2, 
+                           Hb=mean(Hb), TandT=mean(TandT), Adult=1)
+
+juves.sterns <- moorhen[moorhen$Adult!=1,]$Stern
+c(min(juves.sterns), max(juves.sterns)) # [1] 58.28 69.64
+juves.sterns2 <- 582:697/10
+juves.input <- data.frame(Shield=mean(Shield), Weight=mean(Weight), 
+                          Stern=juves.sterns2,
+                          Hb=mean(Hb), TandT=mean(TandT), Adult=0)
+
+adults.pred <- exp(predict(moorhen.loglm2, newdata = adults.input, 
+                           interval = "prediction"))
+juves.pred <- exp(predict(moorhen.loglm2, newdata = juves.input, 
+                          interval = "prediction"))
+
+lines(adults.sterns2, adults.pred[,"fit"], lty=6, lwd=2, col="blue")
+lines(adults.sterns2, adults.pred[,"lwr"], lty=5, col="blue")
+lines(adults.sterns2, adults.pred[,"upr"], lty=5, col="blue")
+lines(juves.sterns2, juves.pred[,"fit"], lty=4, lwd=2, col="red")
+lines(juves.sterns2, juves.pred[,"lwr"], lty=3, lwd=2, col="red")
+lines(juves.sterns2, juves.pred[,"upr"], lty=3, lwd=2, col="red")
+legend( x="topleft", 
+        legend=c("Adult", "Adult model", "Adult 95% PI",
+                 "Juvenile", "Juvenile model", "Juvenile 95% PI"),
+        col=c("blue", "blue", "blue", "red", "red", "red"), 
+        lwd=c(1, 2, 1, 1, 2, 2), lty=c(NA, 6, 5, NA, 4, 3), 
+        pch=c(17, NA, NA, 16, NA, NA), cex = 0.75)
+
+# (g)
+coef(moorhen.loglm2)
+shield.calc <- function(x1, x2){
+    exp(as.numeric(moorhen.loglm2$coefficients[1]
+                   + moorhen.loglm2$coefficients[2] * x1
+                   + moorhen.loglm2$coefficients[3] * x2))
+}
+ratio.calc <- function(st.input){
+    shield.calc(1, st.input)/shield.calc(0, st.input)
+}
+
+confint(moorhen.loglm2, "Adult", level = 0.95)
+exp(confint(moorhen.loglm2, "Adult", level = 0.95))

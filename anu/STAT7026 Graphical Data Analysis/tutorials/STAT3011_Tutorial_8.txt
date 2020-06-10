@@ -1,0 +1,27 @@
+RESEARCH SCHOOL OF FINANCE, ACTUARIAL STUDIES AND APPLIED STATISTICS
+Graphical Data Analysis
+Tutorial 8
+
+1. Hyde Park is a racially integrated neighbourhood of Chicago which is
+located about seven miles south of the city centre on the shores of
+Lake Michigan.  Approximately 50,000 people live in Hyde Park which is
+surrounded on three sides by ghettos.  The University of Chicago which
+is located in Hyde Park makes a considerable effort to preserve the
+security (through employing the largest private police force in the
+USA) and socio-economic profile of the neighbourhood.  These efforts
+notwithstanding, there is a high crime rate in the area.  As part of
+research into crime prevention, Reed (1978) collected data on the
+reported number of purse snatchings in Hyde Park between January 1968
+and September 1973, and this data is contained in an R object
+called snatch.  The observations are the reported number of purse
+snatchings on each twenty-eighth day. (Note that this study has used a
+sampling scheme to obtain observations which are equally-spaced in
+time; an accumulation scheme would yield monthly totals.) Analyze this
+series.
+
+2.  The Annual report of the Australian Tobacco Board (1989) contains
+data on the annual duty paid clearances of Australian cigarettes and
+tobacco in 106kg of product weight from 1964-65 to 1988-89.  The data
+are store in a time series object called cig.  Analyse the components
+of this series.
+

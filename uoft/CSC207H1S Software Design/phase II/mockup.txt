@@ -1,0 +1,41 @@
+mockup
+
+flightpool:
+
+flight1 A-B
+flight2 A-C
+flight3 B-C
+flight4 A-D
+flight5 B-D
+flight6 A-D
+
+suppose these are all on the same day, and no conflicts for departure and arrival time.
+
+allCities(flightpool)
+
+cities = empty list
+
+for each flight in flightpool, add origin and destination to cities if not appeared before.
+
+NOW we want to createItinerary from A to D using combination.
+
+allRoutes(A, D, {cities except A and D}) which are
+
+A-D
+A-B-D
+A-C-D
+A-B-C-D
+A-C-B-D
+
+now searchFlights2 for each itineary, if all flights in an itinerary is ok, then the whole itinerary is ok.
+
+
+about searchFlight2, it takes the origin and destination, return the flight(s)
+
+
+for each two continuous flights in "temporary itinerary" check if time conflicts:
+	- arrival of first < departure of second
+	- stop time < hours
+
+
+

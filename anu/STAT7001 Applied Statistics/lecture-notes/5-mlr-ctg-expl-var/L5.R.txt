@@ -1,0 +1,36 @@
+#Last Updated: 07/08/2017
+rm(list=ls())
+setwd('~/Desktop/Research/AppliedStat2017/L5')
+#install.packages('Sleuth3')
+library(Sleuth3)
+head(ex0918)
+
+wing=ex0918
+names(wing)
+
+wingsize=wing$Females   #response variable
+con=wing$Continent      #explan variable (categorical)
+lat=wing$Latitude       #explan variable quantitative
+con
+
+#creating the indicator for North America
+indNA=ifelse(con=="NA",1,0)  
+indNA
+
+#fitting the MLR allowing for an interaction
+wingint.reg=lm(wingsize~lat+indNA+indNA*lat)
+summary(wingint.reg)
+
+#plotting points from NA
+plot(lat[indNA==1],wingsize[indNA==1],pch="*",ylab="wing size", xlab="lat",xlim=c(30,60),ylim=c(870,950)) 
+
+#adding the points from EU (Baseline Level)
+points(lat[indNA==0],wingsize[indNA==0],col='red')  
+
+
+#regression line for NA
+abline(wingint.reg$coef[1]+wingint.reg$coef[3],wingint.reg$coef[2]+wingint.reg$coef[4]) 
+
+#regression line for EU (Baseline Level)
+abline(wingint.reg$coef[1],wingint.reg$coef[2],col='red')  
+

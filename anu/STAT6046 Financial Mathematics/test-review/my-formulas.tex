@@ -1,0 +1,282 @@
+\documentclass[a4paper, 11pt, twoside]{article}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{stix}
+\begin{document}
+\title{STAT6046 Formulas Lists}
+\author{Rui Qiu}
+
+\maketitle
+
+\section{Week 1}
+
+\subsection{Effective rate of interest}
+
+\[\text{Effective rate of interest for a specified period} = \frac{\text{amount of interest for the period}}{\text{amount at the start of the period}}\]\\
+
+$S(t)$ represents the value of an investment at time $t.$ Then the annual rate of interest for a period from year $u$ to $u+1$ is
+
+\[i_{u+1}=\frac{S(u+1)-S(u)}{S(u)}\]
+
+\subsection{Simple interest}
+
+\[S(t)=S(0)+iS(0)+iS(0)+\cdots +i(S(0)=S(0)\cdot(1+ti)\]
+
+\subsection{Compound interest}
+
+\[S(t)=S(0)\cdot (1+i)^t\]
+
+\subsection{Accumulation factor}
+
+\[A(t_1,t_2)=\frac{S(t_2)}{S(t_1)}=(1+i)^{t_2-t_1}\]
+
+\subsection{The principle of consistency}
+
+\[S(t_2)=S(t_1)\cdot(1+i)^{t_2-t_1}=S(0)\cdot(1+i)^{t_1}(1+i)^{t_2-t_1}=S(0)\cdot(1+i)^{t_2}\]
+
+\[A(0,t_n)=A(0,t_1)A(t_1,t_2)\cdots A(t_{n-1},t_n)\]
+
+\subsection{Present values}
+
+The amount that should be put aside \textit{now} to provide for payments in the future is \textbf{the present value (PV)} or \textbf{discounted value} of the payments.\\
+
+The \textbf{discount factor} equals the amount that must be invested at the start of the period to accumulate to $1$ at the end of the period.
+
+\[v = \frac1{1+i}=(1+i)^{-1}\]
+
+Under compound interest,
+
+\[Kv^t=K(1+i)^{-t} = \text{the present value (at time 0) of an amount $K$ due at time $t$}.\]
+
+Under simple interest,
+
+\[K(1+it)^{-t} = \text{the present value (at time 0) of an amount $K$ due at time $t$}.\]
+
+More generally,
+
+\[Kv^{t_2-t_1} = K(1+i)^{-(t_2-t_1)} = \text{the present value at time $t_1$ of an amount $K$ due at time $t_2$}.\]\\
+
+\subsection{Rounding}
+
+Intermediate steps: at least 5 significant digits.
+
+Final step: round to nearest cent and interest rates to one decimal place.\\
+
+\subsection{Investing with different interest rates}
+
+The present value at time $t=0$, of an amount $K$ payable in $t$ years is
+
+\[K(1+i_1)^{-1}(1+i_2)^{-1}(1+i_3)^{-1}\cdots (1+i_t)^{-1} = \frac{K}{(1+i_1)(1+i_2)(1+i_3)\cdots (1+i_t)}.\]
+
+\subsection{Converting between effective rates of interest}
+
+Always remember: \textbf{Equivalent rates produces the same accumulated amounts over the same time period.}
+
+\section{Week 2}
+
+\subsection{Nominal rates of interest}
+
+We define $i^{(m)}$ as the nominal rate of interest per annum convertible $m$ times per year, $i^{(m)}$  is payable in equal installments of $\frac{i^{(m)}}{m}$ at the \textbf{end} of each subinterval of length $\frac{1}{m}$ years (i.e. at times $\frac{1}{m}, \frac{2}{m}, \dots, 1.$
+
+\[\left(1+\frac{i^{(m)}}{m}\right)^m = (1+i)\]\\
+
+\subsection{Converting between interest rates}
+
+Nominal and effective annual rates of interest are convertible:
+
+\[(1+i)^t = \left(1+\frac{i^{(m)}}{m}\right)^{mt}.\]\\
+
+\subsection{Present values with nominal rate of interest}
+
+The present value at time 0 of an amount $K$ due at time $t$ (in years), when nominal rate of interest of $i^{(m)}$ apply is 
+
+\[K\cdot\left(1+\frac{i^{(m)}}{m}\right)^{-mt}.\]\\
+
+\subsection{Effective and nominal rates of discount}
+
+The interest paid at the end of an interest compounding period is \textbf{interest payable in arrears.}
+
+The interest payable at the start of an interest compounding period is \textbf{interest payable in advance.}\\
+
+$i$ paid at the \textbf{end} of the period on the balance at the \textbf{beginning} of the period.
+
+\[d = \frac{\text{amount of interest for the period}}{\text{balance at the end of the period}}\]
+
+$d$ paid at the \textbf{beginning} of the period on the balance at the \textbf{end} of the period.
+
+\[i = \frac{\text{amount of interest for the period}}{\text{balance at the start of the period}}\]
+
+Note that \[d = \frac{i}{1+i}.\]
+
+Also \[i=\frac{d}{1-d}.\]
+
+And \[v=1-d.\] since $v=\frac{1}{1+i},$ as $v$ is discount factor.\\
+
+\subsection{Nominal discount rates}
+
+Define $d^{(m)}$ to be the total amount of interest, payable in equal installments at the \textbf{start} of each subinterval (i.e. at time $0, 1/m, 2/m, \dots, (m-1)/m.$\\
+
+$d^{(m)}$ implies a $\frac{1}{m}$-year compound discount rate of $\frac{d^{(m)}}{m}.$\\
+
+Nominal and effective annual rates of discount are convertible:
+
+\[1-d = \left(1-\frac{d^{(m)}}{m}\right)^m.\]
+
+So the present value (at time 0) of 1 payable at time $t$ is \[v^t=(1-d)^t=\left(1-\frac{d^{(m)}}{m}\right)^{mt}.\]
+
+Similarly, the accumulated value of 1 from time 0 to time $t$ is \[(1+i)^t=(1-d)^{-t}=\left(1-\frac{d^{(m)}}{m}\right)^{-mt}.\]
+
+Present values in this context have been expressed in the form of compound discount.
+
+If with simple discount, the present value is expressed as \[(1-d\cdot t).\]
+
+For a fixed nominal rate of discount $d^{(m)}$, the effective annual discount rate $d$ decreases as $m$ increases.
+
+\subsection{Force of interest}
+
+For an effective annual rate of interest, the equivalent nominal rate of interest as the number of compounding periods $m$ approaches infinity is called the \textbf{force of interest.}
+
+\[\lim_{m\to\infty}i^{(m)}=\delta.\]\\
+
+We use $\delta_t$ to denote the \textbf{force of interest at time $t$} or the \textbf{instantaneous rate of growth at time $t$.}
+
+If $\delta_t$ is constant, it is written as $\delta.$\\
+
+Similarly, \[\lim_{m\to\infty}d^{(m)}=\delta.\]\\
+
+Therefore, under compound interest at an annual effective rate $i$, the equivalent force of interest is \[\delta_t=\ln(1+i) \text{ or } i=e^{\delta_t}-1.\]\\
+
+Note:
+
+\[d<d^{(2)}<d^{(3)}<\cdots < \delta < \cdots < i^{(3)} < i^{(2)} < i.\]\\
+
+Also
+
+\[
+\begin{split}
+	S(n) &= S(0) \cdot \exp\left(\int^n_0 \delta_t dt\right).\\
+	S(0) &= S(n) \cdot \exp\left(-\int^n_0 \delta_t dt\right).\\
+\end{split}
+\]
+
+More generally, 
+
+\[S(t_2)=S(t_1)\exp\left(\int^{t_2}_{t_1}\delta_t dt\right), \text{ or } A(t_1,t_2)=\exp\left(\int^{t_2}_{t_1}\delta_t dt \right).\]
+
+For present value:
+
+\[S(t_1) = S(t_2)\cdot \exp\left(-\int^{t_2}_{t_1}\delta_t dt\right).\]
+
+When $\delta_t=\delta$:
+
+\[
+\begin{split}
+	S(n)&=S(0)\cdot \exp\left(\int^n_0\delta dt\right) = S(0)\cdot e^{\delta n}.\\
+	S(0)&=S(n)\cdot e^{-\delta n}\\
+\end{split}
+\]
+
+\section{Week 3}
+
+\subsection{The valuation of periodic payments -- annuities}
+
+Geometric series:
+
+\[1+x+x^2+x^3+\cdots + x^k = \frac{1-x^{k+1}}{1-x}=\frac{x^{k+1}-1}{x-1}.\]\\
+
+\subsection{Accumulated value of an immediate annuity}
+
+The accumulated value of a series of periodic payments is \textbf{annuity.}\\
+
+Consider a series of $n$ payments of $1$ unit made at the \textbf{end} of equally spaced time intervals, where each payment is invested at an effective interest rate of $i$ per time interval, and where interest is credited on payment dates.
+
+The accumulated value of these payments at time $n$, where the final payment is made at time $n$, can be found by noting the following:
+
+The first payment accumulates from time $1$ to time $n$, i.e. $n-1$ periods of time, or: $(1+i)^{n-1}.$
+
+The second payment accumulates from time $2$ to time $n$, i.e. $n-2$ periods of time, or: $(1+i)^{n-2}.$
+
+$\dots$
+
+The second-last payment accumulates from time $n-1$ to time $n$, i.e. $1$ period of time, or: $(1+i).$
+
+The last payment of $1$ made at time $n.$
+
+Therefore, using the geometric series expansion, the summation of these accumulated payments is:
+
+\[s_{\annuity{n}}=s_{\annuity{n}\ i}=(1+i)^{n-1}+(1+i)^{n-2}+(1+i)^{n-3}+\cdots + (1+i)+1=\frac{(1+i)^n-1}{(1+i)-1}=\frac{(1+i)^n-1}{i}\]\\
+
+In summary, the accumulated value at the end of $n$ periods of an \textbf{immediate annuity} of $1$ unit per period payable at the end of each period for a total of $n$ period is:
+
+\[s_{\annuity{n}}=\sum^{n-1}_{t=0}(1+i)^t=\frac{(1+i)^n-1}{i}\]\\
+
+Since the payment is made at the end of each period, it's also referred to as the accumulated value of an annuity certain payable in \textbf{arrears.}\\
+
+In the case of accumulated value, when the annuity is valued at the time of the final payment this is referred to as an \textbf{immediate} annuity.\\
+
+\subsection{Present value of an immediate annuity}
+
+The present value at time $0$ of an immediate annuity of $1$ unit per period payable at the end of each period for $n$ period is:
+
+\[a_{\annuity{n}}=s_{\annuity{n}}\cdot v^n = \frac{1-v^n}{i}.\]\\
+
+\begin{table}[htbp!] 
+	\centering
+	\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+		\hline
+		value & $a_{\annuity{n}}$ &  &  &  &  &  &  &  $s_{\annuity{n}}$\\
+		\hline
+		time & 0 & 1 & 2 & 3 & 4 & \dots & $n-1$ & $n$\\
+		\hline
+		amount &  & 1 & 1 & 1 & 1 & \dots & 1 & 1\\
+		\hline
+	\end{tabular}
+	\caption{Visualization of immediate annuity}
+\end{table}
+
+\subsection{Annuities due}
+
+An annuity payable in advance (i.e. payment at the beginning of each period) is called an \textbf{annuity due.}\\
+
+The accumulated value at the end of $n$ periods of an annuity of $1$ unit per period payable at the \textbf{beginning} of each period for $n$ periods is:
+
+\[\ddot{s}_{\annuity{n}}=\frac{(1+i)^n-1}{d}=\frac{i}{d}s_{\annuity{n}}\ .\]\\
+
+The present value of $1$ unit per period payable at the \textbf{beginning} of each period for $n$ periods is:
+
+\[\ddot{a}_{\annuity{n}} = \frac{1-v^n}{d}=\frac{i}{d}a_{\annuity{n}}\ .\]\\
+
+\begin{table}[htbp!] 
+	\centering
+	\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+		\hline
+		value & $a_{\annuity{n}}$ & $\ddot{a}_{\annuity{n}}$ &  &  &  &  & $s_{\annuity{n}}$ &  $\ddot{s}_{\annuity{n}}$\\
+		\hline
+		time & 0 & 1 & 2 & 3 & 4 & \dots & $n$ & $n+1$\\
+		\hline
+		amount &  & 1 & 1 & 1 & 1 & \dots & 1 & \\
+		\hline
+	\end{tabular}
+	\caption{Visualization of annuity due}
+\end{table}
+
+\subsection{Deferred annuities}
+
+If an annuity is to be valued more than $1$ unit of time before commencement of the stream of payments, we call this a \textbf{deferred annuity.}\\
+
+Suppose $k,n$ non-negative integers, the value at time $0$ of a series of $n$ payments, each of amount $1$, commencing at $k+1$, is denoted by $_k\big\vert a_{\annuity{n}}\ ,$ as \textbf{$n$-payment immediate annuity deferred for $k$ payment periods.}
+
+\[_k\big\vert a_{\annuity{n}} = v^{k+1} + v^{k+2} + \cdots + v^{k+n} = v^k\big[v^1+v^2+\cdots + v^n\big] = v^k\cdot a_{\annuity{n}} = a_{\annuity{n+k\ \ \ }} - a_{\annuity{k}}\ .\]\\
+
+Similarly, the equivalent \textbf{$n$-payment annuity-due deferred for $k$ payment period} is:
+
+\[_k\big\vert \ddot{a}_{\annuity{n}} = v^k\cdot \ddot{a}_{\annuity{n}} = \ddot{a}_{\annuity{n+k\ \ \ }} - \ddot{a}_{\annuity{k}}\ .\]\\
+
+\subsection{Valuing annuities with more than one interest rate}
+
+\subsection{Annuities payable more frequently than annually}
+
+\subsection{}
+
+
+\end{document}

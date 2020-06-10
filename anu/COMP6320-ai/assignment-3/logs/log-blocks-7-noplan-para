@@ -1,0 +1,90 @@
+Starting SAT-based planner...
+Checking for plugins...
+Encodings registered:    3
+Solvers registered:      1
+Command line options:
+    Domain file:          benchmarks/blocks/domain.pddl
+    Problem file:         benchmarks/blocks/problem07.pddl
+    Experiment name:      blocks_temp
+    Query strategy:        ramp, min_h = 15 max_h = 50 step_h = 5
+    Compute plangraph:     False
+    Plangraph constraints: both
+    Encoding:              basic
+    Solver                 precosat
+    SAT solver time out    None
+    Write debug CNF:       False
+    Remove tmp files:      False
+Command line arg processing time: 0.0016980171203613281
+Parsing the PDDL domain...
+Parsing the PDDL problem...
+Simplifying the problem representation...
+Parsing time: 0.04237794876098633
+Grounding the problem...
+Grounding time: 0.016412019729614258
+Simplifying the ground encoding...
+Simplify time: 0.017810821533203125
+Planning...
+
+Step: 15
+-------------------------------------------------
+Generating base encoding: basic ...
+PRE_EFF_COUNT:
+12075
+FRAME COUNT:
+2130
+INT MUTEX COUNT:
+36735
+Encoding generation time: 1.4391469955444336
+Writing CNF file...
+Total variables: 2816
+Total clauses: 51017
+Writing time: 0.08609580993652344
+Solving...
+UNSAT
+Solution time:  0.07825493812561035
+Step time: 1.6058318614959717
+
+Step: 20
+-------------------------------------------------
+Generating base encoding: basic ...
+PRE_EFF_COUNT:
+16100
+FRAME COUNT:
+2840
+INT MUTEX COUNT:
+48980
+Encoding generation time: 1.8994817733764648
+Writing CNF file...
+Total variables: 3731
+Total clauses: 67997
+Writing time: 0.09160399436950684
+Solving...
+SAT
+Solution time:  0.4343233108520508
+Extracting the plan...
+Plan:
+0: unstack e g
+1: put-down e
+2: unstack g b
+3: put-down g
+4: unstack b a
+5: put-down b
+6: unstack a f
+7: put-down a
+8: unstack f c
+9: stack f e
+10: unstack c d
+11: stack c f
+12: pick-up b
+13: stack b c
+14: pick-up d
+15: stack d b
+16: pick-up g
+17: stack g d
+18: pick-up a
+19: stack a g
+Simulating plan for validation.
+Plan valid. 20 actions.
+Step time: 2.429177761077881
+Total time: 4.114648103713989
+

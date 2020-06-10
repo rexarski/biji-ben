@@ -1,0 +1,122 @@
+---
+title: "STAT7026 Assignment 1 Report"
+author: "Rui Qiu"
+date: 2017-08-18
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.path='Figs/', dev = 'pdf', out.width='750px', dpi=200,
+                      echo=FALSE, warning=FALSE, message=FALSE)
+```
+
+## Background
+The heights in inches of the singers in the New York Choral Society in 1979 are contained in a list called singers with components `soprano.1`, `soprano.2`, `alto.1`, `alto.2`, `tenor.1`, `tenor.2`, `bass.1` and `bass.2`. These components are listed in order of decreasing pitch. The first four components are female voices and the last four male. We are interested in the comparison of the height distributions, and what factors appear to be important in describing height. We transformed the ragged list into a 3-column dataframe. Those 3 columns represent the height (in inches) of the singer, the voice/pitch of the singer and the gender of the singer.
+
+```{r, load.data, echo=F, cache=T}
+library(ggplot2)
+library(reshape2) # data cleaning
+library(plyr)
+library(wesanderson) # ggplot2 color palette
+
+pal <- wes_palette("Zissou", 20, type = "continuous")
+
+load("./classdata.RData")
+attach(singers)
+
+# melt the data
+heights <- melt(singers, measure.vars=c("soprano.1","soprano.2","alto.1","alto.2","tenor.1","tenor.2","bass.1","bass.2"))
+
+heights <- as.data.frame.list(heights)
+heights <- cbind(heights, c(rep("F",127),rep("M",101)))
+colnames(heights) <- c("value","voice","gender")
+```
+
+## Histogram by Voice
+Since our data only contains 2 variables, _height_ and _voice_ (and a hidden variable _gender_, which will be talked about later), the first idea comes to our mind is to visualize the data in a histogram. A histogram will be obvious to present how many singers have the same height for each voice. While constructing the histgram, we rearrange the data by 8 voices ordered from the highest pitch (`soprano.1`) to the lowest pitch (`bass.2`). The main histogram is divided into a 4-by-2 gird, so that each pair of similar voices, e.g. `soprano.1` and `soprano.2`, will be on the same row. We also include a spectrum legend, using different colors to indicate differrent quantities.
+
+```{r, hist.voice, echo=F, cache=T}
+# reorder the data frame by certain voice pitch order
+target <- c("soprano.1", "soprano.2", "alto.1", "alto.2", "tenor.1", "tenor.2", "bass.1", "bass.2")
+# heights[match(target, heights$voice),]
+heights$voice <- factor(heights$voice, levels=unique(heights$voice))
+
+# (BETTER) DENSITY PLOT BY VOICE
+ggplot(heights,aes(value)) + 
+  geom_histogram(binwidth = 0.9,aes(fill=..count..)) +
+  facet_wrap(~voice,ncol=2) +
+  scale_fill_gradientn(colours = pal) +
+  ylab("frequency") +
+  xlab("height (inches)") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, size = 20, face = "bold"))+
+  theme(axis.text=element_text(size=11),
+        axis.title=element_text(size=13,face="bold"))+
+  ggtitle("Singers Histogram by Voice")
+```
+
+So far, we roughly get images of distributions of those 8 voices. However, we would like to investigate further. Typically, we need more statistical information and side-by-side comparison.
+
+## Boxplot by Voice
+Therefore, we next plot our data in a boxplot. On x-axis direction, we arrange the 8 voices by decreasing pitch order again. Also, note that the little cross inside each box represents the mean of that group of height.
+```{r, box.voice, echo=F, cache=T}
+# BOXPLOT BY VOICE
+ggplot(heights, aes(voice, value)) +
+  geom_boxplot(aes(fill=gender)) + 
+  scale_fill_manual(values=wes_palette(n=2, name="Zissou")) +
+  stat_summary(fun.y=mean, geom="point", shape=4, size=4) + # add a mean as a cross
+  ylab("height (inches)") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, size = 20, face = "bold"))+
+  theme(axis.text=element_text(size=11),
+        axis.title=element_text(size=13,face="bold"))+
+  ggtitle("Singers Boxplot by Voice")
+```
+
+## Boxplot by Gender
+Additioanlly, we know that those 8 voices can be divided into two hidden but easily understandable groups, which are male and female. Similarly, we plot the boxplot by gender.
+
+```{r, box.gender, echo=F, cache=T}
+ggplot(heights, aes(gender, value)) +
+  geom_boxplot(aes(fill=gender)) + 
+  scale_fill_manual(values=wes_palette(n=2, name="Zissou")) + 
+  ylab("height (inches)") +
+  stat_summary(fun.y=mean, geom="point", shape=4, size=4) + # add a mean as a cross
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, size = 20, face = "bold"))+
+  theme(axis.text=element_text(size=11),
+        axis.title=element_text(size=13,face="bold"))+
+  ggtitle("Singers Boxplot by Gender")
+```
+
+## Conclusions
+* **Conclusion from the plots:**
+    + Generally, singers with higher pitch have relatively smaller height, singers with lower pitch have relatively larger height. We can rephrase this discovery with more statistical terminology, that is "**the pitch of a singer and the height of his/her seems negatively correlated**". However, this is not 100% true, since `soprano.1` has both higher mean and median than `soprano.2` although it represents a higher pitch itself.
+    + And **male singers tend to have lower pitch and larger height than female singers**.
+    + Simialr groups of singers tend to have similar height distributions. (We don't consider `alto.2` and `tenor.1` as "similar groups" since they are one group of female singers and a one group of male singers.)
+* **Intuitive explanation:** One explanation is that we can consider human as a piccolo, the shorter air column it has, the frequency of vibration is higher, so that the pitch is higher. This is why male singers with `bass` voice are always taller than female `soprano`s.
+* **Potential improvement:** 
+    + In visualziation, since we use histograms to "see" what each distribution looks like, and boxplot to check the statistics of distributions, maybe a violin plot that combines the features of these two would be more compact.
+    + In investigation, if we are able to quantify the definition of "pitch", instead of just leaving it as a categorical variable, then we can fit in a regression to further study the relationship between variable height and pitch. Because although people within the same voice group are tagged with the same pitch, there might still exist some variations. 
+    + Due to the limitation of sample size, some patterns within might be still in the mist. A larger sample definitely would help.
+
+### References
+- [R for Data Science by Garrett Grolemund and Hadley Wickham (http://r4ds.had.co.nz/)](http://r4ds.had.co.nz/).
+- [Wes Anderson Palettes (https://github.com/karthik/wesanderson)](https://github.com/karthik/wesanderson).
+
+```{r, heatmap, eval=F, echo=F, cache=T}
+# -------------------------------------------------------
+# (Maybe a) HEATMAP
+heights.counts <- ddply(heights,.(value,voice),nrow)
+colnames(heights.counts) <- c("value","voice","count")
+
+ggplot(heights.counts, aes(x = heights.counts$value, y = heights.counts$voice, fill = heights.counts$count)) +
+  geom_tile() + 
+  scale_fill_gradientn(colours = pal) + 
+  scale_x_discrete(expand = c(0, 0)) +
+  scale_y_discrete(expand = c(0, 0)) + 
+  coord_equal() +
+  geom_text(aes(label=count))
+```

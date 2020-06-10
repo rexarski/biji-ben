@@ -1,0 +1,18 @@
+# CSC 120, Spring 2016, Assignment 1 - Script to test on data from webpage.
+
+source("a1funs.r")
+
+data <- 
+  as.matrix(read.table("http://www.cs.utoronto.ca/~radford/csc120/a1data.txt"))
+
+set.seed(1)
+e <- find_pairings (data, tries=10, plot=TRUE)
+
+plot_pairs(data,e)
+title (paste("Seed 1, Total distance",round(total_distance(data,e),4)))
+
+
+set.seed(1000000000)  # ... or whatever your student ID is ...
+e <- find_pairings (data)
+plot_pairs(data,e)
+title (paste("Seed with ID, Total distance",round(total_distance(data,e),4)))

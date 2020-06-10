@@ -1,0 +1,42 @@
+# STA 410/2102, Fall 2015, Functions for Assignment #2, Problem 1.
+
+
+# Compute the log likelihood for parameters p, given sample sizes n, m1, and m2,
+# and observed counts x, x1, and x2.  Same as in Assignment #1.
+
+log_likelihood <- function (p, n, m1, m2, x, x1, x2)
+{
+    dbinom (x, n, mean(p), log=TRUE) + 
+      dbinom (x1, m1, p[1], log=TRUE) + 
+      dbinom (x2, m2, p[2], log=TRUE)
+}
+
+
+# Find maximum likelihood estimates for the model parameters using EM.
+
+mle_em <- function (n, m1, m2, x, x1, x2, initial, iters)
+{
+    p <- initial
+
+    for (i in 1:iters) {
+
+        # E Step.  Computes q1 and q2, which are the probabilities that
+        # a person answering "yes" and "no" in the first survey is a man.
+
+        q1 <- p[1] / (p[1] + p[2])
+        q2 <- (1-p[1]) / (2 - p[1] - p[2])
+
+        # M Step.  Computes new estimates for the model parameters, p.
+
+        p[1] <- (x*q1 + x1) / (x*q1 + x1 + (n-x)*q2 + m1 - x1)
+        p[2] <- (x*(1-q1) + x2) / (x*(1-q1) + x2 + (n-x)*(1-q2) + m2 - x2)
+
+        # Output results of E and M steps and the new log likelihood, for
+        # purposes of debugging and seeing the convergence rate.
+
+        cat("iteration",i,"\n  q1:",q1," q2:",q2,"\n  p[1]:",p[1]," p[2]:",p[2],
+            "\n  log likelihood:",log_likelihood(p,n,m1,m2,x,x1,x2),"\n")
+    }
+
+    p
+}

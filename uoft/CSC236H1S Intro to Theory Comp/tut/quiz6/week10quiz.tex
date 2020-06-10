@@ -1,0 +1,68 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{amsmath}
+\usepackage{listings}
+
+\title{Week 10 Quiz}
+\author{Rui Qiu, c3qiurui}
+\date{March 19, 2015}
+        
+
+\begin{document}
+\maketitle
+
+\section{What I wrote}
+
+\lstset{language=Python}
+
+\begin{lstlisting}]frame=single]
+def soln(a, b, k, e):
+    c = 0
+    while c <= e:
+        print ((float (a) / b**k)**c)
+        c += 1
+\end{lstlisting}
+
+\section{what to test}
+ $a=4, b=2, k=1, n=b^10$ (note: actually $e=10$)\\
+ $a=1, b=2, k=0, n=b^10$\\
+ $a=1, b=3, k=1, n=b^10$
+
+ \section{results}
+ 1.0\\
+2.0\\
+4.0\\
+8.0\\
+16.0\\
+32.0\\
+64.0\\
+128.0\\
+256.0\\
+512.0\\
+1024.0\\
+1.0\\
+1.0\\
+1.0\\
+1.0\\
+1.0\\
+1.0\\
+1.0\\
+1.0\\
+1.0\\
+1.0\\
+1.0\\
+1.0\\
+0.3333333333333333\\
+0.1111111111111111\\
+0.03703703703703703\\
+0.012345679012345677\\
+0.004115226337448558\\
+0.0013717421124828527\\
+0.00045724737082761756\\
+0.0001524157902758725\\
+5.0805263425290837e-05\\
+1.693508780843028e-05
+
+\end{document}

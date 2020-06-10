@@ -1,0 +1,396 @@
+RESEARCH SCHOOL OF FINANCE, ACTUARIAL STUDIES AND APPLIED STATISTICS
+GRAPHICAL DATA ANALYSIS
+Tutorial 4
+Sample Solution
+
+Question 1. 
+As always, when we have only two variables, begin by plotting the data.
+We see that the location and spread changes with voltage.  We will need to
+transform the response to stabilise the spread.  With luck, this may also
+linearise the relationship. 
+
+volt <- test$volt
+life <- test$time
+
+(do not call the lifetime by the name time -- time is an inbuilt S-Plus
+ function and so you shouldn't use the name for something else)
+ 
+ plot(volt,life,main="Time to breakdown at various voltages",xlab="Voltage",
+ ylab="Lifetime")
+ 
+ A sunflower plot might be used to separate out some of the points that are 
+ too close together (although this is mainly a cosmetic issue in this case as
+ the data need to be transformed to be analysed sensibly).
+ 
+ out=Nreps(volt,life)
+ Sunflowers(out$x,out$y,out$rays,add=F,main="Sunflower plot for Lifetime
+ versus Voltage",sub="One ray equals one observation")
+ 
+ Not too interesting yet: we really need to do something about the spread of
+ the data.
+ 
+ Lifetimes are usually asymmetrically distributed with a long right tail
+ so the usual transformations are possible.  In extreme cases, we get Weibull
+ data which is reduced to exponential data by taking logs.  The reciprocal is 
+ too strong and the cube root is not strong enough. The log transformation is
+ also indicated by the "ladder of power" rule discussed in lectures.
+ 
+ loglife <- log(life)
+ plot(volt,loglife,main="Time to breakdown at various voltages, log scale",
+ xlab="voltage",ylab="log(lifetime)")
+ 
+ You can try the reciprocal and cubed-root transformations for yourself. The
+ log transformation works pretty well in both linearising the plot and fixing
+ the spread.
+ 
+ First, we can try segmenting the data into strips and adding boxplots to each
+ strip. In this case, the fact that the voltages are discrete makes for 
+ some easy choices of strips: use strips for which the values of the  
+ voltages are midpoints.
+ 
+ First, find out what the discrete values of volt are:
+ 
+ voltvals <- unique(volt) 
+ 
+ Now, find the midpoints of the discrete unique volt values:
+ 
+ splits <- 0
+ for(i in 1:(length(voltvals)-1)){
+ splits[i]=(voltvals[i]+voltvals[i+1])/2
+ }
+ 
+ And add the lines for the segments at these places:
+ 
+ abline(v=splits)
+ 
+ (Alternatively, we could look at the voltage values and manually put
+ in the places for the splits:
+ voltvals <- c(26,28,30,32,34,36,38)
+ splits <- c(27,29,31,33,35,37)
+ )
+ 
+ Now, we will add boxplots, a median curve and quartile curves.
+ Start by keeping places for the medians and the quartiles:
+ medians=0
+ q1s=0
+ q3s=0
+ 
+ Now, we go through each segment, calculate and add a boxplot for 
+ each segment and keep track of the medians and quartiles:
+ 
+ for(i in 1:length(voltvals)){
+ bp=boxplot(loglife[volt==voltvals[i]],plot=F)
+ medians[i]=bp$stats[3]
+ q1s[i]=rev(bp$stats)[2]
+ q3s[i]=rev(bp$stats)[4]
+ Addbplots(voltvals[i],bp$stats,0.5)
+ }
+ 
+ Finally, we add the median curve, and the quartile curves:
+ 
+ lines(voltvals,medians,type="l")
+ lines(voltvals,q1s,lty=2)
+ lines(voltvals,q3s,lty=2)
+ 
+ The median curve is sloping downwards at almost constant rate: maybe a linear
+ model fit relating voltage and loglife is indicated. The quartile curves
+ are pretty useless, mainly because they are based on so little data. It is
+ hard to tell if the spread is stabilized because of the different numbers of
+ observations at each unique value of volt.
+ 
+ We can confirm our suspicions that a linear model is the way to go by trying
+ some scatterplot smoothing: we could use ksmooth to get a running
+ mean smoother ( use plot(ksmooth(volt,loglife,ban=5),type="l")), or,
+ easier (since it avoids the problem of bandwidth selection), we could use
+ a lowess smoother:
+ 
+ plot(volt,loglife,main="Time to breakdown at various voltages, log scale",
+ xlab="voltage",ylab="log(lifetime)")
+ lines(lowess(volt,loglife),type="l")
+ 
+ The lowess curve is pretty much a straight line: in this case, it looks
+ pretty straightforward to just fit a linear model in the usual way. We could
+ also look at a lowess residuals plot to see how the spread is going:
+ 
+ fitlife=lowess(volt,loglife)
+ reslife=loglife-approx(fitlife$x,fitlife$y,volt)$y
+ plot(volt,reslife,main="Lowess residuals for Log lifetime versus
+ voltage",xlab="Voltage",ylab="Lowess Residuals")
+ 
+ or, we could look at an absolute residual plot:
+ 
+ plot(volt,abs(reslife),main="Absolute lowess residuals for Log lifetime
+ versus voltage",xlab="Voltage",ylab="Absolute Lowess Residuals")
+ lines(lowess(volt,abs(reslife)),type="l")
+ 
+ and we could assess the normality of the residuals by a Q-Q plot of the 
+ standardised lowess residuals:
+ 
+ qqnorm(reslife/approx(lowess(volt,abs(reslife))$x,lowess(volt,abs(reslife))$y,volt)$y,
+ main="Q-Q plot of Lowess Residuals from log lifetime versus voltage",
+ ylab="Quantiles of Estimated Residuals")
+ 
+ We could have equally looked at the residuals from any of our scatterplot 
+ smoothing attempts, but lowess seems to do a reasonable job of smoothing the 
+ scatterplot. The residual plots are not too unusual; the constant variance
+ assumption may not be as strongly supported as we'd like (the variance
+seems to rise then fall, but the extent of the changes in the variance is 
+mild, and we'd be hard pressed to improve it further). Otherwise, the
+residual plots show no unusual patterns. The Q-Q plot of the lowess residuals
+is interesting. There seems to be an overall linear trend, but there is one 
+distinctly unusual point which may be an outlier. If we ignore that point, the 
+Q-Q plot exhibits mild curvature, suggesting slight skewness, but probably
+not enough to concern us.
+                                                           
+Overall, the lowess residuals look normal, but there is one outlying 
+observation. Now, it seems we would be best served by pursuing a standard
+model-based approach.
+                                                           
+This suggests that we fit a linear model on the log scale and see how well it
+does. That is, we will fit a model relating log(life) to voltage.
+
+library(MASS)                                                        
+fit <- rlm(loglife~volt)
+                                                           
+The coefficients from the model fit are:
+fit$coef
+(Intercept)          x
+20.17981 -0.5406491
+                                                           
+Now, we'll have a look at the residuals: first some residual plots,
+                                                           
+plot(volt,fit$residuals,main="Residual plot from model fit",xlab="Voltage",
+     ylab="Residuals")
+plot(volt,abs(fit$residuals),main="Absolute residual plot from model fit",
+     xlab="Voltage",ylab="Absolute Residuals")
+lines(lowess(volt,abs(fit$residuals)),type="l")
+                                                           
+We get the same result as for the lowess fit: the variance seems to gently
+rise and then fall with voltage. This result is not alarming and is probably
+consistent with the constant variance assumption.
+Now, we'll have a look at a QQ plot of the residuals:
+                                                           
+qqnorm(fit$residuals,main="QQ plot of residuals from model fit",ylab="Residuals")
+                                                           
+The QQ plot shows some mild curvature, most noticably in the upper tail.
+There is also a cluster of points in the lower tail that we might wish to
+investigate.
+                                                           
+The qqplot shows that there are separate groups of points in each tail.  
+These clusters are separate from the rest of the points and are in the tail of
+the distribution but are not really extreme.  However, the residual plot
+shows that within voltage groups they are the extreme points.  Given the
+replication within groups, we could consider examining the within
+group distribution.
+                                                           
+group1=loglife[volt==voltvals[1]]
+group2=loglife[volt==voltvals[2]]
+group3=loglife[volt==voltvals[3]]
+group4=loglife[volt==voltvals[4]]
+group5=loglife[volt==voltvals[5]]
+group6=loglife[volt==voltvals[6]]
+group7=loglife[volt==voltvals[7]]
+par(mfrow=c(4,2))
+qqnorm(group1)
+qqnorm(group2)
+qqnorm(group3)
+qqnorm(group4)
+qqnorm(group5)
+qqnorm(group6)
+qqnorm(group7)
+                                                           
+These don't look too bad (normal or shorter tailed) except in the first
+group for which there are few data points.  There is no evidence of
+asymmetry on the log scale. Nonetheless, we are a little hampered by the lack 
+of data in some of the groups.
+                                                           
+The data are from a designed experiment so there are no leverage points.
+                                                           
+Question 2.
+                                                           
+The data is in the matrix agar.
+                                                           
+conc=agar[,1]
+anti=agar[,2]
+                                                           
+Again begin by plotting the data. We see a nonlinear relationship with
+constant spread.  This suggests that we transform the explanatory variable
+to linearise the relationship.  (Any transformation of the response should
+                                 affect the spread too.) 
+                                                           
+plot(conc,anti,main="Plot of Zone Diameter measurements for standard antibiotic
+     preparation",xlab="Concentration",ylab="Zone Diameter")
+                                                           
+The concentrations are equally spaced on the log scale so it makes sense to
+try the log transformation.
+                                                           
+plot(log(conc),anti,main="Plot of Zone Diameter measurements for standard 
+     antibiotic preparation",sub="Concentration on log scale",xlab="log Conc.",
+     ylab="Zone Diameter")
+                                                           
+We'll add a lowess smoother to the plot and plot the lowess residuals:
+                                                           
+lines(lowess(log(conc),anti),type="l")
+fit=approx(lowess(log(conc),anti)$x,lowess(log(conc),anti)$y,log(conc))$y
+res=anti-fit
+plot(log(conc),res,main="Residual plot for Lowess fit for Antibiotic data",
+sub="Concentration on log scale",xlab="log Conc.",ylab="Lowess Residuals")
+                                                           
+or, plot the absolute lowess residuals:
+                                                           
+plot(log(conc),abs(res),main="Residual plot for Lowess fit for Antibiotic
+data",sub="Concentration on log scale",xlab="log Conc.",ylab="Lowess Residuals")
+lines(lowess(log(conc),abs(res)),type="l")
+                                                           
+The lowess smoother is almost a straight line and the plot of lowess 
+residuals looks not too bad, although it appears as if the spread of points 
+was not constant as first thought, but is in fact gradually rising. 
+A Q-Q plot of the lowess residuals gives no cause for alarm.
+                                                           
+qqnorm(res)
+                                                           
+We might now pursue a parametric modelling approach since the signs from
+the lowess approach are fairly healthy. In the scatterplot of anti v log(conc)
+there is still a little curvature but the relationship is now fairly linear 
+and homoscedastic.  This suggests that we fit a linear model and see how 
+well it does.
+                                                           
+fit <- rlm(anti~log(conc))
+plot(log(conc),anti,main="Plot of Zone Diameter measurements for standard
+antibiotic preparation",sub="Concentration on log scale",xlab="log Conc.",
+ylab="Zone Diameter")
+abline(fit$coef)
+                                                           
+Now we'll look at the residuals:
+                                                             
+res <- fit$residuals
+plot(log(conc),res,main="Residual plot from simple linear fit",ylab="Residual",
+xlab="Log Conc.")
+plot(log(conc),abs(res),main="Residual plot from simple linear fit",
+ylab="Residual",xlab="Log Conc.")
+lines(lowess(log(conc),abs(res)),type='l')
+                                                           
+qqnorm(res)
+                                                           
+The residual plots and Q-Q plots don't look too bad, although there seems to
+be some curvature in the residual plot.
+                                                           
+Can we do better? In particular, is
+there an explanation for the curvature in the residual plot? Do we need to add
+a quadratic term? Or do we need to do something even more drastic?
+                                                           
+The residual distribution seems a little short tailed in the left tail and 
+long in the right. The residual plot shows that there is some curvature in 
+the relationship.
+                                                           
+We could 
+a) argue that the log transformation was too strong and try something
+weaker                                                         
+b) take the log of the response too
+and	
+c) include a squared term in log(conc) in the model.
+                                                           
+Option a) is feasible but is likely to end up with an uninterpretable 
+transformation because cube roots are too weak, and transformations between
+cube root and log are likely to be physically meaningless.
+                                                           
+Using lowess and trial and error, we arrive at the x^(1/6) transformation.
+                                                           
+fit=rlm(anti~conc^(1/6))
+plot(conc^(1/6),anti)
+abline(fit$coef)
+res=fit$residuals
+plot(conc^(1/6),abs(res))
+lines(lowess(conc^(1/6),abs(res)),type="l")
+qqnorm(res)
+                                                           
+Fitting a linear model to diameter and concentration^(1/6) yields
+a slightly short tailed residual distribution and spread increasing
+as concentration increases.
+                                                           
+Option b) is less attractive because of the effect of transforming the
+response on the spread.  However, perhaps the spread wasn't quite constant
+and this is worth a try.  
+                                                           
+fit=rlm(log(anti)~log(conc))
+plot(log(conc),log(anti))
+abline(fit$coef)
+res=fit$residuals
+plot(log(conc),abs(res))
+lines(lowess(log(conc),abs(res)),type="l")
+qqnorm(res)
+                                                           
+For the model for log(diameter) against log(concentration), the residual
+distribution seems mainly normal with an outlier in the lower left tail
+and the residual plot seems to show that there is a bit of structure we
+are not capturing. Nonetheless, this model is not bad.
+                                                           
+Option c) is also feasible but leaves open the question of whether we should fit a quadratic model on the raw scale.  We obtain a slightly short tailed
+distribution but seem to retain structure in the residual plot.
+ 
+ fit=rlm(anti~cbind(log(conc),log(conc)^2))
+ res=fit$residuals
+ fitted=fit$coef[1]+fit$coef[2]*log(conc)+fit$coef[3]*log(conc)^2
+ plot(fitted,abs(res))
+ lines(lowess(fitted,abs(res)),type="l")
+ qqnorm(res)
+ 
+ Fitting a quadratic in log(concentration) yields a slightly short tailed
+ residual distribution which is fine but there is evidence of the spread 
+ increasing with concentration.
+ 
+ Options a) and c) seem to be the most profitable, although there is really very little to separate (a), (b) or (c), although all of them appear to be better 
+than the linear model fit originally.  We have then to choose
+between
+
+diameter against concentration^(1/6)
+
+fit$coef
+[1]  -8.036497  41.439091
+
+and
+
+diameter against log(concentration) and  log(concentration)^2
+
+fit$coef
+[1] 32.2197227  5.8165402  0.2659876
+
+In both cases, we have heteroscedasticity as the spread increases with
+concentration.
+
+Comparing a new antibiotic to the standard involves computing the concentration
+of the standard which would have led to the same zone diameter.  
+i.e., it involves back prediction.  
+
+The concentration of the standard leading to a diameter of 16.3 is
+
+16.3 = -8.036497 + 41.439091(conc)^(1/6)
+
+i.e. conc = ((16.3 + 8.036497)/41.439091)^6 =  0.04102864
+
+Since the new antibiotic concentration was 0.2, the new antibiotic
+is less potent by a factor of  0.04102864/0.2 = 0.2
+
+Alternatively,
+
+16.3 = 32.2197227 + 5.8165402log(conc) + 0.2659876log(conc)^2
+
+0 = 15.91972 + 5.8165402log(conc) + 0.2659876log(conc)^2
+
+i.e. conc = exp((- 5.8165402 + sqrt(5.8165402^2 - 4*15.91972*0.2659876))/
+                  
+                  (2*0.2659876)) = 0.04046095
+
+or
+
+conc = exp((- 5.8165402 - sqrt(5.8165402^2 - 4*15.91972*0.2659876))/
+             
+             (2*0.2659876)) =  7.869322e-09
+
+which is too small to be sensible.  
+
+Thus the new antibiotic is less potent by a factor of 0.04046095/0.2 = 0.2
+
+This equivalence reflects the fact that the models fit equally well over the
+range of the data.  
+

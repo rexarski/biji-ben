@@ -1,0 +1,94 @@
+##########################
+#  Ratio Estimation -    #
+# Number of Animals in   # 
+# National Park Example  # 
+#       R Code           #
+##########################
+
+# Read data in from csv file
+
+> parkdata <- read.csv("ratio_parkanimals.csv")
+
+> parkdata
+   area animals
+1   890      29
+2   770      24
+3   900      31
+4   560      21
+5   930      31
+6   670      25
+7   590      17
+8   510      17
+9   550      19
+10  960      32
+11  910      35
+12  700      23
+13  710      22
+14  760      28
+15  990      34
+16  510      20
+17  590      25
+18  650      22
+19  850      33
+20  620      20
+
+# attach data so you don't have to use $ signs
+> attach(parkdata)
+
+# sample mean of response
+> mean(animals)
+[1] 25.4
+
+# sample mean of auxilary variable
+> mean(area)
+[1] 731
+
+# sample size
+> length(animals)
+[1] 20
+
+
+# Scatterplot of area (x) vs animals (y)
+> plot(area,animals)
+
+# Regression model through origin with animals as response and area as predictor
+
+> regmodel <- lm(animals ~ 0 + area)
+> summary(regmodel)
+Call:
+lm(formula = animals ~ 0 + area)
+
+Residuals:
+    Min      1Q  Median      3Q     Max
+-3.4695 -1.3574 -0.4492  1.6631  4.5305
+
+Coefficients:
+      Estimate Std. Error t value Pr(>|t|)
+area 0.0346942  0.0006732   51.54   <2e-16 ***
+---
+Residual standard error: 2.25 on 19 degrees of freedom
+Multiple R-squared: 0.9929,     Adjusted R-squared: 0.9925
+F-statistic:  2656 on 1 and 19 DF,  p-value: < 2.2e-16
+
+# Residuals from regression using R function
+> res = residuals(regmodel)
+
+# s^2_r: sample variance of residuals
+> var(res)
+[1] 5.061587
+
+# Residuals from regression using calculation
+res2 = animals -  (0.0346942*area)
+
+> var(res2)
+[1] 5.06159
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,7 @@
+library(kernlab)
+help(ksvm)
+
+library(rattle)
+rattle()
+
+library(ggplot2)

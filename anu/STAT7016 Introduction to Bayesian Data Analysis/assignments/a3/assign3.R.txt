@@ -1,0 +1,374 @@
+library(MCMCpack)
+library(mvtnorm)
+
+#Problem 2
+#a)
+p2.data<-read.table("interexp.dat",header=T)
+p2.data
+attach(p2.data)
+thetaA<-mean(yA, na.rm=T)
+thetaB<-mean(yB, na.rm=T)
+varA<-var(yA,na.rm=T)
+varB<-var(yB,na.rm=T)
+rho<-cor(yA,yB,use="complete.obs")
+
+
+
+
+#b)
+yB.hat<-yB
+yB.hat[is.na(yB)==TRUE]<-thetaB+(yA[is.na(yB)==TRUE]-thetaA)*rho*sqrt(varB/varA)
+
+yA.hat<-yA
+yA.hat[is.na(yA)==TRUE]<-thetaA+(yB[is.na(yA)==TRUE]-thetaB)*rho*sqrt(varA/varB)
+
+t.test(yA.hat,yB.hat,paired=TRUE)
+
+#
+#	Paired t-test
+
+#data:  yA.hat and yB.hat 
+#t = -3.2807, df = 57, p-value = 0.00177
+#alternative hypothesis: true difference in means is not equal to 0 
+#95 percent confidence interval:
+ #-0.9850730 -0.2383347 
+#sample estimates:
+#mean of the differences 
+ #            -0.6117038 
+ 
+ #c)
+ library(mvtnorm)
+ library(sbgcop)
+ #Jeffreys prior
+ p<-2
+ 
+ #Gibbs sampler for imputation
+ #prior parameters
+ n<-dim(p2.data)[1]
+ p<-dim(p2.data)[2]
+ 
+Sigma<-diag(1,2,2)
+ 
+ 
+ #Starting values
+ Sigma<-S0
+ Y.full<-p2.data
+ O<-1*(!is.na(p2.data))
+ 
+ for (j in 1:p){
+ 	Y.full[is.na(Y.full[,j]),j]<-mean(Y.full[,j],na.rm=TRUE)
+ }
+ 
+ #Gibbs sampler
+ THETA<-SIGMA<-Y.MISS<-NULL
+ 
+ set.seed(1)
+ 
+ for (s in 1:1000){
+ 	##update theta
+   mun<-apply(Y.full,2,mean)
+   Ln<-Sigma/n
+   theta<-rmvnorm(1,mun,Ln) 	
+   
+   ##update Sigma
+   Sn<-(t(Y.full)-c(theta))%*%t(t(Y.full)-c(theta))
+   Sigma<-solve(rwish(solve(Sn),n))
+   
+   ##update missing data
+   for (i in 27:n){
+   	b<-(O[i,]==0)
+   	a<-(O[i,]==1)
+   	iSa<-solve(Sigma[a,a])
+   	beta.j<-Sigma[b,a]%*%iSa
+   	Sigma.j<-Sigma[b,b]-Sigma[b,a]%*%iSa%*%Sigma[a,b]
+   	theta.j<-theta[b]+beta.j%*%(t(Y.full[i,a])-theta[a])
+   	Y.full[i,b]<-rmvnorm(1,theta.j,Sigma.j)
+   }
+   
+   ##save results
+   THETA<-rbind(THETA,theta)
+   SIGMA<-rbind(SIGMA,c(Sigma))
+   Y.miss<-rbind(Y.MISS,Y.full[O==0])
+ }
+ 
+ mean(THETA[,1]-THETA[,2])
+ quantile(THETA[,1]-THETA[,2],c(0.025,0.975))
+ mean(THETA[,1]>THETA[,2])
+
+ #Problem 3
+ 
+
+ p3.data<-read.table("azdiabetes.dat",header=T)
+p3.data
+attach(p3.data)
+
+#a)
+Lyes<-diabetes=="Yes"
+Lno<-diabetes=="No"
+diab_yes<-p3.data[Lyes,]
+diab_no<-p3.data[Lno,] 
+
+
+#Yes-diabetes
+Y<-diab_yes[,1:7]
+n<-dim(Y)[1]
+ybar<-apply(Y,2,mean)
+Sigma<-cov(Y)
+THETA_yes<-SIGMA_yes<-NULL
+
+##Prior parameters
+mu0<-ybar
+L0<-S0<-Sigma
+nu0<-9
+
+set.seed(1)
+for (s in 1:10000){
+###update theta
+Ln<-solve(solve(L0)+n*solve(Sigma))
+mun<-Ln%*%(solve(L0)%*%mu0+n*solve(Sigma)%*%ybar)
+theta<-rmvnorm(1,mun,Ln)
+
+##update Sigma
+Sn<-S0+(t(Y)-c(theta))%*%t(t(Y)-c(theta))
+Sigma<-solve(rwish(solve(Sn),nu0+n))
+
+##save results
+THETA_yes<-rbind(THETA_yes,theta)
+SIGMA_yes<-rbind(SIGMA_yes,c(Sigma))
+}
+
+#No-diabetes
+Y<-diab_no[,1:7]
+n<-dim(Y)[1]
+ybar<-apply(Y,2,mean)
+Sigma<-cov(Y)
+THETA_no<-SIGMA_no<-NULL
+
+##Prior parameters
+mu0<-ybar
+L0<-S0<-Sigma
+nu0<-9
+
+set.seed(1)
+for (s in 1:10000){
+###update theta
+Ln<-solve(solve(L0)+n*solve(Sigma))
+mun<-Ln%*%(solve(L0)%*%mu0+n*solve(Sigma)%*%ybar)
+theta<-rmvnorm(1,mun,Ln)
+
+##update Sigma
+Sn<-S0+(t(Y)-c(theta))%*%t(t(Y)-c(theta))
+Sigma<-solve(rwish(solve(Sn),nu0+n))
+
+##save results
+THETA_no<-rbind(THETA_no,theta)
+SIGMA_no<-rbind(SIGMA_no,c(Sigma))
+}
+
+#Compare marginal posterior distributions of Theta
+
+pdf("Fig1.pdf")
+par(mfrow=c(2,4))
+for (i in 1:7){
+	xname<-bquote(theta[.(names(Y)[i])])
+	xl<-c(min(range(THETA_yes[,i])[1],range(THETA_no[,i])[1]),max(range(THETA_yes[,i])[2],range(THETA_no[,i])[2]))
+	d_yes<-density(THETA_yes[,i])
+	d_no<-density(THETA_no[,i])
+	yl<-c(min(min(d_yes[2]$y),min(d_no[2]$y)),max(max(d_yes[2]$y),max(d_no[2]$y)))
+	plot(d_yes,xlab=xname,ylab="",main="",xlim=xl,ylim=yl,col="red",cex.axis=0.8)
+	lines(d_no)
+	}
+
+dev.off()
+
+
+
+#Compute posterior probabilities theta_yes>theta_no
+pp<-NULL
+for (i in 1:7){
+	pp<-c(pp,mean(THETA_yes[,i]>THETA_no[,i]))
+
+}
+	names(pp)<-names(Y)
+pp
+
+#c)
+
+Sigma_yes_mean<-apply(SIGMA_yes,2,mean)
+Sigma_no_mean<-apply(SIGMA_no,2,mean)
+
+pdf("Fig2.pdf")
+plot(Sigma_yes_mean,Sigma_no_mean,xlab=expression(Sigma[yes]),ylab=expression(Sigma[no]))
+abline(0,1)
+dev.off()
+
+
+
+#Problem 4
+p4.data<-read.table("divorce.dat")
+
+X<-p4.data[,1]
+y<-p4.data[,2]
+ranks<-match(y,sort(unique(y)))
+uranks<-sort(unique(ranks))
+n<-length(X)
+p<-1
+
+#starting values
+beta<-rep(0,p)
+z<-qnorm(rank(y,ties.method="random")/(n+1))
+g<-rep(NA,1)
+K<-length(uranks)
+mu_c<-0
+
+S<-10000
+
+#prior parameters
+tau2_beta<-tau2_c<-16
+
+
+A<-1/tau2_beta+sum(X^2)
+#matrices to store posterior draws in
+BETA<-matrix(NA,S,p)
+Z<-matrix(NA,S,n)
+G<-matrix(NA,S,length(g))
+
+#Gibbs sampler
+for (s in 1:S){
+	#update g using its full conditional
+    for (k in 1:K-1){
+    	a<-max(z[y==0])
+    	b<-min(z[y==1])
+    	u<-runif(1,pnorm((a-mu_c)/sqrt(tau2_c)),pnorm((b-mu_c)/sqrt(tau2_c)))
+    	g[k]<-mu_c+sqrt(tau2_c)*qnorm(u)
+    }
+    
+    #update beta
+    beta<-rnorm(1,mean=sum(X)/A,sqrt(1/A))
+    
+    #update z
+    ez<-X%*%t(beta)
+    a<-c(-Inf,g)[match(y,0:K)]
+    b<-c(g,Inf)[match(y,0:K)]
+    u<-runif(n,pnorm(a-ez),pnorm(b-ez))
+    z<-ez+qnorm(u)
+    
+    #Store values
+    BETA[s,]<-beta
+    Z[s,]<-z
+    G[s,]<-g
+}
+
+#Thinning by taking every 10th value in the chains
+
+BETA<-BETA[10*(1:(S/10)),]
+Z<-Z[10*(1:(S/10)),]
+G<-G[10*(1:(S/10)),]
+
+#MCMC diagnostics
+library(coda)
+apply(Z,2,effectiveSize)
+effectiveSize(BETA)
+effectiveSize(G)
+
+pdf("Fig3.pdf")
+par(mfrow=c(2,2))
+acf(BETA,main=expression(paste("autocorrelation ",beta)))
+plot(BETA, xlab="iteration",ylab=expression(beta))
+acf(G,main="autocorrelation `c'")
+plot(G, xlab="iteration",ylab="c")
+dev.off()
+
+pdf("Fig4.pdf")
+par(mfrow=c(4,4))
+for (i in 1:8){
+acf(Z[,i],main=bquote(paste("autocorrelation ", Z[.(i)])))
+plot(Z[,i], xlab="iteration",ylab=bquote(Z[.(i)]))
+}
+dev.off()
+
+pdf("Fig5.pdf")
+par(mfrow=c(4,4))
+for (i in 9:16){
+acf(Z[,i],main=bquote(paste("autocorrelation ", Z[.(i)])))
+plot(Z[,i], xlab="iteration",ylab=bquote(Z[.(i)]))
+}
+dev.off()
+
+pdf("Fig6.pdf")
+par(mfrow=c(4,4))
+for (i in 17:24){
+acf(Z[,i],main=bquote(paste("autocorrelation ", Z[.(i)])))
+plot(Z[,i], xlab="iteration",ylab=bquote(Z[.(i)]))
+}
+dev.off()
+
+
+#d) 
+mean(BETA>0)
+quantile(BETA,c(0.025,0.975))
+
+
+#Problem 5
+y<-c(13,52,6,40,10,7,66,10,10,14,16,4,66,5,11,10,15,5,76,56,88,24,51,4,40,8,18,5,16,50,40,1,36,5,10,91,18,1,18,6,1,23,15,18,12,12,17,3)
+n<-length(y)
+
+#b) logarithm of posterior density
+
+logpost<-function(theta){
+  sigma<-theta[3]
+  mu<-theta[2]
+  lambda<-theta[1]
+  logf<- -log(sigma)+sum(log(dnorm(((y^lambda-1)/lambda),mu,sigma)))+sum((lambda-1)*log(y))
+  return(logf)
+}
+#c) 
+library(LearnBayes)
+start<-c(0.1,3,0.5)
+fit<-laplace(logpost,start)
+fit$mode
+
+#d) 
+lambda.test<-seq(0.05,0.95,0.10)
+
+#Gibbs sampler
+results.mu<-list()
+results.sigma2<-list()
+S<-10000
+sigma2<-fit$mode[3]^2
+for (j in 1: length(lambda.test)){
+  mu.post<-NULL
+sigma2.post<-NULL
+  for (i in 1:S){
+  mu<-rnorm(1,sum(y^lambda[j]-1)/(n*lambda[j]),sqrt(sigma2/n))
+  sigma2<-rinvgamma(1,n/2,1/2*sum(((y^lambda[j]-1)/lambda[j]-mu)^2))
+  mu.post<-c(mu.post,mu)
+  sigma2.post<-c(sigma2.post,sigma2)
+  }
+results.mu[[j]]<-mu.post
+results.sigma2[[j]]<-sigma2.post
+}
+F.mu<-F.sigma2<-U.mu<-U.sigma2<-L.mu<-L.sigma2<-NULL
+library(plotrix)
+for (i in 1:10){
+  F.mu<-c(F.mu,mean(results.mu[[i]]))
+  F.sigma2<-c(F.sigma2,mean(results.sigma2[[i]]))
+  L.mu<-c(L.mu,quantile(results.mu[[i]],probs=0.025))
+  L.sigma2<-c(L.sigma2,quantile(results.sigma2[[i]],probs=0.025))
+  U.mu<-c(U.mu,quantile(results.mu[[i]],probs=0.975))
+  U.sigma2<-c(U.sigma2,quantile(results.sigma2[[i]],probs=0.975))
+}
+pdf("Fig7.pdf")
+plotCI(lambda.test,F.mu,ui=U.mu,li=L.mu,ylab=expression(mu),xlab=expression(lambda),
+         main=expression(paste("95% posterior interval for ", mu)))
+dev.off()
+
+pdf("Fig8.pdf")
+plotCI(lambda.test,F.sigma2,ui=U.sigma2,li=L.sigma2,ylab=expression(sigma^2),xlab=expression(lambda),
+       main=expression(paste("95% posterior interval for ", sigma^2)))
+dev.off()
+
+mean(L.sigma2)
+mean(U.sigma2)
+mean(U.mu)
+mean(L.mu)

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>trsh</title>
+    <link href='http://fonts.googleapis.com/css?family=Ubuntu+Mono' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="animations.css">
+    <link rel="stylesheet" href="term.css">
+    <link rel="stylesheet" href="term_fkscss.css">
+
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+</head>
+<body>
+    <section id="navbar">
+        <b>~me/</b> <span>: Your Home Directory</span>
+    </section>
+    <section id="sidebar">
+        <h2 class="currendir">~me/</h2>
+        <ul class="lsout">
+        </ul>
+    </section>
+    <section id="message-buffer">
+
+        <section class="message" data-sender="helpbot">
+        Hello and welcome to the <b>Training Shell</b> (trsh)! <br> I'm helpbot, and I'm here to get you started. Say <code>help</code> at any time for more information.
+        </section>
+    
+    </section>
+    <section id="modal-display">
+    </section>
+    <div id="ia-wrapper">
+    <textarea id="input-area" placeholder="me@localhost" spellcheck="false" autocorrect='off'></textarea>
+    </div>
+
+    <template id="helpTemplate">
+        <p>What do you want help with? For starters, I can explain:</p>
+        <ul>
+        <li>The interface</li>
+        <li>What a command prompt/shell is</li>
+        <li>How to work with files</li>
+        <li>Who I am</li>
+        </ul>
+        <p>
+        To ask me a question, type <code>help &lt;keyword&gt;</code> where <code>&lt;keyword&gt;</code> is the thing you want to learn more about
+        </p>
+        <p>
+        If there's anything else you need to ask, I have a keyword lookup system as well; For example, if you wanted to learn about opening zip files, you could say <code>help zip</code>.
+        </p>
+    </template>
+
+    <template class="helptext_body interface">
+        The training shell is divided into two main areas: the working area (to the right), and the sidebar (to the left). The sidebar displays your "Current Working Directory"(cwd). This can be thought of as where you currently "are" in the filesystem. It will update when you move around the filesystem.
+        <aside>press enter to continue...</aside>
+    </template>
+
+    <template class="helptext_body interface">
+        <p>This area on the right is a little more complicated. At the top is the navbar: it shows the long version of your current path, as well as a short description of your current directory (If a description has been set, that is!). 
+        </p><p>
+        The place where these messages are appearing is called the chat buffer. This will show the back and fourth between you and me (helpbot), or between you and the bot that executes commands (shellbot)
+        </p><p>
+        Lastly, there's the command prompt, at the bottom of this area. As you type, text will appear down there. you can press enter to send the command to either me or shellbot.
+        </p>
+        <aside>press enter to continue...</aside>
+    </template>
+
+    <template class="helptext_body interface">
+
+        That's all for now! If you're just getting started, try asking me about moving around the filesystem with <code>help navigation</code>, or <code>help files</code>.
+    </template>
+
+    <template id="help_query">
+        <section>
+            <code><b>mv</b> &lt;files&gt; &lt;target&gt;</code>
+            <p class="help_desc">
+            <b>Move</b>s one or many <b>files</b>. Can also be used to rename a file.<br>
+            If <code>&lt;files&gt;</code> is more than one element, <code>&lt;target&gt;</code> must be a directory.
+            </p>
+        </section>
+        <section>
+            <code><b>cd</b> &lt;directory&gt;</code>
+            <p class="help_desc">
+            Changes your current working directory. You can use it to <b>move</b> around the <b>files</b>ystem.
+            </p>
+        </section>
+    </template>
+
+
+    <script src="jquery.min.js"></script>
+    <script src="dirfaker.js"></script>
+    <script src="termfaker.js"></script>
+</body>
+</html>

@@ -1,0 +1,154 @@
+# STAT2008/STAT4038/STAT6038 Regression Modelling 
+
+# Assignment 1 for 2017
+
+# Read in the first dataset (and have a bit of a look at the data):
+
+moorhen <- read.csv("moorhen.csv", header=T)
+attributes(moorhen)
+summary(moorhen)
+attach(moorhen)
+
+# Access the second dataset from the UsingR library
+
+install.packages("UsingR") # installs the UsingR package
+library(UsingR) # attaches both the UsingR and the HistData libraries to your search path
+search()
+
+ls(pos="package:UsingR") # lists the contents of the UsingR package
+ls(pos="package:HistData") # lists the contents of the HistData package
+
+help(fat) # there are brief help files on all of the datasets in the above libraries
+fat # typing the name shows the contents of the dataset
+attributes(fat) # check that the variable names match the description
+summary(fat) # always a sensible bit of exploratory data analysis
+attach(fat) # attaches the data sets to your search path, so you can reference the variables
+
+# This command was used by Ian to create a csv version of the data for Wattle:
+# write.csv(fat, file="fat.csv", row.names=FALSE)
+
+# You could have read in this version the same way we did the moorhen dataset, instead of 
+# accessing the UsingR library.
+
+# For now on, just commands, for further comments and for the presentation of 
+# the R output, see the model solutions.
+
+
+# Question 1 (a)
+
+plot(Weight, Shield, xlab="Weight (mg)", ylab="Shield area (sq. mm)", main="Data on 43 Commonwealth Park moorhens")
+identify(Weight, Shield)
+
+moorhen[c(4,17,27),]
+
+# Question 1 (b)
+
+cor.test(Weight, Shield)
+
+# Question 1 (c)
+
+plot(Weight, sqrt(Shield), xlab="Weight (mg)", ylab="sq. root of Shield area (sq. mm)", main="Data on 43 Commonwealth Park moorhens")
+cor.test(Weight, sqrt(Shield))
+
+plot(Weight, log(Shield), xlab="Weight (mg)", ylab="ln of Shield area (sq. mm)", main="Data on 43 Commonwealth Park moorhens")
+cor.test(Weight, log(Shield))
+
+plot(sqrt(Weight), Shield, xlab="sq. root of Weight (mg)", ylab="Shield area (sq. mm)", main="Data on 43 Commonwealth Park moorhens")
+cor.test(sqrt(Weight), Shield)
+
+plot(sqrt(Weight), sqrt(Shield), xlab="sq. root of Weight (mg)", ylab="sq. root of Shield area (sq. mm)", main="Data on 43 Commonwealth Park moorhens")
+cor.test(sqrt(Weight), sqrt(Shield))
+
+plot(sqrt(Weight), log(Shield), xlab="sq. root of Weight (mg)", ylab="ln of Shield area (sq. mm)", main="Data on 43 Commonwealth Park moorhens")
+cor.test(sqrt(Weight), log(Shield))
+
+plot(log(Weight), Shield, xlab="ln of Weight (mg)", ylab="Shield area (sq. mm)", main="Data on 43 Commonwealth Park moorhens")
+cor.test(log(Weight), Shield)
+
+plot(log(Weight), sqrt(Shield), xlab="ln of Weight (mg)", ylab="sq. root of Shield area (sq. mm)", main="Data on 43 Commonwealth Park moorhens")
+cor.test(log(Weight), sqrt(Shield))
+
+plot(log(Weight), log(Shield), xlab="ln of Weight (mg)", ylab="ln of Shield area (sq. mm)", main="Data on 43 Commonwealth Park moorhens")
+cor.test(log(Weight), log(Shield))
+identify(log(Weight), log(Shield))
+
+# Question 1 (d)
+
+moorhen.lm <- lm(log(Shield) ~ log(Weight))
+moorhen.lm
+
+par(mfrow=c(2,2))
+plot(moorhen.lm, which=1)
+plot(moorhen.lm, which=2)
+
+barplot(hat(log(Weight)),names.arg=1:length(Weight))
+title("Leverage plot of the hat values\n for the moorhen data")
+abline(h=2*sum(hat(log(Weight)))/length(Weight))
+
+plot(moorhen.lm, which=4)
+par(mfrow=c(1,1))
+
+# Question 1 (e)
+
+anova(moorhen.lm)
+
+# Question 1 (f)
+
+summary(moorhen.lm)
+
+# Question 1 (g)
+
+plot(c(30,max(Weight)),c(20,max(Shield)), type="n", xlab="Weight (mg)", ylab="Shield area (sq. mm)", main="Data on 43 Commonwealth Park moorhens")
+points(Weight, Shield)
+identify(Weight, Shield)
+
+new.X.values <- log(1:(max(Weight)+30))
+new.Y.values <- coef(moorhen.lm)[1] +  coef(moorhen.lm)[2]*new.X.values
+lines(exp(new.X.values), exp(new.Y.values))
+
+abline(lm(Shield ~ Weight)$coef, lty=2)
+legend(60,480,c("lm(Shield ~ Weight)", "lm(log(Shield) ~ log(Weight))"), lty=2:1)
+
+
+# Question 2 (a)
+
+plot(BMI, body.fat, xlab="Body Mass Index", ylab="% Body Fat", main="Body Measurements Data")
+fat[BMI>35,]
+identify(BMI, body.fat)
+
+# Question 2 (b)
+
+fat.lm <- lm(body.fat ~ BMI)
+fat.lm
+
+plot(fat.lm, which=1)
+plot(fat.lm, which=2)
+plot(fat.lm, which=4)
+
+# Question 2 (c)
+
+range(body.fat)
+fat[body.fat==0,]
+
+fat.loglm <- lm(body.fat ~ log(BMI))
+fat.loglm
+
+plot(fat.loglm, which=1)
+plot(fat.loglm, which=2)
+plot(fat.loglm, which=4)
+
+# Question 2 (d)
+
+anova(fat.loglm)
+summary(fat.loglm)
+range(log(BMI))
+
+# Question 2 (e)
+
+# A bit of re-fitting to get the predict function to work properly:
+
+logBMI <- log(BMI)
+fat.newloglm <- lm(body.fat ~ logBMI)
+newvalues <- log(c(17.25, 21.75, 27.5, 32.5))
+conf.ints <- predict(fat.newloglm, newdata=data.frame(logBMI=newvalues), interval="confidence")
+conf.ints

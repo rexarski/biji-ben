@@ -1,0 +1,44 @@
+Please answer the following questions. Do your
+work individually, without your partner.
+
+
+1. L =  [1, 2, 3, 5, 7, 11]
+
+Answer the following questions about L:
+
+
+a) The value of L[3] is: 1, 2, 3, 5, none of these
+
+b) The value of L[6] is: 1, 2, 3, 5, none of these 
+
+
+c) L[0:-1] is the same as:  [0, 1, 2, 3, 5, 7, 11]
+                            [1, 2, 3, 5, 7, 11]
+                            [2, 3, 5, 7, 11]
+                            [1, 2, 3, 5, 7]
+                            [2, 3, 5, 7]
+                            []
+
+
+
+2. What will the following print (choose from the answers below):
+
+              loopy = ['little', 'rabbit', 'Foofoo']
+              ind = 0
+
+              while (ind < len(loopy)) and (loopy[ind] != 'rabbit'):
+                  print loopy[ind],
+                  ind = ind + 1
+
+
+        A. little
+           rabbit
+
+        B. little
+           Foofoo
+
+        C. little 
+
+        D. none of the above
+        
+ 

@@ -1,0 +1,54 @@
+<?xml version="1.0" standalone="no" ?>
+<!DOCTYPE quiz SYSTEM "quiz.dtd">
+<quiz>
+  <questions>
+    <mc-question qid="Q516" solution="1">
+       <question>What do you promise when you take the oath of citizenship?</question>
+       <option>To pledge your loyalty to Queen Elizabeth II</option>        
+       <option>To fulfill the duties of a Canadian</option>         
+       <option>To pledge your allegiance to the flag</option>         
+       <option>To pledge your loyalty to Canada from sea to sea</option>
+    </mc-question>
+    <tf-question qid="Q637" solution="False">
+       <question>The Prime Minister, Stephen Harper, is Canada's Head of State.</question>
+    </tf-question>
+    <mc-question qid="Q888" solution="4">
+       <question>What is the Underground Railroad?</question>
+       <option>The first railway to cross Canada</option>         
+       <option>The CPR's secret railway line</option>
+       <option>The TTC subway system</option>
+       <option>A network used by slaves who escaped the United States into Canada</option>
+    </mc-question>
+    <mc-question qid="Q555" solution="3">
+       <question>During the War of 1812 the Americans burned down the Parliament Buildings in York (now Toronto).  What did the British and Canadians do in return?</question>
+       <option>They attacked American merchant ships</option>
+       <option>They expanded their defence system, including Fort York</option>
+       <option>They burned down the White House in Washington D.C.</option>
+       <option>They captured Niagara Falls</option>
+    </mc-question>
+  </questions>
+  <class-responses>
+    <student sid="s998801234">
+      <response qid="Q516" answer="1" />
+      <response qid="Q637" answer="False" /> 
+      <response qid="Q555" answer="2" />
+      <response qid="Q888" answer="4" />
+    </student>
+    <student sid="s001078452">
+      <response qid="Q516" answer="4" />
+      <response qid="Q637" answer="False" />
+      <response qid="Q555" answer="3" />
+      <response qid="Q888" answer="4" />
+    </student>
+    <student sid="s997733991">
+      <response qid="Q516" answer="1" />
+      <response qid="Q637" answer="True" />
+      <response qid="Q555" answer="3" />
+      <response qid="Q888" answer="2" />
+    </student>
+    <student sid="s555555555">
+      <response qid="Q637" answer="False" />
+      <response qid="Q555" answer="3" />
+    </student>
+  </class-responses>
+</quiz>

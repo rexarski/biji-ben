@@ -1,0 +1,5 @@
+high mod low poor
+high 1520 266 124 66
+mod 234 1512 432 78
+low 117 362 1772 205
+poor 36 82 179 492

@@ -1,0 +1,15 @@
+#q1.1
+
+forgot to consider country, may include someone hasn’t competed but his country does
+
+#q1.2
+
+forgot to consider country, may include someone didn’t win any medals but his country does
+
+#q2.1
+
+EID1=EID2
+
+#q2.4
+
+not enough

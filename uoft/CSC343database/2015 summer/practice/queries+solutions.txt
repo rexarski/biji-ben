@@ -1,0 +1,224 @@
+World Database Schema
+csc343country(code, name, continent, region, surfacearea, indepyear, population, lifeexpectancy, gnp, gnpold, localname, governmentform, headofstate, capital, code2)
+csc343city(id, name, countrycode, district, population)
+csc343countrylanguage(countrycode, countrylanguage, isofficial, percentage)
+...where continent = {Asia, Europe, North America, South America, Africa, Oceania, Antarctica}
+
+===============================================================
+Queries + Solutions
+===============================================================
+
+Set 1
+
+Q1: What is the country code of the country with name 'Canada'?
+A1: select code from csc343country where name='Canada';
+Answer: 
+CAN
+
+Q2:  How many different languages are spoken in Canada?
+A2: select countrylanguage from csc343countrylanguage where countrycode='CAN';
+Answer: 
+12
+
+Q3: What is the second most popular language spoken in Italy?.
+A3: select countrylanguage, percentage  from csc343countrylanguage where countrycode='ITA';
+Answer: 
+Sardinian
+
+Q4: What is the population of the capital of the country you are coming from? Report the country, the capital, its population.
+A4: -
+Answer: -
+
+Q5: What is the country with the largest number of spoken languages?
+A5:  select code, count(countrylanguage) as TOTAL  from csc343country, csc343countrylanguage WHERE code=countrycode GROUP BY code ORDER BY TOTAL desc;
+Answer:
+ IND  |    12
+ USA  |    12
+ CHN  |    12
+ RUS  |    12
+ CAN  |    12
+
+Set 2
+
+Q1: Find the name of the country with code "LKA".
+A: SELECT name FROM csc343country WHERE code='LKA';
+Answer:
+   name
+-----------
+ Sri Lanka
+(1 row)
+
+Q2: Find the name and population of the country with code "LKA".
+A: SELECT name, population FROM csc343country WHERE code='LKA';
+Answer:
+SELECT name, population FROM csc343country WHERE code='LKA';
+   name    | population
+-----------+------------
+ Sri Lanka |   18827000
+(1 row)
+
+
+Q3: Find the name and the population of the capital of the country with code "LKA";
+A:  SELECT CI.name, CI.population FROM csc343country CO JOIN csc343city CI ON CO.capital=CI.id WHERE code='LKA';
+Answer:
+  name   | population
+---------+------------
+ Colombo |     645000
+(1 row)
+
+Q4: Find the name and population of the countries of "Africa" with population more than 50000000 (50M or 50e6).
+A: SELECT name, population FROM csc343country WHERE continent='Africa' AND population > 50000000;
+Answer:
+                 name                  | population
+---------------------------------------+------------
+ Egypt                                 |   68470000
+ Ethiopia                              |   62565000
+ Congo, The Democratic Republic of the |   51654000
+ Nigeria                               |  111506000
+(4 rows)
+
+
+Q5: Find the different types of government form in the world. Report each type only one time.
+A: SELECT DISTINCT governmentform FROM csc343country;
+Anwser: 
+                governmentform
+----------------------------------------------
+ Monarchy
+ Socialistic Republic
+ Federal Republic
+ Overseas Department of France
+ Constitutional Monarchy
+ Special Administrative Region of China
+ Part of Denmark
+ Administrated by the UN
+ Republic
+ Islamic Republic
+ US Territory
+ Monarchy (Emirate)
+ Dependent Territory of the US
+ Co-administrated
+ Dependent Territory of the UK
+ Constitutional Monarchy, Federation
+ Territory of Australia
+ Nonmetropolitan Territory of France
+ Nonmetropolitan Territory of The Netherlands
+ Constitutional Monarchy (Emirate)
+ Occupied by Marocco
+ Territorial Collectivity of France
+ Dependent Territory of Norway
+ Nonmetropolitan Territory of New Zealand
+ Monarchy (Sultanate)
+ People'sRepublic
+ Parliamentary Coprincipality
+ Commonwealth of the US
+ Islamic Emirate
+ Socialistic State
+ Parlementary Monarchy
+ Autonomous Area
+ Federation
+ Emirate Federation
+ Independent Church State
+(35 rows)
+
+Q6: Find the number of countries in the world?
+A: SELECT count(*) FROM csc343country;
+Answer: 239
+
+Q7. For each continent, find the number of countries and the average population.
+A: SELECT continent, count(name), avg(population) FROM csc343country GROUP BY continent;
+Answer:
+   continent   | count |          avg
+---------------+-------+------------------------
+ Europe        |    46 |  15871186.956521739130
+ Oceania       |    28 |   1085755.357142857143
+ Asia          |    51 |  72647562.745098039216
+ North America |    37 |  13053864.864864864865
+ Africa        |    58 |  13525431.034482758621
+ Antarctica    |     5 | 0.00000000000000000000
+ South America |    14 |  24698571.428571428571
+(7 rows)
+
+Set 3 
+
+Q1: Find how many countries have "English" as their official language. The schema of the result should be (numofcountries).
+A:  SELECT count(CO.name) AS numofcountries FROM csc343country CO JOIN csc343countrylanguage CL ON CO.code=CL.countrycode WHERE countrylanguage='English' AND isofficial='t';
+Answer: 
+numofcountries
+-------
+    44
+(1 row)
+
+
+
+Q2: Find the most popular official languages in the world. Report the 5 most popular languages and the number of countries where the language is official in a descending order of popularity. The schema of the result should be (countrylanguage, numofcountries).
+A: SELECT CL.countrylanguage, count(CO.name) AS numofcountries FROM csc343country CO JOIN csc343countrylanguage CL ON CO.code=CL.countrycode WHERE isofficial='t' GROUP BY CL.countrylanguage ORDER BY count(CO.name) DESC LIMIT 5;
+Answer:
+ countrylanguage | numofcountries
+-----------------+-------
+ English         |    44
+ Arabic          |    22
+ Spanish         |    20
+ French          |    18
+ Portuguese      |     6
+(5 rows)
+
+
+Q3: Find which languages are spoken in most countries of the world. Report the 5 most popular languages and the number of countries where the language is spoken in a descending order of popularity. The schema of the result should be (countrylanguage, numofcountries).
+A: SELECT CL.countrylanguage, count(CO.name) AS numofcountries FROM csc343country CO JOIN csc343countrylanguage CL ON CO.code=CL.countrycode GROUP BY CL.countrylanguage ORDER BY count(CO.name) DESC LIMIT 5;
+Answer:
+ countrylanguage | numofcountries
+-----------------+-------
+ English         |    60
+ Arabic          |    33
+ Spanish         |    28
+ French          |    25
+ Chinese         |    19
+(5 rows)
+
+Q4: Find the number of people that speak each language in "Canada". Report the language and the number of people that speak each language in a descenting order of popularity. The schema of the result should be (countrylanguage, numofpeople).
+A: SELECT CL.countrylanguage, (CL.percentage*CO.population/100) AS numofpeople FROM csc343country CO JOIN csc343countrylanguage CL ON CO.code=CL.countrycode WHERE CO.name='Canada' ORDER BY numofpeople;
+Answer:
+countrylanguage  |   numofpeople
+------------------+------------------
+ English          | 18812788.4752655
+ French           | 7288397.88118362
+ Chinese          |           778675
+ Italian          | 529499.014852047
+ German           | 498352.007426023
+ Polish           | 218028.996286988
+ Spanish          | 218028.996286988
+ Portuguese       | 218028.996286988
+ Punjabi          | 218028.996286988
+ Ukrainian        | 186882.007426023
+ Dutch            |           155735
+ Eskimo Languages | 31147.0004641265
+(12 rows)
+
+
+Q5: Find the languages that are spoken by most people in the world (irrelevant of their country of residence). Report only the languages that are spoken by more than 50M people in a descending order of popularity. The schema of the result should be (countrylanguage, numofpeople).
+A: SELECT CL.countrylanguage,  SUM(CO.population * CL.percentage / 100) AS numofpeople  FROM csc343country CO JOIN csc343countrylanguage CL ON CO.code=CL.countrycode GROUP BY CL.countrylanguage HAVING SUM(CO.population * CL.percentage / 100) > 50000000 ORDER BY numofpeople DESC;
+Answer: 
+ countrylanguage |   numofpeople
+-----------------+------------------
+ Chinese         | 1191843539.22187
+ Hindi           | 405633085.474659
+ Spanish         | 355029461.907821
+ English         | 347077860.651048
+ Arabic          |  233839240.44018
+ Bengali         | 209304713.125095
+ Portuguese      | 177595269.439995
+ Russian         | 160807559.897025
+ Japanese        | 126814106.084933
+ Punjabi         | 104025371.706806
+ German          | 92133587.0430592
+ Javanese        |  83570161.236496
+ Telugu          | 79065637.9334068
+ Marathi         | 75019094.9665654
+ Korean          | 72291373.1146914
+ Vietnamese      | 70616220.4468264
+ French          | 69980879.2383475
+ Tamil           | 68691538.0299795
+ Urdu            | 63589468.8840628
+ Turkish         |   62205656.07252
+ Italian         | 59864482.4274508
+(21 rows)

@@ -1,0 +1,121 @@
+##########################
+#    Donner Party        #
+#      R Code            #
+##########################
+
+# Read data in from .csv file
+
+> donner = read.csv("donnerpartydata.csv")
+> donner
+   AGE    SEX   STATUS
+1   23   MALE     DIED
+2   40 FEMALE SURVIVED
+3   40   MALE SURVIVED
+. .... . . ...........
+. .... . . ...........
+. .... . . ...........
+. .... . . ...........
+42  35   MALE     DIED
+43  23   MALE SURVIVED
+44  24   MALE     DIED
+45  25 FEMALE SURVIVED
+
+# Attach the data to R so you can reference each column referencing data name and rename variables
+
+> attach(donner)
+> age <- AGE
+> gender <- SEX
+> status <- STATUS
+
+# Fit logistic regression model with main effects of age and gender only
+
+> glm.model1=glm(status ~ age + gender, family=binomial(link="logit"))
+> glm.model1=glm(status ~ age + gender, family=binomial) # same as above because R uses canonical link by default
+
+> summary(glm.model1)
+
+Call:
+glm(formula = status ~ age + gender, family = binomial(link = "logit"))
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-1.7445  -1.0441  -0.3029   0.8877   2.0472  
+
+Coefficients:
+            Estimate Std. Error z value Pr(>|z|)  
+(Intercept)  3.23041    1.38686   2.329   0.0198 *
+age         -0.07820    0.03728  -2.097   0.0359 *
+genderMALE  -1.59729    0.75547  -2.114   0.0345 *
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 61.827  on 44  degrees of freedom
+Residual deviance: 51.256  on 42  degrees of freedom
+AIC: 57.256
+
+Number of Fisher Scoring iterations: 4
+
+
+# Model with age,gender,age^2 and all interactions
+
+> agesq = age^2
+> glm.model2=glm(status ~ age*gender + agesq + agesq:gender, family=binomial)
+
+> summary(glm.model2)
+
+Call:
+glm(formula = status ~ age * gender * age^2, family = binomial)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-2.2279  -0.9388  -0.5550   0.7794   1.6998  
+
+Coefficients:
+               Estimate Std. Error z value Pr(>|z|)  
+(Intercept)     7.24638    3.20517   2.261   0.0238 *
+age            -0.19407    0.08742  -2.220   0.0264 *
+genderMALE     -6.92805    3.39887  -2.038   0.0415 *
+age:genderMALE  0.16160    0.09426   1.714   0.0865 .
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 61.827  on 44  degrees of freedom
+Residual deviance: 47.346  on 41  degrees of freedom
+AIC: 55.346
+
+Number of Fisher Scoring iterations: 5
+
+
+# Model with age & gender and interaction
+
+> glm.model3=glm(status ~ age*gender, family=binomial)
+
+> summary(glm.model3)
+
+Call:
+glm(formula = status ~ age * gender, family = binomial)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-2.2279  -0.9388  -0.5550   0.7794   1.6998  
+
+Coefficients:
+               Estimate Std. Error z value Pr(>|z|)  
+(Intercept)     7.24638    3.20517   2.261   0.0238 *
+age            -0.19407    0.08742  -2.220   0.0264 *
+genderMALE     -6.92805    3.39887  -2.038   0.0415 *
+age:genderMALE  0.16160    0.09426   1.714   0.0865 .
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 61.827  on 44  degrees of freedom
+Residual deviance: 47.346  on 41  degrees of freedom
+AIC: 55.346
+
+Number of Fisher Scoring iterations: 5

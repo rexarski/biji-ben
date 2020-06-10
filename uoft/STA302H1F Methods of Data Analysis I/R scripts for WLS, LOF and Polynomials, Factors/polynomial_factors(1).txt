@@ -1,0 +1,99 @@
+# Polynomials and factors
+
+library(MASS)
+library(nnet)
+library(car)
+library(alr3)
+
+# Polynomial terms
+data(cakes)
+
+# Factors: qualitative predictors
+# Sleep data
+cakes$X1q=cakes$X1^2
+cakes$X2q=cakes$X2^2
+f0=lm(Y~X1+X2,cakes)
+f1=lm(Y~X1+X2+X1q+X2q,cakes)
+f2=lm(Y~X1*X2+X1q+X2q,cakes)
+anova(f0,f1)
+anova(f1,f2)
+
+par(mfrow=c(1,2))
+plot(c(32,38),c(4,9),type="n",xlab=expression(X[1]),ylab="Y")
+x1=seq(32,38,by=0.2)
+lines(x1,predict(f2,data.frame(X1=x1,X2=360,X1q=x1^2,X2q=360^2)))
+text(33,8,expression(paste(X[2],"=360")))
+lines(x1,predict(f2,data.frame(X1=x1,X2=350,X1q=x1^2,X2q=350^2)))
+text(33,5.3,expression(paste(X[2],"=350")))
+lines(x1,predict(f2,data.frame(X1=x1,X2=340,X1q=x1^2,X2q=340^2)))
+text(35,4.5,expression(paste(X[2],"=340")))
+plot(c(335,365),c(4,9),type="n",xlab=expression(X[1]),ylab="Y")
+x2=seq(335,365,by=1)
+lines(x2,predict(f2,data.frame(X1=37,X2=x2,X1q=37^2,X2q=x2^2)))
+text(339,8,expression(paste(X[1],"=37")))
+lines(x2,predict(f2,data.frame(X1=35,X2=x2,X1q=35^2,X2q=x2^2)))
+text(339,4.5,expression(paste(X[1],"=35")))
+lines(x2,predict(f2,data.frame(X1=33,X2=x2,X1q=33^2,X2q=x2^2)))
+text(348,4,expression(paste(X[1],"=33")))
+
+# Find optimal baking time (x1) give baking temp (x2), and obtain 95% pointwise confidence interval
+b=coef(f2)
+x2=seq(335,365,by=1)
+gd=matrix(nrow=6,ncol=length(x2))
+gd[1,]=0*rep(1,length(x2))
+gd[2,]=-1/(2*b[4])*rep(1,length(x2))
+gd[3,]=0*rep(1,length(x2))
+gd[4,]=(b[2]+b[6]*x2)/(2*b[4]^2)
+gd[5,]=0*rep(1,length(x2))
+gd[6,]=-x2/(2*b[4])
+bcov=vcov(f2)
+xm=-(b[2]+b[6]*x2)/(2*b[4])
+xm_se=sqrt(diag(t(t(gd)%*%bcov%*%gd)))
+xm_lw=xm-pnorm(0.975)*xm_se
+xm_up=xm+pnorm(0.975)*xm_se
+plot(c(335,365),c(33,39),type="n",xlab="Baking temperature",ylab="Optimal baking time")
+lines(x2,xm,lty=1)
+lines(x2,xm_lw,lty=2)
+lines(x2,xm_up,lty=2)
+
+# In the text book (Page 125), Table 6.1 is obtained by:
+data(sleep1)
+sleep<-sleep1
+sleep$D <- factor(sleep$D)
+
+# The "factor" command is used to convert a numeric variable into a factor.
+# Since the data frame sleep1 has missing values, we use 
+# "na.action=na.omit" to delete species with missing data.
+
+a1 <- lm(TS~D,sleep,na.action=na.omit)
+summary(a1)
+anova(a1)
+# vcov extracts the covariance matrix of the estimated coeffients, 
+# which is useful for applying delta method, e.g.
+betacov=vcov(a1) 
+
+a0 <- update(a1,~.-1)
+summary(a0)
+anova(a0)
+
+# Adding a Predictor, and Comparing Regression Lines
+
+# m1 is the most general model
+m1 <- lm(TS~logb(BodyWt,2)*D,sleep,na.action=na.omit)
+summary(m1)
+
+# m2 is the parallel regressions
+m2 <- update(m1, ~D + logb(BodyWt,2))
+summary(m2)
+
+# m3 is the model with common intercept
+m3 <- update(m1, ~logb(BodyWt,2):D)
+summary(m3)
+
+# m4 is the coincident regression lines (all the same)
+m4 <- update(m1, ~logb(BodyWt,2))
+summary(m4) 
+
+anova(m4,m1)
+anova(m3,m1)
+anova(m2,m1)

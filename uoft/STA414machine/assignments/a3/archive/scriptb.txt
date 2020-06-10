@@ -1,0 +1,13 @@
+source("a3b.r")
+
+lm(1,train1x,train1y,testx,testy)
+proc.time()
+
+gplc(1,train1x,train1y,testx,testy)
+proc.time()
+
+hyperpar(train1x,train1y)
+proc.time()
+
+gp(gamma_opt,rho_opt,train1x,trainy,testx,testy)
+proc.time()

@@ -1,0 +1,5 @@
+accept s0
+s0 0 s0
+s0 1 s1
+s1 0 s0
+s1 1 s1

@@ -1,0 +1,177 @@
+# STAT3015/STAT7030 GLMs
+
+# R command file and solutions for Tutorial 1
+
+# Question One
+
+# If you can come up with reasonable answers to these questions for all the examples discussed
+# in this course, you will be well on your way to getting a good mark for the course.
+
+
+# Question Two
+
+# Part (a)
+
+# Read in and attach the data:
+# Remember to set your working directory first
+
+setwd("")   # Put path of your working directory in the round brackets with double quotation signs
+
+library("foreign")
+child.iq <- read.dta("child.iq.dta")
+
+attach(child.iq)
+names(child.iq)
+
+# It is always a good idea to get an idea of the range of the data:
+summary(child.iq)
+
+# Fit the described simple linear regression model:
+child.iq.lma <-lm(ppvt~momage)
+
+# Plot the data and the model:
+plot(momage, ppvt, xlab="Mother's age", ylab="Child's ppvt test score", pch=20, 
+     main="Child IQ data with fitted simple linear regression model")
+abline(child.iq.lma)
+
+# Check the assumptions:
+par(mfrow=c(2, 2))
+plot(child.iq.lma)
+
+# No obvious evidence of any dependence structure in the residuals, any non constant variance or
+# major departures from normality. There are some hints of problems with particular observations
+# which might warrant further investigation, but no obvious problems on the default outlier plot.
+
+# Get the coefficient estimates:
+summary(child.iq.lma)
+
+# The fitted model is ppvt = 67.7826 + 0.8403 * momage
+
+# In this model, the slope coefficient associated with momage is 0.8403, suggesting that
+# children's IQ tends to increase as the mother's age increases. Note that the maximum mother's
+# age in the data is 29. It is dangerous to use this model to extrapolate outside this range, 
+# so the recommended age to give birth in order to maximise their child's IQ test score would
+# be 29.
+
+# However, in making this recommendation, we are assuming that the model reflects the true 
+# underlying relationship between maternal age and child's IQ and the true relationship may not
+# linear, especially if we start observing additional data outside the age range [17, 29].
+
+# This simple model is also NOT controlling for other factors, which could make a difference in
+# this decision, such as how fertility varies with age - higher IQ test scores are almost
+# certainly not the only objective in deciding at which age to give birth.
+
+# Part (b)
+
+educ_cat
+factor(educ_cat)
+
+# See any difference here?
+
+child.iq.lmb1 <-lm(ppvt~factor(educ_cat))
+plot(child.iq.lmb1)
+
+anova(child.iq.lmb1)
+summary(child.iq.lmb1)
+
+child.iq.lmb2 <-lm(ppvt~momage+factor(educ_cat))
+plot(child.iq.lmb2)
+
+anova(child.iq.lmb2)
+summary(child.iq.lmb2)
+
+# Even though we have not yet covered this treatment of categorical explanatory variables in 
+# lectures, it is fairly obvious from the F test on factor(educ_cat) in the ANOVA tables in 
+# both of the above models, that there are significant differences in test scores for the
+# different categories of mother's education. As we will see later in the course, the t 
+# statistics in the summary tables for the different educ_cat levels, suggest that all three
+# of the more educated categories (2, 3, and 4) have significantly higher test scores than the
+# reference category (category 1, the category for which there is no parameter estimate in the 
+# table of coefficients).
+
+child.iq.lmb3 <-lm(ppvt~factor(educ_cat)+momage)
+anova(child.iq.lmb3)
+summary(child.iq.lmb3)
+
+# Also note that once we control for the differences between the educational categories, that 
+# the slope coefficient associated with mother's age has decreased from 0.8403 to 0.2877 and
+# is now no longer a significant coefficient in this expanded model.
+
+# Part (c)
+
+# Create the new indicator variable
+educ_hs <- 1*(educ_cat>=2)
+
+# Note you could have done this a number of ways: 
+# educ_hs <- ifelse(educ_cat>=2,1,0) would also produce the same result.
+
+child.iq.lmc <- lm(ppvt~educ_hs+momage+momage:educ_hs)
+plot(child.iq.lmc)
+
+anova(child.iq.lmc)
+summary(child.iq.lmc)
+
+colors <- ifelse(educ_hs==1, "blue", "red")
+plot (momage, ppvt, xlab="Mother's age", ylab="Child's ppvt test score",
+  col=colors, pch=20, main="Child IQ data with fitted multiple regression model",
+  sub="(red indicates Mothers without a high school education)")
+curve (cbind (1, 1, x, 1*x) %*% coef(child.iq.lmc), add=TRUE, col="blue")
+curve (cbind (1, 0, x, 0*x) %*% coef(child.iq.lmc), add=TRUE, col="red")
+
+# Note the interaction term between mother's age and high school education is significant
+# and the plot clearly shows that any relationship between test scores and mother's age
+# depends on the education status.
+
+# However, note the R-square and other summary measures for this model are very low (about 6%).
+# Even though we have an apparently reasonable fitting model and significant coefficients due
+# to the large sample size, this model is probably at best only explanatory (i.e. tells us
+# something aobut the relationships between the variables). The model is probably not a good 
+# enough model to use for prediction. Note I am not a great believer in using summary measures
+# alone to make these sort of judgements about models (certainly not R-square alone), but with
+# relatively large datasets, there are other things we can do to check the predictive power of
+# our models, as we will see in part (d).
+
+# Part (d)
+
+child.iq_first200 <-child.iq[1:200,]
+educ_hs_sub <-ifelse(child.iq_first200$educ_cat>=2,1,0)
+
+child.iq.lmd <- lm(ppvt~educ_hs_sub*momage,data=child.iq_first200)
+plot(child.iq.lmd)
+
+anova(child.iq.lmd)
+summary(child.iq.lmd)
+
+child.iq_last200 <- child.iq[201:400,]
+newdata <- data.frame(cbind("momage"=child.iq_last200$momage,
+                            "educ_hs_sub"=ifelse(child.iq_last200$educ_cat>=2,1,0)))
+
+plot(predict(child.iq.lmd,newdata),child.iq_last200$ppvt,xlim=c(20,140),xlab="Fitted",ylab="Actual")
+abline(a=0,b=1)
+
+# The function used here to make the prediction for the last 200 childern:
+# predict(child.iq.lmd,newdata). More details about this command can be found by executing:
+# ?predict.lm
+
+# We may also try other types of plots:
+
+# a boxplot may be generated by
+boxplot(data.frame(predict(child.iq.lmd,newdata), child.iq_last200$ppvt), names = c("Predicted scores", "Actual scores"))
+
+# a histogram plot may be created by
+par(mfrow = c(2,1))
+hist(predict(child.iq.lmd,newdata), xlim=c(20,160), xlab = "Predicted test scores", main="", breaks = seq(20, 160, by=5))
+hist(child.iq_last200$ppvt, xlim=c(20,160), xlab = "Actual test scores", main="", breaks = seq(20, 160, by=5))
+title(list("A comparison of predicted and acutal scores", cex = 1.5), outer = T, line = -2)
+
+# This was a form of cross-validation - we used one sub-sample of the data to build the model
+# and another sub-sample to validate the predictions from that model. It would be better if we
+# had chosen the sub-samples at random to avoid bias. The method of selection used is possibly 
+# not an issue if the data were in random order, but we definitely have a problem if the data
+# were sorted by something meaningful such as the age of the child, which would mean there 
+# were some systematic differences between the first 200 and last 200 children.
+
+# As suggested above, the model is a poor predictor of test scores in a new group of children.
+# There is still a lot of variation in the data that is not explained by the model and we
+# need to include more explanatory variables in the model (if we have them available in the
+# data - if not, then we will need to collect them in the next iteration of this research).

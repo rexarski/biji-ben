@@ -1,0 +1,83 @@
+
+#Q1
+theta<-seq(0,1,0.001)
+n<-20
+y<-0
+d.prior<-dbeta(theta,a,b)
+
+pdf("HW_Fig1.pdf",family="Times",height=3.5,width=7)
+par(mar=c(3,3,1,1),mgp=c(1.75,0.75,0))
+par(mfrow=c(1,2))
+a<-40
+b<-400
+d.prior<-dbeta(theta,a,b)
+
+plot(theta,d.prior,type="n",ylim=c(0,30),
+xlab="percentage infected in the population",ylab="",main="Beta(40,400) prior")
+lines(theta,d.prior,lty=2,lwd=2)
+d.prior<-dbeta(theta,a,b)
+d.post<-dbeta(theta,a+y,b+n-y)
+lines(theta,d.post,lty=1,lwd=2)
+legend(0.6,10,c("prior","post"),lty=c(2,1),lwd=c(2,2))
+
+a<-2
+b<-2
+d.prior<-dbeta(theta,a,b)
+plot(theta,d.prior,type="n",ylim=c(0,30),
+xlab="percentage infected in the population",ylab="",main="Beta(2,2) prior")
+lines(theta,d.prior,lty=2,lwd=2)
+
+d.post<-dbeta(theta,a+y,b+n-y)
+lines(theta,d.post,lty=1,lwd=2)
+legend(0.6,10,c("prior","post"),lty=c(2,1),lwd=c(2,2))
+dev.off()
+
+
+#Q2
+#a) 
+theta1<-1
+theta2<-2
+sigma<-2
+
+y<-seq(-8,10,0.01)
+py<-0.5*dnorm(y,theta1,sigma)+0.5*dnorm(y,theta2,sigma)
+par(mfrow=c(1,1))
+pdf("HW_Fig2.pdf")
+plot(y,py,type="l",xlab="y",ylab="",xaxs="i",yaxs="i",bty="n",cex=2,yaxt="n")
+dev.off()
+
+#b)
+
+0.5*dnorm(1,1,2)/(0.5*dnorm(1,1,2)+0.5*dnorm(1,2,2))
+
+#c)
+ptheta_y<-function(sigma)  0.5*dnorm(1,1,sigma)/(0.5*dnorm(1,1,sigma)+0.5*dnorm(1,2,sigma))
+
+py<-0.5*dnorm(y,theta1,sigma)+0.5*dnorm(y,theta2,sigma)
+
+pdf("HW_Fig3.pdf")
+plot(seq(0.025,5,0.01),ptheta_y(seq(0.025,5,0.01)),xlab="sigma",ylab=expression(paste("p(",theta,"=0|y=1)")),type="l",lwd=3)
+dev.off()
+
+#Q4
+p<-c(0,0.025,0.05,0.075,0.10)
+g_p<-c(0.80, 0.10,0.05,0.035,0.015)
+#a) 
+n<-60
+y<-55
+
+g.post<-dbinom(y,n,1-p)*g_p
+g.post<-g.post/sum(g.post)
+g.post         
+#b)
+y<-c(58,  55 , 59 , 54 , 56 , 57 , 57 , 50 , 52 , 60)
+
+g_p<-c(0.80, 0.10,0.05,0.035,0.015)
+
+for (i in 1:10){
+  g.post<-dbinom(y[i],n,1-p)*g_p
+  g.post<-g.post/sum(g.post)
+  g_p<-g.post #updated posterior becomes new prior
+}
+  
+}  

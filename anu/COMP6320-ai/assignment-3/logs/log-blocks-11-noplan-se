@@ -1,0 +1,80 @@
+Starting SAT-based planner...
+Checking for plugins...
+Encodings registered:    3
+Solvers registered:      1
+Command line options:
+    Domain file:          benchmarks/blocks/domain.pddl
+    Problem file:         benchmarks/blocks/problem11.pddl
+    Experiment name:      blocks_temp
+    Query strategy:        ramp, min_h = 15 max_h = 50 step_h = 5
+    Compute plangraph:     False
+    Plangraph constraints: both
+    Encoding:              basic
+    Solver                 precosat
+    SAT solver time out    None
+    Write debug CNF:       False
+    Remove tmp files:      False
+Command line arg processing time: 0.0024089813232421875
+Parsing the PDDL domain...
+Parsing the PDDL problem...
+Simplifying the problem representation...
+Parsing time: 0.059902191162109375
+Grounding the problem...
+Grounding time: 0.030345916748046875
+Simplifying the ground encoding...
+Simplify time: 0.09508419036865234
+Planning...
+
+Step: 15
+-------------------------------------------------
+Generating base encoding: basic ...
+PRE_EFF_COUNT:
+28875
+FRAME COUNT:
+4650
+INT MUTEX COUNT:
+181545
+Encoding generation time: 15.116342067718506
+Writing CNF file...
+Total variables: 6440
+Total clauses: 215235
+Writing time: 0.309096097946167
+Solving...
+UNSAT
+Solution time:  0.30814170837402344
+Step time: 15.73641324043274
+
+Step: 20
+-------------------------------------------------
+Generating base encoding: basic ...
+PRE_EFF_COUNT:
+38500
+FRAME COUNT:
+6200
+INT MUTEX COUNT:
+242060
+Encoding generation time: 19.776070833206177
+Writing CNF file...
+Total variables: 8535
+Total clauses: 286925
+Writing time: 0.3948988914489746
+Solving...
+UNSAT
+Solution time:  1.0527129173278809
+Step time: 21.22479009628296
+
+Step: 25
+-------------------------------------------------
+Generating base encoding: basic ...
+PRE_EFF_COUNT:
+48125
+FRAME COUNT:
+7750
+INT MUTEX COUNT:
+302575
+Encoding generation time: 24.55616807937622
+Writing CNF file...
+Total variables: 10630
+Total clauses: 358615
+Writing time: 0.4774308204650879
+Solving...

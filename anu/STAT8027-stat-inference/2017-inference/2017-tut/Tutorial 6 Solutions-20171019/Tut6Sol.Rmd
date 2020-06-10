@@ -1,0 +1,65 @@
+---
+title: Tutorial 6  
+author: STAT 3013/8027
+output: pdf_document
+---
+
+---
+\large
+
+1. Consider the following simple linear regression model:
+
+\begin{eqnarray*}
+Y_i &=& \beta_0 + \beta_1 x_i + \epsilon_i \\
+\epsilon_i &\sim iid& \ n(0, \sigma^2), \ \ i=1, \ldots, n. 
+\end{eqnarray*}
+
+**Ans.** See the handwritten pages for $\hat{\beta_0}$ and $\hat{\beta_1}$, as well as their expectations and variances.
+
+```{r}
+gdp <- read.csv("gdp2013.csv", header=T)
+labor <- read.csv("labor2013.csv", header=T)
+D <- merge(gdp, labor, by=c("Country.Name", "Country.Code"))
+dim(D)
+D <- na.omit(D)
+dim(D)
+names(D)[3:4] <- c("gdp", "labor")
+
+##
+y <- log(D$gdp)
+x <- log(D$labor)
+
+
+##
+S.xy <- sum ( (y-mean(y))* (x-mean(x)) )
+S.xx <- sum ( (x-mean(x))^2 )
+beta.1.hat <- S.xy/S.xx
+beta.1.hat
+
+beta.0.hat <- mean(y) - beta.1.hat*mean(x)
+beta.0.hat
+
+mod <- lm(y ~ x)
+summary(mod)
+```
+
+
+
+2. Least-squares estimates for a categorical regression model.  **Ans.** See the handwritten pages for the derivation of $\hat{\mu}_j$.  We found:
+
+    $$\hat{\mu}_j = \frac{1}{n} \sum_{i=1}^n y_{i,j} = \bar{y}_{.,j}$$
+    
+```{r}
+y <- c(21, 23, 19, 24, 25, 23, 19, 21, 20, 18, 
+       22, 20, 15, 10, 13, 14, 11, 15)
+x <- as.factor(c(rep("0.5",6),  rep("1.0",6), rep("1.5",6)))   
+plot(y ~ x)
+```
+
+
+Note:  In our model we assume every $y_{ij}$ has the same variability.  A typical concern is whether the variability within each group is similar across the groups.  As a quick check we can examine the box part of the box plots to see if they are reasonably similar in spread.  It seems roughly OK here, although group 2 has a slightly smaller spread comparatively.
+
+```{r}
+mu.hat <- tapply (y, x ,mean)    
+mu.hat
+````    

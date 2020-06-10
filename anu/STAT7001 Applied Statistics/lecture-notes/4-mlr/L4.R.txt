@@ -1,0 +1,18 @@
+#Last Updated: 26/07/2017
+rm(list=ls())
+setwd('~/Desktop/Research/AppliedStat2017/L4')
+#install.packages('Sleuth3')
+library(Sleuth3)
+head(ex0915)
+y=ex0915$Yield
+z=ex0915$Rainfall
+plot(z,y,ylab="Yield",xlab="Rainfall",main="Corn Yield vs Rainfall")
+
+fitm<-lm(y~z+I(z^2))
+summary(fitm)
+
+X=cbind(1,z,z^2)
+Y=y
+solve(t(X)%*%X)%*%t(X)%*%Y
+
+points(z,fitm$fitted,pch=3,col='red')

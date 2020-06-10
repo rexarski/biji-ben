@@ -1,0 +1,500 @@
+# STAT2008/STAT6038 Regression Modelling Tutorial 4 - R Commands
+
+# Question One
+
+# Q1 (a)
+
+# Assuming you have previously managed to install the Faraway library, if not:
+# install.packages("faraway")
+
+library(faraway)
+mammalsleep
+help(mammalsleep)
+
+# This command was used by Ian to create a .csv copy of the file for Wattle:
+# write.csv(mammalsleep, "mammalsleep.csv", row.names=TRUE)
+
+# Instead of accessing the the faraway library, you could download the .csv
+# file and then "reverse" the above command:
+# mammalsleep <- read.csv("mammalsleep.csv", row.names=1, header=T)
+
+attach(mammalsleep)
+
+plot(body, brain)
+identify(body, brain, labels=row.names(mammalsleep))
+
+# The three obvious "stand-outs" are Man and the two species of Elephants.
+# There is also an obvious skew in the distribution of both variables and 
+# removing the three potential outliers will not solve the problem, just
+# promote other members of the "cloud" to take their place.
+
+# Q1 (b)
+
+# Fit the simple linear regression model:
+
+msleep.lm <- lm(brain ~ body)
+
+# Calculate and store the two types of standardised residuals:
+
+std.res <- data.frame(cbind(int.stud=rstandard(msleep.lm), ext.stud=rstudent(msleep.lm)), row.names=row.names(mammalsleep))
+std.res
+
+# Extract the top 5, ordering by the absolute value of the
+# internally Studentized residuals:
+
+std.res[order(abs(std.res$int.stud), decreasing=T)[1:5],]
+
+# Which turns out to be the same as we would get if we to order by the
+# externally Studentized residuals:
+
+std.res[order(abs(std.res$ext.stud), decreasing=T)[1:5],]
+
+# Q1 (c)
+
+std.res["Man", "ext.stud"]
+
+# The appropriate comparison for the externally Studentised residual is:
+qt(0.975, df=msleep.lm$df-1)
+
+# There does appear to a location shift for Man in the context of this model,
+# but we haven't yet checked the residual plots to see if the model is
+# appropriate for making this comparison (it isn't, as we can see below)
+# and Man was not the most extreme ext.stud residual.
+
+plot(msleep.lm)
+
+# Q1 (d)
+
+msleep.loglm <- lm(log(brain) ~ log(body))
+plot(msleep.loglm)
+
+std.res <- data.frame(cbind(int.stud=rstandard(msleep.loglm), ext.stud=rstudent(msleep.loglm)), row.names=row.names(mammalsleep))
+std.res
+
+std.res[order(abs(std.res$int.stud), decreasing=T)[1:5],]
+
+std.res[order(abs(std.res$ext.stud), decreasing=T)[1:5],]
+
+# Model is certainly an improvement and Man still appears to be a marginal
+# "mean-shift" outlier, but the Elephants are no longer extreme!
+
+# Q1 (e)
+
+pairs(mammalsleep)
+pairs(log(mammalsleep))
+
+# Note the strange looking graphs for predation, exposure and danger, which
+# are explained when you read the description in the help file.
+
+help(mammalsleep)
+
+# Note the intercept coefficient is within machine rounding error of zero 
+# and the slope coefficient is the partial regression coefficient for Capacity
+# in the earlier multiple regression model, i.e. the "slope" associated with
+# Capacity, having already accounted for the effects of Weight.
+
+msleep.mrm <- lm(log(sleep) ~ log(body) + log(brain))
+plot(msleep.mrm)
+
+anova(msleep.mrm)
+
+anova(lm(log(sleep) ~ log(brain) + log(body)))
+
+# The obvious strong inter-relationship between brain and body weights
+# becomes multicollinearity in this multiple regression model. Note that
+# effect in this instance is that neither of the partial regression 
+# coefficients is significant in the table of coefficients:
+
+summary(msleep.mrm)
+
+# Question Two
+
+# Q2 (a)
+
+forbes <- read.csv("forbes.csv", header=T)
+forbes
+attach(forbes)
+forbes.lm <- lm(log(Pressure) ~ Boiling.point)
+data.frame(int.stud=rstandard(forbes.lm), ext.stud=rstudent(forbes.lm))
+
+# Clearly observation 12 is the outlier.
+
+# Q2 (b)
+
+plot(fitted(forbes.lm), rstudent(forbes.lm), main="Residuals vs Fitted", xlab="Fitted Values", ylab="Externally Studentized Residuals", sub="lm(log(Pressure) ~ Boiling.point)")
+abline(h=0, lty=2)
+identify(fitted(forbes.lm), rstudent(forbes.lm))
+
+plot(forbes.lm, which=2)
+plot(forbes.lm, which=4)
+
+# Observation 12 obviously stands out on all three plots and is
+# definitely adversely affecting the fit of the model.
+
+# Q2 (c)
+
+forbes.lm2 <- lm(log(Pressure)[-12] ~ Boiling.point[-12])
+data.frame(int.stud=rstandard(forbes.lm2), ext.stud=rstudent(forbes.lm2))
+
+# No reallt extreme values now.
+
+anova(forbes.lm)
+anova(forbes.lm2)
+
+# The MSE has dropped substantially.
+
+summary(forbes.lm)
+summary(forbes.lm2)
+
+# The effect on the coefficients is noticeable, but not as dramatic as the drop in MSE.
+
+#Q2 (d)
+
+plot(fitted(forbes.lm2), rstudent(forbes.lm2), main="Residuals vs Fitted", xlab="Fitted Values", ylab="Externally Studentized Residuals", sub="lm(log(Pressure)[-12] ~ Boiling.point[-12])")
+abline(h=0, lty=2)
+identify(fitted(forbes.lm2), rstudent(forbes.lm2))
+
+plot(forbes.lm2, which=2)
+plot(forbes.lm2, which=4)
+
+# Observation 1 is now a marginal problem, but I am very reluctant to throw away
+# any more data in this relatively small dataset.
+
+# Question Three
+
+# Q3 (a)
+
+addvar <- read.csv("addvar.csv", header=T)
+addvar
+names(addvar)
+attach(addvar)
+
+plot(Pred1, Response, sub=paste("r =",cor(Response, Pred1)))
+abline(lm(Response ~ Pred1), lty=2)
+
+plot(Pred2, Response, sub=paste("r =",cor(Response, Pred2)))
+abline(lm(Response ~ Pred2), lty=2)
+
+# No sign of non-linearity in either plot, but possible heterocedasticity  
+# (i.e. increasing rather than constant variance) in the relationship between 
+# the Response and Pred2.
+
+# Q3 (b)
+
+addvar.lm <- lm(Response ~ Pred1 + Pred2)
+plot(addvar.lm)
+
+
+# Some strange features in the Residuals vs Fitted plot - mainly due to the small group
+# of residuals in the top left of the plot, three of which have been "helpfully" 
+# highlighted by R, but no real suggestion of non-linearity (some curvature to the
+# median smoother added by R). There is no longer any apparent heteroscedasticity.
+
+# The normal quantile plot suggests the residuals distribution is notably skewed and
+# we are not dealing with a small sample.
+
+# Q3 (c)
+
+par(mfrow=c(2,1))
+plot(Pred1, residuals(lm(Response ~ Pred1 + Pred2)), ylab="Residuals")
+plot(Pred2, residuals(lm(Response ~ Pred1 + Pred2)), ylab="Residuals")
+
+# No suggestions of non-linearity in either plot.
+
+# Q3 (d)
+
+Pred1_on_Pred2.lm <- lm(Pred1 ~ Pred2)
+Response_on_Pred2.lm <- lm(Response ~ Pred2)
+plot(residuals(Pred1_on_Pred2.lm), residuals(Response_on_Pred2.lm), xlab="Residuals from Pred1 on Pred2", ylab="Residuals from Response on Pred2", sub=paste("r =", cor(residuals(Pred1_on_Pred2.lm), residuals(Response_on_Pred2.lm))))
+title("Added Variable Plot for Pred1")
+abline(lm(residuals(Response_on_Pred2.lm) ~ residuals(Pred1_on_Pred2.lm)),lty=2)
+
+Pred2_on_Pred1.lm <- lm(Pred2 ~ Pred1)
+Response_on_Pred1.lm <- lm(Response ~ Pred1)
+plot(residuals(Pred2_on_Pred1.lm), residuals(Response_on_Pred1.lm), xlab="Residuals from Pred2 on Pred1", ylab="Residuals from Response on Pred1", sub=paste("r =", cor(residuals(Pred2_on_Pred1.lm), residuals(Response_on_Pred1.lm))))
+title("Added Variable Plot for Pred2")
+abline(lm(residuals(Response_on_Pred1.lm) ~ residuals(Pred2_on_Pred1.lm)),lty=2)
+
+# The second added variable plot now shows signs of non-linearity (curvature around
+# the model). This is arguably more apparent from this added variable plot than from
+# the residual vs fitted plot for the model, which didn't really detect this problem.
+
+# Note there is a relationship (not necessarily a linear one) between Pred1 and Pred2:
+
+par(mfrow=c(1,1))
+plot(Pred1, Pred2, sub=paste("r =",cor(Pred1, Pred2)))
+abline(Pred2_on_Pred1.lm, lty=2)
+
+# Question Four
+
+# Q4 (a)
+
+savings <- read.csv("savings.csv", header=T)
+savings
+names(savings)
+attach(savings)
+
+savings.lm <- lm(SavingsRate ~ Pop15 + Pop75 + DPI + DPIgrowth)
+
+plot(fitted(savings.lm), rstandard(savings.lm), xlab="Fitted values", ylab="Internally Studentized Residuals", sub="lm(SavingsRate ~ Pop15 + Pop75 + DPI + DPIGrowth)")
+abline(0,0, lty=2)
+title("Standardised Residuals vs Fitted Values")
+identify(fitted(savings.lm), rstandard(savings.lm), labels=Country)
+
+savings[Country=="Zambia",]
+savings[Country=="Chile",]
+savings[Country=="Japan",]
+
+# Underlying assumptions appear OK, however, there are some possible problem observations:
+# 2 possible vertical outliers are observations 50 (Zambia) and 7 (Chile);
+# and 1 potentially highly influential point in observation 24 (Japan).
+
+plot(Pop15, rstandard(savings.lm), ylab="Internally Studentized Residuals", sub="lm(SavingsRate ~ Pop15 + Pop75 + DPI + DPIGrowth)")
+abline(0,0, lty=2)
+title("Standardised Residuals vs Individual Predictors")
+identify(Pop15, rstandard(savings.lm), labels=Country)
+
+# There is interesting structure in this plot which could be further explored. 
+# It suggests the countries fall into two groups with respect to the percentage
+# of their populations which are under 15 years of age.
+# Note that Zambia and Chile appear at the top and bottom of the second group.
+# In the 1960s, it appears that Zambia had a particularly high savings rate despite
+# having a young population, whilst Chile had a particularly low savings rate even
+# amongst the group of countries with relatively young populations.
+
+plot(Pop75, rstandard(savings.lm), ylab="Internally Studentized Residuals", sub="lm(SavingsRate ~ Pop15 + Pop75 + DPI + DPIGrowth)")
+abline(0,0, lty=2)
+title("Standardised Residuals vs Individual Predictors")
+identify(Pop75, rstandard(savings.lm), labels=Country)
+
+# Similar story to the main residual plot.
+
+plot(DPI, rstandard(savings.lm), ylab="Internally Studentized Residuals", sub="lm(SavingsRate ~ Pop15 + Pop75 + DPI + DPIGrowth)")
+abline(0,0, lty=2)
+title("Standardised Residuals vs Individual Predictors")
+identify(DPI, rstandard(savings.lm), labels=Country)
+
+savings[Country=="UnitedStates",]
+
+# Similar story to the main residual plot, but now observation 48 (United States) 
+# appears to be the highly influential point rather than Japan - the US was the 
+# country with the highest DPI in this period:
+
+max(DPI)
+savings[DPI == max(DPI),]
+max(DPI[-48])
+
+plot(DPIgrowth, rstandard(savings.lm), ylab="Internally Studentized Residuals", sub="lm(SavingsRate ~ Pop15 + Pop75 + DPI + DPIGrowth)")
+abline(0,0, lty=2)
+title("Standardised Residuals vs Individual Predictors")
+identify(DPIgrowth, rstandard(savings.lm), labels=Country)
+
+savings[Country=="Libya",]
+
+# Similar story to the main residual plot, but now observation 26 (Libya) is the
+# standout with very high DPIgrowth - the 1960s was a period of rapid expansion in
+# the exploitation of Libya's oil reserves.
+
+max(DPIgrowth)
+savings[DPIgrowth == max(DPIgrowth),]
+max(DPIgrowth[-26])
+
+# Q4 (b)
+
+plot(residuals(lm(Pop15~Pop75+DPI+DPIgrowth)), residuals(lm(SavingsRate~Pop75+DPI+DPIgrowth)),xlab="Pop15 net of Pop75, DPI, DPIgrowth", ylab="SavingsRate net of Pop75, DPI, DPIgrowth", sub=paste("r =", cor(residuals(lm(Pop15~Pop75+DPI+DPIgrowth)),residuals(lm(SavingsRate~Pop75+DPI+DPIgrowth)))))
+abline(0, coef(savings.lm)[2], lty=2)
+anova(lm(SavingsRate~Pop75+DPI+DPIgrowth+Pop15))
+
+identify(residuals(lm(Pop15~Pop75+DPI+DPIgrowth)), residuals(lm(SavingsRate~Pop75+DPI+DPIgrowth)), labels=Country)
+
+# Pop15 appears to be a significant addition to a model that already includes
+# Pop75, DPI & DPIgrowth, assuming the model has not been too distorted by a number 
+# of possible problem observations.
+
+plot(residuals(lm(Pop75~Pop15+DPI+DPIgrowth)), residuals(lm(SavingsRate~Pop15+DPI+DPIgrowth)),xlab="Pop75 net of Pop15, DPI, DPIgrowth", ylab="SavingsRate net of Pop15, DPI, DPIgrowth", sub=paste("r =", cor(residuals(lm(Pop75~Pop15+DPI+DPIgrowth)),residuals(lm(SavingsRate~Pop15+DPI+DPIgrowth)))))
+abline(0, coef(savings.lm)[3], lty=2)
+anova(lm(SavingsRate~Pop15+DPI+DPIgrowth+Pop75))
+
+# Pop75 does not appear to be a significant addition to a model that already includes
+# the other explanatory variables.
+
+plot(residuals(lm(DPI~Pop15+Pop75+DPIgrowth)), residuals(lm(SavingsRate~Pop15+Pop75+DPIgrowth)),xlab="DPI net of Pop15, Pop75, DPIgrowth", ylab="SavingsRate net of Pop15, Pop75, DPIgrowth", sub=paste("r =", cor(residuals(lm(DPI~Pop15+Pop75+DPIgrowth)),residuals(lm(SavingsRate~Pop15+Pop75+DPIgrowth)))))
+abline(0, coef(savings.lm)[4], lty=2)
+anova(lm(SavingsRate~Pop15+Pop75+DPIgrowth+DPI))
+
+# DPI does not appear to be a significant addition to a model that already includes
+# the other explanatory variables. It is an even weaker addition than Pop75, so
+# we could consider excluding it first and reconsider Pop75:
+
+anova(lm(SavingsRate~Pop15+DPIgrowth+Pop75))
+
+# Pop75 still not a sigificant addition at the 0.05 level of significance, but note what
+# happens if we move Pop75 up the order:
+
+anova(lm(SavingsRate~Pop75+DPIgrowth+Pop15))
+
+# Finally, the added variable plot and analysis for DPIgrowth:
+
+plot(residuals(lm(DPIgrowth~Pop15+Pop75+DPI)), residuals(lm(SavingsRate~Pop15+Pop75+DPI)),xlab="DPIgrowth net of Pop15, Pop75, DPI", ylab="SavingsRate net of Pop15, Pop75, DPI", sub=paste("r =", cor(residuals(lm(DPIgrowth~Pop15+Pop75+DPI)),residuals(lm(SavingsRate~Pop15+Pop75+DPI)))))
+abline(0, coef(savings.lm)[5], lty=2)
+anova(lm(SavingsRate~Pop15+Pop75+DPI+DPIgrowth))
+
+identify(residuals(lm(DPIgrowth~Pop15+Pop75+DPI)), residuals(lm(SavingsRate~Pop15+Pop75+DPI)), labels=Country)
+
+# DPIgrowth does appear to be a significant addition, but we still have question marks
+# about some of the potential problem observations.
+
+# Q4 (c)
+
+pairs(savings[,3:6])
+
+# Multicollinearity is the reason we are getting different stories depending on which 
+# order we include the predictors in the model. There are strong relationships between
+# the explanatory variables, particularly between the predictors Pop15, Pop75 and DPI,
+# which are all strongly correlated. Pop15 and Pop75 are very highly negatively
+# correlated with countries that have high percentages under 15 tending to have
+# low percentages over 75 and vice versa.
+
+cor.test(Pop15, Pop75)
+
+# Q4 (d)
+
+# Judging by the results of part (b), DPI is probabbly the first candidate for removal:
+
+savings.lm_noDPI <- lm(SavingsRate ~ Pop75 + DPIgrowth + Pop15)
+
+# Comparing this model with the full model:
+
+anova(savings.lm)
+anova(savings.lm_noDPI)
+
+# The MSE for the reduced model is actually slightly smaller, indicating a small 
+# increase in the precision of the estimates, an effect that often accompanies the 
+# removal of an extraneous variable.
+
+summary(savings.lm)
+summary(savings.lm_noDPI)
+
+# The R-squared value has decreased slightly (as it must when a variable is removed
+# from the model), but the adjusted R-squared and overall F statistic have both
+# increased slightly. There has been very little change in the estimated coefficients
+# of the remaining variables.
+
+# Note given the multicollinerity, it makes sense to examine the variance inflation
+# factors. To do this we could use the old S-Plus code shown in the brick, which still
+# works, or if you have installed the R package for the Faraway text (as per the 2014
+# assignment and earlier tutorials) then there is vif() function available in that 
+# package.
+
+diag(solve(cor(savings[,3:6])))
+
+library(faraway)
+vif(savings[,3:6])
+
+# This suggests that Pop75 is the source of most of the multicollinearity as it is
+# highly corrleated with both Pop15 and DPI and common sense suggests not keeping
+# two alternative measures of age structure in the model at the expense of DPI:
+
+savings.lm_noPop75 <- lm(SavingsRate ~ DPI + DPIgrowth + Pop15)
+
+# Again compring it with the full model (the two reduced models are not nested):
+
+anova(savings.lm)
+anova(savings.lm_noPop75)
+
+# Even fitted first in the model, the F test associated with DPI is not significant
+# and the MSE is slightly higher for the reduced model.
+
+summary(savings.lm)
+summary(savings.lm_noPop75)
+
+# Both the R-squared and adjusted R-squared values are slightly lower (the
+# overall F statistic has increased slightly, but it is on different degrees of
+# freedom and the p-value is slightly higher). There has also been a noticable
+# change in the estimated partial regression coefficients.
+
+plot(savings.lm, which=c(1,2,4))
+plot(savings.lm_noDPI, which=c(1,2,4))
+plot(savings.lm_noPop75, which=c(1,2,4))
+
+# There is little to choose between the plots for the first two models, though 
+# observation 26 (Libya) tends to stand out as a possible highly influential point.
+# This problem is even worse for the third model. On balance, I would choose 
+# the second model - arguably no worse a fit than the full model, but it is slightly
+# simpler. Note that the vifs for this reduced set of explanatory variables still
+# suggest a problem with multi-collinearity, at least compared to removing Pop75:
+
+diag(solve(cor(savings[,c(3,4,6)])))
+vif(savings[,c(3,4,6)])
+
+diag(solve(cor(savings[,c(3,5,6)])))
+vif(savings[,c(3,5,6)])
+
+# I suspect the real issue is whether or not we remove BOTH of DPI and Pop75, but this
+# was not asked for in the tutorial questions, so is something for you to investigate
+# for yourself.
+
+# Q4 (e)
+
+plot(fitted(savings.lm_noDPI),hatvalues(savings.lm_noDPI))
+title("Leverages vs Fitted Values")
+identify(fitted(savings.lm_noDPI),hatvalues(savings.lm_noDPI), labels=Country)
+
+# Observation 26 (Libya) and possibly also observation 24 (Japan) require further
+# investigation as influential points.
+
+# Added variable plot for Pop75 to a model that includes DPIgrowth and Pop15:
+
+plot(residuals(lm(Pop75~DPIgrowth+Pop15)), residuals(lm(SavingsRate~DPIgrowth+Pop15)),xlab="Pop75 net of DPIgrowth, Pop15", ylab="SavingsRate net of DPIgrowth, Pop15", sub=paste("r =", cor(residuals(lm(Pop75~DPIgrowth+Pop15)),residuals(lm(SavingsRate~DPIgrowth+Pop15)))))
+abline(0, coef(savings.lm_noDPI)[2], lty=2)
+identify(residuals(lm(Pop75~DPIgrowth+Pop15)), residuals(lm(SavingsRate~DPIgrowth+Pop15)), labels=Country)
+
+anova(lm(SavingsRate~DPIgrowth+Pop15+Pop75))
+
+# Added variable plot for DPIgrowth to a model that includes Pop75 and Pop15:
+
+plot(residuals(lm(DPIgrowth~Pop75+Pop15)), residuals(lm(SavingsRate~Pop75+Pop15)),xlab="DPIgrowth net of Pop75, Pop15", ylab="SavingsRate net of Pop75, Pop15", sub=paste("r =", cor(residuals(lm(DPIgrowth~Pop75+Pop15)),residuals(lm(SavingsRate~Pop75+Pop15)))))
+abline(0, coef(savings.lm_noDPI)[3], lty=2)
+identify(residuals(lm(DPIgrowth~Pop75+Pop15)), residuals(lm(SavingsRate~Pop75+Pop15)), labels=Country)
+
+anova(lm(SavingsRate~Pop75+Pop15+DPIgrowth))
+
+# Added variable plot for Pop15 to a model that includes Pop75 and DPIgrowth:
+
+plot(residuals(lm(Pop15~Pop75+DPIgrowth)), residuals(lm(SavingsRate~Pop75+DPIgrowth)),xlab="Pop15 net of Pop75, DPIgrowth", ylab="SavingsRate net of Pop75, DPIgrowth", sub=paste("r =", cor(residuals(lm(Pop15~Pop75+DPIgrowth)),residuals(lm(SavingsRate~Pop75+DPIgrowth)))))
+abline(0, coef(savings.lm_noDPI)[4], lty=2)
+identify(residuals(lm(Pop15~Pop75+DPIgrowth)), residuals(lm(SavingsRate~Pop75+DPIgrowth)), labels=Country)
+
+anova(lm(SavingsRate~Pop75+DPIgrowth+Pop15))
+
+# Libya is at far right of all of these plots - it is the rightmost point on the added
+# variable plot for DPIgrowth, where it is very obviously is remote from the rest of the
+# data.
+
+# Q4 (f)
+
+# All of the required influence measures has a separate function in R, they are described
+# in the following help file:
+
+help(influence.measures)
+
+data.frame(Country, "leverages"=hatvalues(savings.lm_noDPI), "DFFITS"=dffits(savings.lm_noDPI), "Cooks D"=cooks.distance(savings.lm_noDPI))
+
+# The obvious standout observation on all the above measures is number 24 (Libya), 
+# which I suspect is a genuine outlier for good historical reasons, as discussed earlier
+# in part (a), though observation 24 (Japan also has relatively high values).
+# As can be seen from the DFBETAS, removing either of these observations would lead 
+# to significant changes in some of the coefficients of the model:
+
+dfbetas(savings.lm_noDPI)
+
+# We could compare most of these measures with arbitrary cut-offs suggested in the
+# "brick", but I prefer to interpret them in relative terms. Note simply deleting the
+# most extreme observation may simply promote another observation to problem status,
+# so these problems do cast doubt on the usefulness of these models. A lot depends on 
+# the detailed research question we are trying to address with these models. A model
+# with these sorts of problems may still be of some use in exploring relationships 
+# between the variables included in the model, but the problems indicate a lack of 
+# overall fit to all of the data, which casts real doubt on any potential use of these
+# models for predictive purposes.
+

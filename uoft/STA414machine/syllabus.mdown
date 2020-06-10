@@ -1,0 +1,55 @@
+#STA 414/2104 (Fall 2015): Statistical Methods for Machine Learning and Data Mining
+
+2015-09-13
+
+Intructor: Russ Salakhutdinov
+Office: Pratt Building, Room 290F
+Lectures: M2-5
+OH: M 11-12 Pratt Building, Room 290E
+contact: rsalakhu@cs.toronto.edu
+
+##Marking scheme
+- 3 assignments: 40%
+- 1-hour midterm: 20%
+- 3-hour final: 40%
+
+##Midterm
+- nonprogrammable calculator + single-sided sheetj
+- 1 hour, 4 questions, similar to questions from chapter 1-4 with `*`.
+
+##Final
+nonprogrammable calculator + doulbe-sided sheet
+
+##Course outline
+- linear methods for regression, Bayesian linear regression
+- linear models for classification
+- probabilistic generative and discriminative models
+- regularization methods
+- model comparison and BIC
+- neural networks
+- radial basis function networks
+- kernel methods, Gaussian processes, support vector machines
+- mixture models and EM algorithm
+- graphical models and Bayesian networks
+
+##Books:
+- Christopher M. Bishop (2006) Pattern Recognition and Machine Learning, Springer
+
+additional reference:
+
+- Machine Learning: A Probabilistic Perspective, by Kevin P. Murphy.
+- Trevor Hastie, Robert Tibshirani, Jerome Friedman (2009) The Elements of Statistical Learning
+- David MacKay (2003) Information Theory, Inference, and Learning Algorithms
+
+
+##reading:
+- lec1 -- machine learning: introduction to ml, probability distributions; **reading** 1.1-1.3
+- lec2 -- probability distributions; **reading** 2.1-2.4
+- lec3 -- regression; **reading** 1.5, 3.1-3.2
+- lec4 -- bayesian inference; **reading** 3.3-3.5
+- lec5 -- classification; **reading** 4.1 - 4.5 
+- lec6 -- Gaussian processes; **reading** 6.4
+- lec7 -- mixture models; **reading** 9.1 - 9.3
+- lec8 -- latent variable models; **reading** 12.1 - 12.2, 12.4
+- lec9 -- modeling sequential data; **reading** 13.1 - 13.2
+

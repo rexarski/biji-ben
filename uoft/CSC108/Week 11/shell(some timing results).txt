@@ -1,0 +1,42 @@
+Python 2.7.2 (v2.7.2:8527427914a2, Jun 11 2011, 14:13:39) 
+[GCC 4.0.1 (Apple Inc. build 5493)]
+Type "help", "copyright", "credits" or "license" for more information.
+[evaluate sorting.py]
+
+>>> # We pass a function to time_sort.
+>>> import sorting
+>>> type(sorting.bubble_sort)
+<type 'function'>
+
+>>> # random 2000 element list
+[evaluate time_sorting.py]
+bubble:     0.4314
+insertion:  0.2324
+insertion2: 0.2328
+selection:  0.2005
+selection2: 0.1996
+merge:      0.0126
+sorted:      0.0006
+list.sort:  0.0005
+
+>>> # list in non-ascending order (opposite of what we want)
+[evaluate time_sorting.py]
+bubble:     0.6494
+insertion:  0.4640
+insertion2: 0.4576
+selection:  0.2111
+selection2: 0.2147
+merge:      0.0090
+sorted:      0.0001
+list.sort:  0.0000
+
+>>> # list in non-descending order (the order that we want)
+[evaluate time_sorting.py]
+bubble:     0.2186
+insertion:  0.0010
+insertion2: 0.0008
+selection:  0.2004
+selection2: 0.2025
+merge:      0.0089
+sorted:      0.0000
+list.sort:  0.0000

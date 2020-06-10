@@ -1,0 +1,120 @@
+Python 2.7.2 (v2.7.2:8527427914a2, Jun 11 2011, 14:13:39) 
+[GCC 4.0.1 (Apple Inc. build 5493)]
+Type "help", "copyright", "credits" or "license" for more information.
+>>> e1 = Event(10, 11, 'csc108', 'Mar 30')
+Traceback (most recent call last):
+  File "<string>", line 1, in <fragment>
+NameError: name 'Event' is not defined
+[evaluate Event.py]
+>>> e1 = Event(10, 11, 'csc108', 'Mar 30')
+>>> e1.rename('office hours')
+>>> Event.rename(e1, 'office hours')
+>>> s = str(89)  # This calls str's __init__ method (constructor)
+>>> L = [1, 2, 3]
+>>> L = list((4, 5, 6))
+>>> s.rename('office hours')   # the rename method cannot be applied to a str object
+Traceback (most recent call last):
+  File "<string>", line 1, in <fragment>
+AttributeError: 'str' object has no attribute 'rename'
+>>> e1.lower()   # the lower method cannot be applied to an Event object
+Traceback (most recent call last):
+  File "<string>", line 1, in <fragment>
+AttributeError: 'Event' object has no attribute 'lower'
+
+>>> dir(Event)
+['__class__', '__delattr__', '__dict__', '__doc__', '__format__', '__getattribute__', '__hash__', '__init__', '__module__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', 'duration', 'rename']
+>>> print e1  # By default, the memory address is displayed.
+<__main__.Event object at 0x106c5b0>
+[evaluate Event.py]
+>>> e1 = Event(10, 11, 'csc108', 'Mar 30')
+>>> print e1  # Once __str__ is implemented, the value returned by that method is displayed instead.
+From 10 to 11 do this: csc108 on this date Mar 30.
+>>> print e1.__str__()  # this is equivalent to the print statement above
+From 10 to 11 do this: csc108 on this date Mar 30.
+>>> e2 = Event(6, 9, 'csc108', 'Mar 29')
+
+
+>>> e1
+<__main__.Event object at 0x106cad0>
+>>> e2
+<__main__.Event object at 0x106ca70>
+>>> e1 < e2
+False
+>>> e1 == e2
+False
+>>> e1 > e2
+True
+>>> # The comparison operators compare the memory addresses of the objects by default. 
+>>> # After we implement __cmp__, those operators rely on that definition instead.
+[evaluate Event.py]
+>>> e1 = Event(10, 11, 'csc108', 'Mar 30')
+>>> e2 = Event(6, 9, 'anything', 'Mar 29')
+>>> e1 < e2
+False
+>>> e1 == e2
+False
+>>> e2 > e1
+False
+>>> e2 = Event(5, 9, 'zoo', 'Mar 29')
+>>> e3 = Event(5, 9, 'zoo', 'Mar 29')
+>>> e2 = Event(6, 9, 'anything', 'Mar 29')
+events = [e3, e2, e1]
+>>> for item in events:
+	print item
+
+From 5 to 9 do this: zoo on this date Mar 29.
+From 6 to 9 do this: anything on this date Mar 29.
+From 10 to 11 do this: csc108 on this date Mar 30.
+
+>>> events.sort()  # sort also relies on __cmp__
+for item in events:
+	print item
+
+From 6 to 9 do this: anything on this date Mar 29.
+From 10 to 11 do this: csc108 on this date Mar 30.
+From 5 to 9 do this: zoo on this date Mar 29.
+
+>>> e1 < e2
+False
+>>> e1 < 'ksldjfslk'
+Traceback (most recent call last):
+  File "/Applications/WingIDE.app/Contents/MacOS/src/debug/tserver/_sandbox.py", line 1, in <module>
+    # Used internally for debug sandbox under external interpreter
+  File "/Applications/WingIDE.app/Contents/MacOS/src/debug/tserver/_sandbox.py", line 25, in __cmp__
+AttributeError: 'str' object has no attribute 'description'
+
+[evaluate Day.py]
+>>> day = Day()
+>>> dir(Day)
+['__class__', '__delattr__', '__dict__', '__doc__', '__format__', '__getattribute__', '__hash__', '__init__', '__module__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__']
+[evaluate Day.py]
+>>> day = Day('March 30')
+>>> print day
+<__main__.Day object at 0x106ced0>
+
+[evaluate Day.py]
+>>> day = Day('March 30')
+>>> e3 = Event(5, 9, 'zoo', 'Mar 30')
+>>> day.schedule_event(e3)
+>>> day.schedule_event(Event(10, 11, 'csc108', 'Mar 30'))
+>>> print day
+Date: March 30
+From 5 to 9 do this: zoo on this date Mar 30.
+From 10 to 11 do this: csc108 on this date Mar 30.
+>>> print day.__str__()
+Date: March 30
+From 5 to 9 do this: zoo on this date Mar 30.
+From 10 to 11 do this: csc108 on this date Mar 30.
+
+>>> e1
+<__main__.Event object at 0x106cc30>
+>>> e2
+<__main__.Event object at 0x106c970>
+>>> print e1
+From 10 to 11 do this: csc108 on this date Mar 30.
+>>> print e2
+From 6 to 9 do this: anything on this date Mar 29.
+>>> e1.__cmp__(e2)
+1
+>>> e1 > e2
+True

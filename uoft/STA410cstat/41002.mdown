@@ -1,0 +1,103 @@
+#41002
+
+2015-09-17
+
+today's topic, "how computers represent numbers internally", which is not covered in the textbook, suprisingly.
+
+how big they can be? how small they can be without going to zero?
+
+- **Fixed-point Arithmetic**: **some** numbers to the left of decimal place, **some** to the right. e.g., 123456.78, 13.10, 000013.10, etc. but numbers like 1.234 and 1234567.89 won't work because the number of digits doesn't fit.
+
+> Fixed point is a simple yet very powerful way to represent fractional numbers in computer. By reusing all integer arithmetic circuits of a computer, fixed point arithmetic is orders of magnitude faster than floating point arithmetic.Feb 28, 2006
+
+- **Floating-point Arithmetic** (scientific notation):
+
+$1.2345 \times 10^7 = 1234500$ # this is a scientific notation
+
+$1.2345 \times 10^{-7} = 0.00000012345$ # computer does have a limit for this, but it's around $10^{-300}$ level.
+
+but computers better do in binary format rather than decimal, i.e., it prefers format like:
+
+$1.0111011 \times 2^{41}$
+
+"double precision" is about 15 digits of accuracy, that is $10^{-300}$ (close to zero) to $10^{300}$ (close to Inf)
+
+So for computers, $\frac{10^{-400}}{10^{-401}}$ cannot be returned as 10, but as **NaN**(not a number), they are just incapable to calculate this.
+
+**NA**: missing a data, usually appears in R table, where misses an entry.
+**NaN**: not a number
+
+- 1/Inf -> 0
+- Inf + 10 -> 10
+- Inf - Inf -> NaN
+
+- generate a dataset of n numbers (some mean) using `dpois`, `d`.
+- compute the likelihood of `d` for various Poison means.
+- see how big n has to be for that to ail.
+- solve this problem using `log=TRUE`
+
+
+	> a <- rpois(1000, 5.5)
+	> a
+	   [1]  4  4  3  7  7  5  3  7  3  8  5  4  5  7  1  9  1  6  3  5  6  6  6  3  3  9  8  8  6  1  2  5  5  7  3 10  7  6
+	  [39]  6  4  7  6 14  3  7  6  9  7  6  6  5  2  5  6  3  6  4  7  9  5  4  1  7  9  6  7  9  7  5 10  5  4  7  5  7  7
+	  [77]  7  3  8  3  2  9  3  4  3  8  4  2  7  3  6  2  5  5  6  2  7  7 10  4  3  7  5  7  5  6  7  5  8  5  5  2  6  8
+	 [115]  6  6  7  6  7  4  3  6  6  3  7  4  5  4  3  6  8  8  5  4  4  3  7 10  4  7  3  3  3  7  6  3  7  4  6  6  7  5
+	 [153]  7  4  3  5  7  3  3  5  8  1  7  3  5  4  3  6  6  8  6  6  2 10  8  4  7  5  5  6  1  5  6  9  5  3  7  5  2  4
+	 [191]  5  5  3  8  8 13  3  8  6  5  8  5  7  4  5  6  6  8  1 10  4  5  4  8  8  3  9  4  6  8  4  9  8  3  2  5  7  5
+	 [229]  8  5  3  9  8 10  4  4  4  6  5  9  9  3  7  8  3  6  3  9  7  2  3  5  4  5 11  5  6 11  9  2  4  8  8  6  9  5
+	 [267]  5  4  1  5  4  6  3  7  7  5  7  6 10  4  6  8  7  4  2  6  5  7  7  2  3  4  5  6  3  4  7 12  5  8  7  8  7  9
+	 [305]  8  4  4  5  7  5  4  5  5  8  9  7  6  6  5  5  2  5  5  4  3  7  6  7  3  8  9  6  8  6  5  6  6  6  5  3  2  6
+	 [343]  3  3  3 12  4  7  4  2  6 10  3  3  1  7  9  6  5  8  6  4  7  5  4  4  5  4  5  6  9  8  6  7  4  4  6  6  5  4
+	 [381]  3  5  4  7  5 11 10  3  8  6  6  6  5  6  3  7  4  1  6  4 13  5  4  6  9  6  5  8  2  5  4  6  6 11  5  4 11  3
+	 [419]  6  4  3  6  4  5  7  1  5  4  2  5  2  8  3  4  6  4  3  8  6  3  4  4  5  5  9  6 10  5  7  6  7  6  4  3  6 10
+	 [457]  5  6  3  6  3  5  5  3  5  9  2  6  6  6  4  3  6  9  5 11  4  6  4  6  7  7  5  6  3  8  8  8  8  6  7  5  4  2
+	 [495]  5  3  6 10  7  5  5  2  7  8  5  7  5 10  6  3  6  4  6 13  5  2  7  1  3  5  8  8  4 11  5  6  8  7  8  7  5  9
+	 [533]  9  7  3  3  0  3  4  5  7  4  7  9  7  3  4  6  7  4  6  9  3 12  2 11  5  7  5  3  3  4  9  4  4  3  5  5  7  4
+	 [571]  4  7  5  7  3  3 10  8  4  6  6 10  5  6  5  7  7  3  3  5  7  7  3  6  4  5  7  6  5  6  6  6  3  2  8 11  5  6
+	 [609]  2  4  5  5  6  5  6  6  5  8  7  5  3  8  2  3  7  3  7 10  9  7  5  6  7  6  5  3  6  5 10  2  4  4  9  6  2  5
+	 [647] 11  8  8  3  6  5  6  9  3  4  5  8  3  5  4  4  5  7  3  8 10  8  5  2  4  7  2  6  4  5  5  4  8  6  3  4  6  4
+	 [685]  8  5  8  2  7  7  6  7  5  5  7  5  8  2  3  6  5  7  4  3  3  8  6  4  3  5  8 10  9  6  4  3  8  3  4  7  4 10
+	 [723]  7  8 11  5  9  4  3  6  6  4  6  3  8  3  4  6  5  9  4  3  4  9  5  7  3  7  7  5  9  2  4  7  8 12 10  5  5  5
+	 [761]  5  4  5  1  2  3  7 10  7  5 11  9  8  4  2  7  7  3 10  6  5  7  5  7  9  7  7  3  6  2  6  6  5  5  8  7  6 10
+	 [799]  4  7  9  2  7  4  9  4  5  2  2  5  8  6  5  4  3  2  8  6  5  7  8  6  4  6  5  2  9  3  4  5  9  8  6  3  4  2
+	 [837]  4  6  4  7  8  5  4  1  1  5  6  5  5 10  7  7  1  6  6 10  8  4  4  8  6  6  5  2  6  5  9  8  5  6  7  7  6  5
+	 [875]  4  8  3  6  3  4  5  4  3 11  4  5  3  8  2  5  3  6  7  6  9  3  5  8  2  5  7  6  2  6  7  9  7  4  3  8  6  6
+	 [913]  7  4  3  5 10  7  5  8  4  5  3 11  4  4  7  5  2  5  9  4  6  4  4 11  2  5  6  5  7  6  8  3  5  4  4  7  7  3
+	 [951]  6  6  8 10  3  9  5  6  5  7  5  7  3  3  4  9  3  4 12 10  4  6  7  5  4  7  3  2  1  2  3  6  2  4  7  0  2  9
+	 [989]  2  4  7  5  3  4  8  2  5  8  4  6
+	> prod(dpois(a,5.5))
+	[1] 0
+	> prod(dpois(a,6.7))
+	[1] 0
+	> prod(dpois(a,6.8))
+	[1] 0
+	> prod(dpois(a,6.7,log=TRUE))
+	[1] Inf
+	> sum(dpois(a,6.7,log=TRUE))
+	[1] -2333.16
+	> sum(dpois(a,6.8,log=TRUE)) # worse
+	[1] -2350.655
+	> sum(dpois(a,6.6,log=TRUE)) # slightly better
+	[1] -2316.906
+	> sum(dpois(a,6.65,log=TRUE)) 
+	[1] -2324.876
+	> sum(dpois(a,6.68,log=TRUE)) # gradually narrowing down
+	[1] -2329.809
+	> sum(dpois(a,mean(a),log=TRUE)) # this is the best one
+	[1] -2231.824		
+
+
+- write a function called `plot_error_reduction <- function(sizes, gen, repl, ...)`
+
+![img](./9.png)
+
+	> plot_error_reduction(c(10,20,40),rnorm,40)
+	Error: could not find function "plot_error_reduction"
+	> plot_error_reduction(c(10,20,40),rnorm,40, log="x") # this gives more samples, where c(...) is sizes, rnorm is gen, log="x" is repl, 
+
+
+	# missing resources, check the posted codes!
+
+
+

@@ -1,0 +1,5 @@
+<!ELEMENT fewfollowers (who*)>
+<!ELEMENT who (follower*)>
+<!ATTLIST who uid ID #REQUIRED>
+<!ELEMENT follower EMPTY>
+<!ATTLIST follower uid CDATA #REQUIRED>

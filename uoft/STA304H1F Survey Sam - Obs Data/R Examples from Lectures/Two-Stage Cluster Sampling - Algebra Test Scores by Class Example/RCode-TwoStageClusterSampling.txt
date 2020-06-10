@@ -1,0 +1,114 @@
+###############################
+# Two-Stage Cluster Sampling- #
+#   Algebra Test Scores       #
+#    by Class Example         # 
+#         R Code              #
+###############################
+
+# library(Sampling)
+
+# Read data from csv file
+> algebra <- read.csv("algebra.csv")
+
+# Two-Stage Clutser sample with 2,3,3,3,3 scores from each class respectively. N=12, n=5 
+> cl = mstage(data=algebra, stage=c("cluster", "stratified"), varnames=c("class","score"),
+              size=list(5,c(2,2,3,3,3)),method="srswor")
+
+# Get data 
+> twostage=getdata(algebra,cl)
+
+# The data for the first stage (selection of classes)
+> twostage
+[[1]]
+    Mi score class ID_unit Prob_ 1 _stage
+53  24    37    38      53      0.4166667
+57  24    65    38      57      0.4166667
+52  24    60    38      52      0.4166667
+.
+132 28    65    44     132      0.4166667
+133 28    60    44     133      0.4166667
+136 28    52    44     136      0.4166667
+.
+159 19    34    46     159      0.4166667
+163 19    71    46     163      0.4166667
+160 19    42    46     160      0.4166667
+.
+220 17   100    58     220      0.4166667
+221 17    43    58     221      0.4166667
+222 17    48    58     222      0.4166667
+.
+234 21    71    62     234      0.4166667
+227 21    31    62     227      0.4166667
+
+
+# Data for the second stage (selection of scores/students within classes)
+[[2]]
+    class Mi score ID_unit Prob_ 2 _stage       Prob
+53     38 24    37      53     0.08333333 0.03472222
+68     38 24    68      68     0.08333333 0.03472222
+141    44 28    75     141     0.07142857 0.02976190
+155    44 28    75     155     0.07142857 0.02976190
+160    46 19    42     160     0.15789474 0.06578947
+170    46 19    64     170     0.15789474 0.06578947
+169    46 19    34     169     0.15789474 0.06578947
+220    58 17   100     220     0.17647059 0.07352941
+226    58 17    49     226     0.17647059 0.07352941
+219    58 17    49     219     0.17647059 0.07352941
+247    62 21    61     247     0.14285714 0.05952381
+239    62 21    63     239     0.14285714 0.05952381
+246    62 21    51     246     0.14285714 0.05952381
+
+
+# Population class sizes for classes in sample 
+> Mi = tapply(twostage[[1]]$score,twostage[[1]]$class,length)
+
+> Mi
+38 44 46 58 62
+24 28 19 17 21
+
+# Attach second stage data
+> attach(twostage[[2]])
+
+# Class sample sizes
+> mi=tapply(score,class,length)
+
+> mi
+38 44 46 58 62
+ 2  2  3  3  3
+
+# Sample means for each class
+> ybari = tapply(score,class,mean)
+
+> ybari
+  38    44   46    58     62
+52.50 75.00 46.67 66.00 58.33
+
+
+# Ratio estimate for mean
+> ybarhatr = sum(Mi*ybari)/sum(Mi)
+
+> ybarhatr
+[1] 60.49235
+
+# Sample variance within each class
+> sqi = tapply(score,class,var)
+> sqi
+  38     44    46     58     62
+480.50  0.00 241.33 867.00  41.33
+
+# (n-1) * s^2_r
+> sum(Mi^2 * (ybari - ybarhatr)^2)
+[1] 281630.7
+
+# Average population cluster/class size (in sample)
+> mean(Mi)
+[1] 21.8
+
+# Average class sample size
+> mean(mi)
+[1] 2.6
+
+# Part of second term for variance of ratio estimator
+
+> sum( Mi^2 *(1-mi/Mi)*(sqi/mi) )
+[1] 225297.1

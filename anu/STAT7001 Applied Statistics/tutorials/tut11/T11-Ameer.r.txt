@@ -1,0 +1,19 @@
+#Question 1
+
+plane=read.table("ex2216.csv",header=T,sep=",")
+index=plane$INDEX
+crashes=plane$CRASHES
+plot(index,log(crashes),xlab="index",ylab="log(crashes)")
+
+plane.pois=glm(crashes~index+I(index^2),family=poisson(link=log))
+summary(plane.pois)
+
+plane.pois=glm(formula = crashes ~ index, family = poisson(link = log))
+summary=summary(plane.pois)
+summary
+
+
+1-pchisq(summary$deviance, summary$df.residual) #Deviance goodness of fit p-value
+
+
+

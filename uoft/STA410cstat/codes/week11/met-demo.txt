@@ -1,0 +1,32 @@
+# Demo of the Metropolis algorithm, used for sampling from 
+# the posterior distribution of a model for iid data from 
+# a t distribution with 1.5 degrees of freedom, with unknown 
+# location (scale fixed at one).  The prior for the location
+# is normal with mean 0 and standard deviation 10.
+
+x <- c(1.11,1.23,1.65,6.07,6.47,6.98)
+
+logprior <- function (loc) dnorm(loc,0,10,log=TRUE)
+
+loglike <- function (loc, x) sum (dt(x-loc,1.5,log=TRUE))
+
+logpost <- function (loc, x) logprior(loc) + loglike(loc,x)
+
+met <- function (loc,x,iters)
+{
+    r <- numeric(iters)
+    for (i in 1:iters) {
+        ploc <- loc + runif(1,-0.3,+0.3)
+        if (runif(1) < exp(logpost(ploc,x)-logpost(loc,x)))
+            loc <- ploc
+        r[i] <- loc
+    }
+    r
+}
+
+set.seed(1)
+r <- met(0,x,10000)
+
+w <- seq(10,length(r),by=10)
+plot(w,r[w],xlim=c(-200,length(r)),pch=20)
+points(rep(-200,length(x)),x,pch=19,col="red")

@@ -1,0 +1,21 @@
+dat <- read.table('BP.txt',header=T)
+attach(dat)
+lm1 <- lm(diasbp~age)
+plot(lm1, which=1)
+
+w1 <- 1/age
+w2 <- 1/age^2
+lm2 <- lm(diasbp~age, weights = w1)
+lm3 <- lm(diasbp~age, weights = w2)
+summary(lm2)
+anova(lm2)
+summary(lm3)
+anova(lm3)
+
+plot(age, residuals(lm2))
+plot(age, residuals(lm3))
+
+df <- as.data.frame(rbind(coef(lm1),coef(lm2),coef(lm3)))
+colnames(df) <- c("X.intercept", "age")
+rownames(df) <- c("Linear", "Weights1", "Weights2")
+df

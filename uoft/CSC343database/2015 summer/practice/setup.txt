@@ -1,0 +1,83 @@
+===============================================================
+Using PostgreSQL on CDF
+===============================================================
+
+Here's how to use Postgres on CDF:
+
+SSH to mathlab using a terminal window:
+$ ssh <UTorID>@cdf.utoronto.ca
+
+Connect to your database by using the command psql:
+$ psql <UTorID>
+
+Type help in the psql command window to see what is possible:
+> \help
+To exit psql type:
+> \q
+
+If you have followed the steps above, you should be able to connect to your database using psql. psql is a terminal-based front-end to PostgreSQL that enables you to type in queries interactively, issue them to PostgreSQL, and see the query results. Later in the term, we'll see how you can connect to a DBMS, submit queries a get an answer through a program (embedded SQL). Here are some useful psql commands. The parenthesis include description of what the command does:
+
+> \dt (Show description of all the tables - use 'q' to go back to the prompt)
+> \d  (Show description of a specific table- use 'q' to go back to the prompt)
+
+You can find more details about psql online in the following link:
+http://www.postgresql.org/docs/9.1/static/app-psql.html
+
+===============================================================
+Load a Sample Database in your PostgreSQL
+===============================================================
+
+The next steps describe how you can load a sample database to your PostgreSQL using psql:
+
+Login to your cdf account, create a new directory and navigate in the newly created directory:
+
+ssh to dbsrv1, the databse server
+
+$ ssh dbsrv1.cdf.toronto.edu
+
+$ mkdir csc343db
+$ cd csc343db
+
+Copy the csc343world sample database in the new directory:
+$ cp  ~csc343h/summer/public_html/posted_tutorials/csc343world.sql .
+
+Connect to your database using psql:
+$ psql csc343h-<yourcdflogin>
+
+From inside the psql command prompt execute the following command to load the sample database in your database:
+> \i csc343world.sql
+
+From inside the psql command prompt execute the following command to see a brief description of the tables loaded:
+> SET search_path TO World;
+> \dt
+
+If everything worked well, you should be able to see three tables (csc343city, csc343country, csc343countrylanguage). You can also see that the name of our schema is "World". In a database there might be many schemata defined. Each of them defines a new database with a number of relations. To specify which database schema we want to use we had to first run the psql command:
+> SET search_path TO World;
+
+You will need to make sure that you are using the right schema for the questions below.
+
+===============================================================
+Database description
+===============================================================
+
+The sample data you just loaded in your database is Copyright Statistics Finland, http://www.stat.fi/worldinfigures. The schema consists of three tables:
+
+* csc343country: Information about countries of the world.
+* csc343city: Information about some of the cities in those countries.
+* csc343countrylanguage: Languages spoken in each country.
+
+Moreover, each of the table has been populated with a number of tuples. Please use an editor, such as vim, pico, etc. to open and examine the file:
+
+	csc343world.sql
+
+There are three main parts in this file:
+* In the first part we define the schema of the database. This includes defining each relation and its attributes.
+* In the second part we generate tuples to be copied in each of the tables.
+* In the third part we define primary key and foreign key constraints of our tables.
+
+===============================================================
+Run JDBCExample
+===============================================================
+- Update connection details
+- javac JDBCExample.java 
+- java -cp /h/u2/csc343h/summer/public_html/posted_tutorials/postgresql-9.1-903.jdbc4.jar:. JDBCExample

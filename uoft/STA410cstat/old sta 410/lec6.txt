@@ -1,0 +1,145 @@
+###########lec6 Fri
+# Find the MLE for the Poisson mean parameter given data on iid values 
+# specifying an interval in which each value lies (not necessarily a
+# single value).
+#
+# Arguments:
+#     low      Vector of low ends of intervals (non-negative integers)
+#     high     Vector of high ends of intervals (non-negative integers)
+#
+# Value:  The maximum likelihood estimate for the Poisson mean parameter.
+
+poisson_mle <- function (low, high)
+{
+    if (length(low) != length(high))
+        stop("low and high have different lengths")
+
+    if (any(floor(low)!=low) || any(floor(high)!=high))
+        stop("interval ends are not all integers")
+
+    nlm (function (lambda) -poisson_log_likelihood(lambda,low,high),
+         (mean(low) + mean(high)) / 2) $ estimate
+}
+
+# Compute the log likelihood for a Poisson mean parameter given interval
+# data.
+#
+# Arguments:
+#     lambda   The Poisson mean parameter
+#     low      Vector of low ends of intervals (positive integer)
+#     high     Vector of high ends of intervals (positive integer)
+#
+# Value:  The log probability of Poisson values lying in the given
+#         intervals, based on the mean parameter given.
+#
+# Note:   This version won't work for very large data values, due to 
+#         underflow problems.  It also doesn't use R's built-in
+#         dpois function, which would be preferrable in practice.
+
+poisson_log_likelihood <- function (lambda, low, high)
+{
+    ll <- 0
+    for (i in 1:length(low)) {
+        p <- 0
+        for (x in low[i]:high[i])
+            p <- p + lambda^x * exp(-lambda) / factorial(x)
+        ll <- ll + log(p)
+    }
+    ll
+}
+
+
+
+
+
+############
+deriv(quote(2*x^2+3*x+4) , "x")
+deriv(quote(2*x^2+3*x+4) , "x",fun = TRUE)
+
+deriv(quote(2*x^2+3*x+4+x*y) , c("x","y"),fun = TRUE,hessian = TRUE)
+
+?deriv
+
+###############
+set.seed(1)
+x <- abs(rnorm(1000,2.2,1.3))
+
+# The function to compute the log probability density for each data point
+# and its first and second derivatives.  Looks at data in "x".
+
+logp <- 
+  deriv (quote (
+    -lsigma + log (dnorm((x-mu)/exp(lsigma))
+                    + dnorm((-x-mu)/exp(lsigma)))),
+    c("mu","lsigma"), fun=TRUE, hessian=TRUE)
+
+# Minus log likelihood function, for data in "x".
+
+logl <- function (p) -sum(logp(p[1],p[2]))
+
+# Estimates found from two starting points.
+
+cat("estimate starting at 0,0:\n\n")
+print (nlm (logl, c(0,0)))
+
+cat("\nestimate starting at 0.1,0:\n\n")
+print (nlm (logl, c(0.1,0)))
+
+print(nlm(logl,c(0.1,0.1)))
+
+#######################
+x = sunspots[1:500]
+t = 1:length(x)
+
+logp <- 
+  deriv (quote (
+    -lsigma + log (dnorm((x-M*(a + sin(b+f*t)))/exp(lsigma))
+                    + dnorm((-x-M*(a + sin(b+f*t)))/exp(lsigma)))),
+    c("a","b","f","M","lsigma"), fun=TRUE, hessian=TRUE)
+ 
+logl <- function (p) -sum(logp(p[1],p[2],p[3],p[4],p[5]))
+
+temp = nlm(logl,c(0, -1, 2*pi/200, 80, 4))$estimate
+func = temp[1]*(temp[2]+sin(temp[3]+temp[4]*t))
+
+#########Solution
+logp <- deriv (quote (
+          -lsigma + log (dnorm((x-M*(a+sin(b+f*t)))/exp(lsigma))
+                          + dnorm((-x-M*(a+sin(b+f*t)))/exp(lsigma)))),
+          c("a", "b", "f", "M", "lsigma"), fun=TRUE)
+
+# Function for nlm to minimize - minus the log likelihood summing 
+# log probabilities (and gradient and hessian) over data points.
+
+logl <- function (p) {
+    lp <- logp(p[1],p[2],p[3],p[4],p[5])
+    ll <- -sum(lp)
+    attr(ll,"gradient") <- -colSums(attr(lp,"gradient"))
+    ll
+}
+
+# The data.
+
+x <- sunspots[1:500]
+t <- 1:length(x)
+
+# Estimation, from a carefully chosen starting point.
+
+est <- nlm (logl, c(0, -1, 2*pi/200, 80, 4))
+print(est)
+
+mle <- est$estimate
+
+# Plot the mean from the model with the MLE parameter estimates together
+# with the data points.
+
+a <- mle[1]
+b <- mle[2]
+f <- mle[3]
+M <- mle[4]
+
+plot(t,x,pch=20)
+lines(t,abs(M*(a+sin(b+f*t))),col="red")
+
+
+

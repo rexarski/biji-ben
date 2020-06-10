@@ -1,0 +1,3 @@
+@TODO: remake line plots of coaldiff1 and coaldiff1forecast$residuals
+@TODO: put the ARIMA(2,1,1) result after the discussion of select ARIMA(2,1,1) over other models.
+@TODO: should I included plots of residuals (after differencing)?

@@ -1,0 +1,189 @@
+#Example: car speeds
+
+y<-c(98, 100, 107, 110, 112, 117, 117, 120, 125, 130)
+mu_0<-110
+tau0<-2.5^2
+n<-10
+mean.y<-mean(y)
+sigma2<-var(y)
+
+mu_n<-(mu_0/tau0 + n/sigma2*mean.y)/(1/tau0+n/sigma2)
+tau_n<-1/(1/tau0+n/sigma2)
+
+qnorm(c(0.025,0.975),mu_n,sqrt(tau_n))
+
+pdf("Fig1.pdf")
+theta<-seq(mu_0-10,10+mu_0, length=500)
+plot(theta,dnorm(theta,mu_n,sqrt(tau_n)),type="l",ylab=expression(paste("p(",theta, "|",
+  y[1],...,y[n],sigma^{2},")")),xlab=expression(theta))
+
+lines(theta,dnorm(theta,mu_0,tau0),xlab="",ylab="",col="grey",lwd=3)
+dev.off()
+
+#Example car speeds- joint inference of mean and variance
+# prior
+mu0<-110  ; k0<-1
+s20<-100 ; nu0<-1
+
+# data
+y<-c(98, 100, 107, 110, 112, 117, 117, 120, 125, 130)
+n<-length(y) ; ybar<-mean(y) ; s2<-var(y)
+
+# posterior inference
+kn<-k0+n ; nun<-nu0+n
+mun<- (k0*mu0 + n*mean(y))/kn  
+s2n<- (nu0*s20 +(n-1)*s2 +k0*n*(ybar-mu0)^2/(kn))/(nun)
+mun
+s2n
+kn
+nun
+
+dinvgamma<-function(x,a,b) {
+ld<- a*log(b) -lgamma(a) -(a+1)*log(x)  -b/x 
+exp(ld)
+                            }
+
+gs<-100
+theta<-seq(100,130,length=gs)
+s2g<-seq(15,200 ,length=gs)
+is2<-seq(.001,.045,length=gs)
+
+ld.th.is2<-ld.th.s2<-matrix(0,gs,gs)
+for(i in 1:gs) { for(j in 1:gs) {
+		#log posterior density for mu and 1/sigma2
+    ld.th.is2[i,j]<- dnorm(theta[i],mun,1/sqrt( is2[j] *11) ,log=TRUE) +
+                   dgamma(is2[j],11/2,11*s2n/2, log=TRUE )
+         #log posterior density for mu and sigma2
+    ld.th.s2[i,j]<- dnorm(theta[i],mun,sqrt(s2g[j]/11) ,log=TRUE) +
+                    log( dinvgamma(s2g[j],11/2,11*s2n/2 ))
+                     }} 
+pdf("Fig2.pdf",family="Times",height=3.5,width=7)
+par(mfrow=c(1,2),mar=c(3,3,1,1),mgp=c(1.75,.75,0))
+grays<- gray( (10:0)/10)
+image(theta,is2,exp(ld.th.is2),col=grays,xlab=expression(theta),
+       ylab=expression(tilde(sigma)^2) ) 
+ box(col="black")
+image(theta,s2g,exp(ld.th.s2), col=grays,xlab=expression(theta),
+       ylab=expression(sigma^2) )
+        box(col="black")
+dev.off()
+
+
+# monte carlo sampling
+pdf("Fig3.pdf",family="Times",height=7,width=7)
+set.seed(1)
+S<-10000
+s2.postsample<-1/rgamma(S,  (nu0+n)/2, s2n*(nu0+n)/2 )
+theta.postsample<-rnorm(S, mun, sqrt(s2.postsample/(k0+n)))
+quantile(theta.postsample, c(.025,.975))
+
+c(ybar-1.96*sqrt(s2/n),ybar+1.96*sqrt(s2/n))
+#plot(density(theta.postsample,adjust=3) )
+#x<-seq(1.6,2.0,length=200) ; lines(x,dnorm(x,mun,sqrt(t2n)),col="red")
+###
+layout(matrix(c(1,1,2,3),2,2,byrow=T))
+par(mar=c(3,3,1,1),mgp=c(1.75,.75,0))
+image(theta,s2g,exp(ld.th.s2), col=grays,xlab=expression(theta),
+       ylab=expression(sigma^2))
+points(theta.postsample[1:5000], s2.postsample[1:5000],pch=".",
+   xlab=expression(theta),ylab=expression(sigma^2))
+plot(density(s2.postsample,adjust=3),main="",xlab=expression(sigma^2), 
+     ,ylab=expression( paste(italic("p("),
+     sigma^2,"|",italic(y[1]),"...",italic(y[n]),")",sep=""))) 
+# abline(v=s2n)
+plot(density(theta.postsample,adjust=3),main="",xlab=expression(theta),ylab=expression( paste(italic("p("),
+     theta,"|",italic(y[1]),"...",italic(y[n]),")",sep=""))) 
+#abline(v=mun)
+quantile( theta.postsample,c(.025,.975))
+abline(v=quantile( theta.postsample,c(.025,.975)),col="gray",lwd=2)
+### t-test based confidence interval
+n<-length(y) ; ybar<-mean(y) ; s2<-var(y)
+
+ybar+qt( c(.025,.975), n-1) *sqrt(s2/n)
+abline( v= ybar+qt( c(.025,.975), n-1) *sqrt(s2/n), col="black",lwd=2)
+
+
+dev.off()
+
+
+
+#####
+
+
+#Multinomial modell for categorical data
+
+alpha1<-alpha2<-alpha3<-1
+y1<-727
+y2<-583
+y3<-137
+
+library(MCMCpack)
+theta.post<-rdirichlet(1000,c(alpha1+y1,alpha2+y2,alpha3+y3))
+pdf("Fig6.pdf")
+hist(theta.post[,1]-theta.post[,2],breaks=20,xlab=expression(theta[1]-theta[2]),main="")
+dev.off()
+
+
+#Cars speed data discrete (grid)  approximation
+# priors
+mu0<-110 ; t20<-2.5^2
+s20<-100 ; nu0<-1
+
+#data
+y<-c(98, 100, 107, 110, 112, 117, 117, 120, 125, 130)
+
+n<-length(y) ; mean.y<-mean(y) ; var.y<-var(y)
+
+
+####
+G<-100 ; H<-100
+
+mean.grid<-seq(100,125,length=G) 
+prec.grid<-seq(0.001,0.03,length=H) 
+
+post.grid<-matrix(nrow=G,ncol=H)
+
+for(g in 1:G) {
+  for(h in 1:H) { 
+    
+    post.grid[g,h]<- dnorm(mean.grid[g], mu0, sqrt(t20)) *
+      dgamma(prec.grid[h], nu0/2, s20*nu0/2 ) *
+      prod( dnorm(y,mean.grid[g],1/sqrt(prec.grid[h])) )
+  }
+}
+
+post.grid<-post.grid/sum(post.grid)
+
+pdf("Fig7.pdf",height=1.75,width=5,family="Times")
+par(mfrow=c(1,3),mar=c(2.75,2.75,.5,.5),mgp=c(1.70,.70,0))
+image( mean.grid,prec.grid,post.grid,col=gray( (10:0)/10 ),
+       xlab=expression(theta), ylab=expression(tilde(sigma)^2) )
+
+mean.post<- apply(post.grid,1,sum)
+plot(mean.grid,mean.post,type="l",xlab=expression(theta),
+     ylab=expression( paste(italic("p("),
+                            theta,"|",italic(y[1]),"...",italic(y[n]),")",sep="")))
+
+prec.post<-apply(post.grid,2,sum)
+plot(prec.grid,prec.post,type="l",xlab=expression(tilde(sigma)^2),
+     ylab=expression( paste(italic("p("),
+                            tilde(sigma)^2,"|",italic(y[1]),"...",italic(y[n]),")",sep=""))) 
+
+dev.off()
+#####
+
+
+theta.post.index <- sample (1:length(mean.grid), 1000, replace=T,prob=mean.post)
+theta.post<-mean.grid[theta.post.index]
+sigma_inv.post<-NULL
+for (i in 1:1000){
+  sigma_inv.post<-c(sigma_inv.post,(sample(prec.grid,1,prob=post.grid[theta.post.index[i],])))
+}
+
+pdf("Fig8.pdf")
+par(mfrow=c(2,2))
+plot(theta.post,sigma_inv.post, main="scatter plot of 1000 draws from joint posterior distribution", cex.main=0.7,xlab=expression(theta),ylab=expression(sigma^2),cex.main=0.8)
+hist(sigma_inv.post,breaks=20,xlab=expression(sigma^2),main=expression(paste("Posterior draws of ",sigma^2)),cex.main=0.7)
+hist(theta.post,breaks=20,xlab=expression(theta),main=expression(paste("Posterior draws of ",theta)),cex.main=0.7)
+dev.off()
+

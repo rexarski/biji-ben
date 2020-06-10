@@ -1,0 +1,23 @@
+#+ setup,include=FALSE
+source("http://utstat.utoronto.ca/~radford/knitr-options.r")
+#+
+
+source("midpoint.r")
+options(digits=17) # show as much precision as available
+
+#' Run the test function defined in midpoint.r.
+
+test_midpoint_rule()
+
+#' Try integrating a function with no singularities.
+
+for (n in c(100,1000,10000)) print (midpoint_rule(function(x)x^2,0,1,n))
+
+#' Try integrating a function with a singularity.
+
+for (n in c(100,1000,10000)) print (midpoint_rule(function(x)1/sqrt(x),0,1,n))
+
+#' Plot the function integrated above.
+
+x <- seq(0.01,1,by=0.01)
+plot(x,1/sqrt(x),type="l",ylim=c(0,10),yaxs="i",xlim=c(0,1),xaxs="i")

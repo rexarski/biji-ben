@@ -1,0 +1,215 @@
+# R code for Q2 of Tutorial 4
+
+# This example uses the teacher effectiveness example (example 2) from pages 13 to 18 of the 
+# brick. A lot of the old S-Plus code shown in the brick still works in R.
+
+# First the S-Plus code and model shown in the brick at bottom of page 13 and at the top of
+# page 14:
+
+tchreff <- read.table("TeachEff.txt", header = T)
+tchreff
+names(tchreff)
+
+attach(tchreff)
+tchreff.lm <- lm(teff ~ x1 + x2 + x3 + x4 + factor(gender))
+anova(tchreff.lm)
+
+# Some differences in rounding from the ouput shown in the brick. There are also small changes
+# in the format of the output - there are many such small differences between R and S-Plus, 
+# reflecting the fact that different people with different personal preferences created the 
+# functions in the two languages! 
+
+# We can also reproduce the table shown on page 14 of the brick using some "user-defined" 
+# model selection functions that were created in the STAT2008/STAT6038 Regression Modelling 
+# course - though this is definitely a topic from that prerequisite course, not a required
+# part of this current course.
+
+# As part of STAT2008/STAT6038 in 2015, I updated the two model selection functions 
+# given in the STAT2008/6038 brick (also originally written in S-Plus):
+
+selection.criteria <- function(model, ideal_mse=I(summary(model)$sigma^2)) {
+  parameters <- model$rank
+  sample.size <- parameters + model$df.residual
+  leverages <- hatvalues(model)
+  deletion.residuals <- residuals(model)/(1-leverages)
+  mse <- summary(model)$sigma^2
+  pressp <- sum(deletion.residuals^2)
+  r.squared <- summary(model)$r.squared
+  adj.r.squared <- summary(model)$adj.r.squared
+  Cp <- parameters + (((sample.size-parameters)*(mse-ideal_mse))/ideal_mse)
+  temp <- cbind(parameters, mse, pressp, r.squared, adj.r.squared, Cp)
+  dimnames(temp) <- list(paste(model$call)[2],c("p","MSE","PRESSp","R-Squared","Adj.R-Sqd","Cp"))
+  temp
+}
+
+model.selection <- function(response, predictors, model.list=matrix(1:ncol(predictors),nrow=1)) {
+  full.model <- lm(response ~ predictors)
+  full.mse <- summary(full.model)$sigma^2
+  temp <- model.list
+  dimnames(temp) <- list(dimnames(model.list)[[1]],dimnames(predictors)[[2]])
+  result <- cbind(temp,p=0,MSE=0,PRESSp=0,"R-Squared"=0,"Adj.R-Sqd"=0,"Cp"=0)
+  for (i in (1:nrow(model.list))) {
+    variables <- model.list[i,]
+    for (j in (1:length(variables))) {
+      ifelse(variables[j]>0,variables[j]<-j,variables[j]<-0)
+    }
+    part.model <- lm(response ~ predictors[,variables])
+    result[i,(ncol(predictors)+1):ncol(result)] <- selection.criteria(part.model, ideal_mse=full.mse)
+  }
+  as.data.frame(result)
+}
+
+# The model selection function calls the selection criteria function to produce various model
+# diagnostics for a series of models. It expects as input the response variable as a vector and 
+# the explanatory variabels in a matrix (if you want indicator, factor, polynomial or interaction
+# terms, you need to first create the appropriate variables and include them in the matrix):
+
+# Now to apply these functions to the teacher effectiveness data:
+
+unique(gender)
+levels(gender)
+gndr <- ifelse(gender=="M",0,1)
+tchreff.all <- cbind(gndr, x1, x2, x3, x4, teff)
+
+# The model selection function also expects a list of models, where each model is described 
+# by a vector listing which columns of the explanatory data matrix are to be included in the
+# model:
+
+models <- rbind(
+  c(1,0,0,0,0),
+  c(1,1,0,0,0),
+  c(1,0,1,0,0),
+  c(1,0,0,1,0),
+  c(1,0,0,0,1),
+  c(1,1,1,0,0),
+  c(1,1,0,1,0),
+  c(1,1,0,0,1),
+  c(1,0,1,1,0),
+  c(1,0,1,0,1),
+  c(1,0,0,1,1),
+  c(1,1,1,1,0),
+  c(1,1,1,0,1),
+  c(1,1,0,1,1),
+  c(1,0,1,1,1),
+  c(1,1,1,1,1))
+
+# Now we are ready to reproduce the table on page 14:
+
+bigtable <- model.selection(teff,tchreff.all[,1:5],models)
+bigtable
+
+# Gender should be included in the model, as the research question is about whether or not the 
+# response variable (teacher effectiveness) differs between the sexes. The above suggests our
+# model should also include x2 and x4 as explanatory variables.
+
+# Yet another approach, suggested at the bottom of page 14 of the brick, is to use forward 
+# stepwise regression.
+
+# forstp <- stepwise(tchreff.all[,1:5],tchreff.all[,6],f.crit=c(3.5,3))
+# forstp$which
+
+# In R, no-one has yet written a function called stepwise(), so the above S-Plus code doesn't
+# work!
+
+# There is also a function called step() available in both S-Plus and R - see the help files
+# for details!
+
+# Here is the the default version of forward selection in R version:
+
+step(lm(teff ~ ., data=data.frame(tchreff.all))) 
+# . as scope means "what is already there"
+
+# step(lm(teff ~ .^2, data=data.frame(tchreff.all)))
+# .^2 as scope indicates all interactions of existing terms
+
+# This suggests dropping gender (which we can't do) and keeping all four of the other x's.
+
+# This function uses a completely different selection criteria (AIC) and has to be
+# "tweaked", otherwise it results in a totally different model from the one suggested by 
+# stepwise(): 
+
+lm.start <- lm(teff ~ gndr + x1 + x2 + x3 + x4, data=as.data.frame(tchreff.all))
+step(lm.start)
+step(lm.start, k=4)
+lm.final <- step(lm.start, k=4)
+anova(lm.final)
+
+# So, both stepwise() in S-Plus and the step() function in R , suggest a model without gndr, 
+# but if we have an a priori conviction that gender is likely to cause a difference in teff,
+# the only way we can test this assumption is to include it in our models.
+
+# We can get close to the model suggested in the brick using stepwise refinement instead of
+# forward selection and limiting the scope to at least initially include gender
+
+step(lm(teff ~ gender), data=data.frame(tchreff.all), scope=list(upper=as.formula("teff ~ gender + x1 + x2 + x3 + x4")), direction="both")
+
+# This at least arrives temporarily at the model with gender, x2 and x4, before deciding that
+# the model would be better off without gender.
+
+anova(lm(teff ~ x2 + x4 + factor(gender)))
+anova(lm(teff ~ factor(gender) + x2 + x4))
+
+# Note, we do not have orthogonal contrasts in this observational data, so it does make a 
+# difference which order we include the explanatory variables in the model.
+
+# Gender does not appear to be significant, regardless of how we include it in the model!
+# This suggests that we really need only a single multiple regression model, rather than 
+# two parallel models, one for each of the two genders! 
+
+# However x1, x2, x3 and x4 are obviously all inter-related and there is a faint possibility 
+# that the relationship between x2 and x4 is masking an effect of gender on teacher
+# effectiveness in the above model. The next section of the brick (on pages 17 and 18), applies
+# some more multiple regression techniques from STAT2008 to investigate this
+# possibility by examining added variable plots for x2 and x4 in the context of the above model.
+
+# The following code from the brick produces two partial residual plots to further explore any
+# possible inter-relationships between x2, x4 and gender. "Automatic" model selection, stepwise
+# model refinement and partial regression plots were all topics in STAT2008/STAT6038, which is 
+# a course on multiple regression modelling.
+
+# These techniques all play in role in statistical modelling in general, including generalised
+# linear modelling (especially in the area of data reduction of large and complicated datasets);
+# however, they were covered in the earlier prerequisite course and are not examinable topics
+# in this course.
+
+rsd1 <- residuals(lm(x2 ~ factor(gender) + x4))
+rsd2 <- residuals(lm(teff ~ factor(gender) + x4))
+plot(rsd1,rsd2,type="n",xlab="e(x2|x4,gender)", ylab="e(teff|x4,gender)")
+points(rsd1[gender=="M"],rsd2[gender=="M"],pch="M",cex=0.7)
+points(rsd1[gender=="F"],rsd2[gender=="F"],pch="F",cex=0.7)
+abline(lsfit(rsd1[gender=="M"],rsd2[gender=="M"])$coef,lty=2)
+abline(lsfit(rsd1[gender=="F"],rsd2[gender=="F"])$coef,lty=3)
+
+rsd1 <- residuals(lm(x4 ~ factor(gender) + x2))
+rsd2 <- residuals(lm(teff ~ factor(gender) + x2))
+plot(rsd1,rsd2,type="n",xlab="e(x4|x2,gender)", ylab="e(teff|x2,gender)")
+points(rsd1[gender=="M"],rsd2[gender=="M"],pch="M",cex=0.7)
+points(rsd1[gender=="F"],rsd2[gender=="F"],pch="F",cex=0.7)
+abline(lsfit(rsd1[gender=="M"],rsd2[gender=="M"])$coef,lty=2)
+abline(lsfit(rsd1[gender=="F"],rsd2[gender=="F"])$coef,lty=3)
+
+# See the discussion of these plots on page 17 of the brick.
+ 
+# Finally, could our earlier analysis of the effects of gender be incomplete and do we really
+# need (rather than a single multiple regression or parallel regression models for the 
+# two genders), completely separate regression models for the two genders?:
+
+anova(lm(teff ~ gndr + x2 + x4 + gndr:x2 + gndr:x4))
+
+# This suggests we don't need either of the two interaction terms! We can confirm this using
+# the following code from the brick, which provides a single test for the addition of these
+# two terms:
+
+Zx2 <- gndr*x2
+Zx4 <- gndr*x4
+Zx <- cbind(Zx2,Zx4)
+eff.lm <- lm(teff ~ x2 + x4 + gndr + Zx)
+anova(eff.lm)
+
+# So, we also find that (even combining the two interactions together) there is no significant
+# effect, suggesting that the above models are not masking any hidden effects and we really
+# can conclude that that gender does NOT have an effect on teacher effectiveness.
+
+# In short, our assumption of any gender effect appears to be wrong or, at least, it is not
+# substantiated by these data!
+

@@ -1,0 +1,78 @@
+\documentclass[a4paper, 11pt, twoside]{article}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\begin{document}
+
+2017-02-23-lec02
+\\
+
+A \textit{set} is a well-defined collection of objects.
+
+We call the objects of a set its elements or members.
+
+If $A$ is a set, we write $x\in A$ to mean that $x$ is a member of $A$.
+
+If $x \not\in A$, $x$ is not a member of $A$.
+
+If $A, B$ are sets, and every element of $A$ is an element of $B$, then we say $A$ is a subset of $B$. We write $A \subseteq B$.
+
+\[ 	\mathbb{R} \supseteq
+	\mathbb{Q} \supseteq
+	\mathbb{Z} \supseteq
+	\mathbb{N} \]
+	
+Last we saw that $\sqrt{2} \not\in \mathbb{Q}$, but $\sqrt{2}\in \mathbb{R}$. That implies $\mathbb{R} \not= \mathbb{Q}$.
+
+We can describe subsets of given set $A$ by writing $\{x\in A: x \text{satisfies some conditions}\}$
+
+Let $A$ be all cities in Australia, $\{x \in A: x \text{has a population of at least 3 million people} = \{Sydney, Melbourne\}$
+
+Example: Find all real numbers satisfying $x^2 < x$.
+
+\[
+\begin{split}
+	x^2 &< x \\
+	x(x-1) &< 0 \\
+	\text{exactly one of } x, x-1 \text{is smaller than}   0\\
+	0 < x &< 1
+\end{split}
+\]
+
+$\{x \in \mathbb{R}: x^2<x\}=\{x\in \mathbb{R}: 0<x<1\} = (0,1)$
+\\
+
+\textbf{Coin Problem}: We have a collection of piles of coins. Define a transformation that for each time, we take one coin from each pile to make a new pile.
+
+Question: Describe all non-empty collections of coins unchanged under this transformation.
+
+Let $S$ be the set of collections of coins which are unchanged by transformation.
+
+Let $T$ be the set of all collections consisting of one pile of size $1$, one of size $2$, $\dots$, one of size $n$ for some natural number $n$. (Since we are referring to collections, order does not matter.)
+\\
+
+Claim $S=T$. (must show $S\subseteq T$ and $T \subseteq S$.)
+
+\textbf{Proof:}
+
+First let's show $T\subseteq S$.
+
+given a collection in $T$ with piles of sizes of $1, 2, \dots , n$ for some fixed integer $n$. When we transform, we get piles of sizes of $0, 1, \dots , n-1$ plus one new pile of size $n$.
+
+The result is a collection of piles of sizes $1, 2, \dots ,n$, exactly as we started with.
+
+Thus this collection is unchanged by transformation and hence in $S$.
+\\
+
+Next, we show $S\subseteq T$.
+
+Let $a \in S$, i.e. $a$ is a collection unchanged by transformation.
+
+Let $m$ be the number of piles in $a$.
+
+Observe that when we transform a collection with $m$ piles, we also create a new pile of size $m$. If $a$ is unchanged by transformation, then $a$ must have a pile of size $m$ to begin with.
+
+Now that we know $a$ has a pile of size of $m$. We see that the transformation of $a$ must have a pile of size $m-1$. But since $a$ is unchanged under transformation, this implies $a$ itself must have a pile of size $m-1$.
+
+Continuing with this reasoning we see that $a$ must have piles of size $m, m-1, m-2, \dots ,1$. But $a$ only has $m$ piles, so these are all the piles of $a$. Thus $a$ has the desired form and $a\in T$. 
+
+\end{document}

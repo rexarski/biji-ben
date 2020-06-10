@@ -1,0 +1,21 @@
+# CSC 120, lab exercise 6 solution, Part II.
+
+record_lows_and_highs <- function (t)
+{
+    lows <- numeric(0)
+    highs <- numeric(0)
+    record_low <- Inf
+    record_high <- -Inf
+    for (v in t) {
+        if (v > record_high) {
+            record_high <- v
+            highs <- c(highs,record_high)
+        }
+        if (v < record_low) {
+            record_low <- v
+            lows <- c(lows,record_low)
+        }
+    }
+    list (lows=lows, highs=highs)
+}
+

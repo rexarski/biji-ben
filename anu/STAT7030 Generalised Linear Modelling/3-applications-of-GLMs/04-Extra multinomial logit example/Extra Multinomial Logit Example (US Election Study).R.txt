@@ -1,0 +1,156 @@
+library(faraway)
+## data
+data(nes96)
+help(nes96)
+#get party affiliation
+sPID <-  nes96$PID
+#collapse to 3 category response
+levels(sPID) <- c("D","D", "I", "I", "I", "R", "R")
+## treat income as continuous
+inca <- c(1.5, 4, 6, 8, 9.5, 10.5, 11.5, 12.5, 13.5, 14.5, 16, 18.5, 21, 23.5, 27.5, 32.5, 37.5, 42.5, 47.5, 55, 67.5, 82.5, 97.5, 115)
+#unclass - convert factor to integer codes
+income <- inca[unclass(nes96$income)]
+educ <- as.factor(unclass(nes96$educ))
+age <- nes96$age
+
+
+prop.table(table(educ, sPID),1)
+
+
+#graphical plots of empirical probabilities
+pdf(file="Pic1.pdf", width=5, height=4.75)
+par(mar=c(4,5,1,1))
+par(mfrow=c(1,3))
+## plots - matplot() - plots columsn of one matrix against the columns of another matrix
+matplot(prop.table(table(educ, sPID),1), type="l", xlab="educ",
+ 		 ylab="prop", col= c("blue", "green", "red"), lwd=3)
+ il <- c(8, 26, 42, 58, 74, 90, 107)
+# divide the range of income into 7 intervals, code the values of income according to the interval to which they fall; like binning 
+cutinc <- cut(income, 7)
+matplot(il, prop.table(table(cutinc, sPID),1), type="l", xlab="income", 
+ 		 ylab="prop", col= c("blue", "green", "red"),lwd=3)
+ al <- c(24, 34, 44, 54, 65, 75, 85)
+ cutage <- cut(age,7)
+ matplot(al, prop.table(table(cutage, sPID),1), type="l", 
+ 		xlab="age",  ylab="prop", 
+ col= c("blue", "green", "red"), lwd=3)
+dev.off()
+
+#fit mulitnomial model
+library(nnet)
+library(nnet)
+mmod <- multinom(sPID ~ age + educ + income) 
+summary(mmod)
+
+
+
+## can we reduce the model? Note use of effective degrees of freedom - explained in class
+mmod.aic <- step(mmod, trace=0)
+diff.dev <- deviance(mmod.aic) - deviance(mmod)
+1 - pchisq(diff.dev, mmod$edf-mmod.aic$edf) # do reject the smaller model
+
+
+#let's look at a change of $1000 of income
+pp <- predict(mmod.aic, data.frame(income=c(0,1)),type="probs")
+ pp
+ log( pp[2,2]/pp[2,1]) - log( pp[1,2]/pp[1,1])
+log( pp[2,3]/pp[2,1]) - log( pp[1,3]/pp[1,1])
+
+ ## Let's predict based on the following incomes in $1,000.
+  il <- c(8, 26, 42, 58, 74, 90, 107)
+ predict(mmod.aic, data.frame(income=il), type="probs")
+
+## just most probable for each income group
+predict(mmod.aic, data.frame(income=il))
+
+#The intercept models the probabilities of the party identification for an income of zero.  
+ cc <- c(0, -1.174933, -0.950359)
+ exp(cc)/(sum(exp(cc))) 
+ predict(mmod.aic, data.frame(income=0), type="probs")
+
+
+#Ordered logit
+x <- seq(-4,4, by=0.01)
+pdf(file="Pic2.pdf", width=12, height=12)
+ par(mar=c(5, 6, 4, 2) + 0.1)
+ par(mfrow=c(2,1))
+plot(x, dnorm(x), type="l", lwd=3, xlab="", ylab="normal density", xaxt="n", cex.axis=2, cex.lab=2.5, cex.main=3, main="z")
+abline(v=c(-1.5,  1.5), lwd=3, col="blue")
+axis(1, at=c(-1.5, 1.5), labels=c( main=c(expression(theta[1]), expression(theta[2]) )), cex.axis=3, padj=1)
+legend(-4.25, 0.4, legend="Democrat", box.lty=0, cex=2)
+legend(-1.5, 0.4, legend="Independent", box.lty=0, cex=2)
+legend(1.75, 0.4, legend="Republican", box.lty=0, cex=2)
+plot(x, dnorm(x), type="l", lwd=3, xlab="", ylab="normal density", xaxt="n", cex.axis=2, cex.lab=2.5, cex.main=3, main=expression(paste("z", - beta, "'x")))
+abline(v=c(-1.5,  1.5), lwd=3, col="blue")
+axis(1, at=c(-1.5,  1.5), labels=c( main=c(expression(paste(theta[1] -  beta, "'x")), expression(paste(theta[2] - beta, "'x")))), cex.axis=3, padj=1)
+legend(-4.25, 0.4, legend="Democrat", box.lty=0, cex=2)
+legend(-1.5, 0.4, legend="Independent", box.lty=0, cex=2)
+legend(1.75, 0.4, legend="Republican", box.lty=0, cex=2)
+dev.off()
+
+## Ordered logit
+library(MASS)
+mod <- polr(sPID ~ age + educ + income)
+## Variable selection via AIC
+mod.aic <- step(mod, trace=0)
+summary(mod.aic)
+## Check via difference in deviance
+dev <- deviance(mod.aic)- deviance(mod)
+df <- mod$edf -  mod.aic$edf
+1- pchisq(dev, df)
+
+## Check propotional odds assumption ??
+pim <- prop.table(table(income, sPID),1)
+pim
+emp.gamma.d <- pim[,1]
+emp.gamma.i <- pim[,1]+pim[,2]
+##
+
+logit(emp.gamma.d) - logit(emp.gamma.i)
+
+pdf(file="Pic3.pdf", width=12, height=12)
+par(mar=c(5, 6, 4, 2) + 0.1)
+par(mfrow=c(1,1))
+plot(inca, logit(emp.gamma.d) - logit(emp.gamma.i), cex.axis=2, cex.lab=2.5)
+dev.off()
+
+#interpretation of coefficient estimates
+summary(mod.aic)
+#for income = 0
+# predicted probability of a being a Democrat
+ilogit(0.209)
+# predicted probability of a being an Independent 
+ilogit(1.292)-ilogit(0.209)
+
+#alternative code
+## Suppose x=0
+x <- 0
+ gamma.d <- ilogit(0.2091 - mod.aic$coef*x)
+ gamma.i <- ilogit(1.2916  - mod.aic$coef*x)
+ gamma.r <- 1
+##
+ prob.d <- gamma.d
+ prob.i <- gamma.i - gamma.d
+ prob.r <- gamma.r - gamma.i
+
+prob.d
+prob.i
+prob.r
+ 
+predict(mod.aic,data.frame(income=il,row.names=il),type="probs")
+ 
+x<-seq(-4,4,by=0.05)
+pdf("Pic4.pdf")
+plot(x,dlogis(x),type="l")
+abline(v=c(0.209,1.292))
+abline(v=c(0.209,1.292)-50*0.013129,lty=2)
+abline(v=c(0.209,1.292)-100*0.013129,lty=5)
+dev.off()
+
+#mod.prob - ordered probit
+mod.prob <- polr(formula = sPID ~ income, method="probit")
+summary(mod.prob)
+
+#Proportional hazards
+mod.cloglog <- polr(formula = sPID ~ income, method="cloglog")
+summary(mod.cloglog)

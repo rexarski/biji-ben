@@ -1,0 +1,132 @@
+# The following R code is a revised version of the S-Plus code shown on pages 65 to 68 of the brick.
+
+# This example is specific to the Carrots data, but the code could easily be modified to calculate leverage values,
+# deletion residuals and Cook's D statistic for other models.
+
+# First, fit the model:
+
+crts <- read.table("Carrots.txt", header=T)
+attach(crts)
+crts
+
+prp <- dmg/crts$ni
+fldb <- ifelse(field=="B",1,0)
+fldc <- ifelse(field=="C",1,0)
+crts.glm <- glm(prp ~ dose + cbind(fldb,fldc), family=binomial, weights=crts$ni)
+plot(crts.glm)
+
+# my preferred plot for Cook's D values:
+
+plot(crts.glm, which=4)
+
+# Now check the residual deviance, either using the "rule of thumb" as per the brick
+
+anova(crts.glm, test="Chisq")
+crts.glm$deviance/crts.glm$df.residual
+1+(3*sqrt(2/crts.glm$df.residual))
+
+# or better yet, as a formal hypothesis test as discussed previously in lectures:
+
+summary(crts.glm)$dispersion 
+crts.glm$deviance
+crts.glm$deviance/summary(crts.glm)$dispersion 
+crts.glm$df.residual
+qchisq(c(0.025, 0.975), crts.glm$df.residual) 
+
+# Or as a more powerful one-tailed test for over-dispersion only:
+
+1 - pchisq(crts.glm$deviance, crts.glm$df.residual)
+
+residuals(crts.glm, "deviance")
+sort(residuals(crts.glm, "deviance"))
+
+# Observation #14 appears to be an outlier - how influential is this point - it may be the cause of the apparent
+# over-dispersion? To check this we can calculate and display the deletion residuals:
+
+deletion.res <- 0
+for (i in 1:24) {
+  tmp <- glm(prp[-i] ~ dose[-i] + cbind(fldb[-i], fldc[-i]), family=binomial, weights=crts$ni[-i])
+  eta <- t(tmp$coef) %*% c(1, dose[i], fldb[i], fldc[i])
+  yhat <- exp(eta)/(1 + exp(eta))
+  bigD <- 2*prp[i]*log(prp[i]/yhat) + 2*(1-prp[i])*log((1-prp[i])/(1-yhat))
+  deletion.res[i] <- sqrt(bigD*crts$ni[i])
+  deletion.res[i] <- ifelse(prp[i] < yhat, -deletion.res[i], deletion.res[i])
+}
+
+sort(deletion.res)
+
+# The deletion residual plot looks similar to the original deviance residual plot:
+
+plot(crts.glm$linear.predictor, residuals(crts.glm, "deviance"), xlab="Linear predictors", ylab="Deviance residuals")
+title("(a) - Deviance Residual Plot")
+
+plot(crts.glm$linear.predictor, deletion.res, xlab="Linear predictors", ylab="Deleted deviance residuals")
+title("(b) - Deleted Deviance Residual Plot")
+
+# The deletion residuals are similar to the original residuals, however, the largest change was for point 14:
+
+residuals(crts.glm, "deviance") - deletion.res
+barplot(residuals(crts.glm, "deviance") - deletion.res, names=names(prp), xlab="Observation Number", ylab="Change in deviance residual value")
+
+# Note using the latest version of R, we no longer need to calculate Cook's distance using the approach shown in the
+# brick, as all the influence measures we calculated for ordinary lm() models are also available for glm() models - 
+# this includes Cook's distances and the hat or leverage values:
+
+help(influence)
+
+# Point 14 also stands out on the plot of Cook's distance, confirming that it is an discordant observation (possibly a
+# "vertical" outlier):
+
+barplot(cooks.distance(crts.glm), names=names(prp), xlab="Observation Number", ylab="Cook's Distance")
+title("(c) - Plot of Cook's Distances")
+
+# This gives the same impression as the plot shown on page 67 of the brick, but the scale is slightly different!
+
+# We could also check the leverage values (again the code shown in the brick is not required):
+
+barplot(hatvalues(crts.glm), names=names(prp), xlab="Observation Number", ylab="Leverage values")
+title("(d) - Plot of Leverages")
+
+# None of the values appears particularly influential - no leverage is higher than the cut-off of 2p/n = 2*4/24 = 0.33 
+
+# To test whether point 14 is influential enough to have a significant effect on the model, we can create an indicator
+# variable for just this point and include it in the model:
+
+p14 <- rep(0,24)
+p14[14] <- 1
+crts.glm1 <- glm(prp ~ dose + cbind(fldb,fldc) + p14, family=binomial, weights=crts$ni)
+anova(crts.glm1, test="Chisq")
+
+# The answer is yes, point 14 does have a significant effect on the coefficients of the model:
+
+summary(crts.glm)$coef
+summary(crts.glm1)$coef
+
+# Note in either case, the coefficient of dose is both negative and significantly different from 0, suggesting that
+# increased dosage does protect against damage, but if we have a more specific research question (such as the 
+# predicted damage for a particular dose), then we have to use the model with outlier excluded, as there the 
+# large Cook's D for observation 14 in the original model (as confirmed by the above test) suggests 
+# Observation 14 has effected the size of the model coefficients (and hence predictions from the model).
+
+# So, point 14 might have been an error in our data, or a genuine special case.  So even though I am reluctant to throw
+# away ni[14]/sum[ni] = 42/900 = 4.67 percent of the data, in the absence of any further information about the cause of
+# this outlier, we have no option but to exclude it from the model:
+
+crts.glm2 <- glm(prp[-14] ~ dose[-14] + cbind(fldb[-14],fldc[-14]), family=binomial, weights=crts$ni[-14])
+plot(crts.glm2)
+
+# This "fix" to the model does appear to have solved the problem with over-dispersion:
+
+anova(crts.glm2, test="Chisq")
+crts.glm2$deviance/crts.glm2$df.residual
+
+# Which is now fairly close to the expected value of 1 and now satisfies the "rule of thumb" from the brick, as it below:
+
+1+(3*sqrt(2/crts.glm2$df.residual))
+
+# To check this, we can again do the following, which is a equivalent to a formal two-tailed hypothesis test on the 
+# residual deviance (but also checks for under-dispersion):
+
+crts.glm2$deviance
+crts.glm2$df.residual
+qchisq(c(0.025, 0.975), crts.glm2$df.residual)
