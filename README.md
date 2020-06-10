@@ -1,2 +1,65 @@
-# biji-ben
-An archive of some sketches and notes during my college days.
+# biji-ben 笔记本
+An archive of some sketches and notes during my college days, including:
+
+- University of Toronto
+  - APM236 Applications of Linear Programming
+  - APM462 Nonlinear Optimization
+  - AST121 The Origin and Evolution of the Universe
+  - CSC108 Introduction to Computer Programming 
+  - CSC120 Computer Science for the Sciences
+  - CSC148 Introduction to Computer Science
+  - CSC165 Mathematical Expression and Reasoning for Computer Science
+  - CSC207 Software Design
+  - CSC236 Introduction to the Theory of Computation
+  - CSC318 The Design of Interactive Computational Media
+  - CSC336 Numerical Methods
+  - CSC343 Introduction to Databases
+  - EEB214 Evolution and Adaptation
+  - LIN200 Introduction to Language
+  - LIN203 English Words
+  - MAT135 Calculus I
+  - MAT136 Calculus II
+  - MAT224 Linear Algebra II
+  - MAT237 Multivariable Calculus
+  - MAT240 Algebra I
+  - MAT244 Introduction to Ordinary Differential Equations
+  - MAT246 Concepts in Abstract Mathematics
+  - MAT301 Groups and Symmetries
+  - MAT315 Introduction to Number Theory
+  - MAT327 Introduction to Topology
+  - MAT332 Introduction to Graph Theory
+  - MAT334 Complex Variables
+  - MAT335 Chaos, Fractals and Dynamics
+  - MAT337 Introduction to Real Analysis
+  - MAT402 Classical Geometries
+  - PHL201 Introductory Philosophy
+  - PHL245 Modern Symbolic Logic
+  - PHL271 Law and Morality
+  - PSY100 Introductory Psychology
+  - SOC102 Social Inequalities
+  - SPA100 Spanish for Beginners
+  - STA257 Probability and Statistics I
+  - STA261 Probability and Statistics II
+  - STA302 Methods of Data Analysis I
+  - STA304 Surveys, Sampling and Observational Data
+  - STA305 Design and Analysis of Experiments
+  - STA347 Probability
+  - STA410 Statistical Computation
+  - STA414 Statistical Methods for Machine Learning II
+  - STA437 Methods for Multivariate Data
+  - STA447 Stochastic Processes
+  - STA457 Time Series Analysis
+- The Australian National University
+  - COMP6320 Artificial Intelligence
+  - COMP8410 Data Mining
+  - MATH6222 Introduction to Mathematical Thinkings: Problem-Solving and Proofs
+  - STAT6038 Regression Modelling
+  - STAT6039 Principles of Mathematical Statistics
+  - STAT6046 Financial Mathematics
+  - STAT7001 Applied Statistics
+  - STAT7016 Introduction to Bayesian Data Analysis
+  - STAT7017 Big Data Statistics
+  - STAT7026 Graphical Data Analysis
+  - STAT7030 Generalised Linear Models
+  - STAT8003 Biostatistics
+  - STAT8027 Statistical Inference
