@@ -1,0 +1,54 @@
+Please answer the following questions on a piece of paper. Do your
+work individually, without your partner.
+
+
+s = 'a'
+t = 'b'
+
+    1. What is the value of the expression s + t?
+        - 'st'
+        - 's + t'
+        - 'a + b'
+        - 'ab'
+        - None of the above
+    
+    2. What is the value of the expression s * t?
+        - 'st'
+        - 's * t'
+        - 'a * b'
+        - 'ab'
+        - None of the above
+        
+    3. What is the value of s * 6?
+        - 's6'
+        - 'ssssss'
+        - '6s'
+        - 'aaaaaa'
+        - None of the above
+
+    4. What is the value of s[0]?
+
+    5. s = 'm':
+        - what will s refer to after this statement:
+                s = 'c'
+
+    6. s = 'n':
+        - what will s refer to after this statement:
+                s[0] = 'c'
+
+    7. s = '':
+        - What is the value of len(s)?   
+
+
+          
+    8. s = 'heffalump'
+        - What is the value of len(s)?
+        - What is the value of s[4]?
+        - What is the value of s[len(s)]?
+
+    9. What will the following code print?
+        vowels = 'aeiou'
+        t = 'abcdefghIJKLMNO'
+        for c in t:
+            if c in vowels:
+                print c

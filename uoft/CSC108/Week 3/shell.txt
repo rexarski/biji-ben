@@ -1,0 +1,59 @@
+Python 2.7.2 (v2.7.2:8527427914a2, Jun 11 2011, 14:13:39) 
+[GCC 4.0.1 (Apple Inc. build 5493)]
+Type "help", "copyright", "credits" or "license" for more information.
+[evaluate green.py]
+>>> help(total_green)
+Help on function total_green in module __main__:
+
+total_green(pic)
+    (Picture) -> int
+    Return the total amount of green in pic.
+
+>>> # Verifying that total_green works as expected
+>>> import media
+>>> pic = media.create_picture(2, 2)
+>>> help(media.create_picture)
+Help on function create_picture in module media:
+
+create_picture(w, h, col=Color(255, 255, 255))
+    Return a Picture w pixels wide and h pixels high.
+    Default Color col is white.
+
+>>> pix1 = media.get_pixel(pic, 0, 0)
+>>> media.get_color(pix1)
+Color(255, 255, 255)
+>>> media.set_color(pix1, media.yellow)
+>>> media.get_green(pix1)
+255
+>>> media.set_color(pix1, media.purple)
+>>> media.get_green(pix1)
+0
+>>> media.get_red(pix1)
+128
+>>> media.get_blue(pix1)
+128
+>>> dir(media)
+['Color', 'DEFAULT_FONT', 'IMAGE_FORMATS', 'Image', 'ImageDraw', 'ImageFont', 'PIC_INITIALIZED', 'Picture', '__builtins__', '__doc__', '__file__', '__name__', '__package__', 'add_line', 'add_oval', 'add_oval_filled', 'add_polygon', 'add_polygon_filled', 'add_rect', 'add_rect_filled', 'add_text', 'aliceblue', 'antiquewhite', 'aqua', 'aquamarine', 'azure', 'beige', 'bisque', 'black', 'blanchedalmond', 'blue', 'blueviolet', 'brown', 'burlywood', 'cadetblue', 'chartreuse', 'chocolate', 'choose_color', 'choose_file', 'choose_folder', 'choose_save_filename', 'close', 'close_inspect', 'color', 'copy', 'coral', 'cornflowerblue', 'cornsilk', 'create_color', 'create_image', 'create_picture', 'crimson', 'crop', 'crop_picture', 'cyan', 'darkblue', 'darkcyan', 'darken', 'darkgoldenrod', 'darkgray', 'darkgreen', 'darkkhaki', 'darkmagenta', 'darkolivegreen', 'darkorange', 'darkorchid', 'darkred', 'darksalmon', 'darkseagreen', 'darkslateblue', 'darkslategray', 'darkturquoise', 'darkviolet', 'deeppink'
+, 'deepskyblue', 'dimgray', 'distance', 'dodgerblue', 'firebrick', 'floralwhite', 'forestgreen', 'fuchsia', 'gainsboro', 'get_blue', 'get_color', 'get_green', 'get_height', 'get_pixel', 'get_pixels', 'get_red', 'get_short_path', 'get_width', 'get_x', 'get_y', 'ghostwhite', 'gold', 'goldenrod', 'gray', 'green', 'greenyellow', 'honeydew', 'hotpink', 'indianred', 'indigo', 'init_picture', 'inspect', 'ivory', 'khaki', 'lavender', 'lavenderblush', 'lawngreen', 'lemonchiffon', 'lightblue', 'lightcoral', 'lightcyan', 'lighten', 'lightgoldenrodyellow', 'lightgreen', 'lightgrey', 'lightpink', 'lightsalmon', 'lightseagreen', 'lightskyblue', 'lightslategray', 'lightsteelblue', 'lightyellow', 'lime', 'limegreen', 'linen', 'load_image', 'load_picture', 'magenta', 'maroon', 'math', 'mediumaquamarine', 'mediumblue', 'mediumorchid', 'mediumpurple', 'mediumseagreen', 'mediumslateblue', 'mediumspringgreen', 'mediumturquoise', 'mediumvioletred', 'midnightblue', 'mintcream', 'mistyrose', 'moccasin', 'mw',
+ 'navajowhite', 'navy', 'oldlace', 'olive', 'olivedrab', 'orange', 'orangered', 'orchid', 'os', 'palegoldenrod', 'palegreen', 'paleturquoise', 'palevioletred', 'papayawhip', 'peachpuff', 'peru', 'pink', 'pixel', 'plum', 'powderblue', 'purple', 'red', 'rosybrown', 'royalblue', 'saddlebrown', 'salmon', 'sandybrown', 'save', 'save_as', 'say', 'seagreen', 'seashell', 'set_blue', 'set_color', 'set_green', 'set_red', 'show', 'show_external', 'sienna', 'silver', 'skyblue', 'slateblue', 'slategray', 'snow', 'springgreen', 'steelblue', 'tan', 'teal', 'thistle', 'tomato', 'turquoise', 'update', 'violet', 'wheat', 'white', 'whitesmoke', 'yellow', 'yellowgreen']
+>>> help(media.create_color)
+Help on function create_color in module media:
+
+create_color(r, g, b)
+    Return a Color object with RGB values r, g, and b.
+
+>>> pix2 = media.get_pixel(pic, 1, 1)
+>>> media.set_color(pix2, media.create_color(20, 30, 150))
+>>> media.get_color(pix2)
+Color(20, 30, 150)
+>>> for pix in pic:
+	print media.get_color(pix)
+Color r=128 g=0 b=128
+Color r=255 g=255 b=255
+Color r=255 g=255 b=255
+Color r=20 g=30 b=150
+>>> expected = 0 + 255 + 255 + 30
+>>> result = total_green(pic)
+>>> expected == result
+True
+

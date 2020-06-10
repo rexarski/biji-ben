@@ -1,0 +1,160 @@
+Python 2.7.2 (v2.7.2:8527427914a2, Jun 11 2011, 14:13:39) 
+[GCC 4.0.1 (Apple Inc. build 5493)]
+Type "help", "copyright", "credits" or "license" for more information.
+>>> # list methods
+>>> L = ['a', 'b', 'c', 'd']
+>>> dir(list)
+['__add__', '__class__', '__contains__', '__delattr__', '__delitem__', '__delslice__', '__doc__', '__eq__', '__format__', '__ge__', '__getattribute__', '__getitem__', '__getslice__', '__gt__', '__hash__', '__iadd__', '__imul__', '__init__', '__iter__', '__le__', '__len__', '__lt__', '__mul__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__reversed__', '__rmul__', '__setattr__', '__setitem__', '__setslice__', '__sizeof__', '__str__', '__subclasshook__', 'append', 'count', 'extend', 'index', 'insert', 'pop', 'remove', 'reverse', 'sort']
+L
+>>> ['a', 'b', 'c', 'd']
+>>> L.append('e')
+L
+>>> ['a', 'b', 'c', 'd', 'e']
+>>> newL = L.append('f')    # append doesn't return anything
+>>> newL
+>>> print newL
+None
+>>> L.insert(2, 'new')
+>>> L
+['a', 'b', 'new', 'c', 'd', 'e', 'f']
+>>> L.insert(len(L), 'z')
+>>> L
+['a', 'b', 'new', 'c', 'd', 'e', 'f', 'z']
+>>> L.sort()
+>>> L
+['a', 'b', 'c', 'd', 'e', 'f', 'new', 'z']
+>>> del L[1]
+L
+>>> ['a', 'c', 'd', 'e', 'f', 'new', 'z']
+>>> help(list.remove)
+Help on method_descriptor:
+
+remove(...)
+    L.remove(value) -- remove first occurrence of value.
+    Raises ValueError if the value is not present.
+
+>>> # for loop over list
+>>> for item in L:
+	print item
+
+a
+c
+d
+e
+f
+new
+z
+>>> L = [1, 2, 3]
+for item in L:
+	item = item * 2
+
+>>> print L
+[1, 2, 3]
+>>> for item in L:
+	item = item * 2
+	print item
+
+2
+4
+6
+>>> range(4)
+[0, 1, 2, 3]
+>>> range(len(L))
+[0, 1, 2]
+>>> for i in range(len(L)):
+	L[i] = L[i] * 2
+
+>>> print L
+[2, 4, 6]
+>>> range(L)
+Traceback (most recent call last):
+  File "<string>", line 1, in <fragment>
+TypeError: range() integer end argument expected, got list.
+>>> help(range)
+Help on built-in function range in module __builtin__:
+
+range(...)
+    range([start,] stop[, step]) -> list of integers
+    
+    Return a list containing an arithmetic progression of integers.
+    range(i, j) returns [i, i+1, i+2, ..., j-1]; start (!) defaults to 0.
+    When step is given, it specifies the increment (or decrement).
+    For example, range(4) returns [0, 1, 2, 3].  The end point is omitted!
+    These are exactly the valid indices for a list of 4 elements.
+
+>>> range(10)
+[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+>>> range(4, 10)
+[4, 5, 6, 7, 8, 9]
+>>> range(4, 10, 2)
+[4, 6, 8]
+>>> range(4, 100, 5)
+[4, 9, 14, 19, 24, 29, 34, 39, 44, 49, 54, 59, 64, 69, 74, 79, 84, 89, 94, 99]
+
+
+>>> subjects = ['CSC', 'Bio', 'French', 'History']
+>>> subjects_alias = subjects
+>>> print subjects
+['CSC', 'Bio', 'French', 'History']
+>>> print subjects_alias
+['CSC', 'Bio', 'French', 'History']
+>>> print id(subjects), id(subjects_alias)
+17294600 17294600
+>>> subjects[1] = 'Commerce'
+>>> print subjects
+['CSC', 'Commerce', 'French', 'History']
+>>> print subjects_alias
+['CSC', 'Commerce', 'French', 'History']
+>>> print id(subjects), id(subjects_alias)
+17294600 17294600
+
+>>> # cloning
+>>> subjects
+['CSC', 'Commerce', 'French', 'History']
+>>> subjects_clone = subjects[:]
+>>> subjects
+['CSC', 'Commerce', 'French', 'History']
+>>> subjects_clone
+['CSC', 'Commerce', 'French', 'History']
+>>> print id(subjects), id(subjects_clone)
+17294600 17430408
+>>> subjects[2] = 'Philosophy'
+>>> subjects
+['CSC', 'Commerce', 'Philosophy', 'History']
+>>> subjects_clone
+['CSC', 'Commerce', 'French', 'History']
+>>> print id(subjects), id(subjects_clone)
+17294600 17430408
+
+[evaluate list_functions.py]
+>>> subjects
+['CSC', 'Commerce', 'Philosophy', 'History']
+>>> total_length(subjects)
+28
+>>> L = []
+>>> L.append('a')
+>>> L
+['a']
+[evaluate list_functions.py]
+>>> L = [1, 2, 3]
+[evaluate list_functions.py]
+>>> square_list(L)
+[1, 4, 9]
+[evaluate list_functions.py]
+>>> L = ['a', 'b', 'c']
+>>> to_upper(L)
+>>> L
+['a', 'b', 'c']
+[evaluate list_functions.py]
+>>> to_upper(L)
+A
+B
+C
+[evaluate list_functions.py]
+>>> L
+['a', 'b', 'c']
+>>> to_upper(L)
+>>> L
+['A', 'B', 'C']
+>>> range(len(L))
+[0, 1, 2]

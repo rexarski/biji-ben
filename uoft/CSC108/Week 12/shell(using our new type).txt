@@ -1,0 +1,82 @@
+Python 2.7.2 (v2.7.2:8527427914a2, Jun 11 2011, 14:13:39) 
+[GCC 4.0.1 (Apple Inc. build 5493)]
+Type "help", "copyright", "credits" or "license" for more information.
+[evaluate Event.py]
+>>> # We're made a new type named Event.
+
+>>> # This calls the __init__ method (the "constructor") for Event.
+>>> # At this point, we haven't defined __init__, but we get this method from Python.  
+>>> e1 = Event()    
+>>> e1 # e1 is an object of type Event
+<__main__.Event object at 0x106c530>
+>>> e2 = Event()
+>>> e2 # e1 is an object of type Event
+<__main__.Event object at 0x106c4b0>
+>>> dir(Event)  # Python gives us these things by default for each type.
+['__class__', '__delattr__', '__dict__', '__doc__', '__format__', '__getattribute__', '__hash__', '__init__', '__module__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__']
+[evaluate Event.py]
+>>> e1
+<__main__.Event object at 0x106c530>
+>>> e2
+<__main__.Event object at 0x106c4b0>
+>>> e1.start_time = 10  # we create a variable start_time associated with Event object e1
+>>> e1.end_time = 11
+>>> e1.description = 'CSC108 lecture'
+
+>>> # Let's review another type.
+>>> s = 'hello'
+>>> dir(str)
+['__add__', '__class__', '__contains__', '__delattr__', '__doc__', '__eq__', '__format__', '__ge__', '__getattribute__', '__getitem__', '__getnewargs__', '__getslice__', '__gt__', '__hash__', '__init__', '__le__', '__len__', '__lt__', '__mod__', '__mul__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__rmod__', '__rmul__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '_formatter_field_name_split', '_formatter_parser', 'capitalize', 'center', 'count', 'decode', 'encode', 'endswith', 'expandtabs', 'find', 'format', 'index', 'isalnum', 'isalpha', 'isdigit', 'islower', 'isspace', 'istitle', 'isupper', 'join', 'ljust', 'lower', 'lstrip', 'partition', 'replace', 'rfind', 'rindex', 'rjust', 'rpartition', 'rsplit', 'rstrip', 'split', 'splitlines', 'startswith', 'strip', 'swapcase', 'title', 'translate', 'upper', 'zfill']
+>>> s
+'hello'
+>>> s.upper()  # the notation for calling a method: object.method_name(parameters)
+'HELLO'
+>>> str.upper(s)  # another (equivalent) notation: type.method_name(object, parameters)
+'HELLO'
+>>> help(str.upper)
+Help on method_descriptor:
+
+upper(...)
+    S.upper() -> string
+    
+    Return a copy of the string S converted to uppercase.
+
+>>> str.upper('hello')
+'HELLO'
+
+>>> # We added the rename method to Event.
+[evaluate Event.py]
+>>> e1 = Event()
+>>> e1.description = 'CSC108 lecture'
+>>> e1.description
+'CSC108 lecture'
+>>> e1.rename('sleep in!')   # one way to call the rename method
+>>> e1.description
+'sleep in!'
+>>> Event.rename(e1, 'something else')  # the other way to call the rename method
+>>> e1.description
+'something else'
+>>> dir(Event)
+['__class__', '__delattr__', '__dict__', '__doc__', '__format__', '__getattribute__', '__hash__', '__init__', '__module__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', 'rename']
+>>> e3 = Event()
+
+>>> # We added the __init__ method with 4 parameters.
+[evaluate Event.py]
+>>> e1 = Event(10, 11, 'CSC108 Lecture', 'Mar 28 2012')
+>>> e2 = Event()   # Python no longer gives us the default __init__ method.  We must use our version.
+Traceback (most recent call last):
+  File "<string>", line 1, in <fragment>
+TypeError: __init__() takes exactly 5 arguments (1 given)
+>>> e1.rename('Good Friday')
+>>> e1.description
+'Good Friday'
+
+>>> # We added the duration method.
+[evaluate Event.py]
+>>> e1 = Event(10, 11, 'CSC108 Lecture', 'Mar 28 2012')
+>>> e1.start_time  # start_time is created by the constructor
+10
+>>> Event.duration(e1)
+1
+>>> e1.duration()
+1

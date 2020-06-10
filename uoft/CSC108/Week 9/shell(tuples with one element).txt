@@ -1,0 +1,42 @@
+Python 2.7.2 (v2.7.2:8527427914a2, Jun 11 2011, 14:13:39) 
+[GCC 4.0.1 (Apple Inc. build 5493)]
+Type "help", "copyright", "credits" or "license" for more information.
+
+>>> # Office hours before A2 deadline
+>>> # Jen: Mon 11-12
+>>> # Jonathan: M3 in BA2270
+>>> # Help Centre: M4-6
+>>> # Jen: Tues 2:-3:30
+>>> # Help Centre: T4-6, W4-6
+
+>>> # Error occurs when last word in file is used as a key in the dictionary.
+[evaluate lazy_lit.py]
+Which training file? alice_short.txt
+Traceback (most recent call last):
+  File "/Applications/WingIDE.app/Contents/MacOS/src/debug/tserver/_sandbox.py", line 81, in <module>
+  File "/Applications/WingIDE.app/Contents/MacOS/src/debug/tserver/_sandbox.py", line 64, in generate_text
+  File "/Applications/WingIDE.app/Contents/MacOS/src/debug/tserver/_sandbox.py", line 44, in choose_next_word
+KeyError: 'her.'
+
+>>> # Running the improved version that avoids the key error.
+[evaluate lazy_lit.py]
+Which training file? alice_short.txt
+ to do: once or conversations in it, `and what is the bank, and stupid), whether the daisies, when suddenly a White Rabbit with pink eyes ran close by her sister was considering in her own mind (as well as she was reading, but it had peeped into the bank, and of sitting by her. (as well as she had peeped into the bank, and stupid), whether the pleasure of making a White Rabbit with pink eyes ran close by her sister was reading, but it had peeped into the daisies, when suddenly a daisy-chain would be worth the use of sitting by her sister on the hot day made her feel very tired of a White Rabbit with pink eyes ran close by her. reading, but it had peeped into the trouble of having nothing to get very tired of sitting by her. but it had no pictures or conversations in it, `and what is the hot day made her sister was considering in it, `and what is the daisies, when suddenly a White Rabbit with pink eyes ran close by her. and picking the trouble of a book,' thought Alice was reading, but 
+it had peeped into the bank, and stupid), whether the hot day made her own mind (as well as she could, for the use of making a White Rabbit with pink eyes ran close by her feel very sleepy and picking the use of a book,' thought Alice was considering in her sister was beginning to do: once or twice she was reading, but it had no pictures or twice she had peeped into the daisies, when suddenly a daisy-chain would be worth the use of sitting by her. White Rabbit with pink eyes ran close by her. do: once or conversation?' So she could, for the bank, and stupid), whether the hot day made her feel very sleepy and stupid), whether the hot day made her feel very tired of getting up and stupid), whether the book her sister was considering in her feel very tired of making a daisy-chain would be worth the trouble of sitting by her. it, `and what is the daisies, when suddenly a book,' thought Alice `without pictures or twice she had no pictures or conversations in it, `and what is the daisies, wh
+en suddenly a book,' thought Alice `without pictures or conversation?' So she had no pictures or twice she was reading, but it had peeped into the hot day made her sister on the use of having nothing to get very sleepy and stupid), whether the hot day made her sister on the trouble of a book,' thought Alice `without pictures or conversations in it, `and what is the book her own mind (as well as she had no pictures or twice she had no pictures or twice she could, for the book her sister on the hot day made her sister was beginning to get very sleepy and of sitting by her feel very tired of having
+
+>>> # type tuple
+>>> ('feel', 'very', 'tired')
+('feel', 'very', 'tired')
+>>> type(('feel', 'very', 'tired'))
+<type 'tuple'>
+>>> ('feel')
+'feel'
+>>> type(('feel'))  # this is a str!
+<type 'str'>
+>>> type(('feel',))  # use the comma after the value to indicate a single-element tuple
+<type 'tuple'>
+>>> print (32, 3243)
+(32, 3243)
+>>> print 32, 3243
+32 3243

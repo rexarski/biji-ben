@@ -1,0 +1,10 @@
+This is the first line.
+This is the second.
+Third.
+Fourth.
+          
+fooled you!
+' ' 
+Fool you again?
+''
+

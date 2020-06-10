@@ -1,0 +1,84 @@
+Python 2.7.2 (v2.7.2:8527427914a2, Jun 11 2011, 14:13:39) 
+[GCC 4.0.1 (Apple Inc. build 5493)]
+Type "help", "copyright", "credits" or "license" for more information.
+>>> # type tuple
+>>> t = ('one', 'two', 'three')
+>>> t
+('one', 'two', 'three')
+>>> t[0]
+'one'
+>>> t[1]
+'two'
+>>> t[2]
+'three'
+>>> t[1:]
+('two', 'three')
+
+>>> # Tuples are immutable:
+>>> # cannot assign to an element
+>>> t[0] = 'seven'   # error
+Traceback (most recent call last):
+  File "<string>", line 1, in <fragment>
+TypeError: 'tuple' object does not support item assignment
+>>> # cannot call methods or functions that change it
+>>> t.append('four')  # error: type tuple does not have an append method
+Traceback (most recent call last):
+  File "<string>", line 1, in <fragment>
+AttributeError: 'tuple' object has no attribute 'append'
+>>> t.insert(1, 'hello')   # error: type tuple does not have an insert method
+Traceback (most recent call last):
+  File "<string>", line 1, in <fragment>
+AttributeError: 'tuple' object has no attribute 'insert'
+>>> dir(tuple)
+['__add__', '__class__', '__contains__', '__delattr__', '__doc__', '__eq__', '__format__', '__ge__', '__getattribute__', '__getitem__', '__getnewargs__', '__getslice__', '__gt__', '__hash__', '__init__', '__iter__', '__le__', '__len__', '__lt__', '__mul__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__rmul__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', 'count', 'index']
+>>> help(tuple.count)
+Help on method_descriptor:
+
+count(...)
+    T.count(value) -> integer -- return number of occurrences of value
+
+>>> t.index('two')
+1
+>>> t.count('two')
+1
+>>> len(t)
+3
+>>> for item in t:
+	print item
+
+one
+two
+three
+>>> # type dict
+
+>>> # Option one: parallel lists
+>>> years = [1799, 1800, 1801, 1802, 1902, 2002]
+>>> emissions = [1,70,74,79,82,215630,1733297]  # metric tons of carbon, 1000s
+>>> # to add an entry: need to insert or append to both lists
+>>> # to edit the emissions for a particular year: need to find 
+>>> # the year in the years list and modify the corresponding
+>>> # element in the emissions list
+
+>>> # option two: list of lists
+>>> # better, but still a bit of a pain to look up a year
+>>> # must search the list to find the year
+
+>>> A better way: use a dictionary!
+>>> emissions_by_year = {1799: 1, 1800: 70, 1801: 74, 1802: 82, \
+        1902: 215630, 2002: 1733297}
+>>> # Look up emissions for year 1801
+>>> emissions_by_year[1801]
+74
+# 1801 is a key and 74 is its value
+# keys must be unique
+# values can be duplicated
+
+>>> # Add another year to the dicionary
+>>> emissions_by_year[1950] = 734914
+>>> emissions_by_year
+{1799: 1, 1800: 70, 1801: 74, 1802: 82, 1902: 215630, 2002: 1733297, 1950: 734914}
+
+>>> # Modify the value associated with year 1802
+>>> emissions_by_year[1802] = 100
+emissions_by_year
+{1799: 1, 1800: 70, 1801: 74, 1802: 100, 1902: 215630, 2002: 1733297, 1950: 734914}

@@ -1,0 +1,130 @@
+Python 2.7.2 (v2.7.2:8527427914a2, Jun 11 2011, 14:13:39) 
+[GCC 4.0.1 (Apple Inc. build 5493)]
+Type "help", "copyright", "credits" or "license" for more information.
+>>> print "hello"
+hello
+>>> raw_input("Name: ")
+Name: Jen
+'Jen'
+>>> 'csc108   # The string is missing the closing quotation.
+Traceback (most recent call last):
+  File "<string>", line 1, in <fragment>
+EOL while scanning string literal: <string>, line 1, pos 7
+>>> 'csc108'
+'csc108'
+>>> "csc108"
+'csc108'
+>>> 'csc108"  # We can't mix single and double quotes.
+Traceback (most recent call last):
+  File "<string>", line 1, in <fragment>
+EOL while scanning string literal: <string>, line 1, pos 8
+>>> 'csc' + 108
+Traceback (most recent call last):
+  File "<string>", line 1, in <fragment>
+TypeError: cannot concatenate 'str' and 'int' objects
+>>> # + is overloaded
+>>> # + addition, applies to numerical operands
+>>> # + concatenation, applies to str operands
+>>> 'csc' + '108'
+'csc108'
+>>> dept = 'csc'
+>>> num = 108
+>>> dept + 'num'   # Uses a str 'num', not the variable num.
+'cscnum'
+>>> dept + str(num)
+'csc108'
+>>> int('108')
+108
+>>> int('csc')
+Traceback (most recent call last):
+  File "<string>", line 1, in <fragment>
+ValueError: invalid literal for int() with base 10: 'csc'
+>>> int('34.2')
+Traceback (most recent call last):
+  File "<string>", line 1, in <fragment>
+ValueError: invalid literal for int() with base 10: '34.2'
+>>> float('45.9')
+45.9
+>>> float('45')
+45.0
+>>> "Bwa"+ "ha" * 3
+'Bwahahaha'
+>>> 'ha' in 'Bwahahaha'
+True
+>>> 'HA' in 'Bwahahaha'
+False
+>>> # 3 str operators so far: +, *, in
+>>> len('hello')
+5
+>>> len('hello adhfsjhj hjaksd fsjh khsjdhf')
+34
+>>> len('     ')
+5
+>>> dir(__builtins__)
+['ArithmeticError', 'AssertionError', 'AttributeError', 'BaseException', 'BufferError', 'BytesWarning', 'DeprecationWarning', 'EOFError', 'Ellipsis', 'EnvironmentError', 'Exception', 'False', 'FloatingPointError', 'FutureWarning', 'GeneratorExit', 'IOError', 'ImportError', 'ImportWarning', 'IndentationError', 'IndexError', 'KeyError', 'KeyboardInterrupt', 'LookupError', 'MemoryError', 'NameError', 'None', 'NotImplemented', 'NotImplementedError', 'OSError', 'OverflowError', 'PendingDeprecationWarning', 'ReferenceError', 'RuntimeError', 'RuntimeWarning', 'StandardError', 'StopIteration', 'SyntaxError', 'SyntaxWarning', 'SystemError', 'SystemExit', 'TabError', 'True', 'TypeError', 'UnboundLocalError', 'UnicodeDecodeError', 'UnicodeEncodeError', 'UnicodeError', 'UnicodeTranslateError', 'UnicodeWarning', 'UserWarning', 'ValueError', 'Warning', 'ZeroDivisionError', '_', '__debug__', '__doc__', '__import__', '__name__', '__package__', 'abs', 'all', 'any', 'apply', 'basestring', 'bin', 'bool',
+ 'buffer', 'bytearray', 'bytes', 'callable', 'chr', 'classmethod', 'cmp', 'coerce', 'compile', 'complex', 'copyright', 'credits', 'delattr', 'dict', 'dir', 'divmod', 'enumerate', 'eval', 'execfile', 'exit', 'file', 'filter', 'float', 'format', 'frozenset', 'getattr', 'globals', 'hasattr', 'hash', 'help', 'hex', 'id', 'input', 'int', 'intern', 'isinstance', 'issubclass', 'iter', 'len', 'license', 'list', 'locals', 'long', 'map', 'max', 'memoryview', 'min', 'next', 'object', 'oct', 'open', 'ord', 'pow', 'print', 'property', 'quit', 'range', 'raw_input', 'reduce', 'reload', 'repr', 'reversed', 'round', 'set', 'setattr', 'slice', 'sorted', 'staticmethod', 'str', 'sum', 'super', 'tuple', 'type', 'unichr', 'unicode', 'vars', 'xrange', 'zip']
+
+
+>>> word = 'computer'
+>>> for char in word:
+	print char
+
+c
+o
+m
+p
+u
+t
+e
+r
+>>> word = 'computer science!'
+>>> for char in word:
+	print char
+
+c
+o
+m
+p
+u
+t
+e
+r
+ 
+s
+c
+i
+e
+n
+c
+e
+!
+[evaluate count_e.py]
+Enter a sentence: I love computer science!
+Traceback (most recent call last):
+  File "/Users/campbell/courses/108/course-10812s/website/lectures/L0101/w4/mon/count_e.py", line 11, in <module>
+TypeError: cannot concatenate 'str' and 'int' objects
+[evaluate count_e.py]
+Enter a sentence: I love computer science!
+There were 4 e characters.
+[evaluate count_e.py]
+Enter a sentence: I love computer science!
+There were  4 e characters.
+[evaluate count_e.py]
+Enter a sentence: How are you?
+There were 1 e characters.
+>>> 'a' or 'e'
+'a'
+>>> 'a' in 'aeiouAEIOU'
+True
+>>> 's' in 'aeiouAEIOU'
+False
+[evaluate str_functions.py]
+>>> num_vowels("testing 123")
+2
+>>> num_vowels("ABCDEI")
+3
+>>> num_vowels('yY')
+0
+>>> num_vowels('trfgp')
+0
+>>> s = ''   # The empty string.

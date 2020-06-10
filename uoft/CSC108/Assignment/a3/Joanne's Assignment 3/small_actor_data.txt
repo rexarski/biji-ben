@@ -1,0 +1,188 @@
+CRC: 0xDE308B96	 File: actors.list	Date: Fri Aug 12 00:00:00 2011
+
+Copyright 1990-2007 The Internet Movie Database, Inc.  All rights reserved.
+
+COPYING POLICY: Internet Movie Database (IMDb)
+==============================================
+
+CUTTING COPYRIGHT NOTICE
+
+THE ACTORS LIST
+===============
+
+Name					Titles
+----					------
+Bacon, Kevin			A Few Good Men (1992)  [Capt. Jack Ross]  <4>
+						A Few Good Men: From Stage to Screen (2001) (V)	 (archive footage) (uncredited)	 [Capt. Jack Ross]
+						A Little Vicious (1991)	 [Narrator]
+						A Look Behind the Scenes: Super (2011)	[Himself]
+						American Empire (2011) {{SUSPENDED}}
+						Animal House (1978)	 [Chip Diller]	<7>
+						Animal House: The Inside Story (2008) (TV)	[Himself]  <16>
+						Apollo 13 (1995)  [Jack Swigert]  <3>
+						Balto (1995)  (voice)  [Balto]	<1>
+						Beauty Shop (2005)	[Jorge]	 <17>
+						Beyond All Boundaries (2009)  (voice)  [Robert Sherrod - Time Magazine Correspondent]
+						Boffo! Tinseltown's Bombs and Blockbusters (2006)  (archive footage) (uncredited)  [Jack Swigert]
+						Broadway's Best (2002) (TV)	 (as The Bacon Brothers)  [Himself]
+						Canceled Lives: Letters from the Inside (1993) (V)	(voice)	 [Himself]
+						Cavedweller (2004)	[Randall Pritchard]	 <11>
+						Christmas in Rockefeller Center (2001) (TV)	 [Himself]
+						Code of Conduct (2001) (V)	[Himself]  <5>
+						Come Together: A Night for John Lennon's Words and Music (2001) (TV)  [Himself]
+						Connected: The Power of Six Degrees (2008) (TV)	 [Himself]
+						Crazy, Stupid, Love. (2011)	 [David Lindhagen]	<11>
+						Criminal Law (1988)	 [Martin Thiel]	 <2>
+						Death Sentence (2007)  [Nick Hume]	<1>
+						Destination Anywhere (1997) (V)	 [Mike]	 <4>
+						Digging to China (1998)	 [Ricky Schroth]  <2>
+						Diner (1982)  [Timothy Fenwick Jr.]	 <4>
+						Diner: On the Flip Side (2000) (V)	[Himself - 'Timothy Fenwick Jr.']
+						Elephant White (2011)  [Jimmy]	<2>
+						Elvis Lives (2003) (TV)	 [Himself]
+						End of the Line (1987)	[Everett]  <1>
+						Enormous Changes at the Last Minute (1983)	[Dennis]  <2>
+						Film Trix 2004 (2004)  [Himself]
+						Flatliners (1990)  [David Labraccio]  <3>
+						Fleshing Out the 'Hollow Man' (2000) (V)  [Himself]
+						Footloose (1984)  [Ren McCormack]  <1>
+						Footloose: A Modern Musical (2004) (V)	[Himself]
+						Footloose: Songs That Tell a Story (2004) (V)  [Himself]
+						Forty Deuce (1982)	[Ricky]	 <2>
+						Freedom Downtime (2001)	 (uncredited) (unconfirmed)	 [Himself - entering Miramax building during protest]
+						Friday the 13th (1980/I)  [Jack Burrel]	 <5>
+						Frost/Nixon (2008)	[Jack Brennan]	<4>
+						Going to Pieces: The Rise and Fall of the Slasher Film (2006)  (archive footage)  [Jack]
+						Happy Birthday Elizabeth: A Celebration of Life (1997) (TV)	 [Himself]	<5>
+						He Said, She Said (1991)  [Dan Hanson]	<1>
+						Hero at Large (1980)  [2nd Teenager]  <36>
+						Hollow Man (2000)  [Sebastian Caine]  <2>
+						Hollow Man: Anatomy of a Thriller (2000) (V)  [Himself]
+						IFP Gotham Awards 2004 (2004) (TV)	[Himself]
+						Imagine New York (2003)	 [Himself]
+						In the Cut (2003)  (uncredited)	 [John Graham]
+						Jayne Mansfield's Car (2013)  [Carroll Caldwell]
+						JFK (1991)	[Willie O'Keefe]  <47>
+						Lemon Sky (1988) (TV)  [Alan]  <1>
+						Live from Baghdad (2002) (TV)  (archive footage) (uncredited)  [Himself]
+						Lost Moon: The Triumph of Apollo 13 (1996) (V)	[Himself]  <7>
+						Loverboy (2005)	 [Marty]  <3>
+						Macy's Thanksgiving Day Parade (1999) (TV)	[Himself]
+						Mister Roberts (1984) (TV)	[Ens. Frank Pulver]
+						Murder in the First (1995)	[Henri Young]  <2>
+						My Dog Skip (2000)	[Jack Morris]  <4>
+						My One and Only (2009)	[Dan Devereaux]	 <3>
+						My One and Only: Making of Documentary (2009) (V)  [Himself]
+						Mystic River (2003)	 [Sean Devine]	<3>
+						Mystic River: Beneath the Surface (2004) (V)  [Himself - 'Sean Devine']
+						Mystic River: From Page to Screen (2004) (TV)  [Himself - 'Sean']
+						Natural Disasters: Forces of Nature (2004)	[Narrator]
+						New York Skyride (1994)	 [Narrator/Host]
+						Novocaine (2001)  (uncredited)	[Actor Lance Phelps]
+						Oliver Stone: Inside Out (1992) (TV)  [Himself]
+						Only When I Laugh (1981)  [Don]	 <22>
+						Philadelphia Chickens (2010)  (voice)  [Himself]
+						Picture Perfect (1997)	[Sam Mayfair]  <3>
+						Planes, Trains, and Automobiles (1987)	 [Taxi Racer]  <5>
+						Premio Donostia a Meryl Streep (2008) (TV)	(archive footage)  [Wade]
+						Pyrates (1991)	[Ari]  <1>
+						Queens Logic (1991)	 [Dennis]  <1>
+						Quicksilver (1986)	[Jack Casey]  <1>
+						R.I.P.D. (2013)
+						Rails & Ties (2007)	 [Tom Stark]  <1>
+						Saving Angelo (2007)  [Brent]  <4>
+						Seventeen: The Faces for Fall (1998) (TV)  (archive footage) (uncredited)  [Himself]
+						She's Having a Baby (1988)	[Jake Briggs]  <1>
+						Sinatra 75: The Best Is Yet to Come (1990) (TV)	 [Himself]
+						Sleepers (1996)	 [Sean Nokes]  <1>
+						Starting Over (1979)  [Husband - Young Couple]	<34>
+						Stir of Echoes (1999)  [Tom Witzky]	 <2>
+						Sundance Skippy (2010)	[Himself]
+						Super (2010)  [Jacques]	 <4>
+						Taking Chance (2009) (TV)  [LtCol Mike Strobl]	<1>
+						Telling Lies in America (1997)	[Billy Magic]  <1>
+						The Air Up There (1994)	 [Jimmy Dolan]	<1>
+						The Big Picture (1989)	[Nick Chapman]	<1>
+						The Demon Murder Case (1983) (TV)  [Kenny Miller]  <4>
+						The Gift (1979) (TV)  [Teddy]
+						The Human Family Tree (2009) (TV)  (voice)	[Narrator]
+						The Little Sister (1985) (TV)  (uncredited)	 [Probation Officer]
+						The Magic 7 (2009) (TV)	 [Himself]
+						The Making of 'Tremors' (1998) (V)	(archive footage)  [Val McKee]
+						The River Wild (1994)  [Wade]  <2>
+						The Technician (2010) {{SUSPENDED}}	 [Grant]
+						The Woodsman (2004)	 [Walter]  <1>
+						The Yearbook: An 'Animal House' Reunion (1998) (V)	[Himself]
+						These Vagabond Shoes (2009)
+						Trapped (2002)	[Hickey]  <4>
+						Trapped: From Within (2002) (V)	 (also archive footage)	 [Himself/'Joe Hickey']	 <7>
+						Tremors (1990)	[Valentine McKee]  <1>
+						Tribeca Film Festival Awards (2004) (TV)  [Himself - Presenter]
+						Turn It Up! (2009) {{SUSPENDED}}  [Himself - Narrator]
+						Unseen + Untold: National Lampoon's Animal House (2003) (TV)  [Himself - Interviewee]
+						VH1 Big in 2002 Awards (2002) (TV)	[Himself]
+						We Married Margo (2000)	 [Himself]	<108>
+						Where Are They Now?: A Delta Alumni Update (2003) (V)  (voice)	[Rev. Chip Diller]
+						Where the Truth Lies (2005)	 [Lanny]  <1>
+						White Water Summer (1987)  [Vic]  <1>
+						Wild Things (1998)	[Ray Duquette]	<1>
+						Will & Grace: The Final Bow (Curtain Call) (2006) (V)  [Himself]
+						X-Men: First Class (2011)  [Sebastian Shaw]	 <5>
+						X-Men: First Class 35mm Special (2011) (TV)	 [Himself]
+						You Don't Know Jack: Volume 2 (1996) (VG)  (voice)	[Himself - Celebrity Guest Appearance]	<3>
+
+Littlefield, Lucien		A Blonde for a Night (1928)	 [Valet]  <5>
+						A Gentleman of Leisure (1915)  [Clerk]	<15>
+						A Gutter Magdalene (1916)
+						A Punch in the Nose (1926)	<1>
+						A Ship Comes In (1928)	[Dan Casey]	 <6>
+						A Texas Steer (1927)  [Yell]  <12>
+						A Woman Who Sinned (1924)  [Reverend Hillburn]	<3>
+						Across the Continent (1922)	 [Scott Tyler]	<6>
+						All Souls' Eve (1921)
+						Are You Listening? (1932)  (uncredited)	 [Fred]
+						At Sword's Point (1952)	 (uncredited)  [Cpl. Gautier]
+						Babbitt (1924)	[Edward Littlefield]  <10>
+						Bachelor Brides (1926)	[Egbert Beamish]  <5>
+						Bad Men of Tombstone (1949)	 [Old Man in Claims Office]	 <14>
+						Bells of Capistrano (1942)	[Daniel (Pop) McCracken]  <4>
+						Beyond the Rocks (1922)	 (uncredited)  [Sir Lionel Grey's Associate]
+						Big Money (1930)  (uncredited)	[Undetermined Role]
+
+Petrie, George			A Fire in the Sky (1978) (TV)  [Hank]  <21>
+						At Sword's Point (1952)	 [Chalais]	<12>
+						Planes, Trains, and Automobiles (1987)
+ 
+Valentino, Rudolph		A Rogue's Romance (1919)  (as Rudolph Volantino)  [Apache Dancer]  <15>
+						A Sainted Devil (1924)	[Don Alonzo Castro]	 <1>
+						A Society Sensation (1918)	(as Rudolpho De Valentina)	[Dick Bradley]	<2>
+						A Trip to Paramountown (1922)  [Himself]
+						Alimony (1917)	(uncredited)  [Dancer]
+						All Night (1918)  (as Rudolpho di Valentina)  [Richard Thayer]	<2>
+						Alla Nazimova and Rudolph Valentino (2000) (TV)	 (archive footage)	[Himself]
+						An Adventuress (1920)  (as Rodolph Valentino)  [Jacques Rudanyi]  <6>
+						Beyond the Rocks (1922)	 [Lord Hector Bracondale]  <1>
+						Big Little Person (1919)  (as M. Rodolpho De Valentina)	 [Arthur Endicott]	<3>
+						Blood and Sand (1922)  (as Rodolph Valentino)  [Juan Gallardo]	<4>
+						Blue Skies (1946)  (archive footage) (uncredited)  [Himself]
+
+Gore, Al				'Hick' Town (2009)	[Himself]
+						Hillary! Uncensored: Banned by the Media (2008) (V)	 (archive footage)	[Himself]
+						Johnny Cash's America (2008)  [Himself]	 <9>
+						Journeys with George (2002)	 (archive footage)	[Himself]
+						Last Days on Earth (2006) (TV)	[Himself]
+						
+Langford, Jon			At Last, Okemah! (2009)	 [Himself]	<5>
+						Cavedweller (2004)	(as Jonathan Langford)	[Herman]  <14>
+						Johnny Cash's America (2008)	 [Himself]	 <29>
+
+De Niro, Robert			Showtime (2002)	 [Det. Mitch Preston]  <1>
+						Sleepers (1996)	 [Father Bobby]	 <3>
+
+-----------------------------------------------------------------------------
+SUBMITTING UPDATES
+==================
+
+CUTTING UPDATES
+
+For further info visit http://www.imdb.com/licensing/contact

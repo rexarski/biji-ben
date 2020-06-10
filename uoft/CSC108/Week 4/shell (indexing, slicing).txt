@@ -1,0 +1,104 @@
+Python 2.7.2 (v2.7.2:8527427914a2, Jun 11 2011, 14:13:39) 
+[GCC 4.0.1 (Apple Inc. build 5493)]
+Type "help", "copyright", "credits" or "license" for more information.
+>>> for char in "computer":
+	print char
+
+c
+o
+m
+p
+u
+t
+e
+r
+>>> ''   # the empty string
+''
+>>> len('')
+0
+[evaluate str_functions.py]
+>>> reverse("computer")
+Traceback (most recent call last):
+  File "/Applications/WingIDE.app/Contents/MacOS/src/debug/tserver/_sandbox.py", line 1, in <module>
+    # Used internally for debug sandbox under external interpreter
+  File "/Applications/WingIDE.app/Contents/MacOS/src/debug/tserver/_sandbox.py", line 17, in reverse
+UnboundLocalError: local variable 'reverse' referenced before assignment
+[evaluate str_functions.py]
+>>> reverse("computer")
+Traceback (most recent call last):
+  File "/Applications/WingIDE.app/Contents/MacOS/src/debug/tserver/_sandbox.py", line 1, in <module>
+    # Used internally for debug sandbox under external interpreter
+  File "/Applications/WingIDE.app/Contents/MacOS/src/debug/tserver/_sandbox.py", line 17, in reverse
+UnboundLocalError: local variable 'rev' referenced before assignment
+[evaluate str_functions.py]
+>>> reverse("computer")
+<function reverse at 0x1036c70>
+>>> print reverse("computer")
+<function reverse at 0x1036c70>
+[evaluate str_functions.py]
+>>> reverse("computer")
+'retupmoc'
+>>> print reverse("computer")
+retupmoc
+[evaluate str_functions.py]
+>>> 'h' in 'hello'
+True
+>>> 'x' in 'hi'
+False
+[evaluate str_functions.py]
+>>> num_matches('computer', 'science')
+2
+>>> num_matches('apple', 'python')
+2
+>>> num_matches('box', 'car')
+0
+>>> num_matches('', '')
+0
+>>> 'a' > 'c'
+False
+>>> 'c' > 'a'
+True
+>>> 'a' < 'A'
+False
+>>> s = 'sliceofspam'
+>>> s[0]   # Indexing: grab a single character at a given index.  
+'s'
+>>> s[3]  
+'c'
+>>> s[-2]  # Negative indices are for counting from the right-hand side.
+'a'
+>>> s[-2]  
+'a'
+>>> s[2:5] # Slicing: grabbing a substring.  Here we slice from index 2 (inclusive) to 5 (not inclusive).
+'ice'
+>>> s[3:]  # If we omit the second index, goes to the far right-hand side
+'ceofspam'
+>>> s[:8]  # If we omit the first index, goes from the far left-hand side
+'sliceofs'
+>>> s[:]   # If we omit both indices, we get the whole string.
+'sliceofspam'
+>>> s[3:-2]
+'ceofsp'
+>>> s[9:-2]
+''
+>>> s[9]
+'a'
+>>> s[-5:]
+'fspam'
+>>> s[5:2]
+''
+>>> s[1] = 'x'   # We cannot change a string.
+Traceback (most recent call last):
+  File "<string>", line 1, in <fragment>
+TypeError: 'str' object does not support item assignment
+>>> # strs are immutable: they can't be modified
+>>> # Let's build a new string that has the text we'd like.
+>>> s = s[0] + 'x' + s[2:]
+>>> s
+'sxiceofspam'
+>>> s = 'hello'
+>>> id(s)
+17222144
+>>> s = s[2:]
+>>> id(s)
+17249080

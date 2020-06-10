@@ -1,0 +1,89 @@
+Python 2.7.2 (v2.7.2:8527427914a2, Jun 11 2011, 14:13:39) 
+[GCC 4.0.1 (Apple Inc. build 5493)]
+Type "help", "copyright", "credits" or "license" for more information.
+>>> L = ['a', 'b', 'c']
+>>> range(len(L))
+[0, 1, 2]
+>>> s = 'hello'
+>>> s in L
+False
+>>> 'b' in L
+True
+[evaluate list_practise.py]
+Test today? NO
+Valid responses are: ['yes', 'no']
+Test today? no
+no
+What would you like to do? yes
+Valid responses are: ['Play Again', 'Save', 'Quit']
+What would you like to do?Save
+Save
+
+
+>>> grades = [['111222333', 82], ['999888777', 78], ['444555666', 85]]
+>>> len(grades)
+3
+>>> # grades is a list of [str, int] lists
+>>> grades[0]
+['111222333', 82]
+>>> grades[1]
+['999888777', 78]
+>>> grades[2]
+['444555666', 85]
+>>> grades[3]
+Traceback (most recent call last):
+  File "<string>", line 1, in <fragment>
+IndexError: list index out of range
+>>> grades[0]
+['111222333', 82]
+>>> grades[0][0]
+'111222333'
+>>> grades[0][1]
+82
+>>> for item in grades:
+	print item
+
+['111222333', 82]
+['999888777', 78]
+['444555666', 85]
+>>> grades
+[['111222333', 82], ['999888777', 78], ['444555666', 85]]
+[evaluate nested.py]
+>>> average_grade(grades)
+81.66666666666667
+[evaluate nested.py]
+>>> get_student_IDs(grades)
+['111222333', '999888777', '444555666']
+
+
+>>> # nested loops
+>>> measurements = [[33, 34, 20], [29, 31, 34], [28, 27, 30]]
+>>> for dataset in measurements:
+	print dataset
+
+[33, 34, 20]
+[29, 31, 34]
+[28, 27, 30]
+
+>>> L = [28, 27, 30]
+>>> total = 0
+for item in L:
+	total += item
+>>> 
+>>> print total / len(L)
+28
+>>> measurments
+Traceback (most recent call last):
+  File "<string>", line 1, in <fragment>
+NameError: name 'measurments' is not defined
+>>> measurements
+[[33, 34, 20], [29, 31, 34], [28, 27, 30]]
+>>> for dataset in measurements:
+	total = 0.0
+	for datapoint in dataset:
+		total += datapoint
+	print total / len(dataset)
+
+29.0
+31.3333333333
+28.3333333333

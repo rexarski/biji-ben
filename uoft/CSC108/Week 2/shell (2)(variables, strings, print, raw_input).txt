@@ -1,0 +1,135 @@
+Python 2.7.2 (v2.7.2:8527427914a2, Jun 11 2011, 14:13:39) 
+[GCC 4.0.1 (Apple Inc. build 5493)]
+Type "help", "copyright", "credits" or "license" for more information.
+>>> # Changeability
+>>> x = 5
+>>> x * 2
+10
+>>> x = x + 2  # changing x's value
+>>> x * 2
+14
+>>> x = 23.56
+>>> x * 2
+47.12
+
+# Exercise: rewriting x <= 5 without using <= operator
+>>> x = 23.56
+>>> not (x > 5)  # suggested solution: verifying with x greater than 5
+False
+>>> x <= 5  # checking to make sure they both give same result
+False
+>>> x = 5  # now verifying with x equal to 5
+>>> x <= 5
+True
+>>> not (x > 5)
+True
+>>> x = -2  # Now verifying with x less than 5
+>>> x <= 5
+True
+>>> not (x > 5)
+True
+
+>>> # Basics slide 8
+>>> x = 37
+>>> y = x + 2
+>>> # y gets 39
+>>> x = 20
+>>> # is y now 20?
+>>> y
+39
+
+>>> # This doesn't actually swap the values!
+>>> i = 50
+>>> j = -9
+>>> # Swap i and j
+>>> i = j
+>>> j = i
+>>> i
+-9
+>>> j
+-9
+
+>>> # Variable assignment is not symmetric.  Variable must be on left-hand side.
+>>> a = 87
+>>> b = 68
+>>> a + b = total
+Traceback (most recent call last):
+  File "<string>", line 1, in <fragment>
+can't assign to operator: <string>, line 1
+>>> total = a + b
+
+>>> # print: produces textual output
+>>> # Wing displays the value of expressions as a courtesy, 
+>>> # but we can use also print to display textual output.
+>>> 4 + 24 / 2.5
+13.6
+[evaluate expression.py]
+13.6
+[evaluate expression.py]
+13.6
+[evaluate expression.py]
+13.6
+
+
+>>> "This is a string."
+>>> 'This is a string.'
+>>> # raw_input: a built-in function used to get textual input
+>>> raw_input("What is your name? ")  # prompts the user to type input; the argument to raw_input is the prompt.
+What is your name? Jen
+'Jen'
+>>> name = raw_input("What is your name? ")  # raw_input returns the input the user typed as a string
+>>> What is your name? Jen
+>>> name
+'Jen'
+>>> name = raw_input("What is your name?")
+What is your name?Jen
+>>> name = raw_input("What is your name? ")
+What is your name? 2012
+>>> name  # Even if the user enters a number, it is still returned as a string. 
+'2012'
+>>> # The + symbol means addition when used with numeric (int, float) operands.
+>>> # The + symbol means concatenation when used with str operands.
+>>> name + 1  # Python gives an error when apply + to a str and an int operand.
+Traceback (most recent call last):
+  File "<string>", line 1, in <fragment>
+TypeError: cannot concatenate 'str' and 'int' objects
+>>> int(name) + 1  # We can convert the str to int, so the + is applied to two ints (addition).
+2013
+>>> int(name)
+2012
+name + str(1)  # Or we can convert the int to a str, so the + is applied to two strs (concatenation).
+'20121'
+name = int(name)  # assigning a new value to the name variable
+[evaluate hello.py]
+>>> What is your name? Jen
+Hello Jen
+>>> What is your name? Bob
+>>> say_hello()   # print displays the message on the screen
+What is your name? Jen
+Hello Jen
+>>> say_hello2()  # return gives a value back (in this case, the messsage as a string)
+What is your name? Bob
+'Hello Bob'
+>>> message = say_hello2()
+What is your name? Bob
+>>> message
+'Hello Bob'
+>>> msg = say_hello()
+What is your name? Jen
+Hello Jen
+>>> msg
+>>> msg
+>>> message
+'Hello Bob'
+>>> message + '!'
+'Hello Bob!'
+>>> msg + '!'
+Traceback (most recent call last):
+  File "<string>", line 1, in <fragment>
+TypeError: unsupported operand type(s) for +: 'NoneType' and 'str'
+>>> say_hello()
+What is your name? Jen
+Hello Jen
+>>> say_hello2()
+What is your name? Bob
+'Hello Bob'

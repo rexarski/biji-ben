@@ -1,0 +1,128 @@
+Python 2.7.2 (v2.7.2:8527427914a2, Jun 11 2011, 14:13:39) 
+[GCC 4.0.1 (Apple Inc. build 5493)]
+Type "help", "copyright", "credits" or "license" for more information.
+
+>>> 'hi' < 'ab'
+False
+>>> help(ord)
+Help on built-in function ord in module __builtin__:
+
+ord(...)
+    ord(c) -> integer
+    
+    Return the integer ordinal of a one-character string.
+
+>>> ord('h')
+104
+>>> ord('i')
+105
+>>> 'a' < 'b'
+True
+>>> 'a' == 'b'
+False
+>>> 'a' < 'A'
+False
+>>> 'a' == 'A'
+False
+>>> ord('a')
+97
+>>> ord('A')
+65
+[evaluate temperature_report.py]
+>>> get_report(-4)
+"Brrr, it's freezing!"
+>>> get_report(4)
+''
+[evaluate temperature_report.py]
+>>> get_report2(4)
+'Yippee!'
+>>> get_report2(-4)
+"Brrr, it's freezing!"
+>>> get_report2(-0)
+''
+[evaluate temperature_report.py]
+At freezing.
+[evaluate really_red.py]
+>>> pic = media.load_picture(media.choose_file())
+Traceback (most recent call last):
+  File "<string>", line 1, in <fragment>
+NameError: name 'media' is not defined
+[evaluate really_red.py]
+>>> import media
+>>> pic = media.load_picture(media.choose_file())
+>>> print count_really_red(pic)
+2423
+>>> True
+True
+>>> False
+False
+>>> True == "True"
+False
+>>> type(True)
+<type 'bool'>
+>>> type("True")
+<type 'str'>
+>>> False == 0
+True
+>>> True == 1
+True
+>>> if 0:
+	print "Nothing"
+
+>>> if 3243:
+	print "You'll see this."
+
+You'll see this.
+>>> if -3243:
+	print "You'll see this."
+
+You'll see this.
+>>> if True:
+	print "This"
+
+This
+>>> x = 4
+>>> x < 2 or 8
+8
+>>> (x < 2) or 8
+8
+>>> below_zero = True
+>>> if below_zero == True:  # Don't do this!  Simplify it.
+	print "Brrrr!"
+
+Brrrr!
+>>> # Simplified:
+>>> if below_zero:
+	print "Brrrr!"
+
+Brrrr!
+>>> temp = -4
+>>>  # Don't do this!  Simplify it.
+>>> if (temp < 0) == True:  
+	print "Below freezing"
+
+Below freezing
+
+>>> # The simplified version
+>>> if temp < 0:   
+	print "Below freezing"
+
+Below freezing
+>>> # Simplify the code below.
+>>> def is_odd(x):
+	if x % 2 == 1:
+		return True
+	else:
+		return False
+
+>>> is_odd(3)
+True
+>>> is_odd(6)
+False
+>>> def is_odd(x):
+	return x % 2 == 1
+
+>>> is_odd(3)
+True
+>>> is_odd(6)
+False

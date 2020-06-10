@@ -1,0 +1,185 @@
+Python 2.7.2 (v2.7.2:8527427914a2, Jun 11 2011, 14:13:39) 
+[GCC 4.0.1 (Apple Inc. build 5493)]
+Type "help", "copyright", "credits" or "license" for more information.
+>>> # open the file 'story.txt' for reading
+>>> f = open('story.txt', 'r')
+>>> print f
+<open file 'story.txt', mode 'r' at 0x7e1860>
+>>> # r: read from the file
+>>> f   # f is type file
+<open file 'story.txt', mode 'r' at 0x7e1860>
+>>> dir(file)
+['__class__', '__delattr__', '__doc__', '__enter__', '__exit__', '__format__', '__getattribute__', '__hash__', '__init__', '__iter__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', 'close', 'closed', 'encoding', 'errors', 'fileno', 'flush', 'isatty', 'mode', 'name', 'newlines', 'next', 'read', 'readinto', 'readline', 'readlines', 'seek', 'softspace', 'tell', 'truncate', 'write', 'writelines', 'xreadlines']
+>>> line = f.readline()
+>>> print line
+Once upon a time there was a curious little girl
+
+>>> line = f.readline()
+>>> print line
+named Goldilocks.  Goldilocks lived near the woods
+
+>>> line
+'named Goldilocks.  Goldilocks lived near the woods\n'
+>>> line = f.readline()
+>>> print line
+and loved to go exploring.
+
+>>> line = f.readline()
+>>> line
+>>> '\n'
+>>> line = f.readline()
+>>> line = f.readline()
+lien
+Traceback (most recent call last):
+  File "<string>", line 1, in <fragment>
+NameError: name 'lien' is not defined
+>>> line
+'The door was open, and she decided to take a peak \n'
+>>> line = f.readline()
+line
+>>> 'inside.'
+>>> line = f.readline()  # when end of file is reached, readline returns '' (empty string)
+>>> line
+''
+>>> line = f.readline()
+>>> line
+''
+>>> f.close()
+>>> myfile = open('story.txt')
+>>> s = myfile.read(10)   # read 10 characters
+>>> s
+'Once upon '
+>>> s = myfile.read(10)   # read 10 characters
+>>> s
+'a time the'
+>>> s = myfile.read(20)
+>>> s
+'re was a curious lit'
+>>> s = myfile.read(5)
+>>> s
+'tle g'
+>>> s = myfile.read(4)
+>>> s     # \n is a single character
+'irl\n'
+>>> myfile.close()
+>>> myfile = open('story.txt')
+>>> for line in myfile:
+	print line
+
+Once upon a time there was a curious little girl
+
+named Goldilocks.  Goldilocks lived near the woods
+
+and loved to go exploring.
+
+
+
+    One day Goldilocks came upon a comfy little cottage.
+
+The door was open, and she decided to take a peak 
+
+inside.
+>>> myfile.close()
+>>> myfile = open('story.txt')
+>>> for line in myfile:
+	print line,  # suppress the newline that print usually adds
+
+Once upon a time there was a curious little girl
+named Goldilocks.  Goldilocks lived near the woods
+and loved to go exploring.
+
+    One day Goldilocks came upon a comfy little cottage.
+The door was open, and she decided to take a peak 
+inside.
+>>> myfile.close()
+>>> myfile = open('story.txt')
+>>> for line in myfile:
+	print line.rstrip()   # strip the whitespace from the right-hand side of the line
+
+ Once upon a time there was a curious little girl
+named Goldilocks.  Goldilocks lived near the woods
+and loved to go exploring.
+
+    One day Goldilocks came upon a comfy little cottage.
+The door was open, and she decided to take a peak
+inside.
+>>> 'testing 123   \t\n'.rstrip() 
+>>> 'testing 123'
+>>> len('\n')
+1
+>>> myfile.close()
+>>> myfile = open('story.txt')
+>>> s = myfile.read()
+>>> s
+'Once upon a time there was a curious little girl\nnamed Goldilocks.  Goldilocks lived near the woods\nand loved to go exploring.\n\n    One day Goldilocks came upon a comfy little cottage.\nThe door was open, and she decided to take a peak \ninside.'
+print s
+Once upon a time there was a curious little girl
+named Goldilocks.  Goldilocks lived near the woods
+and loved to go exploring.
+
+    One day Goldilocks came upon a comfy little cottage.
+The door was open, and she decided to take a peak 
+inside.
+>>> myfile.readline()
+''
+>>> myfile.close()
+>>> myfile = open('story.txt')
+>>> next_line = myfile.readline()
+>>> while next_line != '':
+	next_line = myfile.readline()
+
+>>> next_line
+''
+>>> myfile.close()
+>>> myfile = open('story.txt')
+>>> next_line = myfile.readline()
+>>> print next_line
+Once upon a time there was a curious little girl
+
+>>> while next_line != '':
+	print next_line
+	next_line = myfile.readline()
+
+Once upon a time there was a curious little girl
+
+named Goldilocks.  Goldilocks lived near the woods
+
+and loved to go exploring.
+
+
+
+    One day Goldilocks came upon a comfy little cottage.
+
+The door was open, and she decided to take a peak 
+
+inside.
+>>> print next_line
+
+>>> next_line
+''
+>>>  # mode 'w'
+>>> output = open('letter.txt', 'w')
+>>> output.write('Dear Uncle Marty,\n')
+>>> output.close()
+>>> myfile = open('letter.txt')
+>>> s = myfile.readline()
+>>> s
+'Dear Uncle Marty,\n'
+>>> myfile.close()
+
+>>> # mode 'a'
+>>> myfile = open('letter.txt', 'a')
+>>> myfile.write('I hope you are well.')
+>>> myfile.close()
+[evaluate comments.py]
+[evaluate comments.py]
+#I hope you are well.
+
+# another comment
+[evaluate comments.py]
+#I hope you are well.
+# another comment
+[evaluate comments.py]
+ #I hope you are well.
+    #comment
+# another comment

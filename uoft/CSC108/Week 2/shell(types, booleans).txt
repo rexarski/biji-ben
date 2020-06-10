@@ -1,0 +1,124 @@
+Python 2.7.2 (v2.7.2:8527427914a2, Jun 11 2011, 14:13:39) 
+[GCC 4.0.1 (Apple Inc. build 5493)]
+Type "help", "copyright", "credits" or "license" for more information.
+>>> # Recap: types and type conversion functions
+>>> type(34.3)
+<type 'float'>
+>>> type(3)
+<type 'int'>
+>>> int(4.86)
+4
+>>> float(34)
+34.0
+>>> "hello"
+'hello'
+>>> 'hello'
+'hello'
+>>> type('hi')
+<type 'str'>
+>>> my_average = 94.7
+>>> type(my_average)
+<type 'float'>
+>>> # Another type: Boolean (type bool)
+>>> my_average >= 90
+True
+>>> my_average >= 100
+False
+>>> # True and False are boolean values.
+>>> type(True)
+<type 'bool'>
+>>> # Comparison operator: compare two values and give back a Boolean value.
+>>> 3 < 4
+True
+>>> 3 < 8
+True
+>>> 3 > 8
+False
+>>> 3.8 < 2.5
+False
+>>> x = 7
+>>> y = 7.0
+>>> x <= y
+True
+>>> 7 <= 7.0
+True
+>>> 7 == 7.0  # == is the symbol for equality
+True
+>>> 7 == 7.1
+False
+>>> 7 != 7.1
+True
+>>> # !=  symbol is read as "not equal to"
+>>> # Logical operators: and, or, not
+>>> sunny = True
+>>> snowing = False
+>>> not sunny
+False
+>>> not snowing
+True
+>>> not True
+False
+>>> not not True
+True
+>>> not not False
+False
+>>> sunny
+True
+>>> snowing
+False
+>>> sunny and snowing
+False
+# and: evaluates to True if and only if both operands are True
+>>> True and True
+True
+>>> True and False
+False
+>>> False and True
+False
+>>> False and False
+False
+>>> sunny or snowing
+True
+# or: evaluates to True if at least one of the operands is True
+>>> True or True
+True
+>>> True or False
+True
+>>> False or True
+True
+>>> False or False
+False
+>>> a = False
+>>> b = True
+>>> not a or b  # precedence?  not has higher precedence than or
+True
+>>> (not a) or b
+True
+>>> not (a or b)
+False
+>>> -3 + 7  # similar to how negation has higher precedence than addition
+4
+>>> (-3) + 7
+4
+>>> -(3 + 7)
+-10
+>>> # not has highest precedence
+>>> b or not a
+True
+>>> # not a or b is equivalent to b or not a
+>>> # -3 + y is equivalent to y + -3
+>>> x = 6
+>>> x < 0 or x > 5
+True
+>>> x < 0 and x > 5
+False
+>>> x <= 5
+False
+# Exercise: write an expression equivalent to  x <= 5 without
+# using the <= operator.
+str(45)   # Can convert an int to a string
+'45'
+int('hello')  # Python doesn't know how to convert 'hello' to type int
+Traceback (most recent call last):
+  File "<string>", line 1, in <fragment>
+ValueError: invalid literal for int() with base 10: 'hello'

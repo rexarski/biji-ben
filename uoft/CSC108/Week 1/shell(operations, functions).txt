@@ -1,0 +1,61 @@
+Python 2.7.2 (v2.7.2:8527427914a2, Jun 11 2011, 14:13:39) 
+[GCC 4.0.1 (Apple Inc. build 5493)]
+Type "help", "copyright", "credits" or "license" for more information.
+11 + 56
+67
+23 - 52
+-29
+4 * 5
+20
+# This is a comment.  Python does not try to execute it.
+4 * 5    # * is the multiplication symbol
+20
+2 ** 5   # 2 to the power of 5
+32
+7 / 3
+2
+# 7 and 3 are integers, so the value yielded is also an integer
+7 % 3    # 7 mod 3 gives us the remainder
+1
+7.0 / 3.0
+2.3333333333333335
+7.0 / 3
+2.3333333333333335
+7 / 3.0
+2.3333333333333335
+# Expressions with multiple operators
+4 + 5 * 3
+19
+(4 + 5) * 3
+27
+# Negative numbers
+5 - 2
+3
+5 - -2
+7
+5 - -------2
+7
+5 - --------2
+3
+4 / 0
+Traceback (most recent call last):
+  File "<string>", line 1, in <fragment>
+ZeroDivisionError: integer division or modulo by zero
+4 + 
+Traceback (most recent call last):
+  File "<string>", line 1, in <fragment>
+invalid syntax: <string>, line 1, pos 5
+# Some useful built-in functions
+min(9, -17)  # min is a function; 9 and -17 are arguments
+-17
+max(9, -17)
+9
+max(9, -17, 3, -8)   # max can have multiple argument
+9
+abs(-17)
+17
+abs(-4)
+4
+abs(-4 + 2)     # here the argument is an expression
+2
+abs(-4 + 2)

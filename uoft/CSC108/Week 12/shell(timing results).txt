@@ -1,0 +1,70 @@
+Python 2.7.2 (v2.7.2:8527427914a2, Jun 11 2011, 14:13:39) 
+[GCC 4.0.1 (Apple Inc. build 5493)]
+Type "help", "copyright", "credits" or "license" for more information.
+[evaluate general_timer.py]
+=== <function one_loop at 0x1036bf0> ===
+Size = 1000 and elapsed time = 0.000310
+Size = 2000 and elapsed time = 0.000644
+Size = 3000 and elapsed time = 0.000725
+Size = 4000 and elapsed time = 0.000798
+Size = 5000 and elapsed time = 0.001012
+Size = 6000 and elapsed time = 0.001098
+Size = 7000 and elapsed time = 0.001169
+Size = 8000 and elapsed time = 0.001852
+Size = 9000 and elapsed time = 0.001992
+Size = 10000 and elapsed time = 0.002305
+=== <function two_loops at 0x1036c70> ===
+Size = 1000 and elapsed time = 0.000431
+Size = 2000 and elapsed time = 0.000774
+Size = 3000 and elapsed time = 0.001298
+Size = 4000 and elapsed time = 0.001567
+Size = 5000 and elapsed time = 0.001500
+Size = 6000 and elapsed time = 0.001625
+Size = 7000 and elapsed time = 0.002069
+Size = 8000 and elapsed time = 0.002192
+Size = 9000 and elapsed time = 0.002455
+Size = 10000 and elapsed time = 0.002845
+=== <function nested_loop at 0x1036b30> ===
+Size = 1000 and elapsed time = 0.135927
+Size = 2000 and elapsed time = 0.536608
+Size = 3000 and elapsed time = 1.206600
+Size = 4000 and elapsed time = 2.221761
+Size = 5000 and elapsed time = 3.309163
+Size = 6000 and elapsed time = 4.731720
+Size = 7000 and elapsed time = 6.380703
+Size = 8000 and elapsed time = 8.342797
+Size = 9000 and elapsed time = 10.574697
+Size = 10000 and elapsed time = 12.993522
+=== <function nested_loop2 at 0x1036a70> ===
+Size = 1000 and elapsed time = 0.003803
+Size = 2000 and elapsed time = 0.007418
+Size = 3000 and elapsed time = 0.011056
+Size = 4000 and elapsed time = 0.014510
+Size = 5000 and elapsed time = 0.018061
+Size = 6000 and elapsed time = 0.021713
+Size = 7000 and elapsed time = 0.025279
+Size = 8000 and elapsed time = 0.028812
+Size = 9000 and elapsed time = 0.032022
+Size = 10000 and elapsed time = 0.036322
+=== <function big_loop at 0x1036bb0> ===
+Size = 1000 and elapsed time = 0.000806
+Size = 2000 and elapsed time = 0.000828
+Size = 3000 and elapsed time = 0.000826
+Size = 4000 and elapsed time = 0.000827
+Size = 5000 and elapsed time = 0.000827
+Size = 6000 and elapsed time = 0.000792
+Size = 7000 and elapsed time = 0.000778
+Size = 8000 and elapsed time = 0.000792
+Size = 9000 and elapsed time = 0.000828
+Size = 10000 and elapsed time = 0.000827
+=== <function interesting at 0x1036b70> ===
+Size = 1000 and elapsed time = 0.000003
+Size = 2000 and elapsed time = 0.000003
+Size = 3000 and elapsed time = 0.000003
+Size = 4000 and elapsed time = 0.000003
+Size = 5000 and elapsed time = 0.000003
+Size = 6000 and elapsed time = 0.000003
+Size = 7000 and elapsed time = 0.000003
+Size = 8000 and elapsed time = 0.000003
+Size = 9000 and elapsed time = 0.000003
+Size = 10000 and elapsed time = 0.000003

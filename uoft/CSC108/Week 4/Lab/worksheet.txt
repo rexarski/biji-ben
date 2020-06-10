@@ -1,0 +1,38 @@
+=== Booleans: Warmup Exercise ===
+
+Please answer the following questions on separate a piece of paper. Do your
+work individually, without your partner.
+
+
+1.  my_account is a float variable representing the amount of money in my
+    bank account.
+
+    a.  Create a boolean variable "rich" which will be True if and only if I 
+        have at least a million dollars in the account.
+        
+    min_balance is another float variable representing the minimum
+    balance I need to maintain to avoid service charges. The bank
+    changes this amount from time to time.
+    
+    b.  Create a boolean variable "close" that is True if and only if
+        my account has at least the minimum balance, but is dangerously
+		close (within 30.00 of the minimum balance).
+
+
+2.  A student may get into CSCB67 (not a real course) if they have a
+    GPA of 2.7 or higher, and  if they have taken at least one of:
+    CSCA08 or CSCA20. 
+    
+    g is a float variable representing my current GPA, and a08 and a20 
+    are booleans: a08 is True if and only if I have taken CSCA08, and 
+    a20 is True if and only if I have taken CSCA20.
+
+    a.  Write a Python expression with the variables g, a08 and a20 that 
+        evaluates to True if I can take CSCB67, and to false otherwise
+    
+    Now, assume that we don't know what my actual GPA is, (we don't
+    have the float g) but we have a bool variable b which represents 
+    whether my GPA is at least 2.7.
+
+    b.  Write another expression, using b, a08, and a20: it should
+    evaluate to True if I can take B67, and to False otherwise.
